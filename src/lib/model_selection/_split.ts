@@ -10,7 +10,7 @@ import * as _ from 'lodash';
  * @param {Number} random_state
  * @param {boolean} shuffle
  * @param stratify
- * return train_X, train_y, test_X, test_y
+ * return X_train, y_train, X_test, y_test
  */
 export function train_test_split(
 	X = [],
@@ -23,54 +23,50 @@ export function train_test_split(
 		stratify = false
 	} = {}
 ) {
-	if (_.isEmpty(test_size) && _.isEmpty(train_size)) {
+	/* if (_.isEmpty(test_size) && _.isEmpty(train_size)) {
 		test_size = 0.25
 		console.warn(`test_size and train_size are both empty. Setting test size to 0.25 by default`)
-	}
+	} */
 	// Training dataset size accoding to X
-	const train_size_length:number = train_size ?
-		train_size * X.length :
-		(1 - (test_size || 0.2)) * X.length;
-	const pure_train_size:number = _.toInteger(train_size_length);
+	const train_size_length:number = _.round(train_size * X.length);
+	const test_size_length:number = _.round(test_size * X.length);
 	// Initiate Random engine
 	const randomEngine = Random.engines.mt19937();
 	randomEngine.seed(random_state);
 
 	// split
-	let train_X = [];
-	let train_y = [];
-	let test_X = [];
-	let test_y = [];
+	let X_train = [];
+	let y_train = [];
+	let X_test = [];
+	let y_test = [];
 
-	// Getting train_X and train_y
-	while (train_X.length < pure_train_size && train_y.length < pure_train_size) {
+	// Getting X_train and y_train
+	while (X_train.length < train_size_length && y_train.length < train_size_length) {
 		const index = Random.integer(0, X.length - 1)(randomEngine);
-		console.log(index);
 
-		// train_X
-		train_X.push(X[index]);
-		console.log('X', X[index], 'i', index);
+		// X_train
+		X_train.push(X[index]);
 		X.splice(index, 1);
 
-		//train_y
-		train_y.push(y[index]);
+		//y_train
+		y_train.push(y[index]);
 		y.splice(index, 1);
 	}
 
-	while (test_X.length < X.length) {
+	while (X_test.length < test_size_length) {
 		const index = Random.integer(0, X.length - 1)(randomEngine);
-		// train_X
-		test_X.push(X[index]);
+		// X_train
+		X_test.push(X[index]);
 		X.splice(index, 1);
 
-		//train_y
-		test_y.push(y[index]);
+		//y_train
+		y_test.push(y[index]);
 		y.splice(index, 1);
 	}
 	return {
-		train_X,
-		train_y,
-		test_X,
-		test_y
+		X_train,
+		y_train,
+		X_test,
+		y_test
 	};
 }
