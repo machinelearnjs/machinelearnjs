@@ -3,7 +3,27 @@ exports.__esModule = true;
 var _ = require("lodash");
 var OneHotEncoder = /** @class */ (function () {
     function OneHotEncoder() {
-        this.booleanOneHot = function (list) { return _.map(list, function (value) { return (value ? 1 : 0); }); };
+        // NOTE: this is calculating the sample standard deviation (vs population stddev).
+        // Shouldn't matter for our purposes as long as it's consistent.
+        this.calculateStd = function (lst, mean) {
+            var deviations = _.map(lst, function (n) { return Math.pow(n - mean, 2); });
+            return Math.pow(_.sum(deviations) / (lst.length - 1), 0.5);
+        };
+        /**
+       * Example usage:
+       * boolEncoder.encode(true) => 1
+       * boolEncoder.encode(false) => 0
+         * @param type
+         * @param key
+         * @param values
+         * @returns {{encode}}
+         */
+        this.buildBooleanOneHot = function (type, key, values) {
+            return {
+                encoded: _.map(values, function (value) { return (value ? 1 : 0); }),
+                decode: { type: type, key: key }
+            };
+        };
     }
     /**
      * encode
@@ -22,7 +42,18 @@ var OneHotEncoder = /** @class */ (function () {
         // maybe a little too clever but also the simplest;
         // serialize every value for a given data key, then zip the results back up into a (possibly nested) array
         var transform = function (keys) {
-            return _.zip.apply(_, _.map(keys, function (key) { return _this.standardizeField(key, data, decoders); }));
+            return _.zip.apply(_, _.map(keys, function (key) {
+                var standardized = _this.standardizeField(key, data);
+                var encoded = _.get(standardized, 'encoded');
+                var decode = _.get(standardized, 'decode');
+                if (encoded && decode) {
+                    // TODO: We need to prefer immutable datastructure
+                    decoders.push(standardized.decode);
+                    return encoded;
+                }
+                // Otherwise just return values itself
+                return standardized;
+            }));
         };
         var features = transform(dataKeys);
         var labels = transform(labelKeys);
@@ -81,50 +112,56 @@ var OneHotEncoder = /** @class */ (function () {
    *
      * @param key: each key/feature such as planet, isGasGiant and value
      * @param data: the entire dataset
-     * @param decoders: returned decoder
      * @returns {any}
      */
-    OneHotEncoder.prototype.standardizeField = function (key, data, decoders) {
-        if (decoders === void 0) { decoders = []; }
+    OneHotEncoder.prototype.standardizeField = function (key, data) {
         var type = typeof data[0][key];
         var values = _.map(data, key);
-        // NOTE: this is calculating the sample standard deviation (vs population stddev).
-        // Shouldn't matter for our purposes as long as it's consistent.
-        var calculateStd = function (lst, mean) {
-            var deviations = _.map(lst, function (n) { return Math.pow(n - mean, 2); });
-            return Math.pow(_.sum(deviations) / (lst.length - 1), 0.5);
-        };
         switch (type) {
             case 'string': {
-                var oneHotEncoder = this.buildOneHot(values);
-                var encoded = _.map(values, oneHotEncoder.encode);
-                // TODO: Let's prefer immutable datastructure
-                decoders.push({
-                    key: key,
-                    type: type,
-                    offset: encoded[0].length,
-                    lookupTable: oneHotEncoder.lookupTable
-                });
-                return encoded;
+                var result = this.buildStringOneHot(type, key, values);
+                return {
+                    encoded: result.encoded,
+                    decode: result.decode
+                };
             }
             case 'number': {
                 // Apply std to values if type is number
                 // standardize: ((n - mean)/std)
                 // TODO: add support for scaling to [0, 1]
-                var mean_1 = _.mean(values);
-                var std_1 = calculateStd(values, mean_1);
-                decoders.push({ type: type, mean: mean_1, std: std_1, key: key });
-                return _.map(values, function (value) { return (value - mean_1) / std_1; });
+                var result = this.buildNumberOneHot(type, key, values);
+                return {
+                    encoded: result.encoded,
+                    decode: result.decode
+                };
             }
             case 'boolean': {
                 // True == 1
                 // False == 0
-                decoders.push({ type: type, key: key });
-                return this.booleanOneHot(values);
+                var result = this.buildBooleanOneHot(type, key, values);
+                return {
+                    encoded: result.encoded,
+                    decode: result.decode
+                };
             }
             default:
                 return values;
         }
+    };
+    /**
+   *
+     * @param type
+     * @param key
+     * @param values
+     * @returns {{encoded; decode: {type: any; mean: any; std: number; key: any}}}
+     */
+    OneHotEncoder.prototype.buildNumberOneHot = function (type, key, values) {
+        var mean = _.mean(values);
+        var std = this.calculateStd(values, mean);
+        return {
+            encoded: _.map(values, function (value) { return (value - mean) / std; }),
+            decode: { type: type, mean: mean, std: std, key: key }
+        };
     };
     /**
      * Example for internal reference (unnecessary details for those just using this module)
@@ -138,16 +175,22 @@ var OneHotEncoder = /** @class */ (function () {
      * It's not ideal (ideally it would all just be done in-memory and we could return a "decode" closure,
      * but it needs to be serializable to plain old JSON.
      */
-    OneHotEncoder.prototype.buildOneHot = function (list) {
+    OneHotEncoder.prototype.buildStringOneHot = function (type, key, values) {
         var lookup = {};
         var i = 0;
-        var lookupTable = _.map(_.uniq(list), function (value) {
+        var lookupTable = _.map(_.uniq(values), function (value) {
             lookup[value] = i++;
             return value;
         });
+        var encoded = _.map(values, function (value) { return _.range(0, i).map(function (pos) { return (lookup[value] === pos ? 1 : 0); }); });
         return {
-            lookupTable: lookupTable,
-            encode: function (value) { return _.range(0, i).map(function (pos) { return (lookup[value] === pos ? 1 : 0); }); }
+            encoded: encoded,
+            decode: {
+                key: key,
+                type: type,
+                offset: encoded[0].length,
+                lookupTable: lookupTable
+            }
         };
     };
     return OneHotEncoder;

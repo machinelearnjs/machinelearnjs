@@ -17,11 +17,22 @@ export class OneHotEncoder {
     // maybe a little too clever but also the simplest;
     // serialize every value for a given data key, then zip the results back up into a (possibly nested) array
     const transform = keys =>
-      _.zip(..._.map(keys, key => this.standardizeField(key, data, decoders)));
+      _.zip(..._.map(keys, key => {
+        const standardized = this.standardizeField(key, data);
+
+        const encoded = _.get(standardized, 'encoded');
+        const decode = _.get(standardized, 'decode');
+        if (encoded && decode) {
+          // TODO: We need to prefer immutable datastructure
+          decoders.push(standardized.decode);
+          return encoded;
+        }
+        // Otherwise just return values itself
+        return standardized;
+			}));
 
     const features = transform(dataKeys);
     const labels = transform(labelKeys);
-
     return {
       // zip the label data back into the feature data (to ensure label data is at the end)
       data: _.map(_.zip(features, labels), _.flattenDeep),
@@ -80,50 +91,43 @@ export class OneHotEncoder {
    *
 	 * @param key: each key/feature such as planet, isGasGiant and value
 	 * @param data: the entire dataset
-	 * @param decoders: returned decoder
 	 * @returns {any}
 	 */
-  private standardizeField(key, data, decoders = []) {
+  private standardizeField(key, data) {
     const type = typeof data[0][key];
     const values = _.map(data, key);
 
-    // NOTE: this is calculating the sample standard deviation (vs population stddev).
-    // Shouldn't matter for our purposes as long as it's consistent.
-    const calculateStd = (lst, mean) => {
-      const deviations = _.map(lst, n => Math.pow(n - mean, 2));
-      return Math.pow(_.sum(deviations) / (lst.length - 1), 0.5);
-    };
-
     switch (type) {
       case 'string': {
-        const oneHotEncoder = this.buildStringOneHot(values);
-        const encoded = _.map(values, oneHotEncoder.encode);
-        // TODO: Let's prefer immutable datastructure
-        decoders.push({
-          key,
-          type,
-          offset: encoded[0].length,
-          lookupTable: oneHotEncoder.lookupTable
-        });
-        return encoded;
+        const result = this.buildStringOneHot(type, key, values);
+
+        return {
+          encoded: result.encoded,
+          decode: result.decode
+        };
       }
 
       case 'number': {
         // Apply std to values if type is number
         // standardize: ((n - mean)/std)
         // TODO: add support for scaling to [0, 1]
-        const mean = _.mean(values);
-        const std = calculateStd(values, mean);
-        decoders.push({ type, mean, std, key });
-        return _.map(values, value => (value - mean) / std);
+        const result = this.buildNumberOneHot(type, key, values);
+
+        return {
+          encoded: result.encoded,
+          decode: result.decode
+        }
       }
 
       case 'boolean': {
         // True == 1
         // False == 0
-        decoders.push({ type, key });
-        const oneHotEncoder = this.buildBooleanOneHot();
-        return oneHotEncoder.encode(values);
+        const result = this.buildBooleanOneHot(type, key, values);
+
+        return {
+          encoded: result.encoded,
+          decode: result.decode
+        }
       }
 
       default:
@@ -131,15 +135,42 @@ export class OneHotEncoder {
     }
   }
 
+  // NOTE: this is calculating the sample standard deviation (vs population stddev).
+  // Shouldn't matter for our purposes as long as it's consistent.
+  private calculateStd = (lst, mean) => {
+    const deviations = _.map(lst, n => Math.pow(n - mean, 2));
+    return Math.pow(_.sum(deviations) / (lst.length - 1), 0.5);
+  };
+
+	/**
+   *
+	 * @param type
+	 * @param key
+	 * @param values
+	 * @returns {{encoded; decode: {type: any; mean: any; std: number; key: any}}}
+	 */
+  private buildNumberOneHot(type, key, values) {
+    const mean = _.mean(values);
+    const std = this.calculateStd(values, mean);
+    return {
+      encoded: _.map(values, value => (value - mean) / std),
+      decode: { type, mean, std, key },
+    }
+  }
+
 	/**
    * Example usage:
    * boolEncoder.encode(true) => 1
    * boolEncoder.encode(false) => 0
-	 * @returns {{encode: ((values?) => any)}}
+	 * @param type
+	 * @param key
+	 * @param values
+	 * @returns {{encode}}
 	 */
-  private buildBooleanOneHot = () => {
+  private buildBooleanOneHot = (type, key, values) => {
     return {
-      encode: values => _.map(values, value => (value ? 1 : 0))
+      encoded: _.map(values, value => (value ? 1 : 0)),
+      decode: { type, key }
     }
   }
 
@@ -155,18 +186,26 @@ export class OneHotEncoder {
    * It's not ideal (ideally it would all just be done in-memory and we could return a "decode" closure,
    * but it needs to be serializable to plain old JSON.
    */
-  private buildStringOneHot(list) {
+  private buildStringOneHot(type, key, values) {
     const lookup = {};
     let i = 0;
 
-    const lookupTable = _.map(_.uniq(list), value => {
+    const lookupTable = _.map(_.uniq(values), value => {
       lookup[value] = i++;
       return value;
     });
 
+    const encoded = _.map(
+      values, value => _.range(0, i).map(pos => (lookup[value] === pos ? 1 : 0)))
+
     return {
-      lookupTable,
-      encode: value => _.range(0, i).map(pos => (lookup[value] === pos ? 1 : 0))
+      encoded,
+      decode: {
+        key,
+        type,
+        offset: encoded[0].length,
+        lookupTable
+      }
     };
   }
 }
