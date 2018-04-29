@@ -8,3 +8,6 @@ coverage
 *.log
 
 package-lock.json
+
+# Jetbrain
+.idea
