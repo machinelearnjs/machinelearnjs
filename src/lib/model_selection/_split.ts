@@ -13,13 +13,15 @@ import * as _ from 'lodash';
  * return train_X, train_y, test_X, test_y
  */
 export function train_test_split(
-	X: Array<any>,
-	y: Array<any>,
-	test_size:number = 0.2,
-	train_size:number = 0.8,
-	random_state:number = 0,
-	shuffle: boolean = false,
-	stratify: any = false
+	X = [],
+	y = [],
+	{ // Options
+		test_size = 0.2,
+		train_size = 0.8,
+		random_state = 0,
+		shuffle = false,
+		stratify = false
+	} = {}
 ) {
 	if (_.isEmpty(test_size) && _.isEmpty(train_size)) {
 		test_size = 0.25
@@ -42,11 +44,12 @@ export function train_test_split(
 
 	// Getting train_X and train_y
 	while (train_X.length < pure_train_size && train_y.length < pure_train_size) {
-		const index = Random.integer(0, pure_train_size - 1)(randomEngine);
+		const index = Random.integer(0, X.length - 1)(randomEngine);
 		console.log(index);
 
 		// train_X
 		train_X.push(X[index]);
+		console.log('X', X[index], 'i', index);
 		X.splice(index, 1);
 
 		//train_y
