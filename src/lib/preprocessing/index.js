@@ -9,7 +9,6 @@ var planetList = [
     { planet: 'jupiter', isGasGiant: true, value: 30 }
 ];
 var encodeInfo = enc.encode(planetList, { dataKeys: ['value', 'isGasGiant'], labelKeys: ['planet'] });
-console.log('checking data');
 console.log(encodeInfo.data);
 var decodedInfo = enc.decode(encodeInfo.data, encodeInfo.decoders);
 console.log(decodedInfo);

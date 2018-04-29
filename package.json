@@ -13,9 +13,7 @@
     "build": "run-s clean && run-p build:*",
     "build:main": "tsc -p tsconfig.json",
     "build:module": "tsc -p tsconfig.module.json",
-    "fix": "run-s fix:*",
-    "fix:prettier": "prettier \"src/**/*.ts\" --write",
-    "fix:tslint": "tslint --fix --project .",
+    "fix": "prettier \"src/**/*.ts\" --write",
     "test": "run-s build test:*",
     "test:lint": "tslint --project . && prettier \"src/**/*.ts\" --list-different",
     "test:unit": "nyc --silent ava",
@@ -53,7 +51,10 @@
     "node": ">=8.9"
   },
   "dependencies": {
+    "@types/node": "8.9.4",
+    "@types/random-js": "^1.0.30",
     "lodash": "^4.17.10",
+    "random-js": "^1.0.8",
     "sha.js": "^2.4.10"
   },
   "devDependencies": {
