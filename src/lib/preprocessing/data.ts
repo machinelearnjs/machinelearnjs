@@ -24,7 +24,7 @@ export class OneHotEncoder {
         const decode = _.get(standardized, 'decode');
         if (encoded && decode) {
           // TODO: We need to prefer immutable datastructure
-          decoders.push(standardized.decode);
+          decoders.push(decode);
           return encoded;
         }
         // Otherwise just return values itself
@@ -137,8 +137,8 @@ export class OneHotEncoder {
 
   // NOTE: this is calculating the sample standard deviation (vs population stddev).
   // Shouldn't matter for our purposes as long as it's consistent.
-  private calculateStd = (lst, mean) => {
-    const deviations = _.map(lst, n => Math.pow(n - mean, 2));
+  private calculateStd = (lst, mean: number) => {
+    const deviations = _.map(lst, (n: number) => Math.pow(n - mean, 2));
     return Math.pow(_.sum(deviations) / (lst.length - 1), 0.5);
   };
 
@@ -150,10 +150,10 @@ export class OneHotEncoder {
 	 * @returns {{encoded; decode: {type: any; mean: any; std: number; key: any}}}
 	 */
   private buildNumberOneHot(type, key, values) {
-    const mean = _.mean(values);
+    const mean:number = _.mean(values);
     const std = this.calculateStd(values, mean);
     return {
-      encoded: _.map(values, value => (value - mean) / std),
+      encoded: _.map(values, (value: number) => (value - mean) / std),
       decode: { type, mean, std, key },
     }
   }
@@ -190,13 +190,13 @@ export class OneHotEncoder {
     const lookup = {};
     let i = 0;
 
-    const lookupTable = _.map(_.uniq(values), value => {
-      lookup[value] = i++;
+    const lookupTable = _.map(_.uniq(values), (value: string) => {
+      _.set(lookup, value, i++);
       return value;
     });
 
     const encoded = _.map(
-      values, value => _.range(0, i).map(pos => (lookup[value] === pos ? 1 : 0)))
+      values, (value: string) => _.range(0, i).map(pos => (_.get(lookup, value) === pos ? 1 : 0)))
 
     return {
       encoded,
@@ -209,3 +209,35 @@ export class OneHotEncoder {
     };
   }
 }
+
+export class MinMaxScaler {
+  private featureRange;
+  private dataMax:number;
+  private dataMin:number;
+  private featureMax:number;
+  private featureMin:number;
+  private dataRange:number;
+  private scale:number;
+  private baseMin:number;
+
+  constructor({featureRange = [0, 1]}) {
+    this.featureRange = featureRange;
+  }
+
+  public fit(X: Array<number>) {
+    this.dataMax = _.max(X); // What if X is multi-dimensional?
+    this.dataMin = _.min(X);
+    this.featureMax = this.featureRange[0];
+    this.featureMin = this.featureRange[1];
+    this.dataRange = this.dataMax - this.dataMin;
+    this.scale = (this.featureMax - this.featureMin) / this.dataRange;
+    this.baseMin = this.featureMin - this.dataMin * this.scale;
+  }
+
+  public fit_transform(X: Array<number>) {
+    return X
+      .map(x => x * this.scale)
+      .map(x => x + this.baseMin);
+  }
+}
+

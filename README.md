@@ -24,3 +24,11 @@ We welcome new contributors of all level of experience. For example if you are:
 - You want to learn Typescript
 - You want to learn Machine Learning
 
+#### Docker environment
+
+```bash
+$ cd ~/scikit-learn-js
+$ docker build -t scikit:latest .
+$ docker run -it -v $(pwd):/home/node/app/ -v  scikit:latest bash
+```
+

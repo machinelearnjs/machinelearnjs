@@ -2,6 +2,7 @@
 exports.__esModule = true;
 var data_1 = require("./data");
 // Playing around with onehotencoder
+console.log('Playing with one hot encoder');
 var enc = new data_1.OneHotEncoder();
 var planetList = [
     { planet: 'mars', isGasGiant: false, value: 10 },
@@ -12,3 +13,8 @@ var encodeInfo = enc.encode(planetList, { dataKeys: ['value', 'isGasGiant'], lab
 console.log(encodeInfo.data);
 var decodedInfo = enc.decode(encodeInfo.data, encodeInfo.decoders);
 console.log(decodedInfo);
+// MinMaxScaler
+var minmaxScaler = new data_1.MinMaxScaler({ featureRange: [0, 1] });
+minmaxScaler.fit([1, 2, 3]);
+var result = minmaxScaler.fit_transform([1, 2, 3]);
+console.log(result);

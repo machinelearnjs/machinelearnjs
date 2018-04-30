@@ -48,7 +48,7 @@ var OneHotEncoder = /** @class */ (function () {
                 var decode = _.get(standardized, 'decode');
                 if (encoded && decode) {
                     // TODO: We need to prefer immutable datastructure
-                    decoders.push(standardized.decode);
+                    decoders.push(decode);
                     return encoded;
                 }
                 // Otherwise just return values itself
@@ -179,10 +179,10 @@ var OneHotEncoder = /** @class */ (function () {
         var lookup = {};
         var i = 0;
         var lookupTable = _.map(_.uniq(values), function (value) {
-            lookup[value] = i++;
+            _.set(lookup, value, i++);
             return value;
         });
-        var encoded = _.map(values, function (value) { return _.range(0, i).map(function (pos) { return (lookup[value] === pos ? 1 : 0); }); });
+        var encoded = _.map(values, function (value) { return _.range(0, i).map(function (pos) { return (_.get(lookup, value) === pos ? 1 : 0); }); });
         return {
             encoded: encoded,
             decode: {
@@ -196,3 +196,26 @@ var OneHotEncoder = /** @class */ (function () {
     return OneHotEncoder;
 }());
 exports.OneHotEncoder = OneHotEncoder;
+var MinMaxScaler = /** @class */ (function () {
+    function MinMaxScaler(_a) {
+        var _b = _a.featureRange, featureRange = _b === void 0 ? [0, 1] : _b;
+        this.featureRange = featureRange;
+    }
+    MinMaxScaler.prototype.fit = function (X) {
+        this.dataMax = _.max(X); // What if X is multi-dimensional?
+        this.dataMin = _.min(X);
+        this.featureMax = this.featureRange[0];
+        this.featureMin = this.featureRange[1];
+        this.dataRange = this.dataMax - this.dataMin;
+        this.scale = (this.featureMax - this.featureMin) / this.dataRange;
+        this.baseMin = this.featureMin - this.dataMin * this.scale;
+    };
+    MinMaxScaler.prototype.fit_transform = function (X) {
+        var _this = this;
+        return X
+            .map(function (x) { return x * _this.scale; })
+            .map(function (x) { return x + _this.baseMin; });
+    };
+    return MinMaxScaler;
+}());
+exports.MinMaxScaler = MinMaxScaler;

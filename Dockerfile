@@ -1,21 +1,18 @@
-FROM node:8.4
-
-USER node
+FROM node:8.9.4
+MAINTAINER Jason Shin <visualbbasic@gmail.com>
 
 ENV CORE /home/node/app
 RUN mkdir $CORE
 RUN echo $CORE
 WORKDIR $CORE
 
-# Production code requirements
-ADD . $CORE
-
 # Install baseline cache
-COPY ./package.json ./yarn.lock /tmp/
-RUN cd /tmp && yarn
-RUN cp -a /tmp/node_modules $CORE
+COPY ./package.json $CORE
+COPY ./yarn.lock $CORE
+RUN yarn
 
-WORKDIR $CORE
+# Finally add remaining project source code to the docker container
+ADD . $CORE
 
 RUN yarn global add typescript
 

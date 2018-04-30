@@ -1,6 +1,10 @@
-import { OneHotEncoder } from './data';
+import {
+	OneHotEncoder,
+	MinMaxScaler
+} from './data';
 
 // Playing around with onehotencoder
+console.log('Playing with one hot encoder')
 const enc = new OneHotEncoder();
 const planetList = [
 	{ planet: 'mars', isGasGiant: false, value: 10 },
@@ -12,3 +16,9 @@ console.log(encodeInfo.data);
 
 const decodedInfo = enc.decode(encodeInfo.data, encodeInfo.decoders);
 console.log(decodedInfo);
+
+// MinMaxScaler
+const minmaxScaler = new MinMaxScaler({ featureRange: [0, 1] });
+minmaxScaler.fit([1, 2, 3])
+const result = minmaxScaler.fit_transform([1, 2, 3]);
+console.log(result);
