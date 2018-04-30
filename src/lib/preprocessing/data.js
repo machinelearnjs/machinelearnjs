@@ -204,18 +204,25 @@ var MinMaxScaler = /** @class */ (function () {
     MinMaxScaler.prototype.fit = function (X) {
         this.dataMax = _.max(X); // What if X is multi-dimensional?
         this.dataMin = _.min(X);
-        this.featureMax = this.featureRange[0];
-        this.featureMin = this.featureRange[1];
+        this.featureMax = this.featureRange[1];
+        this.featureMin = this.featureRange[0];
         this.dataRange = this.dataMax - this.dataMin;
-        console.log('checking data range ', this.dataRange);
+        // We need different data range for multi-dimensional
         this.scale = (this.featureMax - this.featureMin) / this.dataRange;
-        console.log('checking scale', this.scale);
         this.baseMin = this.featureMin - this.dataMin * this.scale;
     };
     MinMaxScaler.prototype.fit_transform = function (X) {
         var _this = this;
         return X
+            .map(function (x) {
+            console.log('zz', x);
+            return x;
+        })
             .map(function (x) { return x * _this.scale; })
+            .map(function (x) {
+            console.log('zz', x);
+            return x;
+        })
             .map(function (x) { return x + _this.baseMin; });
     };
     return MinMaxScaler;

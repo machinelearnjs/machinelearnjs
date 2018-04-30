@@ -227,18 +227,25 @@ export class MinMaxScaler {
   public fit(X: Array<number>) {
     this.dataMax = _.max(X); // What if X is multi-dimensional?
     this.dataMin = _.min(X);
-    this.featureMax = this.featureRange[0];
-    this.featureMin = this.featureRange[1];
+    this.featureMax = this.featureRange[1];
+    this.featureMin = this.featureRange[0];
     this.dataRange = this.dataMax - this.dataMin;
-    console.log('checking data range ', this.dataRange);
+    // We need different data range for multi-dimensional
     this.scale = (this.featureMax - this.featureMin) / this.dataRange;
-    console.log('checking scale', this.scale);
     this.baseMin = this.featureMin - this.dataMin * this.scale;
   }
 
   public fit_transform(X: Array<number>) {
     return X
+      .map(x => {
+        console.log('zz', x);
+        return x;
+      })
       .map(x => x * this.scale)
+      .map(x => {
+        console.log('zz', x);
+        return x;
+      })
       .map(x => x + this.baseMin);
   }
 }
