@@ -237,15 +237,7 @@ export class MinMaxScaler {
 
   public fit_transform(X: Array<number>) {
     return X
-      .map(x => {
-        console.log('zz', x);
-        return x;
-      })
       .map(x => x * this.scale)
-      .map(x => {
-        console.log('zz', x);
-        return x;
-      })
       .map(x => x + this.baseMin);
   }
 }
