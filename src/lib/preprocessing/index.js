@@ -15,6 +15,6 @@ var decodedInfo = enc.decode(encodeInfo.data, encodeInfo.decoders);
 console.log(decodedInfo);
 // MinMaxScaler
 var minmaxScaler = new data_1.MinMaxScaler({ featureRange: [0, 1] });
-minmaxScaler.fit([1, 2, 3]);
-var result = minmaxScaler.fit_transform([1, 2, 3]);
+minmaxScaler.fit([4, 5, 6]);
+var result = minmaxScaler.fit_transform([4, 5, 6]);
 console.log(result);

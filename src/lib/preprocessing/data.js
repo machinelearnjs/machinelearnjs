@@ -207,7 +207,9 @@ var MinMaxScaler = /** @class */ (function () {
         this.featureMax = this.featureRange[0];
         this.featureMin = this.featureRange[1];
         this.dataRange = this.dataMax - this.dataMin;
+        console.log('checking data range ', this.dataRange);
         this.scale = (this.featureMax - this.featureMin) / this.dataRange;
+        console.log('checking scale', this.scale);
         this.baseMin = this.featureMin - this.dataMin * this.scale;
     };
     MinMaxScaler.prototype.fit_transform = function (X) {

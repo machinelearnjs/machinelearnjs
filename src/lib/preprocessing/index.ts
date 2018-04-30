@@ -19,6 +19,6 @@ console.log(decodedInfo);
 
 // MinMaxScaler
 const minmaxScaler = new MinMaxScaler({ featureRange: [0, 1] });
-minmaxScaler.fit([1, 2, 3])
-const result = minmaxScaler.fit_transform([1, 2, 3]);
+minmaxScaler.fit([4, 5, 6])
+const result = minmaxScaler.fit_transform([4, 5, 6]);
 console.log(result);
