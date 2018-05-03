@@ -54,6 +54,8 @@
     "@types/node": "8.9.4",
     "@types/random-js": "^1.0.30",
     "lodash": "^4.17.10",
+    "mathjs": "^4.2.1",
+    "node-kmeans": "^1.1.8",
     "random-js": "^1.0.8",
     "sha.js": "^2.4.10"
   },

@@ -1,6 +1,6 @@
 import {
 	OneHotEncoder,
-	MinMaxScaler
+	MinMaxScaler,
 } from './data';
 
 // Playing around with onehotencoder
@@ -22,3 +22,13 @@ const minmaxScaler = new MinMaxScaler({ featureRange: [0, 1] });
 minmaxScaler.fit([4, 5, 6])
 const result = minmaxScaler.fit_transform([4, 5, 6]);
 console.log(result);
+
+
+// Imputer
+import {
+	Imputer
+} from './Imputer';
+
+const testX = [[1, 2], [null, 3], [123, 3]];
+const imp = new Imputer({ missingValues: null, axis: 1 });
+console.log(imp.fit(testX));

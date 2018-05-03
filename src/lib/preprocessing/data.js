@@ -214,15 +214,7 @@ var MinMaxScaler = /** @class */ (function () {
     MinMaxScaler.prototype.fit_transform = function (X) {
         var _this = this;
         return X
-            .map(function (x) {
-            console.log('zz', x);
-            return x;
-        })
             .map(function (x) { return x * _this.scale; })
-            .map(function (x) {
-            console.log('zz', x);
-            return x;
-        })
             .map(function (x) { return x + _this.baseMin; });
     };
     return MinMaxScaler;

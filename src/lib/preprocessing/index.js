@@ -18,3 +18,8 @@ var minmaxScaler = new data_1.MinMaxScaler({ featureRange: [0, 1] });
 minmaxScaler.fit([4, 5, 6]);
 var result = minmaxScaler.fit_transform([4, 5, 6]);
 console.log(result);
+// Imputer
+var Imputer_1 = require("./Imputer");
+var testX = [[1, 2], [null, 3], [123, 3]];
+var imp = new Imputer_1.Imputer({ missingValues: null, axis: 1 });
+console.log(imp.fit(testX));
