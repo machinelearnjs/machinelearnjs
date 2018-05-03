@@ -20,6 +20,8 @@ var result = minmaxScaler.fit_transform([4, 5, 6]);
 console.log(result);
 // Imputer
 var Imputer_1 = require("./Imputer");
-var testX = [[1, 2], [null, 3], [123, 3]];
-var imp = new Imputer_1.Imputer({ missingValues: null, axis: 1 });
-console.log(imp.fit(testX));
+var testX = [[1, 2], [null, 3], [7, 6]];
+var imp = new Imputer_1.Imputer({ missingValues: null, axis: 0 });
+imp.fit(testX);
+var impResult = imp.fit_transform([[null, 2], [6, null], [7, 6]]);
+console.log('checking result', impResult);

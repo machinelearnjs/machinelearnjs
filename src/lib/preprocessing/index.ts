@@ -29,6 +29,8 @@ import {
 	Imputer
 } from './Imputer';
 
-const testX = [[1, 2], [null, 3], [123, 3]];
-const imp = new Imputer({ missingValues: null, axis: 1 });
-console.log(imp.fit(testX));
+const testX = [[1, 2], [null, 3], [7, 6]];
+const imp = new Imputer({ missingValues: null, axis: 0 });
+imp.fit(testX);
+const impResult = imp.fit_transform( [[null, 2], [6, null], [7, 6]]);
+console.log('checking result', impResult);
