@@ -3231,6 +3231,10 @@ mkdirp@^0.5.0, mkdirp@^0.5.1:
   dependencies:
     minimist "0.0.8"
 
+ml-confusion-matrix@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/ml-confusion-matrix/-/ml-confusion-matrix-0.3.0.tgz#5cd7795015cd0ea7adac04f02dfb2a682109c9ae"
+
 modify-values@^1.0.0:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/modify-values/-/modify-values-1.0.1.tgz#b3939fa605546474e3e3e3c63d64bd43b4ee6022"
