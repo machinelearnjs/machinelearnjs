@@ -242,3 +242,59 @@ export class MinMaxScaler {
   }
 }
 
+export class Binarizer {
+  private threshold: number;
+  private copy: boolean;
+
+  constructor({ threshold = 0, copy = true }) {
+    this.threshold = threshold;
+    this.copy = copy;
+  }
+
+  /**
+   * Currently fit does nothing
+   * @param {Array<any>} X
+   */
+  public fit({ X = null }: { X: Array<any> }) {
+    if (_.isEmpty(X)) {
+      throw new Error('X cannot be null');
+    }
+    console.info('Currently Bianrizer\'s fit is designed to do nothing');
+  }
+
+  /**
+   * Transforms matrix into binarized form
+   * X = [[ 1., -1.,  2.],
+   *      [ 2.,  0.,  0.],
+   *      [ 0.,  1., -1.]]
+   * becomes
+   * array([[ 1.,  0.,  1.],
+   *    [ 1.,  0.,  0.],
+   *    [ 0.,  1.,  0.]])
+   * @param {Array<any>} X
+   */
+  public transform({ X = null }: { X: Array<any> }) {
+    let _X = null;
+    if (this.copy) {
+      _X = _.clone(X);
+    } else {
+      _X = X;
+    }
+    if (_.isEmpty(X)) {
+      throw new Error('X cannot be null');
+    }
+    for (let row = 0; row < _.size(X); row++) {
+      const rowValue = _.get(X, `[${row}]`);
+      for (let column = 0; column < _.size(rowValue); column++) {
+        const item = _.get(X, `[${row}][${column}]`);
+        // Type checking item; It must be a number type
+        if (!_.isNumber(item)) {
+          throw new Error(`Value ${item} is not a number`);
+        }
+        // If current item is less than
+        _X[row][column] = item <= this.threshold ? 0 : 1;
+      }
+    }
+  }
+
+}
