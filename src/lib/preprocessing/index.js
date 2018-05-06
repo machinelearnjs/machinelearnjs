@@ -25,3 +25,9 @@ var imp = new Imputer_1.Imputer({ missingValues: null, axis: 0 });
 imp.fit(testX);
 var impResult = imp.fit_transform([[null, 2], [6, null], [7, 6]]);
 console.log('checking result', impResult);
+// Binarizer
+var data_2 = require("./data");
+var binX = [[1., -1., 2.], [2., 0., 0.], [0., 1., -1.]];
+var newBin = new data_2.Binarizer({ threshold: 0 });
+var binResult = newBin.transform({ X: binX });
+console.log('binresult: ', binResult);

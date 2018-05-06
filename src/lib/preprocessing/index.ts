@@ -34,3 +34,13 @@ const imp = new Imputer({ missingValues: null, axis: 0 });
 imp.fit(testX);
 const impResult = imp.fit_transform( [[null, 2], [6, null], [7, 6]]);
 console.log('checking result', impResult);
+
+// Binarizer
+import {
+	Binarizer
+} from "./data";
+
+const binX = [[ 1., -1.,  2.], [ 2.,  0.,  0.], [ 0.,  1., -1.]];
+const newBin = new Binarizer({ threshold: 0 });
+const binResult = newBin.transform({ X: binX });
+console.log('binresult: ', binResult);

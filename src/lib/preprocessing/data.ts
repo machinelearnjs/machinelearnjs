@@ -295,6 +295,7 @@ export class Binarizer {
         _X[row][column] = item <= this.threshold ? 0 : 1;
       }
     }
+    return _X;
   }
 
 }
