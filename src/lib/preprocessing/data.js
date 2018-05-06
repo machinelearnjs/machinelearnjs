@@ -230,8 +230,7 @@ var Binarizer = /** @class */ (function () {
      * Currently fit does nothing
      * @param {Array<any>} X
      */
-    Binarizer.prototype.fit = function (_a) {
-        var _b = _a.X, X = _b === void 0 ? null : _b;
+    Binarizer.prototype.fit = function (X) {
         if (_.isEmpty(X)) {
             throw new Error('X cannot be null');
         }
@@ -248,8 +247,7 @@ var Binarizer = /** @class */ (function () {
      *    [ 0.,  1.,  0.]])
      * @param {Array<any>} X
      */
-    Binarizer.prototype.transform = function (_a) {
-        var _b = _a.X, X = _b === void 0 ? null : _b;
+    Binarizer.prototype.transform = function (X) {
         var _X = null;
         if (this.copy) {
             _X = _.clone(X);

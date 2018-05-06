@@ -255,7 +255,7 @@ export class Binarizer {
    * Currently fit does nothing
    * @param {Array<any>} X
    */
-  public fit({ X = null }: { X: Array<any> }) {
+  public fit(X: Array<any>) {
     if (_.isEmpty(X)) {
       throw new Error('X cannot be null');
     }
@@ -273,7 +273,7 @@ export class Binarizer {
    *    [ 0.,  1.,  0.]])
    * @param {Array<any>} X
    */
-  public transform({ X = null }: { X: Array<any> }) {
+  public transform(X: Array<any>) {
     let _X = null;
     if (this.copy) {
       _X = _.clone(X);

@@ -29,5 +29,13 @@ console.log('checking result', impResult);
 var data_2 = require("./data");
 var binX = [[1., -1., 2.], [2., 0., 0.], [0., 1., -1.]];
 var newBin = new data_2.Binarizer({ threshold: 0 });
-var binResult = newBin.transform({ X: binX });
+var binResult = newBin.transform(binX);
 console.log('binresult: ', binResult);
+// Label Encoder
+var label_1 = require("./label");
+var le = new label_1.LabelEncoder();
+var labelX = ['amsterdam', 'paris', 'tokyo'];
+le.fit(labelX);
+var transformX = ["tokyo", "tokyo", "paris"];
+var leResult = le.transform(transformX);
+console.log(leResult);

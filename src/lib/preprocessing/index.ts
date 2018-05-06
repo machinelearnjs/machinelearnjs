@@ -42,5 +42,17 @@ import {
 
 const binX = [[ 1., -1.,  2.], [ 2.,  0.,  0.], [ 0.,  1., -1.]];
 const newBin = new Binarizer({ threshold: 0 });
-const binResult = newBin.transform({ X: binX });
+const binResult = newBin.transform(binX);
 console.log('binresult: ', binResult);
+
+// Label Encoder
+import {
+	LabelEncoder
+} from "./label";
+
+const le = new LabelEncoder();
+const labelX = ['amsterdam', 'paris', 'tokyo'];
+le.fit(labelX);
+const transformX = ["tokyo", "tokyo", "paris"];
+const leResult = le.transform(transformX);
+console.log(leResult);
