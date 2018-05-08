@@ -1,6 +1,16 @@
 import * as _ from 'lodash';
 import { checkArray } from "../utils/validation";
 
+function _weightedSum({
+  sampleScore, sampleWeight = null, normalize = false
+}) {
+  if (normalize) {
+    return _.mean(sampleScore);
+  } else {
+    return _.sum(sampleScore);
+  }
+}
+
 /**
  *
  * @param {any} y_true
@@ -24,7 +34,10 @@ export function accuracyScore ({
     return yTrue === yPred ? 1 : 0;
   });
 
-  return _.mean(normalised);
+  return _weightedSum({
+    normalize,
+    sampleScore: normalised,
+  })
 }
 
 export function zeroOneLoss({
@@ -32,5 +45,7 @@ export function zeroOneLoss({
 }) {
   if (normalize) {
     return 1 - accuracyScore({ y_true, y_pred })
+  } else {
+    // If normalize is true
   }
 }

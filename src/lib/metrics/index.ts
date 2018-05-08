@@ -30,6 +30,14 @@ const accResult = accuracyScore({
 
 console.log('accuracy result ', accResult);
 
+const accResultNorm = accuracyScore({
+  y_true: [0, 1, 2, 3],
+  y_pred: [0, 2, 1, 3],
+  normalize: false
+});
+
+console.log('accuracy result iwht norm false ', accResultNorm);
+
 const loss_zero_one_result = zeroOneLoss({
   y_true: [1, 2, 3, 4],
   y_pred: [2, 2, 3, 5]
