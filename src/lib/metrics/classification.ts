@@ -8,7 +8,7 @@ import { checkArray } from "../utils/validation";
  * @param {any} normalize
  * @param {any} sample_weight
  */
-export function accuracy_score ({
+export function accuracyScore ({
   y_true, y_pred, normalize=true, sample_weight=null
 }) {
   // TODO: Multi label
@@ -25,4 +25,12 @@ export function accuracy_score ({
   });
 
   return _.mean(normalised);
+}
+
+export function zeroOneLoss({
+  y_true, y_pred, normalize=true, sample_weight=null
+}) {
+  if (normalize) {
+    return 1 - accuracyScore({ y_true, y_pred })
+  }
 }

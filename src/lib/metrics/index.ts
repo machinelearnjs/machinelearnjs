@@ -19,12 +19,21 @@ console.log(cm2.getFalseCount());
 console.log(cm2.getIndex('dog'));
 
 import {
-  accuracy_score
+  accuracyScore,
+  zeroOneLoss
 } from "./classification";
 
-const accResult = accuracy_score({
+const accResult = accuracyScore({
   y_true: [0, 1, 2, 3],
   y_pred: [0, 2, 1, 3]
 });
 
 console.log('accuracy result ', accResult);
+
+const loss_zero_one_result = zeroOneLoss({
+  y_true: [1, 2, 3, 4],
+  y_pred: [2, 2, 3, 5]
+});
+
+console.log('loss zero one ', loss_zero_one_result);
+
