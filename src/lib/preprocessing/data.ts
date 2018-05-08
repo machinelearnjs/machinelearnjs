@@ -17,19 +17,21 @@ export class OneHotEncoder {
     // maybe a little too clever but also the simplest;
     // serialize every value for a given data key, then zip the results back up into a (possibly nested) array
     const transform = keys =>
-      _.zip(..._.map(keys, key => {
-        const standardized = this.standardizeField(key, data);
+      _.zip(
+        ..._.map(keys, key => {
+          const standardized = this.standardizeField(key, data);
 
-        const encoded = _.get(standardized, 'encoded');
-        const decode = _.get(standardized, 'decode');
-        if (encoded && decode) {
-          // TODO: We need to prefer immutable datastructure
-          decoders.push(decode);
-          return encoded;
-        }
-        // Otherwise just return values itself
-        return standardized;
-			}));
+          const encoded = _.get(standardized, 'encoded');
+          const decode = _.get(standardized, 'decode');
+          if (encoded && decode) {
+            // TODO: We need to prefer immutable datastructure
+            decoders.push(decode);
+            return encoded;
+          }
+          // Otherwise just return values itself
+          return standardized;
+        })
+      );
 
     const features = transform(dataKeys);
     const labels = transform(labelKeys);
@@ -82,17 +84,17 @@ export class OneHotEncoder {
     }
   }
 
-	/**
+  /**
    * Standardizing field
    * Example dataset:
    * [ { planet: 'mars', isGasGiant: false, value: 10 },
    * { planet: 'saturn', isGasGiant: true, value: 20 },
    * { planet: 'jupiter', isGasGiant: true, value: 30 } ]
    *
-	 * @param key: each key/feature such as planet, isGasGiant and value
-	 * @param data: the entire dataset
-	 * @returns {any}
-	 */
+   * @param key: each key/feature such as planet, isGasGiant and value
+   * @param data: the entire dataset
+   * @returns {any}
+   */
   private standardizeField(key, data) {
     const type = typeof data[0][key];
     const values = _.map(data, key);
@@ -116,7 +118,7 @@ export class OneHotEncoder {
         return {
           encoded: result.encoded,
           decode: result.decode
-        }
+        };
       }
 
       case 'boolean': {
@@ -127,7 +129,7 @@ export class OneHotEncoder {
         return {
           encoded: result.encoded,
           decode: result.decode
-        }
+        };
       }
 
       default:
@@ -142,37 +144,37 @@ export class OneHotEncoder {
     return Math.pow(_.sum(deviations) / (lst.length - 1), 0.5);
   };
 
-	/**
+  /**
    *
-	 * @param type
-	 * @param key
-	 * @param values
-	 * @returns {{encoded; decode: {type: any; mean: any; std: number; key: any}}}
-	 */
+   * @param type
+   * @param key
+   * @param values
+   * @returns {{encoded; decode: {type: any; mean: any; std: number; key: any}}}
+   */
   private buildNumberOneHot(type, key, values) {
-    const mean:number = _.mean(values);
+    const mean: number = _.mean(values);
     const std = this.calculateStd(values, mean);
     return {
       encoded: _.map(values, (value: number) => (value - mean) / std),
-      decode: { type, mean, std, key },
-    }
+      decode: { type, mean, std, key }
+    };
   }
 
-	/**
+  /**
    * Example usage:
    * boolEncoder.encode(true) => 1
    * boolEncoder.encode(false) => 0
-	 * @param type
-	 * @param key
-	 * @param values
-	 * @returns {{encode}}
-	 */
+   * @param type
+   * @param key
+   * @param values
+   * @returns {{encode}}
+   */
   private buildBooleanOneHot = (type, key, values) => {
     return {
       encoded: _.map(values, value => (value ? 1 : 0)),
       decode: { type, key }
-    }
-  }
+    };
+  };
 
   /**
    * Example for internal reference (unnecessary details for those just using this module)
@@ -195,8 +197,9 @@ export class OneHotEncoder {
       return value;
     });
 
-    const encoded = _.map(
-      values, (value: string) => _.range(0, i).map(pos => (_.get(lookup, value) === pos ? 1 : 0)))
+    const encoded = _.map(values, (value: string) =>
+      _.range(0, i).map(pos => (_.get(lookup, value) === pos ? 1 : 0))
+    );
 
     return {
       encoded,
@@ -212,15 +215,15 @@ export class OneHotEncoder {
 
 export class MinMaxScaler {
   private featureRange;
-  private dataMax:number;
-  private dataMin:number;
-  private featureMax:number;
-  private featureMin:number;
-  private dataRange:number;
-  private scale:number;
-  private baseMin:number;
+  private dataMax: number;
+  private dataMin: number;
+  private featureMax: number;
+  private featureMin: number;
+  private dataRange: number;
+  private scale: number;
+  private baseMin: number;
 
-  constructor({featureRange = [0, 1]}) {
+  constructor({ featureRange = [0, 1] }) {
     this.featureRange = featureRange;
   }
 
@@ -236,9 +239,7 @@ export class MinMaxScaler {
   }
 
   public fit_transform(X: Array<number>) {
-    return X
-      .map(x => x * this.scale)
-      .map(x => x + this.baseMin);
+    return X.map(x => x * this.scale).map(x => x + this.baseMin);
   }
 }
 
@@ -259,7 +260,7 @@ export class Binarizer {
     if (_.isEmpty(X)) {
       throw new Error('X cannot be null');
     }
-    console.info('Currently Bianrizer\'s fit is designed to do nothing');
+    console.info("Currently Bianrizer's fit is designed to do nothing");
   }
 
   /**
@@ -297,5 +298,4 @@ export class Binarizer {
     }
     return _X;
   }
-
 }

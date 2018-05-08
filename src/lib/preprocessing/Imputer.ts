@@ -17,7 +17,13 @@ export class Imputer {
    * @param {number} verbose
    * @param {boolean} copy
    */
-  constructor({missingValues = null, strategy = 'mean', axis = 0, verbose = 0, copy = false}) {
+  constructor({
+    missingValues = null,
+    strategy = 'mean',
+    axis = 0,
+    verbose = 0,
+    copy = false
+  }) {
     this.missingValues = missingValues;
     this.strategy = strategy;
     this.axis = axis;
@@ -39,21 +45,27 @@ export class Imputer {
    * @param {Array<string>} steps
    */
   private calcArrayMean = (matrix, steps: Array<string>) =>
-    _.reduce(steps, (result, step) => {
-      switch(step) {
-        case 'flatten':
-          return _.map(result, _.flatten);
-        case 'filter':
-          return _.map(result,
+    _.reduce(
+      steps,
+      (result, step) => {
+        switch (step) {
+          case 'flatten':
+            return _.map(result, _.flatten);
+          case 'filter':
+            return _.map(
+              result,
               // Expecting any type of matrics array
               // TODO: implement a correct type
               (arr: Array<any>) => {
                 return _.filter(arr, z => z !== this.missingValues);
-              });
-        case 'mean':
-          return _.map(result, _.mean);
-      }
-  }, matrix);
+              }
+            );
+          case 'mean':
+            return _.map(result, _.mean);
+        }
+      },
+      matrix
+    );
 
   public fit(X) {
     const rowLen = math.contrib.size(X, 0);
@@ -62,11 +74,16 @@ export class Imputer {
     const colRange = math.contrib.range(0, colLen);
     if (this.strategy === 'mean') {
       if (this.axis === 0) {
-        const colNumbers = _.map(colRange,
-          (col) => math.subset(X, math.index(rowRange, col)));
-        this.means = this.calcArrayMean(colNumbers, ['flatten', 'filter', 'mean']);
+        const colNumbers = _.map(colRange, col =>
+          math.subset(X, math.index(rowRange, col))
+        );
+        this.means = this.calcArrayMean(colNumbers, [
+          'flatten',
+          'filter',
+          'mean'
+        ]);
       } else if (this.axis === 1) {
-        const rowNumbers = _.map(rowRange, (row) => _.get(X, `[${row}]`));
+        const rowNumbers = _.map(rowRange, row => _.get(X, `[${row}]`));
         this.means = this.calcArrayMean(rowNumbers, ['filter', 'mean']);
       }
     } else {
@@ -93,7 +110,11 @@ export class Imputer {
         }
       }
     } else {
-      throw new Error(`Unknown transformation with strategy ${this.strategy} and axis ${this.axis}`);
+      throw new Error(
+        `Unknown transformation with strategy ${this.strategy} and axis ${
+          this.axis
+        }`
+      );
     }
     return _X;
   }

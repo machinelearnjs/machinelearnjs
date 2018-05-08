@@ -17,7 +17,7 @@ export class LabelEncoder {
    * @param X
    */
   public transform(X) {
-    return _.map(X, (item) => {
+    return _.map(X, item => {
       return _.findIndex(this.classes, cur => cur === item);
     });
   }

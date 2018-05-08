@@ -1,9 +1,7 @@
 import * as _ from 'lodash';
-import { checkArray } from "../utils/validation";
+import { checkArray } from '../utils/validation';
 
-function _weightedSum({
-  sampleScore, sampleWeight = null, normalize = false
-}) {
+function _weightedSum({ sampleScore, sampleWeight = null, normalize = false }) {
   if (normalize) {
     return _.mean(sampleScore);
   } else {
@@ -18,8 +16,11 @@ function _weightedSum({
  * @param {any} normalize
  * @param {any} sample_weight
  */
-export function accuracyScore ({
-  y_true, y_pred, normalize=true, sample_weight=null
+export function accuracyScore({
+  y_true,
+  y_pred,
+  normalize = true,
+  sample_weight = null
 }) {
   // TODO: Multi label
   if (checkArray(y_true).multiclass || checkArray(y_pred).multiclass) {
@@ -36,15 +37,18 @@ export function accuracyScore ({
 
   return _weightedSum({
     normalize,
-    sampleScore: normalised,
-  })
+    sampleScore: normalised
+  });
 }
 
 export function zeroOneLoss({
-  y_true, y_pred, normalize=true, sample_weight=null
+  y_true,
+  y_pred,
+  normalize = true,
+  sample_weight = null
 }) {
   if (normalize) {
-    return 1 - accuracyScore({ y_true, y_pred })
+    return 1 - accuracyScore({ y_true, y_pred });
   } else {
     // If normalize is true
   }

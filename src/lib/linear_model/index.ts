@@ -1,6 +1,4 @@
-import {
-  LinearRegression
-} from './base'
+import { LinearRegression } from './base';
 
 const lr = new LinearRegression();
 
