@@ -21,7 +21,7 @@ export function accuracyScore({
   y_pred,
   normalize = true,
   sample_weight = null
-}) {
+}): array<any> {
   // TODO: Multi label
   if (checkArray(y_true).multiclass || checkArray(y_pred).multiclass) {
     throw new Error('Multiclass is not supported yet!');
@@ -46,7 +46,7 @@ export function zeroOneLoss({
   y_pred,
   normalize = true,
   sample_weight = null
-}) {
+}): array<any> {
   if (normalize) {
     return 1 - accuracyScore({ y_true, y_pred });
   } else {

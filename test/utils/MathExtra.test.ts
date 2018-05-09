@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import math from '../../src/lib/utils/MathExtra';
 
 describe('math.contrib.size', () => {
@@ -33,5 +34,23 @@ describe('math.contrib.size', () => {
 });
 
 describe('math.contrib.range', () => {
-  it('should return [0, 1, 2, 3]', () => {});
+  it('should return [0, 1, 2, 3]', () => {
+    const result = math.contrib.range(0, 4);
+    const expected = [0, 1, 2, 3];
+    console.log('checking range result ', result);
+    expect(_.isEqual(result, expected)).toBe(true);
+  });
+
+  it('should return [-2, -1, 0, 1]', () => {
+    const result = math.contrib.range(-2, 2);
+    const expected = [-2, -1, 0, 1];
+    console.log('result', result);
+    expect(_.isEqual(result, expected)).toBe(true);
+  });
+
+  it('should throw an invalid error', () => {
+    expect(() => math.contrib.range('test', 2)).toThrow(
+      'start and stop arguments need to be numbers'
+    );
+  });
 });

@@ -7,7 +7,7 @@ export class Imputer {
   private axis: number;
   private verbose: number;
   private copy: boolean;
-  private means: Array<number>;
+  private means: array<number>;
 
   /**
    *
@@ -32,42 +32,7 @@ export class Imputer {
     this.means = [];
   }
 
-  /**
-   * Calculate array of numbers as array of mean values
-   * Examples:
-   * [ [ 1, 2 ], [ null, 3 ], [ 123, 3 ] ]
-   * => [ 1.5, 3, 63 ]
-   *
-   * [ [ 1, 123 ], [ 2, 3, 3 ] ]
-   * => [ 62, 2.6666666666666665 ]
-   *
-   * @param matrix
-   * @param {Array<string>} steps
-   */
-  private calcArrayMean = (matrix, steps: Array<string>) =>
-    _.reduce(
-      steps,
-      (result, step) => {
-        switch (step) {
-          case 'flatten':
-            return _.map(result, _.flatten);
-          case 'filter':
-            return _.map(
-              result,
-              // Expecting any type of matrics array
-              // TODO: implement a correct type
-              (arr: Array<any>) => {
-                return _.filter(arr, z => z !== this.missingValues);
-              }
-            );
-          case 'mean':
-            return _.map(result, _.mean);
-        }
-      },
-      matrix
-    );
-
-  public fit(X) {
+  public fit(X): void {
     const rowLen = math.contrib.size(X, 0);
     const colLen = math.contrib.size(X, 1);
     const rowRange = math.contrib.range(0, rowLen);
@@ -91,8 +56,8 @@ export class Imputer {
     }
   }
 
-  public fit_transform(X: Array<any>) {
-    const _X: Array<any> = _.clone(X);
+  public fit_transform(X: array<any>): arraY<any> {
+    const _X: array<any> = _.clone(X);
     if (this.strategy === 'mean' && this.axis === 0) {
       // Mean column direction transform
       for (let row = 0; row < _.size(_X); row++) {
@@ -118,4 +83,39 @@ export class Imputer {
     }
     return _X;
   }
+
+  /**
+   * Calculate array of numbers as array of mean values
+   * Examples:
+   * [ [ 1, 2 ], [ null, 3 ], [ 123, 3 ] ]
+   * => [ 1.5, 3, 63 ]
+   *
+   * [ [ 1, 123 ], [ 2, 3, 3 ] ]
+   * => [ 62, 2.6666666666666665 ]
+   *
+   * @param matrix
+   * @param {Array<string>} steps
+   */
+  private calcArrayMean = (matrix, steps: array<string>): array<any> =>
+    _.reduce(
+      steps,
+      (result, step) => {
+        switch (step) {
+          case 'flatten':
+            return _.map(result, _.flatten);
+          case 'filter':
+            return _.map(
+              result,
+              // Expecting any type of matrics array
+              // TODO: implement a correct type
+              (arr: array<any>) => {
+                return _.filter(arr, z => z !== this.missingValues);
+              }
+            );
+          case 'mean':
+            return _.map(result, _.mean);
+        }
+      },
+      matrix
+    );
 }

@@ -8,7 +8,10 @@ export class OneHotEncoder {
    * @param opts - dataKeys: independent variables, labelKeys: dependent variables; mandatory
    * @return {{data: Array, decoders: Array}} - see readme for full explanation
    */
-  public encode(data, opts = { dataKeys: null, labelKeys: null }) {
+  public encode(
+    data,
+    opts = { dataKeys: null, labelKeys: null }
+  ): { data: array<any>; decoders: array<any> } {
     const labelKeys = opts.labelKeys;
     const decoders = [];
 
@@ -47,7 +50,7 @@ export class OneHotEncoder {
    *
    * Transform the encoded data back into its original format
    */
-  public decode(encoded, decoders) {
+  public decode(encoded, decoders): array<any> {
     return _.map(encoded, row => this.decodeRow(row, decoders));
   }
 
@@ -56,7 +59,7 @@ export class OneHotEncoder {
    *
    * Transform an encoded row back into its original format
    */
-  public decodeRow(row, decoders) {
+  public decodeRow(row, decoders): object {
     let i = 0;
     let numFieldsDecoded = 0;
     const record = {};
@@ -68,18 +71,18 @@ export class OneHotEncoder {
     return record;
 
     // Performs the inverse operation of "encode".
-    function getValue(row, ix, decoder) {
+    function getValue(X: array<array>, ix, decoder): string | boolean | number {
       switch (decoder.type) {
         case 'string': {
-          const data = row.slice(ix, ix + decoder.offset);
+          const data = X.slice(ix, ix + decoder.offset);
           return decoder.lookupTable[_.indexOf(data, 1)];
         }
         case 'boolean':
-          return !!row[ix];
+          return !!X[ix];
         case 'number':
-          return decoder.std * row[ix] + decoder.mean;
+          return decoder.std * X[ix] + decoder.mean;
         default:
-          return row[ix];
+          return X[ix];
       }
     }
   }
@@ -95,7 +98,20 @@ export class OneHotEncoder {
    * @param data: the entire dataset
    * @returns {any}
    */
-  private standardizeField(key, data) {
+  private standardizeField(
+    key,
+    data
+  ):
+    | {
+        encoded: array<number | string | boolean>;
+        decode: {
+          key: number;
+          type: string;
+          offset: number;
+          lookupTable: object;
+        };
+      }
+    | array<any> {
     const type = typeof data[0][key];
     const values = _.map(data, key);
 
@@ -104,8 +120,8 @@ export class OneHotEncoder {
         const result = this.buildStringOneHot(type, key, values);
 
         return {
-          encoded: result.encoded,
-          decode: result.decode
+          decode: result.decode,
+          encoded: result.encoded
         };
       }
 
@@ -116,8 +132,8 @@ export class OneHotEncoder {
         const result = this.buildNumberOneHot(type, key, values);
 
         return {
-          encoded: result.encoded,
-          decode: result.decode
+          decode: result.decode,
+          encoded: result.encoded
         };
       }
 
@@ -127,8 +143,8 @@ export class OneHotEncoder {
         const result = this.buildBooleanOneHot(type, key, values);
 
         return {
-          encoded: result.encoded,
-          decode: result.decode
+          decode: result.decode,
+          encoded: result.encoded
         };
       }
 
@@ -149,14 +165,21 @@ export class OneHotEncoder {
    * @param type
    * @param key
    * @param values
-   * @returns {{encoded; decode: {type: any; mean: any; std: number; key: any}}}
+   * @returns {{encoded: any[]; decode: {type: any; mean: number; std: number; key: any}}}
    */
-  private buildNumberOneHot(type, key, values) {
+  private buildNumberOneHot(
+    type,
+    key,
+    values
+  ): {
+    encoded: array<any>;
+    decode: { type: string; mean: number; std: number; key: number };
+  } {
     const mean: number = _.mean(values);
     const std = this.calculateStd(values, mean);
     return {
-      encoded: _.map(values, (value: number) => (value - mean) / std),
-      decode: { type, mean, std, key }
+      decode: { type, mean, std, key },
+      encoded: _.map(values, (value: number) => (value - mean) / std)
     };
   }
 
@@ -169,12 +192,19 @@ export class OneHotEncoder {
    * @param values
    * @returns {{encode}}
    */
-  private buildBooleanOneHot = (type, key, values) => {
+  private buildBooleanOneHot(
+    type,
+    key,
+    values
+  ): {
+    encoded: array<number | string | boolean>;
+    decode: { key: number; type: string };
+  } {
     return {
-      encoded: _.map(values, value => (value ? 1 : 0)),
-      decode: { type, key }
+      decode: { type, key },
+      encoded: _.map(values, value => (value ? 1 : 0))
     };
-  };
+  }
 
   /**
    * Example for internal reference (unnecessary details for those just using this module)
@@ -188,7 +218,14 @@ export class OneHotEncoder {
    * It's not ideal (ideally it would all just be done in-memory and we could return a "decode" closure,
    * but it needs to be serializable to plain old JSON.
    */
-  private buildStringOneHot(type, key, values) {
+  private buildStringOneHot(
+    type,
+    key,
+    values
+  ): {
+    encoded: array<number | string | boolean>;
+    decode: { key: number; type: string; offset: number; lookupTable: object };
+  } {
     const lookup = {};
     let i = 0;
 
@@ -202,13 +239,13 @@ export class OneHotEncoder {
     );
 
     return {
-      encoded,
       decode: {
         key,
-        type,
+        lookupTable,
         offset: encoded[0].length,
-        lookupTable
-      }
+        type
+      },
+      encoded
     };
   }
 }
@@ -227,7 +264,7 @@ export class MinMaxScaler {
     this.featureRange = featureRange;
   }
 
-  public fit(X: Array<number>) {
+  public fit(X: array<number>): void {
     this.dataMax = _.max(X); // What if X is multi-dimensional?
     this.dataMin = _.min(X);
     this.featureMax = this.featureRange[1];
@@ -238,7 +275,7 @@ export class MinMaxScaler {
     this.baseMin = this.featureMin - this.dataMin * this.scale;
   }
 
-  public fit_transform(X: Array<number>) {
+  public fit_transform(X: array<number>): array<any> {
     return X.map(x => x * this.scale).map(x => x + this.baseMin);
   }
 }
@@ -256,7 +293,7 @@ export class Binarizer {
    * Currently fit does nothing
    * @param {Array<any>} X
    */
-  public fit(X: Array<any>) {
+  public fit(X: array<any>): void {
     if (_.isEmpty(X)) {
       throw new Error('X cannot be null');
     }
@@ -274,7 +311,7 @@ export class Binarizer {
    *    [ 0.,  1.,  0.]])
    * @param {Array<any>} X
    */
-  public transform(X: Array<any>) {
+  public transform(X: array<any>): array<any> {
     let _X = null;
     if (this.copy) {
       _X = _.clone(X);

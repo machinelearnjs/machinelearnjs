@@ -1,7 +1,5 @@
 import * as kmeans from 'node-kmeans';
 
-console.log('checking kmeans!');
-
 // Data source: LinkedIn
 const data = [
   { company: 'Microsoft', size: 91259, revenue: 60420 },
@@ -22,7 +20,6 @@ kmeans.clusterize(vectors, { k: 4 }, (err, res) => {
   if (err) {
     console.error(err);
   } else {
-    console.log('checking res');
-    console.log('%o', res);
+    // silence is golden
   }
 });

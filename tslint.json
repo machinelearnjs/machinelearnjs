@@ -13,22 +13,28 @@
     "typedef": [true, "call-signature"],
 
     // Immutability rules
-    "readonly-keyword": true,
-    "readonly-array": true,
-    "no-let": true,
-    "no-object-mutation": true,
+    "readonly-keyword": false,
+    "readonly-array": false,
+    "no-let": false,  // Sometime let is more declaritive
+    "no-object-mutation": false,
     "no-delete": true,
     "no-method-signature": true,
 
+    // Class rules
+    "no-unnecessary-class": true,
+    "max-classes-per-file": [false],
+    "prefer-conditional-expression": false,
+    "no-console": [true, "log"],
+
     // Functional style rules
-    "no-this": true,
-    "no-class": true,
+    "no-invalid-this": true,
+    "no-class": false,
     "no-mixed-interface": true,
     "no-expression-statement": [
-      true,
+      false,
       { "ignore-prefix": ["console.", "process.exit"] }
     ],
-    "no-if-statement": true
+    "no-if-statement": false
     /* end tslint-immutable rules */
   }
 }

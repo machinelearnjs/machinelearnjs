@@ -24,11 +24,18 @@ const size = (X, axis = 0) => {
  * @param start
  * @param stop
  */
-const range = (start: number, stop: number) => _.range(start, stop);
+const range = (start: number, stop: number) => {
+  if (!_.isNumber(start) || !_.isNumber(stop)) {
+    throw new Error('start and stop arguments need to be numbers');
+  }
+  return _.range(start, stop);
+};
 
+/* tslint:disable */
 math.contrib = {
   size,
   range
 };
+/* tslint:enable */
 
 export default math;

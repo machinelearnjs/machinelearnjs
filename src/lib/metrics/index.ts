@@ -1,3 +1,4 @@
+/* tslint:disable */
 import * as ConfusionMatrix from 'ml-confusion-matrix';
 
 /**

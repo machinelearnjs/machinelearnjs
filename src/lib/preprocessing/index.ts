@@ -1,3 +1,4 @@
+/* tslint:disable */
 import { OneHotEncoder, MinMaxScaler } from './data';
 
 // Playing around with onehotencoder

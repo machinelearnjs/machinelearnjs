@@ -10,20 +10,24 @@ import * as _ from 'lodash';
  * @param arr
  * @returns {any}
  */
-export function checkArray(arr) {
+export function checkArray(
+  arr: array<any>
+): {
+  readonly isArray: boolean;
+  readonly multiclass: boolean;
+} {
   return _.flowRight(
-    // Check multiclass
     x => {
       const firstEle = _.get(arr, '[0]');
       if (_.isArray(firstEle)) {
         return _.set(x, 'multiclass', true);
       } else {
-        return _.get(x, 'multiclass', false);
+        return _.set(x, 'multiclass', false);
       }
     },
     // Check it is an array
     x => {
-      if (!_.isArray(arr)) {
+      if (_.isArray(arr)) {
         return _.set(x, 'isArray', true);
       }
       return _.set(x, 'isArray', false);
