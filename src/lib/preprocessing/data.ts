@@ -35,7 +35,6 @@ export class OneHotEncoder {
           return standardized;
         })
       );
-
     const features = transform(dataKeys);
     const labels = transform(labelKeys);
     return {
@@ -114,11 +113,9 @@ export class OneHotEncoder {
     | array<any> {
     const type = typeof data[0][key];
     const values = _.map(data, key);
-
     switch (type) {
       case 'string': {
         const result = this.buildStringOneHot(type, key, values);
-
         return {
           decode: result.decode,
           encoded: result.encoded

@@ -1,5 +1,5 @@
 "use strict";
-exports.__esModule = true;
+Object.defineProperty(exports, "__esModule", { value: true });
 var _ = require("lodash");
 var OneHotEncoder = /** @class */ (function () {
     function OneHotEncoder() {
@@ -8,21 +8,6 @@ var OneHotEncoder = /** @class */ (function () {
         this.calculateStd = function (lst, mean) {
             var deviations = _.map(lst, function (n) { return Math.pow(n - mean, 2); });
             return Math.pow(_.sum(deviations) / (lst.length - 1), 0.5);
-        };
-        /**
-       * Example usage:
-       * boolEncoder.encode(true) => 1
-       * boolEncoder.encode(false) => 0
-         * @param type
-         * @param key
-         * @param values
-         * @returns {{encode}}
-         */
-        this.buildBooleanOneHot = function (type, key, values) {
-            return {
-                encoded: _.map(values, function (value) { return (value ? 1 : 0); }),
-                decode: { type: type, key: key }
-            };
         };
     }
     /**
@@ -88,28 +73,28 @@ var OneHotEncoder = /** @class */ (function () {
         }
         return record;
         // Performs the inverse operation of "encode".
-        function getValue(row, ix, decoder) {
+        function getValue(X, ix, decoder) {
             switch (decoder.type) {
                 case 'string': {
-                    var data = row.slice(ix, ix + decoder.offset);
+                    var data = X.slice(ix, ix + decoder.offset);
                     return decoder.lookupTable[_.indexOf(data, 1)];
                 }
                 case 'boolean':
-                    return !!row[ix];
+                    return !!X[ix];
                 case 'number':
-                    return decoder.std * row[ix] + decoder.mean;
+                    return decoder.std * X[ix] + decoder.mean;
                 default:
-                    return row[ix];
+                    return X[ix];
             }
         }
     };
     /**
-   * Standardizing field
-   * Example dataset:
-   * [ { planet: 'mars', isGasGiant: false, value: 10 },
-   * { planet: 'saturn', isGasGiant: true, value: 20 },
-   * { planet: 'jupiter', isGasGiant: true, value: 30 } ]
-   *
+     * Standardizing field
+     * Example dataset:
+     * [ { planet: 'mars', isGasGiant: false, value: 10 },
+     * { planet: 'saturn', isGasGiant: true, value: 20 },
+     * { planet: 'jupiter', isGasGiant: true, value: 30 } ]
+     *
      * @param key: each key/feature such as planet, isGasGiant and value
      * @param data: the entire dataset
      * @returns {any}
@@ -117,12 +102,14 @@ var OneHotEncoder = /** @class */ (function () {
     OneHotEncoder.prototype.standardizeField = function (key, data) {
         var type = typeof data[0][key];
         var values = _.map(data, key);
+        console.log('checking type ', type, values);
         switch (type) {
             case 'string': {
                 var result = this.buildStringOneHot(type, key, values);
+                console.log('checking str data ', result, ' type ', type, key, values);
                 return {
-                    encoded: result.encoded,
-                    decode: result.decode
+                    decode: result.decode,
+                    encoded: result.encoded
                 };
             }
             case 'number': {
@@ -131,8 +118,8 @@ var OneHotEncoder = /** @class */ (function () {
                 // TODO: add support for scaling to [0, 1]
                 var result = this.buildNumberOneHot(type, key, values);
                 return {
-                    encoded: result.encoded,
-                    decode: result.decode
+                    decode: result.decode,
+                    encoded: result.encoded
                 };
             }
             case 'boolean': {
@@ -140,8 +127,8 @@ var OneHotEncoder = /** @class */ (function () {
                 // False == 0
                 var result = this.buildBooleanOneHot(type, key, values);
                 return {
-                    encoded: result.encoded,
-                    decode: result.decode
+                    decode: result.decode,
+                    encoded: result.encoded
                 };
             }
             default:
@@ -149,18 +136,33 @@ var OneHotEncoder = /** @class */ (function () {
         }
     };
     /**
-   *
+     *
      * @param type
      * @param key
      * @param values
-     * @returns {{encoded; decode: {type: any; mean: any; std: number; key: any}}}
+     * @returns {{encoded: any[]; decode: {type: any; mean: number; std: number; key: any}}}
      */
     OneHotEncoder.prototype.buildNumberOneHot = function (type, key, values) {
         var mean = _.mean(values);
         var std = this.calculateStd(values, mean);
         return {
-            encoded: _.map(values, function (value) { return (value - mean) / std; }),
-            decode: { type: type, mean: mean, std: std, key: key }
+            decode: { type: type, mean: mean, std: std, key: key },
+            encoded: _.map(values, function (value) { return (value - mean) / std; })
+        };
+    };
+    /**
+     * Example usage:
+     * boolEncoder.encode(true) => 1
+     * boolEncoder.encode(false) => 0
+     * @param type
+     * @param key
+     * @param values
+     * @returns {{encode}}
+     */
+    OneHotEncoder.prototype.buildBooleanOneHot = function (type, key, values) {
+        return {
+            decode: { type: type, key: key },
+            encoded: _.map(values, function (value) { return (value ? 1 : 0); })
         };
     };
     /**
@@ -182,15 +184,17 @@ var OneHotEncoder = /** @class */ (function () {
             _.set(lookup, value, i++);
             return value;
         });
-        var encoded = _.map(values, function (value) { return _.range(0, i).map(function (pos) { return (_.get(lookup, value) === pos ? 1 : 0); }); });
+        var encoded = _.map(values, function (value) {
+            return _.range(0, i).map(function (pos) { return (_.get(lookup, value) === pos ? 1 : 0); });
+        });
         return {
-            encoded: encoded,
             decode: {
                 key: key,
-                type: type,
+                lookupTable: lookupTable,
                 offset: encoded[0].length,
-                lookupTable: lookupTable
-            }
+                type: type
+            },
+            encoded: encoded
         };
     };
     return OneHotEncoder;
@@ -213,9 +217,7 @@ var MinMaxScaler = /** @class */ (function () {
     };
     MinMaxScaler.prototype.fit_transform = function (X) {
         var _this = this;
-        return X
-            .map(function (x) { return x * _this.scale; })
-            .map(function (x) { return x + _this.baseMin; });
+        return X.map(function (x) { return x * _this.scale; }).map(function (x) { return x + _this.baseMin; });
     };
     return MinMaxScaler;
 }());
@@ -234,7 +236,7 @@ var Binarizer = /** @class */ (function () {
         if (_.isEmpty(X)) {
             throw new Error('X cannot be null');
         }
-        console.info('Currently Bianrizer\'s fit is designed to do nothing');
+        console.info("Currently Bianrizer's fit is designed to do nothing");
     };
     /**
      * Transforms matrix into binarized form

@@ -18,6 +18,7 @@
     "test:lint": "tslint --project . && prettier \"src/**/*.ts\" --list-different",
     "test:unit": "npx jest",
     "test:nsp": "nsp check",
+    "test:watch": "npx nodemon -L --watch test --watch src --exec \"yarn test:lint && yarn test:unit && yarn test:nsp\"",
     "watch": "run-s clean build:main && run-p \"build:main -- -w\" \"test:unit -- --watch\"",
     "cov": "run-s build test:unit cov:html && opn coverage/index.html",
     "cov:html": "nyc report --reporter=html",
@@ -29,7 +30,7 @@
     "doc:publish": "gh-pages -m \"[ci skip] Updates\" -d build/docs",
     "version": "standard-version",
     "reset": "git clean -dfx && git reset --hard && npm i",
-    "clean": "trash build test",
+    "clean": "trash build",
     "all": "run-s reset test cov:check doc:html",
     "prepare-release": "run-s all version doc:publish",
     "preinstall": "node -e \"if(process.env.npm_execpath.indexOf('yarn') === -1) throw new Error('scikit-learn-js must be installed with Yarn: https://yarnpkg.com/')\""
@@ -52,6 +53,7 @@
   },
   "dependencies": {
     "@types/jest": "^22.2.3",
+    "@types/lodash": "^4.14.108",
     "@types/node": "8.9.4",
     "@types/random-js": "^1.0.30",
     "jest": "^22.4.3",
@@ -60,6 +62,7 @@
     "ml-confusion-matrix": "^0.3.0",
     "ml-regression-simple-linear": "^1.0.2",
     "node-kmeans": "^1.1.8",
+    "nodemon": "^1.17.4",
     "random-js": "^1.0.8",
     "sha.js": "^2.4.10",
     "ts-jest": "^22.4.5"

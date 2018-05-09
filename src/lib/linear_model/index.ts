@@ -1,3 +1,4 @@
+/* tslint:disable */
 import { LinearRegression } from './base';
 
 const lr = new LinearRegression();

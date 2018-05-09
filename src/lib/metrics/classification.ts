@@ -1,7 +1,11 @@
 import * as _ from 'lodash';
 import { checkArray } from '../utils/validation';
 
-function _weightedSum({ sampleScore, sampleWeight = null, normalize = false }) {
+function _weightedSum({
+  sampleScore,
+  sampleWeight = null,
+  normalize = false
+}): number {
   if (normalize) {
     return _.mean(sampleScore);
   } else {
@@ -29,7 +33,7 @@ export function accuracyScore({
   if (_.size(y_true) !== _.size(y_pred)) {
     throw new Error('y_true and y_pred are not equal in size!');
   }
-  const normalised = _.map(y_true, (_, index) => {
+  const normalised = _.map(y_true, (x, index) => {
     const yTrue = y_true[index];
     const yPred = y_pred[index];
     return yTrue === yPred ? 1 : 0;
