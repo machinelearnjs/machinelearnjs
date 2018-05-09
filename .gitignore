@@ -6,8 +6,10 @@ test/**/*.js
 coverage
 .nyc_output
 *.log
-.Trash-0
 package-lock.json
 
 # Jetbrain
 .idea
+
+# Build
+.Trash-0

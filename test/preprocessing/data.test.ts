@@ -19,10 +19,21 @@ describe('data:OneHotEncoder', () => {
       [ 0, 1, 0, 1, 0 ],
       [ 1, 1, 0, 0, 1 ]
     ];
-    const encoderInfo = enc.encode(planetList, {
+    const encodeInfo = enc.encode(planetList, {
       dataKeys: ['value', 'isGasGiant'],
       labelKeys: ['planet']
     });
-    expect(_.isEqual(encoderInfo.data, expectedEncode)).toBe(true);
+    expect(_.isEqual(encodeInfo.data, expectedEncode)).toBe(true);
+  });
+
+  it('should decode planet list correctly', () => {
+    const enc = new OneHotEncoder();
+
+    const encodeInfo = enc.encode(planetList, {
+      dataKeys: ['value', 'isGasGiant'],
+      labelKeys: ['planet']
+    });
+    const decodedInfo = enc.decode(encodeInfo.data, encodeInfo.decoders);
+    expect(_.isEqual(planetList, decodedInfo)).toBe(true);
   });
 });
