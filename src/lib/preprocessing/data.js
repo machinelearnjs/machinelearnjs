@@ -102,11 +102,9 @@ var OneHotEncoder = /** @class */ (function () {
     OneHotEncoder.prototype.standardizeField = function (key, data) {
         var type = typeof data[0][key];
         var values = _.map(data, key);
-        console.log('checking type ', type, values);
         switch (type) {
             case 'string': {
                 var result = this.buildStringOneHot(type, key, values);
-                console.log('checking str data ', result, ' type ', type, key, values);
                 return {
                     decode: result.decode,
                     encoded: result.encoded

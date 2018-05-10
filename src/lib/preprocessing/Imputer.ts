@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import math from '../utils/MathExtra';
+import { checkArray } from "../utils/validation";
 
 export class Imputer {
   private missingValues: number | null;
@@ -33,10 +34,16 @@ export class Imputer {
   }
 
   public fit(X): void {
+    const check = checkArray(X);
+    if (!check.isArray) {
+      throw new Error('X is not an array!');
+    }
     const rowLen = math.contrib.size(X, 0);
     const colLen = math.contrib.size(X, 1);
     const rowRange = math.contrib.range(0, rowLen);
     const colRange = math.contrib.range(0, colLen);
+    console.log('checking rowlen ',  X, rowLen);
+    console.log('checking colLen', X, colLen);
     if (this.strategy === 'mean') {
       if (this.axis === 0) {
         const colNumbers = _.map(colRange, col =>
