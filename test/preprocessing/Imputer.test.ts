@@ -12,9 +12,34 @@ describe('Imputer', () => {
   });
 
   it('fitting invalid data type should throw an error', () => {
+    // String
     expect(() => {
       new Imputer({ missingValues: null, axis: 0 })
         .fit('asofjasof');
+    }).toThrow('X is not an array!');
+
+    // Int
+    expect(() => {
+      new Imputer({ missingValues: null, axis: 0 })
+        .fit(123);
+    }).toThrow('X is not an array!');
+
+    // Boolean
+    expect(() => {
+      new Imputer({ missingValues: null, axis: 0 })
+        .fit(true);
+    }).toThrow('X is not an array!');
+
+    // Null
+    expect(() => {
+      new Imputer({ missingValues: null, axis: 0 })
+        .fit(null);
+    }).toThrow('X is not an array!');
+
+    // undefined
+    expect(() => {
+      new Imputer({ missingValues: null, axis: 0 })
+        .fit(undefined);
     }).toThrow('X is not an array!');
   });
 });
