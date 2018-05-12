@@ -26,6 +26,7 @@ export class CountVectorizer {
 			(x: Array<string>) => _.uniq(x),
 			(x: string) => tokenizer.tokenize(x),
 			(x: Array<string>) => x.join(' '),
+			// Somehow it's removing too many words??!!
 			(x: Array<string>) => sw.removeStopwords(x, ENGLISH_STOP_WORDS),
 			(x: string) => x.split(' ')
 		)(text);
