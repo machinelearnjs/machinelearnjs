@@ -11,4 +11,6 @@ const cv = new CountVectorizer();
 
 const text1 = ['deep learning ian good fellow learning jason shin shin', 'yoshua bengio'];
 
+console.log('original text', text1);
 cv.fit(text1);
+console.log(cv.vocabulary_);
