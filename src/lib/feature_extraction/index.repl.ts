@@ -9,5 +9,6 @@ import { CountVectorizer } from "./text";
 
 const cv = new CountVectorizer();
 
-const analyze = cv.buildAnalyzer();
-console.log('checking ', analyze('checking this a sentence the'));
+const text1 = ['deep learning ian good fellow learning jason shin shin', 'yoshua bengio'];
+
+cv.fit(text1);
