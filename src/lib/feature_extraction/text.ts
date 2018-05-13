@@ -58,11 +58,21 @@ export class CountVectorizer {
 		}, []);
 	}
 
+	/**
+	 * fit simply calls fit_transform
+	 * @param {Array<string>} doc
+	 * @returns {CountVectorizer}
+	 */
 	public fit(doc: Array<string>) {
 		this.fit_transform(doc);
 		return this;
 	}
 
+	/**
+	 * fit transform applies
+	 * @param {Array<string>} doc
+	 * @returns {number[][]}
+	 */
 	public fit_transform(doc: Array<string>) {
 		// Automatically assig
 		const { vocabulary, vocabulary_ } = this.buildVocabulary(doc);
@@ -78,6 +88,22 @@ export class CountVectorizer {
 	 */
 	public transform(doc: Array<string>) {
 		return this.countVocab(doc);
+	}
+
+	public getFeatureNames() {
+		if (!this.vocabulary) {
+			throw new Error('You must fit a document first before you can retrieve the feature names!');
+		}
+		return this.vocabulary;
+	}
+
+	/**
+	 * Build a tokenizer / vectorizer
+	 * TODO: Check if buildAnalyzer make sense
+	 * @returns {(x?) => any}
+	 */
+	public buildAnalyzer() {
+		return x => this.preprocess(x, { removeSW: true })
 	}
 
 	/**
@@ -99,7 +125,4 @@ export class CountVectorizer {
 		)(text);
 	}
 
-	public buildAnalyzer() {
-		return x => this.preprocess(x, { removeSW: true })
-	}
 }
