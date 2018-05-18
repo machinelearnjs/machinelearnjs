@@ -49,7 +49,7 @@ export class OneHotEncoder {
    *
    * Transform the encoded data back into its original format
    */
-  public decode(encoded, decoders): array<any> {
+  public decode(encoded, decoders): Array<any> {
     return _.map(encoded, row => this.decodeRow(row, decoders));
   }
 
@@ -102,7 +102,7 @@ export class OneHotEncoder {
     data
   ):
     | {
-        encoded: array<number | string | boolean>;
+        encoded: Array<number | string | boolean>;
         decode: {
           key: number;
           type: string;
@@ -110,7 +110,7 @@ export class OneHotEncoder {
           lookupTable: object;
         };
       }
-    | array<any> {
+    | Array<any> {
     const type = typeof data[0][key];
     const values = _.map(data, key);
     switch (type) {
@@ -169,7 +169,7 @@ export class OneHotEncoder {
     key,
     values
   ): {
-    encoded: array<any>;
+    encoded: Array<any>;
     decode: { type: string; mean: number; std: number; key: number };
   } {
     const mean: number = _.mean(values);
@@ -194,7 +194,7 @@ export class OneHotEncoder {
     key,
     values
   ): {
-    encoded: array<number | string | boolean>;
+    encoded: Array<number | string | boolean>;
     decode: { key: number; type: string };
   } {
     return {
@@ -220,7 +220,7 @@ export class OneHotEncoder {
     key,
     values
   ): {
-    encoded: array<number | string | boolean>;
+    encoded: Array<any>;
     decode: { key: number; type: string; offset: number; lookupTable: object };
   } {
     const lookup = {};
@@ -261,7 +261,7 @@ export class MinMaxScaler {
     this.featureRange = featureRange;
   }
 
-  public fit(X: array<number>): void {
+  public fit(X: Array<number>): void {
     this.dataMax = _.max(X); // What if X is multi-dimensional?
     this.dataMin = _.min(X);
     this.featureMax = this.featureRange[1];
@@ -272,7 +272,7 @@ export class MinMaxScaler {
     this.baseMin = this.featureMin - this.dataMin * this.scale;
   }
 
-  public fit_transform(X: array<number>): array<any> {
+  public fit_transform(X: Array<number>): Array<any> {
     return X.map(x => x * this.scale).map(x => x + this.baseMin);
   }
 }
@@ -290,7 +290,7 @@ export class Binarizer {
    * Currently fit does nothing
    * @param {Array<any>} X
    */
-  public fit(X: array<any>): void {
+  public fit(X: Array<any>): void {
     if (_.isEmpty(X)) {
       throw new Error('X cannot be null');
     }
@@ -308,7 +308,7 @@ export class Binarizer {
    *    [ 0.,  1.,  0.]])
    * @param {Array<any>} X
    */
-  public transform(X: array<any>): array<any> {
+  public transform(X: Array<any>): Array<any> {
     let _X = null;
     if (this.copy) {
       _X = _.clone(X);

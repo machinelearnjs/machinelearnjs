@@ -6,6 +6,7 @@ RUN mkdir $CORE
 RUN echo $CORE
 WORKDIR $CORE
 
+RUN git init
 # Install baseline cache
 COPY ./package.json $CORE
 COPY ./yarn.lock $CORE

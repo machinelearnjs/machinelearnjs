@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
 
 export class LabelEncoder {
-  private classes: array<any>;
-  public fit(X: array<any> = null): void {
+  private classes: Array<any>;
+  public fit(X: Array<any> = null): void {
     if (_.isEmpty(X)) {
       throw new Error('X cannot be empty!');
     }
@@ -16,7 +16,7 @@ export class LabelEncoder {
    * Into [2, 2, 1]
    * @param X
    */
-  public transform(X): array<any> {
+  public transform(X): Array<any> {
     return _.map(X, item => {
       return _.findIndex(this.classes, cur => cur === item);
     });

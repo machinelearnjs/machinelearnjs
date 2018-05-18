@@ -11,26 +11,30 @@ import * as _ from 'lodash';
  * @returns {any}
  */
 export function checkArray(
-  arr: T[any]
+  arr: Array<any>
 ): {
   readonly isArray: boolean;
   readonly multiclass: boolean;
 } {
-  return _.flowRight(
-    x => {
-      const firstEle = _.get(arr, '[0]');
-      if (_.isArray(firstEle)) {
-        return _.set(x, 'multiclass', true);
-      } else {
-        return _.set(x, 'multiclass', false);
-      }
-    },
-    // Check it is an array
-    x => {
-      if (_.isArray(arr)) {
-        return _.set(x, 'isArray', true);
-      }
-      return _.set(x, 'isArray', false);
-    }
-  )({});
+  let result = {
+    isArray: false,
+    multiclass: false,
+  };
+
+  // Setting isArray flag
+  if (_.isArray(arr)) {
+    result = _.set(result, 'isArray', true);
+  } else {
+    result = _.set(result, 'isArray', false);
+  }
+
+  // Setting multiclass flag
+  const firstElm = _.get(arr, '[0]');
+  if (_.isArray(firstElm)) {
+    result = _.set(result, 'multiclass', true);
+  } else {
+    result = _.set(result, 'multiclass', false);
+  }
+
+  return result;
 }

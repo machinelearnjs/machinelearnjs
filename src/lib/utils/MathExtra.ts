@@ -31,11 +31,11 @@ const range = (start: number, stop: number) => {
   return _.range(start, stop);
 };
 
-/* tslint:disable */
-math.contrib = {
+const contrib = {
   size,
   range
-};
-/* tslint:enable */
+}
 
-export default math;
+// Exporting merged result
+// { contrib } because we want users to access contrib API like math.contrib.xx
+export default _.merge(math, { contrib });
