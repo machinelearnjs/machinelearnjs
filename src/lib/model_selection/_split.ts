@@ -3,8 +3,8 @@ import * as Random from 'random-js';
 
 /**
  * Split arrays or matrices into random train and test subsets
- * @param {Array<any>} X
- * @param {Array<any>} y
+ * @param {any[]} X
+ * @param {any[]} y
  * @param {Number} test_size
  * @param {Number} train_size
  * @param {Number} random_state
@@ -24,10 +24,10 @@ export function train_test_split(
     // stratify = false
   } = {}
 ): {
-  xTest: Array<any>;
-  xTrain: Array<any>;
-  yTest: Array<any>;
-  yTrain: Array<any>;
+  xTest: any[];
+  xTrain: any[];
+  yTest: any[];
+  yTrain: any[];
 } {
   /* if (_.isEmpty(test_size) && _.isEmpty(train_size)) {
 		test_size = 0.25

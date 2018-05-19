@@ -1,34 +1,83 @@
 import * as _ from 'lodash';
-import * as sw from 'stopword';
 import * as natural from 'natural';
+import * as sw from 'stopword';
 import { ENGLISH_STOP_WORDS } from "./stop_words";
 
 export class CountVectorizer {
-	private vocabulary: Array<string>;
-	public vocabulary_: object = {};
-	constructor() {
+	public vocabulary: object = {};
+	private internalVocabulary: string[];
 
+	/**
+	 * fit simply calls fit_transform
+	 * @param {string[]} doc
+	 * @returns {CountVectorizer}
+	 */
+	public fit(doc: string[]): this {
+		this.fit_transform(doc);
+		return this;
 	}
+
+	/**
+	 * fit transform applies
+	 * @param {string[]} doc
+	 * @returns {number[][]}
+	 */
+	public fit_transform(doc: string[]): number[] {
+		// Automatically assig
+		const { internalVocabulary, pubVocabulary } = this.buildVocabulary(doc);
+		this.vocabulary = pubVocabulary;
+		this.internalVocabulary = internalVocabulary;
+		return this.countVocab(doc);
+	}
+
+	/**
+	 * Dynamically transforms a doc on demand
+	 * @param {string[]} doc
+	 * @returns {number[][]}
+	 */
+	public transform(doc: string[]): number[] {
+		return this.countVocab(doc);
+	}
+
+	public getFeatureNames(): object {
+		if (!this.internalVocabulary) {
+			throw new Error('You must fit a document first before you can retrieve the feature names!');
+		}
+		return this.internalVocabulary;
+	}
+
+	/**
+	 * Build a tokenizer / vectorizer
+	 * TODO: Check if buildAnalyzer make sense
+	 * @returns {(x?) => any}
+	 */
+	public buildAnalyzer(): (x: string) => string[] {
+		return x => this.preprocess(x, { removeSW: true })
+	}
+
 
 	/**
 	 * Calculates list of vocabularies in the entire document and come up with
 	 * vocab: index pairs
 	 * @param doc
 	 */
-	private buildVocabulary(doc) {
+	private buildVocabulary(doc: string[]): {
+		internalVocabulary: string[];
+		pubVocabulary: object;
+	} {
 		const analyze = this.buildAnalyzer();
-		const processedDoc = _.flowRight(
-			(d: Array<string>) => _.uniq(d),
-			(d: Array<string>) => _.sortBy(d, z => z),
-			(d: Array<string>) => _.flatten(d),
-			d =>  _.map(d, (text) => analyze(text))
+		const processedDoc: string[] = _.flowRight(
+			(d: string[]) => _.uniq(d),
+			(d: string[]) => _.sortBy(d, z => z),
+			(d: string[][]) => _.flatten(d),
+			(d: string[]) => _.map(d, (text) => analyze(text))
 		)(doc);
-		const vocabulary_ = _.reduce(processedDoc, (sum, val, index) => {
+		const pubVocabulary = _.reduce(processedDoc, (sum, val, index) => {
 			return _.set(sum, val, index);
 		}, {});
 		return {
-			vocabulary_,
-			vocabulary: processedDoc
+			internalVocabulary: processedDoc,
+			pubVocabulary,
 		};
 	}
 
@@ -40,70 +89,26 @@ export class CountVectorizer {
 	 * [1, 1, 0, 0]
 	 * @param doc
 	 */
-	private countVocab(doc) {
+	private countVocab(doc: string[]): number[] {
 		const analyze = this.buildAnalyzer();
 		// 1. Reducing the doc
-		return _.reduce(doc, (sum: any, text) => {
+		return _.reduce(doc, (sum: any, text: string) => {
 			const tokens = analyze(text);
 
 			// 2. Looping each vocab for counting
-			const sentenceCounted = _.reduce(this.vocabulary, (sum: any, vocab) => {
+			const sentenceCounted = _.reduce(this.internalVocabulary, (sentenceCounts: any, vocab) => {
 				// 3. Getting number of occurences of vocab in each tokens (tokens of a sentence)
-				const vocabCount = _.reduce(tokens, (sum: number, t) => {
-					return _.isEqual(t, vocab) ? ++sum : sum;
+				const vocabCount = _.reduce(tokens, (tokenCounts: number, t) => {
+					if (_.isEqual(t, vocab)) {
+						return (tokenCounts + 1);
+					} else {
+						return tokenCounts
+					}
 				}, 0);
-				return _.concat(sum, [vocabCount]);
+				return _.concat(sentenceCounts, [vocabCount]);
 			}, []);
 			return _.concat(sum, [sentenceCounted]);
 		}, []);
-	}
-
-	/**
-	 * fit simply calls fit_transform
-	 * @param {Array<string>} doc
-	 * @returns {CountVectorizer}
-	 */
-	public fit(doc: Array<string>) {
-		this.fit_transform(doc);
-		return this;
-	}
-
-	/**
-	 * fit transform applies
-	 * @param {Array<string>} doc
-	 * @returns {number[][]}
-	 */
-	public fit_transform(doc: Array<string>) {
-		// Automatically assig
-		const { vocabulary, vocabulary_ } = this.buildVocabulary(doc);
-		this.vocabulary_ = vocabulary_;
-		this.vocabulary = vocabulary;
-		return this.countVocab(doc);
-	}
-
-	/**
-	 * Dynamically transforms a doc on demand
-	 * @param {Array<string>} doc
-	 * @returns {number[][]}
-	 */
-	public transform(doc: Array<string>) {
-		return this.countVocab(doc);
-	}
-
-	public getFeatureNames() {
-		if (!this.vocabulary) {
-			throw new Error('You must fit a document first before you can retrieve the feature names!');
-		}
-		return this.vocabulary;
-	}
-
-	/**
-	 * Build a tokenizer / vectorizer
-	 * TODO: Check if buildAnalyzer make sense
-	 * @returns {(x?) => any}
-	 */
-	public buildAnalyzer() {
-		return x => this.preprocess(x, { removeSW: true })
 	}
 
 	/**
@@ -114,13 +119,13 @@ export class CountVectorizer {
 	 * @param {any} removeSW
 	 * @returns {any}
 	 */
-	private preprocess(text, {removeSW = false}) {
+	private preprocess(text: string, {removeSW = false}): string[] {
 		const tokenizer = new natural.WordTokenizer();
 		return _.flowRight(
 			(x: string) => tokenizer.tokenize(x),
-			(x: Array<string>) => x.join(' '),
+			(x: string[]) => x.join(' '),
 			// TODO: Somehow it's removing too many words??!!
-			(x: Array<string>) => removeSW ? sw.removeStopwords(x, ENGLISH_STOP_WORDS) : x,
+			(x: string[]) => removeSW ? sw.removeStopwords(x, ENGLISH_STOP_WORDS) : x,
 			(x: string) => x.split(' ')
 		)(text);
 	}

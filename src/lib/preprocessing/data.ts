@@ -8,7 +8,7 @@ interface StringOneHotDecoder {
 }
 
 interface StringOneHot {
-  encoded: Array<any>;
+  encoded: any[];
   decode: StringOneHotDecoder;
 }
 
@@ -18,7 +18,7 @@ interface BooleanOneHotDecoder {
 }
 
 interface BooleanOneHot {
-  encoded: Array<any>;
+  encoded: any[];
   decode: BooleanOneHotDecoder;
 }
 
@@ -30,7 +30,7 @@ interface NumberOneHotDecoder {
 }
 
 interface NumberOneHot {
-  encoded: Array<any>;
+  encoded: any[];
   decode: NumberOneHotDecoder;
 }
 
@@ -45,7 +45,7 @@ export class OneHotEncoder {
   public encode(
     data,
     opts = { dataKeys: null, labelKeys: null }
-  ): { data: Array<any>; decoders: Array<any> } {
+  ): { data: any[]; decoders: any[] } {
     const labelKeys = opts.labelKeys;
     const decoders = [];
 
@@ -53,10 +53,9 @@ export class OneHotEncoder {
     const dataKeys = opts.dataKeys ? opts.dataKeys : _.keys(data[0]);
     // maybe a little too clever but also the simplest;
     // serialize every value for a given data key, then zip the results back up into a (possibly nested) array
-    const transform = (keys: Array<string>) =>
+    const transform = (keys: string[]) =>
       _.zip(
         ..._.map(keys, (key: string) => {
-          console.log('checking keys', keys);
           const standardized = this.standardizeField(key, data);
 
           const encoded = _.get(standardized, 'encoded');
@@ -84,7 +83,7 @@ export class OneHotEncoder {
    *
    * Transform the encoded data back into its original format
    */
-  public decode(encoded, decoders): Array<any> {
+  public decode(encoded, decoders): any[] {
     return _.map(encoded, row => this.decodeRow(row, decoders));
   }
 
@@ -168,7 +167,7 @@ export class OneHotEncoder {
     StringOneHot |
     BooleanOneHot |
     NumberOneHot |
-    Array<any>
+    any[]
   {
     const type = typeof data[0][key];
     const values = _.map(data, key);
@@ -311,7 +310,7 @@ export class MinMaxScaler {
     this.featureRange = featureRange;
   }
 
-  public fit(X: Array<number>): void {
+  public fit(X: number[]): void {
     this.dataMax = _.max(X); // What if X is multi-dimensional?
     this.dataMin = _.min(X);
     this.featureMax = this.featureRange[1];
@@ -322,7 +321,7 @@ export class MinMaxScaler {
     this.baseMin = this.featureMin - this.dataMin * this.scale;
   }
 
-  public fit_transform(X: Array<number>): Array<any> {
+  public fit_transform(X: number[]): any[] {
     return X.map(x => x * this.scale).map(x => x + this.baseMin);
   }
 }
@@ -338,9 +337,9 @@ export class Binarizer {
 
   /**
    * Currently fit does nothing
-   * @param {Array<any>} X
+   * @param {any[]} X
    */
-  public fit(X: Array<any>): void {
+  public fit(X: any[]): void {
     if (_.isEmpty(X)) {
       throw new Error('X cannot be null');
     }
@@ -356,9 +355,9 @@ export class Binarizer {
    * array([[ 1.,  0.,  1.],
    *    [ 1.,  0.,  0.],
    *    [ 0.,  1.,  0.]])
-   * @param {Array<any>} X
+   * @param {any[]} X
    */
-  public transform(X: Array<any>): Array<any> {
+  public transform(X: any[]): any[] {
     let _X = null;
     if (this.copy) {
       _X = _.clone(X);

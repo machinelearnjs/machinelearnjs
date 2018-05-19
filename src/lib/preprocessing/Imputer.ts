@@ -8,7 +8,7 @@ export class Imputer {
   private axis: number;
   // private verbose: number;
   private copy: boolean;
-  private means: Array<number>;
+  private means: number[];
 
   /**
    *
@@ -34,7 +34,7 @@ export class Imputer {
   }
 
   public fit(_X): void {
-    let X = this.copy ? _.clone(_X): _X;
+    const X = this.copy ? _.clone(_X): _X;
     const check = checkArray(X);
     if (!check.isArray) {
       throw new Error('X is not an array!');
@@ -43,7 +43,6 @@ export class Imputer {
     const colLen = math.contrib.size(X, 1);
     const rowRange = math.contrib.range(0, rowLen);
     const colRange = math.contrib.range(0, colLen);
-    console.log('checking bro!');
     if (this.strategy === 'mean') {
       if (this.axis === 0) {
         const colNumbers: any = _.map(colRange, col =>
@@ -56,7 +55,6 @@ export class Imputer {
         ]);
       } else if (this.axis === 1) {
         const rowNumbers = _.map(rowRange, row => _.get(X, `[${row}]`));
-        console.log('checking row numbers', rowNumbers);
         this.means = this.calcArrayMean(rowNumbers, ['filter', 'mean']);
       }
     } else {
@@ -64,8 +62,8 @@ export class Imputer {
     }
   }
 
-  public fit_transform(X: Array<any>): Array<any> {
-    const _X: Array<any> = _.clone(X);
+  public fit_transform(X: any[]): any[] {
+    const _X: any[] = _.clone(X);
     if (this.strategy === 'mean' && this.axis === 0) {
       // Mean column direction transform
       for (let row = 0; row < _.size(_X); row++) {
@@ -102,11 +100,11 @@ export class Imputer {
    * => [ 62, 2.6666666666666665 ]
    *
    * @param matrix
-   * @param {Array<string>} steps
+   * @param {string[]} steps
    */
     // TODO: Fix any return type
     // TODO: Fix matrix type any
-  private calcArrayMean = (matrix: any, steps: Array<string>): any =>
+  private calcArrayMean = (matrix: any, steps: string[]): any =>
     _.reduce(
       steps,
       (result, step: string) => {
@@ -118,7 +116,7 @@ export class Imputer {
               result,
               // Expecting any type of matrics array
               // TODO: implement a correct type
-              (arr: Array<any>) => {
+              (arr: any[]) => {
                 return _.filter(arr, z => z !== this.missingValues);
               }
             );

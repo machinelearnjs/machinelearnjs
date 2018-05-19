@@ -36,7 +36,8 @@ export function accuracyScore({
   if (_.size(y_true) !== _.size(y_pred)) {
     throw new Error('y_true and y_pred are not equal in size!');
   }
-  const normalised = _.map(y_true, (_, index) => {
+  const yTrueRange = _.range(0, _.size(y_true));
+  const normalised = _.map(yTrueRange, (index) => {
     const yTrue = y_true[index];
     const yPred = y_pred[index];
     return yTrue === yPred ? 1 : 0;

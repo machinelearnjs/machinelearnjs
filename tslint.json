@@ -34,7 +34,9 @@
       false,
       { "ignore-prefix": ["console.", "process.exit"] }
     ],
-    "no-if-statement": false
+    "no-if-statement": false,
     /* end tslint-immutable rules */
+
+    "array-type": [true, "array-simple"]
   }
 }

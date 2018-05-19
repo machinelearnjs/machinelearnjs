@@ -1,3 +1,4 @@
+/* tslint:disable */
 import * as natural from 'natural';
 const tokenizer = new natural.WordTokenizer();
 console.log(tokenizer.tokenize("your do a dog dog has fleas."));
@@ -15,7 +16,7 @@ const text1 = ['deep learning ian good fellow learning jason shin shin', 'yoshua
 console.log('original text', text1);
 const vocabCounts = cv.fit_transform(text1);
 console.log(vocabCounts);
-console.log(cv.vocabulary_);
+console.log(cv.vocabulary);
 console.log(cv.getFeatureNames());
 
 const newVocabCounts = cv.transform(['ian good fellow jason duuog']);

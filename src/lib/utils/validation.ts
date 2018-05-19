@@ -11,7 +11,7 @@ import * as _ from 'lodash';
  * @returns {any}
  */
 export function checkArray(
-  arr: Array<any>
+  arr: any[]
 ): {
   readonly isArray: boolean;
   readonly multiclass: boolean;

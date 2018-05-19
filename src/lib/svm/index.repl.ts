@@ -1,3 +1,5 @@
+/* tslint:disable */
+
 async function xor() {
     const loadSVM = require('libsvm-js');
     const SVM = await loadSVM();

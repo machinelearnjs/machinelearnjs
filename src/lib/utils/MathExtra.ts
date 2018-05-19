@@ -32,8 +32,8 @@ const range = (start: number, stop: number) => {
 };
 
 const contrib = {
-  size,
-  range
+  range,
+  size
 }
 
 // Exporting merged result
