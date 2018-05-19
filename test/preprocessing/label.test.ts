@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { LabelEncoder } from "../../src/lib/preprocessing/label";
+import { LabelEncoder } from '../../src/lib/preprocessing/label';
 
 describe('Label', () => {
   it('string labels test', () => {
@@ -18,7 +18,7 @@ describe('Label', () => {
     le.fit(labelX);
     const transformX = [2, 2, 2, 3];
     const result = le.transform(transformX);
-    const expected = [ 1, 1, 1, 2 ];
+    const expected = [1, 1, 1, 2];
     expect(_.isEqual(result, expected)).toBe(true);
   });
 

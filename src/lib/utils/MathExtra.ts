@@ -34,7 +34,7 @@ const range = (start: number, stop: number) => {
 const contrib = {
   range,
   size
-}
+};
 
 // Exporting merged result
 // { contrib } because we want users to access contrib API like math.contrib.xx

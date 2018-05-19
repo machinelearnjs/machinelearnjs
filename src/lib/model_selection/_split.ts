@@ -19,7 +19,7 @@ export function train_test_split(
     // Options
     test_size = 0.2,
     train_size = 0.8,
-    random_state = 0,
+    random_state = 0
     // shuffle = false,
     // stratify = false
   } = {}
@@ -73,6 +73,6 @@ export function train_test_split(
     xTest,
     xTrain,
     yTest,
-    yTrain,
+    yTrain
   };
 }

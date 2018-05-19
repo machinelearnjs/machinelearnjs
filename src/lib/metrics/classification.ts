@@ -23,12 +23,10 @@ function _weightedSum({
 export function accuracyScore({
   y_true,
   y_pred,
-  normalize = true,
+  normalize = true
   // sample_weight = null
-}):
-  // TODO: Fix any array type
-  number
-{
+}): // TODO: Fix any array type
+number {
   // TODO: Multi label
   if (checkArray(y_true).multiclass || checkArray(y_pred).multiclass) {
     throw new Error('Multiclass is not supported yet!');
@@ -37,7 +35,7 @@ export function accuracyScore({
     throw new Error('y_true and y_pred are not equal in size!');
   }
   const yTrueRange = _.range(0, _.size(y_true));
-  const normalised = _.map(yTrueRange, (index) => {
+  const normalised = _.map(yTrueRange, index => {
     const yTrue = y_true[index];
     const yPred = y_pred[index];
     return yTrue === yPred ? 1 : 0;
@@ -52,7 +50,7 @@ export function accuracyScore({
 export function zeroOneLoss({
   y_true,
   y_pred,
-  normalize = true,
+  normalize = true
   // sample_weight = null
 }): number {
   if (normalize) {

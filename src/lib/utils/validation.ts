@@ -18,7 +18,7 @@ export function checkArray(
 } {
   let result = {
     isArray: false,
-    multiclass: false,
+    multiclass: false
   };
 
   // Setting isArray flag

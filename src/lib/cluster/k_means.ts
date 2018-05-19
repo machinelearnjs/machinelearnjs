@@ -17,7 +17,7 @@ for (let i = 0; i < data.length; i++) {
   vectors[i] = [_.get(data, `[${i}].size`), _.get(data, `[${i}].revenue`)];
 }
 
-kmeans.clusterize(vectors, { k: 4 }, (err) => {
+kmeans.clusterize(vectors, { k: 4 }, err => {
   if (err) {
     console.error(err);
   } else {

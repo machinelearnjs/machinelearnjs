@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import math from '../utils/MathExtra';
-import { checkArray } from "../utils/validation";
+import { checkArray } from '../utils/validation';
 
 export class Imputer {
   private missingValues: number | null;
@@ -34,7 +34,7 @@ export class Imputer {
   }
 
   public fit(_X): void {
-    const X = this.copy ? _.clone(_X): _X;
+    const X = this.copy ? _.clone(_X) : _X;
     const check = checkArray(X);
     if (!check.isArray) {
       throw new Error('X is not an array!');
@@ -102,8 +102,8 @@ export class Imputer {
    * @param matrix
    * @param {string[]} steps
    */
-    // TODO: Fix any return type
-    // TODO: Fix matrix type any
+  // TODO: Fix any return type
+  // TODO: Fix matrix type any
   private calcArrayMean = (matrix: any, steps: string[]): any =>
     _.reduce(
       steps,

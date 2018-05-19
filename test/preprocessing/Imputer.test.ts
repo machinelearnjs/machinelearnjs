@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { Imputer } from "../../src/lib/preprocessing/Imputer";
+import { Imputer } from '../../src/lib/preprocessing/Imputer';
 
 describe('Imputer', () => {
   it('fit [[1, 2], [null, 3], [7, 6]] and transform [[null, 2], [6, null], [7, 6]]', () => {
@@ -14,32 +14,27 @@ describe('Imputer', () => {
   it('fitting invalid data type should throw an error', () => {
     // String
     expect(() => {
-      new Imputer({ missingValues: null, axis: 0 })
-        .fit('asofjasof');
+      new Imputer({ missingValues: null, axis: 0 }).fit('asofjasof');
     }).toThrow('X is not an array!');
 
     // Int
     expect(() => {
-      new Imputer({ missingValues: null, axis: 0 })
-        .fit(123);
+      new Imputer({ missingValues: null, axis: 0 }).fit(123);
     }).toThrow('X is not an array!');
 
     // Boolean
     expect(() => {
-      new Imputer({ missingValues: null, axis: 0 })
-        .fit(true);
+      new Imputer({ missingValues: null, axis: 0 }).fit(true);
     }).toThrow('X is not an array!');
 
     // Null
     expect(() => {
-      new Imputer({ missingValues: null, axis: 0 })
-        .fit(null);
+      new Imputer({ missingValues: null, axis: 0 }).fit(null);
     }).toThrow('X is not an array!');
 
     // undefined
     expect(() => {
-      new Imputer({ missingValues: null, axis: 0 })
-        .fit(undefined);
+      new Imputer({ missingValues: null, axis: 0 }).fit(undefined);
     }).toThrow('X is not an array!');
   });
 });

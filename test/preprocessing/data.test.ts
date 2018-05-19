@@ -4,8 +4,7 @@ import {
   Binarizer,
   MinMaxScaler,
   OneHotEncoder
-} from "../../src/lib/preprocessing/data";
-
+} from '../../src/lib/preprocessing/data';
 
 describe('data:OneHotEncoder', () => {
   // Datasets for OneHotEncoding
@@ -18,11 +17,7 @@ describe('data:OneHotEncoder', () => {
   it('should encode planet list correctly', () => {
     const enc = new OneHotEncoder();
 
-    const expectedEncode =  [
-      [ -1, 0, 1, 0, 0 ],
-      [ 0, 1, 0, 1, 0 ],
-      [ 1, 1, 0, 0, 1 ]
-    ];
+    const expectedEncode = [[-1, 0, 1, 0, 0], [0, 1, 0, 1, 0], [1, 1, 0, 0, 1]];
     const encodeInfo = enc.encode(planetList, {
       dataKeys: ['value', 'isGasGiant'],
       labelKeys: ['planet']
@@ -52,7 +47,7 @@ describe('data:MinMaxScaler', () => {
   });
 
   it('should feature range [0, 100] of [4, 5, 6] return [0, 50, 100]', () => {
-    const expectedResult = [ 0, 50, 100 ];
+    const expectedResult = [0, 50, 100];
     const minmaxScaler = new MinMaxScaler({ featureRange: [0, 100] });
     minmaxScaler.fit([4, 5, 6]);
     const result = minmaxScaler.fit_transform([4, 5, 6]);
@@ -60,7 +55,7 @@ describe('data:MinMaxScaler', () => {
   });
 
   it('should feature range [-100, 100] of [4, 5, 6] return [ -100, 0, 100 ]', () => {
-    const expectedResult = [ -100, 0, 100 ];
+    const expectedResult = [-100, 0, 100];
     const minmaxScaler = new MinMaxScaler({ featureRange: [-100, 100] });
     minmaxScaler.fit([4, 5, 6]);
     const result = minmaxScaler.fit_transform([4, 5, 6]);
@@ -71,7 +66,7 @@ describe('data:MinMaxScaler', () => {
 describe('data:Binarizer', () => {
   it('Should [[1, -1, 2], [2, 0, 0], [0, 1, -1]] return [[ 1, 0, 1 ], [ 1, 0, 0 ], [ 0, 1, 0 ]]', () => {
     const binX = [[1, -1, 2], [2, 0, 0], [0, 1, -1]];
-    const expected =  [[ 1, 0, 1 ], [ 1, 0, 0 ], [ 0, 1, 0 ]];
+    const expected = [[1, 0, 1], [1, 0, 0], [0, 1, 0]];
     const newBin = new Binarizer({ threshold: 0 });
     const binResult = newBin.transform(binX);
     expect(_.isEqual(binResult, expected)).toBe(true);

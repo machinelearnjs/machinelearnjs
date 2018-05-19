@@ -100,13 +100,13 @@ export class OneHotEncoder {
     const getStrVal = (X, ix, decoder): string => {
       const data = X.slice(ix, ix + decoder.offset);
       return decoder.lookupTable[_.indexOf(data, 1)];
-    }
+    };
 
     const getBoolVal = (X, ix): boolean => !!X[ix];
 
     const getNumbVal = (X, ix, decoder): number => {
       return decoder.std * X[ix] + decoder.mean;
-    }
+    };
 
     while (i < row.length) {
       const decoder = decoders[numFieldsDecoded++];
@@ -163,12 +163,7 @@ export class OneHotEncoder {
   private standardizeField(
     key,
     data
-  ):
-    StringOneHot |
-    BooleanOneHot |
-    NumberOneHot |
-    any[]
-  {
+  ): StringOneHot | BooleanOneHot | NumberOneHot | any[] {
     const type = typeof data[0][key];
     const values = _.map(data, key);
     switch (type) {
@@ -222,11 +217,7 @@ export class OneHotEncoder {
    * @param values
    * @returns {{encoded: any[]; decode: {type: any; mean: number; std: number; key: any}}}
    */
-  private buildNumberOneHot(
-    type,
-    key,
-    values
-  ): NumberOneHot {
+  private buildNumberOneHot(type, key, values): NumberOneHot {
     const mean: number = _.mean(values);
     const std = this.calculateStd(values, mean);
     return {
@@ -244,11 +235,7 @@ export class OneHotEncoder {
    * @param values
    * @returns {{encode}}
    */
-  private buildBooleanOneHot(
-    type,
-    key,
-    values
-  ): BooleanOneHot {
+  private buildBooleanOneHot(type, key, values): BooleanOneHot {
     return {
       decode: { type, key },
       encoded: _.map(values, value => (value ? 1 : 0))
@@ -267,11 +254,7 @@ export class OneHotEncoder {
    * It's not ideal (ideally it would all just be done in-memory and we could return a "decode" closure,
    * but it needs to be serializable to plain old JSON.
    */
-  private buildStringOneHot(
-    type,
-    key,
-    values
-  ): StringOneHot {
+  private buildStringOneHot(type, key, values): StringOneHot {
     const lookup = {};
     let i = 0;
 
