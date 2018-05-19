@@ -1,8 +1,10 @@
 /* tslint:disable */
+import svmResolver from 'libsvm-js';
 
+console.log('checking xor');
 async function xor() {
-  const loadSVM = require('libsvm-js');
-  const SVM = await loadSVM();
+  console.log('checking xor async', svmResolver)
+  const SVM = await svmResolver;
   const svm = new SVM({
     kernel: SVM.KERNEL_TYPES.RBF, // The type of kernel I want to use
     type: SVM.SVM_TYPES.C_SVC, // The type of SVM I want to run
@@ -22,3 +24,4 @@ async function xor() {
 }
 
 xor().then(() => console.log('done!'));
+console.log('checking!!');
