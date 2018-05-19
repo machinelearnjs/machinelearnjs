@@ -33,47 +33,53 @@ export class BaseSVM {
 
 	constructor(options:Options = null) {
 		this.options = {
-			degree: _.get(options, 'degree', 3),
-			kernel: _.get(options, 'kernel', 'RBF'),
-			gamma: _.get(options, 'gamma', null),
+			cacheSize: _.get(options, 'cacheSize', 100),
 			coef0: _.get(options, 'coef0', 0),
 			cost: _.get(options, 'cost', 1),
-			nu: _.get(options, 'nu', .5),
+			degree: _.get(options, 'degree', 3),
 			epsilon: _.get(options, 'epsilon', .1),
-			cacheSize: _.get(options, 'cacheSize', 100),
-			tolerance: _.get(options, 'tolerance', .001),
-			shrinking: _.get(options, 'shrinking', true),
+			gamma: _.get(options, 'gamma', null),
+			kernel: _.get(options, 'kernel', 'RBF'),
+			nu: _.get(options, 'nu', .5),
 			probabilityEstimates: _.get(options, 'probabilityEstimates', false),
+			quiet: _.get(options, 'quiet', true),
+			shrinking: _.get(options, 'shrinking', true),
+			tolerance: _.get(options, 'tolerance', .001),
 			weight: _.get(options, 'weight', null),
-			quiet: _.get(options, 'quiet', true)
 		};
-		console.log('checking options', this.options);
 	}
 
-	public getKernel(SVM, name: string) {
-		return _.get(SVM.KERNEL_TYPE, name);
+	public getKernel(SVM, name: string): number {
+		return _.get(SVM.KERNEL_TYPES, name);
 	}
 
-	public getType(SVM, name: string) {
-		return _.get(SVM.SVM_TYPE, name);
+	public getType(SVM, name: string): number {
+		return _.get(SVM.SVM_TYPES, name);
 	}
 
-	public processOptions(options: Options, type: Type, kernel: Kernel) {
+	public processOptions(SVM, options: Options, type: Type, kernel: Kernel): object {
 		return _.flowRight(
-			opts => _.set(opts, 'type', type),
-			opts => _.set(opts, 'kernel', kernel)
+			opts => {
+				const foundType = this.getType(SVM, type);
+				return _.set(opts, 'type', foundType);
+			},
+			opts => {
+				const foundKernal = this.getKernel(SVM, kernel);
+				return _.set(opts, 'kernel', foundKernal)
+			}
 		)(options)
 	}
 
-	async loadSVM() {
-		return await svmResolver;
+	public async loadSVM(): Promise<any> {
+		return svmResolver;
 	}
 }
 
 export class SVC extends BaseSVM {
-	public async fit({ X = [], y = [] }: { X: any[], y: any[] }) {
+	public async fit({ X = [], y = [] }: { X: any[], y: any[] }): Promise<void> {
 		const SVM = await this.loadSVM();
 		const options = this.processOptions(
+			SVM,
 			this.options,
 			'C_SVC',
 			this.options.kernel
