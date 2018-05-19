@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import * as kmeans from 'node-kmeans';
 
 // Data source: LinkedIn
@@ -16,7 +17,7 @@ for (let i = 0; i < data.length; i++) {
   vectors[i] = [_.get(data, `[${i}].size`), _.get(data, `[${i}].revenue`)];
 }
 
-kmeans.clusterize(vectors, { k: 4 }, (err, res) => {
+kmeans.clusterize(vectors, { k: 4 }, (err) => {
   if (err) {
     console.error(err);
   } else {

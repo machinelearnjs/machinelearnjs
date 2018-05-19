@@ -3,7 +3,7 @@ import { checkArray } from '../utils/validation';
 
 function _weightedSum({
   sampleScore,
-  sampleWeight = null,
+  // sampleWeight = null,
   normalize = false
 }): number {
   if (normalize) {
@@ -24,8 +24,11 @@ export function accuracyScore({
   y_true,
   y_pred,
   normalize = true,
-  sample_weight = null
-}): array<any> {
+  // sample_weight = null
+}):
+  // TODO: Fix any array type
+  number
+{
   // TODO: Multi label
   if (checkArray(y_true).multiclass || checkArray(y_pred).multiclass) {
     throw new Error('Multiclass is not supported yet!');
@@ -33,7 +36,7 @@ export function accuracyScore({
   if (_.size(y_true) !== _.size(y_pred)) {
     throw new Error('y_true and y_pred are not equal in size!');
   }
-  const normalised = _.map(y_true, (x, index) => {
+  const normalised = _.map(y_true, (_, index) => {
     const yTrue = y_true[index];
     const yPred = y_pred[index];
     return yTrue === yPred ? 1 : 0;
@@ -49,11 +52,11 @@ export function zeroOneLoss({
   y_true,
   y_pred,
   normalize = true,
-  sample_weight = null
-}): array<any> {
+  // sample_weight = null
+}): number {
   if (normalize) {
     return 1 - accuracyScore({ y_true, y_pred });
-  } else {
-    // If normalize is true
   }
+  // TODO: Fix return 0; implement when normalize === false
+  return 0;
 }

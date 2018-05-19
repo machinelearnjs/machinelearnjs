@@ -6,9 +6,9 @@ export class Imputer {
   private missingValues: number | null;
   private strategy: string;
   private axis: number;
-  private verbose: number;
+  // private verbose: number;
   private copy: boolean;
-  private means: array<number>;
+  private means: Array<number>;
 
   /**
    *
@@ -22,18 +22,19 @@ export class Imputer {
     missingValues = null,
     strategy = 'mean',
     axis = 0,
-    verbose = 0,
+    // verbose = 0,
     copy = false
   }) {
     this.missingValues = missingValues;
     this.strategy = strategy;
     this.axis = axis;
-    this.verbose = verbose;
+    // this.verbose = verbose;
     this.copy = copy;
     this.means = [];
   }
 
-  public fit(X): void {
+  public fit(_X): void {
+    let X = this.copy ? _.clone(_X): _X;
     const check = checkArray(X);
     if (!check.isArray) {
       throw new Error('X is not an array!');
@@ -42,11 +43,10 @@ export class Imputer {
     const colLen = math.contrib.size(X, 1);
     const rowRange = math.contrib.range(0, rowLen);
     const colRange = math.contrib.range(0, colLen);
-    console.log('checking rowlen ',  X, rowLen);
-    console.log('checking colLen', X, colLen);
+    console.log('checking bro!');
     if (this.strategy === 'mean') {
       if (this.axis === 0) {
-        const colNumbers = _.map(colRange, col =>
+        const colNumbers: any = _.map(colRange, col =>
           math.subset(X, math.index(rowRange, col))
         );
         this.means = this.calcArrayMean(colNumbers, [
@@ -56,6 +56,7 @@ export class Imputer {
         ]);
       } else if (this.axis === 1) {
         const rowNumbers = _.map(rowRange, row => _.get(X, `[${row}]`));
+        console.log('checking row numbers', rowNumbers);
         this.means = this.calcArrayMean(rowNumbers, ['filter', 'mean']);
       }
     } else {
@@ -63,8 +64,8 @@ export class Imputer {
     }
   }
 
-  public fit_transform(X: array<any>): arraY<any> {
-    const _X: array<any> = _.clone(X);
+  public fit_transform(X: Array<any>): Array<any> {
+    const _X: Array<any> = _.clone(X);
     if (this.strategy === 'mean' && this.axis === 0) {
       // Mean column direction transform
       for (let row = 0; row < _.size(_X); row++) {
@@ -103,10 +104,12 @@ export class Imputer {
    * @param matrix
    * @param {Array<string>} steps
    */
-  private calcArrayMean = (matrix, steps: array<string>): array<any> =>
+    // TODO: Fix any return type
+    // TODO: Fix matrix type any
+  private calcArrayMean = (matrix: any, steps: Array<string>): any =>
     _.reduce(
       steps,
-      (result, step) => {
+      (result, step: string) => {
         switch (step) {
           case 'flatten':
             return _.map(result, _.flatten);
@@ -115,12 +118,14 @@ export class Imputer {
               result,
               // Expecting any type of matrics array
               // TODO: implement a correct type
-              (arr: array<any>) => {
+              (arr: Array<any>) => {
                 return _.filter(arr, z => z !== this.missingValues);
               }
             );
           case 'mean':
             return _.map(result, _.mean);
+          default:
+            return result;
         }
       },
       matrix

@@ -20,14 +20,14 @@ export function train_test_split(
     test_size = 0.2,
     train_size = 0.8,
     random_state = 0,
-    shuffle = false,
-    stratify = false
+    // shuffle = false,
+    // stratify = false
   } = {}
 ): {
-  X_test: array<any>;
-  X_train: array<any>;
-  y_test: array<any>;
-  y_train: array<any>;
+  xTest: Array<any>;
+  xTrain: Array<any>;
+  yTest: Array<any>;
+  yTrain: Array<any>;
 } {
   /* if (_.isEmpty(test_size) && _.isEmpty(train_size)) {
 		test_size = 0.25
@@ -59,7 +59,7 @@ export function train_test_split(
     y.splice(index, 1);
   }
 
-  while (X_test.length < testSizeLength) {
+  while (xTest.length < testSizeLength) {
     const index = Random.integer(0, X.length - 1)(randomEngine);
     // X test
     xTest.push(X[index]);
@@ -70,9 +70,9 @@ export function train_test_split(
     y.splice(index, 1);
   }
   return {
-    X_test,
-    X_train,
-    y_test,
-    y_train
+    xTest,
+    xTrain,
+    yTest,
+    yTrain,
   };
 }
