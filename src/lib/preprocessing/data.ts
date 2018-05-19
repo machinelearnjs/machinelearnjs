@@ -1,5 +1,39 @@
 import * as _ from 'lodash';
 
+interface StringOneHotDecoder {
+  key: number;
+  type: string;
+  offset: number;
+  lookupTable: object;
+}
+
+interface StringOneHot {
+  encoded: Array<any>;
+  decode: StringOneHotDecoder;
+}
+
+interface BooleanOneHotDecoder {
+  key: number;
+  type: string;
+}
+
+interface BooleanOneHot {
+  encoded: Array<any>;
+  decode: BooleanOneHotDecoder;
+}
+
+interface NumberOneHotDecoder {
+  type: string;
+  mean: number;
+  std: number;
+  key: string;
+}
+
+interface NumberOneHot {
+  encoded: Array<any>;
+  decode: NumberOneHotDecoder;
+}
+
 export class OneHotEncoder {
   /**
    * encode
@@ -11,7 +45,7 @@ export class OneHotEncoder {
   public encode(
     data,
     opts = { dataKeys: null, labelKeys: null }
-  ): { data: array<any>; decoders: array<any> } {
+  ): { data: Array<any>; decoders: Array<any> } {
     const labelKeys = opts.labelKeys;
     const decoders = [];
 
@@ -19,9 +53,10 @@ export class OneHotEncoder {
     const dataKeys = opts.dataKeys ? opts.dataKeys : _.keys(data[0]);
     // maybe a little too clever but also the simplest;
     // serialize every value for a given data key, then zip the results back up into a (possibly nested) array
-    const transform = keys =>
+    const transform = (keys: Array<string>) =>
       _.zip(
-        ..._.map(keys, key => {
+        ..._.map(keys, (key: string) => {
+          console.log('checking keys', keys);
           const standardized = this.standardizeField(key, data);
 
           const encoded = _.get(standardized, 'encoded');
@@ -62,15 +97,44 @@ export class OneHotEncoder {
     let i = 0;
     let numFieldsDecoded = 0;
     const record = {};
+
+    const getStrVal = (X, ix, decoder): string => {
+      const data = X.slice(ix, ix + decoder.offset);
+      return decoder.lookupTable[_.indexOf(data, 1)];
+    }
+
+    const getBoolVal = (X, ix): boolean => !!X[ix];
+
+    const getNumbVal = (X, ix, decoder): number => {
+      return decoder.std * X[ix] + decoder.mean;
+    }
+
     while (i < row.length) {
       const decoder = decoders[numFieldsDecoded++];
-      record[decoder.key] = getValue(row, i, decoder);
+      if (decoder.type === 'string') {
+        record[decoder.key] = getStrVal(row, i, decoder);
+      } else if (decoder.type === 'number') {
+        record[decoder.key] = getNumbVal(row, i, decoder);
+      } else if (decoder.type === 'boolean') {
+        record[decoder.key] = getBoolVal(row, i);
+      } else {
+        record[decoder.key] = row[i];
+      }
+      // record[decoder.key] = getValue(row, i, decoder);
       i += decoder.offset ? decoder.offset : 1;
     }
     return record;
-
+    /*
     // Performs the inverse operation of "encode".
-    function getValue(X: array<array>, ix, decoder): string | boolean | number {
+    function getValue(
+      X: Array<string | boolean | number>,
+      ix: number,
+      decoder: any
+    ):
+      // Currently supported types
+      any
+    {
+
       switch (decoder.type) {
         case 'string': {
           const data = X.slice(ix, ix + decoder.offset);
@@ -83,7 +147,7 @@ export class OneHotEncoder {
         default:
           return X[ix];
       }
-    }
+    } */
   }
 
   /**
@@ -101,16 +165,11 @@ export class OneHotEncoder {
     key,
     data
   ):
-    | {
-        encoded: Array<number | string | boolean>;
-        decode: {
-          key: number;
-          type: string;
-          offset: number;
-          lookupTable: object;
-        };
-      }
-    | Array<any> {
+    StringOneHot |
+    BooleanOneHot |
+    NumberOneHot |
+    Array<any>
+  {
     const type = typeof data[0][key];
     const values = _.map(data, key);
     switch (type) {
@@ -168,10 +227,7 @@ export class OneHotEncoder {
     type,
     key,
     values
-  ): {
-    encoded: Array<any>;
-    decode: { type: string; mean: number; std: number; key: number };
-  } {
+  ): NumberOneHot {
     const mean: number = _.mean(values);
     const std = this.calculateStd(values, mean);
     return {
@@ -193,10 +249,7 @@ export class OneHotEncoder {
     type,
     key,
     values
-  ): {
-    encoded: Array<number | string | boolean>;
-    decode: { key: number; type: string };
-  } {
+  ): BooleanOneHot {
     return {
       decode: { type, key },
       encoded: _.map(values, value => (value ? 1 : 0))
@@ -219,10 +272,7 @@ export class OneHotEncoder {
     type,
     key,
     values
-  ): {
-    encoded: Array<any>;
-    decode: { key: number; type: string; offset: number; lookupTable: object };
-  } {
+  ): StringOneHot {
     const lookup = {};
     let i = 0;
 
