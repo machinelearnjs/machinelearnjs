@@ -1,23 +1,18 @@
 import svmResolver from 'libsvm-js';
 import * as _ from 'lodash';
 
-type Type = 'C_SVC' | 'NU_SVC' | 'ONE_CLASS' | 'EPSILON_SVR' | 'NU_SVR';
+export type Type = 'C_SVC' | 'NU_SVC' | 'ONE_CLASS' | 'EPSILON_SVR' | 'NU_SVR';
 
-type Kernel = 'LINEAR' | 'POLYNOMIAL' | 'RBF' | 'SIGMOID';
-
-enum Kernel {
-
-
-}
+export type Kernel = 'LINEAR' | 'POLYNOMIAL' | 'RBF' | 'SIGMOID';
 
 /**
  * Options used by sub classes
  * Notice type is disabled as they are set statically from children classes
  */
-interface Options {
+export interface Options {
 	// type:Type;
-	kernel:Kernel;
 	degree:number;										// Degree of polynomial, for polynomial kernel
+	kernel:Kernel;
 	gamma:number | null;							// Gamma parameter of the RBF, Polynomial and Sigmoid kernels. Default value is 1/num_features
 	coef0:number;											// coef0 parameter for Polynomial and Sigmoid kernels
 	cost:number;											// Cost parameter, for C SVC, Epsilon SVR and NU SVR
@@ -27,17 +22,32 @@ interface Options {
 	tolerance:number;									// Tolerance
 	shrinking:boolean;								// Use shrinking euristics (faster),
 	probabilityEstimates:boolean;			// weather to train SVC/SVR model for probability estimates,
-	weight:number | null;							// Set weight for each possible class
+	weight:object | null;							// Set weight for each possible class
 	quiet:boolean;										// Print info during training if false (aka verbose)
 }
 
-class BaseSVM {
+export class BaseSVM {
 	// TODO: Create SVM type
 	public svm: any;
 	public options: Options;
 
-	constructor(options: Options) {
-		this.options = options;
+	constructor(options:Options = null) {
+		this.options = {
+			degree: _.get(options, 'degree', 3),
+			kernel: _.get(options, 'kernel', 'RBF'),
+			gamma: _.get(options, 'gamma', null),
+			coef0: _.get(options, 'coef0', 0),
+			cost: _.get(options, 'cost', 1),
+			nu: _.get(options, 'nu', .5),
+			epsilon: _.get(options, 'epsilon', .1),
+			cacheSize: _.get(options, 'cacheSize', 100),
+			tolerance: _.get(options, 'tolerance', .001),
+			shrinking: _.get(options, 'shrinking', true),
+			probabilityEstimates: _.get(options, 'probabilityEstimates', false),
+			weight: _.get(options, 'weight', null),
+			quiet: _.get(options, 'quiet', true)
+		};
+		console.log('checking options', this.options);
 	}
 
 	public getKernel(SVM, name: string) {
@@ -48,7 +58,7 @@ class BaseSVM {
 		return _.get(SVM.SVM_TYPE, name);
 	}
 
-	public processOptions(options, type: Type, kernel: Kernel) {
+	public processOptions(options: Options, type: Type, kernel: Kernel) {
 		return _.flowRight(
 			opts => _.set(opts, 'type', type),
 			opts => _.set(opts, 'kernel', kernel)
@@ -61,7 +71,7 @@ class BaseSVM {
 }
 
 export class SVC extends BaseSVM {
-	public async fit({ X = [], y = [] }) {
+	public async fit({ X = [], y = [] }: { X: any[], y: any[] }) {
 		const SVM = await this.loadSVM();
 		const options = this.processOptions(
 			this.options,
@@ -72,7 +82,7 @@ export class SVC extends BaseSVM {
 		this.svm.train(X, y);
 	}
 
-	public predict() {
-
+	public predict(X: number[]): number[] {
+		return this.svm.predict(X);
 	}
 }
