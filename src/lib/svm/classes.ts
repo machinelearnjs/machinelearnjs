@@ -29,6 +29,7 @@ export interface Options {
 export class BaseSVM {
 	// TODO: Create SVM type
 	public svm: any;
+	public type: Type;
 	public options: Options;
 
 	constructor(options:Options = null) {
@@ -70,25 +71,72 @@ export class BaseSVM {
 		)(options)
 	}
 
+	/**
+	 * Load SVM object by resolving the default promise
+	 * @returns {Promise<any>}
+	 */
 	public async loadSVM(): Promise<any> {
 		return svmResolver;
 	}
-}
 
-export class SVC extends BaseSVM {
-	public async fit({ X = [], y = [] }: { X: any[], y: any[] }): Promise<void> {
+	public async  fit({ X =[], y = [] }: { X: any[], y: any[] }): Promise<void> {
+		if (!this.type) {
+			throw new Error(`SVM type is unspecified ${this.type}`);
+		}
 		const SVM = await this.loadSVM();
 		const options = this.processOptions(
 			SVM,
 			this.options,
-			'C_SVC',
+			this.type,
 			this.options.kernel
 		);
 		this.svm = new SVM(options);
 		this.svm.train(X, y);
 	}
 
+	/**
+	 * Default predict
+	 * @param {number[]} X
+	 * @returns {number[]}
+	 */
 	public predict(X: number[]): number[] {
 		return this.svm.predict(X);
 	}
 }
+
+export class SVC extends BaseSVM {
+	constructor() {
+		super();
+		this.type = 'C_SVC';
+	}
+}
+
+
+export class SVR extends BaseSVM {
+	constructor() {
+		super();
+		this.type = 'EPSILON_SVR';
+	}
+}
+
+export class OneClassSVM extends BaseSVM {
+	constructor() {
+		super();
+		this.type = 'ONE_CLASS';
+	}
+}
+
+export class NuSVC extends BaseSVM {
+	constructor() {
+		super();
+		this.type = 'NU_SVC';
+	}
+}
+
+export class NuSVR extends BaseSVM {
+	constructor() {
+		super();
+		this.type = 'NU_SVR';
+	}
+}
+
