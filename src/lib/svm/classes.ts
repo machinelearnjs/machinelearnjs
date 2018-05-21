@@ -11,7 +11,7 @@ export type Kernel = 'LINEAR' | 'POLYNOMIAL' | 'RBF' | 'SIGMOID';
  */
 export interface Options {
 	// type:Type;
-	degree:number;										// Degree of polynomial, for polynomial kernel
+	degree:number;										// Degree of polynomial, test for polynomial kernel
 	kernel:Kernel;
 	gamma:number | null;							// Gamma parameter of the RBF, Polynomial and Sigmoid kernels. Default value is 1/num_features
 	coef0:number;											// coef0 parameter for Polynomial and Sigmoid kernels

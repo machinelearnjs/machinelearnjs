@@ -18,10 +18,10 @@
     "test:lint": "tslint --project . && prettier \"src/**/*.ts\" --list-different",
     "test:unit": "npx jest",
     "test:nsp": "nsp check",
-    "watch": "run-s clean build:main && run-p \"build:main -- -w\" \"test:unit -- --watch\"",
+    "watch": "./scripts/tmux-start.sh",
     "watch:build": "yarn build:main -- -w",
     "watch:unit": "yarn test:unit --watch",
-    "watch:lint": "nodemon -L --watch src --exec \"tslint --force --project .\"",
+    "watch:lint": "watch \" npx tslint --force -t verbose 'test/**/*.ts' 'src/**/*.ts'\" src",
     "cov": "run-s build test:unit cov:html && opn coverage/index.html",
     "cov:html": "nyc report --reporter=html",
     "cov:send": "nyc report --reporter=lcov > coverage.lcov && codecov",
@@ -73,7 +73,8 @@
     "random-js": "^1.0.8",
     "sha.js": "^2.4.10",
     "stopword": "^0.1.10",
-    "ts-jest": "^22.4.5"
+    "ts-jest": "^22.4.5",
+    "watch": "^1.0.2"
   },
   "devDependencies": {
     "ava": "^1.0.0-beta.3",

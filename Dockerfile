@@ -1,6 +1,10 @@
 FROM node:8.9.4
 MAINTAINER Jason Shin <visualbbasic@gmail.com>
 
+# System Deps
+RUN apt-get update -y
+RUN apt-get install tmux -y
+
 ENV CORE /home/node/app
 RUN mkdir $CORE
 RUN echo $CORE
