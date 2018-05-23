@@ -1,6 +1,30 @@
 import * as _ from 'lodash';
 import * as Random from 'random-js';
 
+export class KFold {
+  public k:number;
+  public shuffle:boolean;
+  public randomState:number | null;
+
+  constructor({ k = 2, shuffle = false, randomState = null }) {
+    this.k = k;
+    this.shuffle = shuffle;
+    this.randomState = randomState;
+  }
+
+  public split(X, callback):void {
+    const binSize = _.floor(_.size(X) / this.k);
+    const xRange = _.range(0, _.size(X));
+    const splitRange = _.range(0, this.k);
+    _.forEach(splitRange, (index) => {
+      const testIndex = _.range(index * binSize, index * binSize + binSize);
+      const trainIndex = _.pullAll(_.clone(xRange), testIndex);
+      console.log('train', trainIndex, 'test index', testIndex);
+    });
+    console.log('binSize', binSize);
+  }
+}
+
 /**
  * Split arrays or matrices into random train and test subsets
  * @param {any[]} X

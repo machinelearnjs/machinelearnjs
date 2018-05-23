@@ -1,5 +1,5 @@
 /* tslint:disable */
-import { train_test_split } from './_split';
+import { train_test_split, KFold } from './_split';
 
 const X = [[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]];
 const y = [0, 1, 2, 3, 4];
@@ -13,3 +13,9 @@ console.log(
     random_state: 42
   })
 );
+
+const kf = new KFold({ k: 10 });
+const X2 = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1];
+kf.split(X2, 1);
+
+
