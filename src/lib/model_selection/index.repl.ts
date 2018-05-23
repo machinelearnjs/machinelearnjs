@@ -18,4 +18,7 @@ const kf = new KFold({ k: 10 });
 const X2 = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1];
 kf.split(X2, 1);
 
+const kf2 = new KFold({ k: 10, shuffle: true });
+const X3 = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1];
+kf2.split(X3, 1);
 
