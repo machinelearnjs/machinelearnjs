@@ -9,7 +9,7 @@ const data = [
   { company: 'SAP', size: 48000, revenue: 11567 },
   { company: 'Yahoo!', size: 14000, revenue: 6426 },
   { company: 'eBay', size: 15000, revenue: 8700 }
-]
+];
 
 // Create the data 2D-array (vectors) describing the data
 const vectors = [];

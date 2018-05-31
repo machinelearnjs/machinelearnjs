@@ -8,7 +8,7 @@ async function xor() {
   const features = [[0, 0], [1, 1]];
   const labels = [0, 1];
   await svc.fit({ X: features, y: labels });
-  console.log('SVC predict result', svc.predict([2., 2.]));
+  console.log('SVC predict result', svc.predict([2, 2]));
 }
 
 xor().then(() => console.log('finished SVC'));
