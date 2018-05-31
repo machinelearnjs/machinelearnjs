@@ -28,6 +28,9 @@ class Node {
 }
 
 export default class KDTree {
+    public dimensions = null;
+    public root = null;
+
     constructor(points, metric) {
         // If points is not an array, assume we're loading a pre-built tree
         if (!Array.isArray(points)) {
@@ -36,7 +39,7 @@ export default class KDTree {
             restoreParent(this.root);
         } else {
             this.dimensions = new Array(points[0].length);
-            for (var i = 0; i < this.dimensions.length; i++) {
+            for (let i = 0; i < this.dimensions.length; i++) {
                 this.dimensions[i] = i;
             }
             this.root = buildTree(points, 0, null, this.dimensions);
@@ -46,28 +49,26 @@ export default class KDTree {
 
     // Convert to a JSON serializable structure; this just requires removing
     // the `parent` property
-    toJSON() {
+    public toJSON() {
         const result = toJSONImpl(this.root, true);
         result.dimensions = this.dimensions;
         return result;
     }
 
-    nearest(point, maxNodes, maxDistance) {
+    public nearest(point, maxNodes, maxDistance) {
         const metric = this.metric;
         const dimensions = this.dimensions;
-        var i;
+        let i;
 
         const bestNodes = new BinaryHeap(
-            function (e) {
-                return -e[1];
-            }
+          (e) => -e[1]
         );
 
         function nearestSearch(node) {
             const dimension = dimensions[node.dimension];
             const ownDistance = metric(point, node.obj);
             const linearPoint = {};
-            var bestChild,
+            let bestChild,
                 linearDistance,
                 otherChild,
                 i;

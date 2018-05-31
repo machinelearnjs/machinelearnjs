@@ -98,12 +98,12 @@ export class KNeighborsClassifier {
 
 function getSinglePrediction(knn, currentCase) {
     const nearestPoints = knn.kdTree.nearest(currentCase, knn.k);
-    let pointsPerClass = {};
+    const pointsPerClass = {};
     let predictedClass = -1;
     let maxPoints = -1;
-    let lastElement = nearestPoints[0][0].length - 1;
+    const lastElement = nearestPoints[0][0].length - 1;
 
-    for (let element of knn.classes) {
+    for (const element of knn.classes) {
         pointsPerClass[element] = 0;
     }
 
