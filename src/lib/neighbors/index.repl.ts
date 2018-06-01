@@ -1,5 +1,8 @@
 /* tslint:disable */
 import { KNeighborsClassifier } from './classification';
 
-const kn = new KNeighborsClassifier([123], [123], 2);
-kn.fit();
+const knn = new KNeighborsClassifier();
+const X = [[0, 0, 0], [0, 1, 1], [1, 1, 0], [2, 2, 2], [1, 2, 2], [2, 1, 2]];
+const y = [0, 0, 0, 1, 1, 1];
+knn.fit({ X, y });
+console.log('checking', knn.toJSON());

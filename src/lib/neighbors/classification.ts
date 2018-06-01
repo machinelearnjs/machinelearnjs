@@ -1,12 +1,17 @@
 import KDTree from './KDTree';
 import euclideanDistance from 'ml-distance-euclidean';
 
+interface Options {
+  distance: (any) => any;
+  k: number;
+}
+
 export class KNeighborsClassifier {
   private kdTree = null;
   private k = null;
   private classes = null;
   private isEuclidean = null;
-  private options = {};
+  private options:Options;
 
   /**
    * @param {Array} dataset
@@ -15,7 +20,7 @@ export class KNeighborsClassifier {
    * @param {number} [options.k=numberOfClasses + 1] - Number of neighbors to classify.
    * @param {function} [options.distance=euclideanDistance] - Distance function that takes two parameters.
    */
-  constructor(options = {}) {
+  constructor(options = { distance: null, k: 0 }) {
     this.options = options;
   }
 
@@ -68,7 +73,7 @@ export class KNeighborsClassifier {
         'the model was created with the default distance function. Do not load it with another one'
       );
     }
-    return new KNeighborsClassifier(true, model, distance);
+    return new KNeighborsClassifier(this.options);
   }
 
   /**
@@ -80,7 +85,7 @@ export class KNeighborsClassifier {
       name: 'KNN',
       kdTree: this.kdTree,
       k: this.k,
-      classes: Array.from(this.classes),
+      classes: this.classes,
       isEuclidean: this.isEuclidean
     };
   }
