@@ -2,6 +2,12 @@ import KDTree from './KDTree';
 import euclideanDistance from 'ml-distance-euclidean';
 
 export class KNeighborsClassifier {
+  private kdTree = null;
+  private k = null;
+  private classes = null;
+  private isEuclidean = null;
+  private options = {};
+
   /**
    * @param {Array} dataset
    * @param {Array} labels
@@ -9,27 +15,31 @@ export class KNeighborsClassifier {
    * @param {number} [options.k=numberOfClasses + 1] - Number of neighbors to classify.
    * @param {function} [options.distance=euclideanDistance] - Distance function that takes two parameters.
    */
-  constructor(dataset, labels, options = {}) {
-    if (dataset === true) {
-      const model = labels;
-      this.kdTree = new KDTree(model.kdTree, options);
+  constructor(options = {}) {
+    this.options = options;
+  }
+
+  public fit({ X, y }) {
+    if (X === true) {
+      const model = y;
+      this.kdTree = new KDTree(model.kdTree, this.options);
       this.k = model.k;
       this.classes = new Set(model.classes);
       this.isEuclidean = model.isEuclidean;
       return;
     }
 
-    const classes = new Set(labels);
+    const classes = new Set(y);
 
-    const { distance = euclideanDistance, k = classes.size + 1 } = options;
+    const { distance = euclideanDistance, k = classes.size + 1 } = this.options;
 
-    const points = new Array(dataset.length);
+    const points = new Array(X.length);
     for (let i = 0; i < points.length; ++i) {
-      points[i] = dataset[i].slice();
+      points[i] = X[i].slice();
     }
 
-    for (i = 0; i < labels.length; ++i) {
-      points[i].push(labels[i]);
+    for (let i = 0; i < y.length; ++i) {
+      points[i].push(y[i]);
     }
 
     this.kdTree = new KDTree(points, distance);
@@ -58,7 +68,7 @@ export class KNeighborsClassifier {
         'the model was created with the default distance function. Do not load it with another one'
       );
     }
-    return new KNN(true, model, distance);
+    return new KNeighborsClassifier(true, model, distance);
   }
 
   /**
