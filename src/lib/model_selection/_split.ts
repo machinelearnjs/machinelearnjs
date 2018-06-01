@@ -12,7 +12,7 @@ export class KFold {
     this.randomState = randomState;
   }
 
-  public split(X, callback): void {
+  public split(X): void {
     const binSize = _.floor(_.size(X) / this.k);
     const xRange = _.range(0, _.size(X));
     const splitRange = _.range(0, this.k);

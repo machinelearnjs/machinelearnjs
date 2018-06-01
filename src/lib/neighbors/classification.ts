@@ -1,5 +1,5 @@
 import KDTree from './KDTree';
-import euclideanDistance from 'ml-distance-euclidean';
+import * as euclideanDistance from 'ml-distance-euclidean';
 
 interface Options {
   distance: (any) => any;

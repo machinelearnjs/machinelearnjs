@@ -1,3 +1,4 @@
+/* tslint:disable */
 /*
  * Original code from:
  *
@@ -11,7 +12,7 @@
  * @license MIT License <http://www.opensource.org/licenses/mit-license.php>
  */
 
-class Node {
+export class Node {
   public obj = null;
   public left = null;
   public right = null;
@@ -30,6 +31,7 @@ class Node {
 export default class KDTree {
   public dimensions = null;
   public root = null;
+  private metric = null;
 
   constructor(points, metric) {
     // If points is not an array, assume we're loading a pre-built tree
@@ -50,8 +52,9 @@ export default class KDTree {
   // Convert to a JSON serializable structure; this just requires removing
   // the `parent` property
   public toJSON() {
-    const result = toJSONImpl(this.root, true);
-    result.dimensions = this.dimensions;
+    const result = toJSONImpl(this.root);
+    // Renamed dimensions to dimension
+    result.dimension = this.dimensions;
     return result;
   }
 
@@ -145,7 +148,7 @@ export default class KDTree {
   }
 }
 
-function toJSONImpl(src) {
+function toJSONImpl(src): Node {
   const dest = new Node(src.obj, src.dimension, null);
   if (src.left) dest.left = toJSONImpl(src.left);
   if (src.right) dest.right = toJSONImpl(src.right);
@@ -187,6 +190,9 @@ function restoreParent(root) {
 // Binary heap implementation from:
 // http://eloquentjavascript.net/appendix2.html
 class BinaryHeap {
+  public content:Array<any> = [];
+  public scoreFunction:any;
+
   constructor(scoreFunction) {
     this.content = [];
     this.scoreFunction = scoreFunction;

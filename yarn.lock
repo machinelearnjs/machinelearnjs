@@ -3952,6 +3952,10 @@ ml-confusion-matrix@^0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/ml-confusion-matrix/-/ml-confusion-matrix-0.3.0.tgz#5cd7795015cd0ea7adac04f02dfb2a682109c9ae"
 
+ml-distance-euclidean@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/ml-distance-euclidean/-/ml-distance-euclidean-1.0.0.tgz#08447c2233641a2b2a9b4c29e5f792d28f1d5b95"
+
 ml-hash-table@^0.2.1:
   version "0.2.1"
   resolved "https://registry.yarnpkg.com/ml-hash-table/-/ml-hash-table-0.2.1.tgz#ad2aa06c2e3a2ca6a7bbaa0f6dd50a8eaa333d6b"
