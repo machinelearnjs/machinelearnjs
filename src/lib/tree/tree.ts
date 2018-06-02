@@ -53,14 +53,16 @@ export class DecisionTreeClassifier {
 	 * @param {Question} question
 	 * @returns {{trueRows: Array; falseRows: Array}}
 	 */
-	public partition(rows, question: Question) {
+	public partition(X, y, question: Question) {
 		let trueRows = [];
 		let falseRows = [];
-		_.forEach(rows, (row) => {
+		const xLen = _.size(X);
+		_.forEach(_.range(0, xLen), (xIndex) => {
+			const row = X[xIndex];
 			if (question.match(row)) {
-				trueRows.push(row);
+				trueRows.push(y[xIndex]);
 			} else {
-				falseRows.push(row);
+				falseRows.push(y[xIndex]);
 			}
 		});
 
@@ -84,8 +86,14 @@ export class DecisionTreeClassifier {
 			}
 
 			let probOfClass = count / _.size(targets);
-
+			impurity -= Math.pow(probOfClass, 2);
 		});
+		return impurity;
+	}
+
+	public infoGain(left, right, uncertainty) {
+		const p = _.size(left) / (_.size(left) + _.size(right));
+		return uncertainty - p * this.gini(left) - (1 - p) * this.gini(right);
 	}
 
 	public fit() {

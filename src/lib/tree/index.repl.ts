@@ -36,5 +36,12 @@ console.log(q.match(example));
 // Testing Decision tree
 
 // 1 partition
-const partResult = decision.partition(X, new Question(features, 0, 'Red'));
+const partResult = decision.partition(X, y, new Question(features, 0, 'Red'));
 console.log(partResult);
+
+// 2. gini
+const gini = decision.gini(['Apple', 'Apple']);
+console.log('checking consistent features', gini);
+
+const giniSomeMix = decision.gini(['Apple', 'Orange']);
+console.log('gini with some mixing', giniSomeMix);
