@@ -49,11 +49,12 @@ export class DecisionTreeClassifier {
 
 	/**
 	 * Split rows into true and false according to quesiton.match result
-	 * @param rows
+	 * @param X
+	 * @param y
 	 * @param {Question} question
 	 * @returns {{trueRows: Array; falseRows: Array}}
 	 */
-	public partition(X, y, question: Question) {
+	public partition(X, y, question: Question): { trueRows: Array<any>, falseRows: Array<any> } {
 		let trueRows = [];
 		let falseRows = [];
 		const xLen = _.size(X);
@@ -91,6 +92,16 @@ export class DecisionTreeClassifier {
 		return impurity;
 	}
 
+	/**
+	 * Information Gain.
+	 *
+   * The uncertainty of the starting node, minus the weighted impurity of
+   * two child nodes.
+	 * @param left
+	 * @param right
+	 * @param uncertainty
+	 * @returns {number}
+	 */
 	public infoGain(left, right, uncertainty) {
 		const p = _.size(left) / (_.size(left) + _.size(right));
 		return uncertainty - p * this.gini(left) - (1 - p) * this.gini(right);

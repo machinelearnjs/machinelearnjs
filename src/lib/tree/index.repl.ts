@@ -45,3 +45,14 @@ console.log('checking consistent features', gini);
 
 const giniSomeMix = decision.gini(['Apple', 'Orange']);
 console.log('gini with some mixing', giniSomeMix);
+
+// 3. InfoGain
+const currentUncertainty = decision.gini(y);
+
+// How much info do we gain from partitioning Green?
+const greenPartition = decision.partition(X, y, new Question(features, 0, 'Green'));
+const greenInfo = decision.infoGain(greenPartition.trueRows, greenPartition.falseRows, currentUncertainty);
+console.log('Green partition infogain', greenInfo);
+
+const redParition = decision.partition(X, y, new Question(features, 0, 'Red'));
+const redInfo = decision.infoGain(redParition.trueRows, )
