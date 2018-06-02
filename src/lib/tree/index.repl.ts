@@ -55,4 +55,9 @@ const greenInfo = decision.infoGain(greenPartition.trueRows, greenPartition.fals
 console.log('Green partition infogain', greenInfo);
 
 const redParition = decision.partition(X, y, new Question(features, 0, 'Red'));
-const redInfo = decision.infoGain(redParition.trueRows, )
+const redInfo = decision.infoGain(redParition.trueRows, redParition.falseRows, currentUncertainty);
+console.log('Red parition infogain', redInfo);
+
+// find best split
+const bestSplit = decision.findBestSplit(X, y, features);
+console.log('bestSplit: ', bestSplit.bestQuestion.toString(), ' ', bestSplit.bestGain);

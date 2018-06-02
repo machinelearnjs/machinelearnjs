@@ -107,6 +107,38 @@ export class DecisionTreeClassifier {
 		return uncertainty - p * this.gini(left) - (1 - p) * this.gini(right);
 	}
 
+	public findBestSplit(X, y, featureLabels) {
+		const uncertainty = this.gini(y);
+		const nFeatures = _.size(X[0]);
+		let bestGain = 0;
+		let bestQuestion = null;
+		for (let col = 0; col < nFeatures; col++) {
+			const uniqFeatureValues = _.uniqBy(_.map(X, row => row[col]), x => x);
+			for (let featureIndex = 0; featureIndex < _.size(uniqFeatureValues); featureIndex++) {
+				const feature = uniqFeatureValues[featureIndex];
+				const question = new Question(featureLabels, col, feature);
+
+				// Try splitting the dataset
+				const { trueRows, falseRows } = this.partition(X, y, question);
+
+				// Skip this dataset if it does not divide
+				if (_.size(trueRows) === 0 || _.size(falseRows) === 0) {
+					continue;
+				}
+
+				// Calculate information gained from this split
+				const gain = this.infoGain(trueRows, falseRows, uncertainty);
+
+				if (gain >= bestGain) {
+					bestGain = gain;
+					bestQuestion = question;
+				}
+
+			}
+		}
+		return { bestGain, bestQuestion };
+	}
+
 	public fit() {
 
 	}
