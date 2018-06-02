@@ -2,7 +2,8 @@
 
 import { DecisionTreeClassifier, Question, classCounts } from './tree';
 
-const decision = new DecisionTreeClassifier();
+const features = ['color', 'diameter', 'label'];
+const decision = new DecisionTreeClassifier({ featureLabels: features });
 
 const X = [['Green', 3], ['Yellow', 3], ['Red', 1], ['Red', 1], ['Yellow', 3]];
 
@@ -12,7 +13,6 @@ const y = ['Apple', 'Apple', 'Grape', 'Grape', 'Lemon'];
 const counts = classCounts(y);
 console.log('checking counts', counts);
 
-const features = ['color', 'diameter', 'label'];
 
 // Testing questions
 const q = new Question(features, 1, 3);
@@ -50,22 +50,22 @@ const greenPartition = decision.partition(
   new Question(features, 0, 'Green')
 );
 const greenInfo = decision.infoGain(
-  greenPartition.trueRows,
-  greenPartition.falseRows,
+  greenPartition.trueY,
+  greenPartition.falseY,
   currentUncertainty
 );
 console.log('Green partition infogain', greenInfo);
 
 const redParition = decision.partition(X, y, new Question(features, 0, 'Red'));
 const redInfo = decision.infoGain(
-  redParition.trueRows,
-  redParition.falseRows,
+  redParition.trueY,
+  redParition.falseY,
   currentUncertainty
 );
 console.log('Red parition infogain', redInfo);
 
 // find best split
-const bestSplit = decision.findBestSplit(X, y, features);
+const bestSplit = decision.findBestSplit(X, y);
 console.log(
   'bestSplit: ',
   bestSplit.bestQuestion.toString(),

@@ -5,7 +5,7 @@ export class Question {
   private column = null;
   private value = null;
 
-  constructor(features, column, value) {
+  constructor(features = null, column, value) {
     this.features = features;
     this.column = column;
     this.value = value;
@@ -21,6 +21,9 @@ export class Question {
   }
 
   public toString(): string {
+    if (!this.features) {
+      throw Error('You must provide feature labels in order to render toString!');
+    }
     const condition = _.isNumber(this.value) ? '>=' : '==';
     return `Is ${this.features[this.column]} ${condition} ${this.value}`;
   }
@@ -34,6 +37,7 @@ export class Question {
  */
 export function classCounts(targets) {
   // TODO: If targets is a multi-dimensional, automatically grab -1 index
+
   return _.reduce(
     targets,
     (accum, target) => {
@@ -48,14 +52,39 @@ export function classCounts(targets) {
   );
 }
 
+/**
+ * A leaf node classifies data.
+ *
+ * It holds an object of data Class (e.g. Apple) -> count
+ */
 export class Leaf {
-  public predictions = [];
+  public predictions = {};
   constructor(y) {
     this.predictions = classCounts(y);
   }
 }
 
+/**
+ * It holds a reference to the question, and to the two children nodes
+ */
+export class DecisionNode {
+  public question = null;
+  public trueBranch = null;
+  public falseBranch = null;
+
+  constructor(question, trueBranch, falseBranch) {
+    this.question = question;
+    this.trueBranch = trueBranch;
+    this.falseBranch = falseBranch;
+  }
+}
+
 export class DecisionTreeClassifier {
+  private featureLabels = null;
+
+  constructor({ featureLabels = null }) {
+    this.featureLabels = featureLabels;
+  }
   /**
    * Split rows into true and false according to quesiton.match result
    * @param X
@@ -67,20 +96,24 @@ export class DecisionTreeClassifier {
     X,
     y,
     question: Question
-  ): { trueRows: Array<any>; falseRows: Array<any> } {
-    let trueRows = [];
-    let falseRows = [];
+  ): { trueX: Array<any>, trueY: Array<any>, falseX: Array<any>, falseY: Array<any> } {
+    let trueX = [];
+    let trueY = [];
+    let falseX = [];
+    let falseY = [];
     const xLen = _.size(X);
     _.forEach(_.range(0, xLen), xIndex => {
       const row = X[xIndex];
       if (question.match(row)) {
-        trueRows.push(y[xIndex]);
+        trueX.push(X[xIndex]);
+        trueY.push(y[xIndex]);
       } else {
-        falseRows.push(y[xIndex]);
+        falseX.push(X[xIndex]);
+        falseY.push(y[xIndex]);
       }
     });
 
-    return { trueRows, falseRows };
+    return { trueX, trueY, falseX, falseY };
   }
 
   /**
@@ -120,7 +153,7 @@ export class DecisionTreeClassifier {
     return uncertainty - p * this.gini(left) - (1 - p) * this.gini(right);
   }
 
-  public findBestSplit(X, y, featureLabels) {
+  public findBestSplit(X, y) {
     const uncertainty = this.gini(y);
     const nFeatures = _.size(X[0]);
     let bestGain = 0;
@@ -133,18 +166,18 @@ export class DecisionTreeClassifier {
         featureIndex++
       ) {
         const feature = uniqFeatureValues[featureIndex];
-        const question = new Question(featureLabels, col, feature);
+        const question = new Question(this.featureLabels, col, feature);
 
         // Try splitting the dataset
-        const { trueRows, falseRows } = this.partition(X, y, question);
+        const { trueY, falseY } = this.partition(X, y, question);
 
         // Skip this dataset if it does not divide
-        if (_.size(trueRows) === 0 || _.size(falseRows) === 0) {
+        if (_.size(trueY) === 0 || _.size(falseY) === 0) {
           continue;
         }
 
         // Calculate information gained from this split
-        const gain = this.infoGain(trueRows, falseRows, uncertainty);
+        const gain = this.infoGain(trueY, falseY, uncertainty);
 
         if (gain >= bestGain) {
           bestGain = gain;
@@ -155,5 +188,16 @@ export class DecisionTreeClassifier {
     return { bestGain, bestQuestion };
   }
 
-  public fit() {}
+
+
+  public fit({ X, y }) {
+    const { bestGain, bestQuestion } = this.findBestSplit(X, y);
+
+    if (bestGain === 0) {
+      return new Leaf(y);
+    }
+
+    // const { trueRows, falseRows } = this.partition(X, y, bestQuestion);
+    // trueBranch = fit()
+  }
 }
