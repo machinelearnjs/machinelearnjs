@@ -11,7 +11,7 @@ export class KNeighborsClassifier {
   private k = null;
   private classes = null;
   private isEuclidean = null;
-  private options:Options;
+  private options: Options;
 
   /**
    * @param {Array} dataset

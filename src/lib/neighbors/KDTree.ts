@@ -190,8 +190,8 @@ function restoreParent(root) {
 // Binary heap implementation from:
 // http://eloquentjavascript.net/appendix2.html
 class BinaryHeap {
-  public content:Array<any> = [];
-  public scoreFunction:any;
+  public content: Array<any> = [];
+  public scoreFunction: any;
 
   constructor(scoreFunction) {
     this.content = [];

@@ -1,24 +1,18 @@
 /* tslint:disable */
 
-import { DecisionTreeClassifier, Question } from "./tree";
+import { DecisionTreeClassifier, Question, classCounts } from './tree';
 
 const decision = new DecisionTreeClassifier();
 
-const X = [
-    ['Green', 3],
-    ['Yellow', 3],
-    ['Red', 1],
-    ['Red', 1],
-    ['Yellow', 3],
-];
+const X = [['Green', 3], ['Yellow', 3], ['Red', 1], ['Red', 1], ['Yellow', 3]];
 
 const y = ['Apple', 'Apple', 'Grape', 'Grape', 'Lemon'];
 
 // Class counts
-const counts = decision.classCounts(y);
+const counts = classCounts(y);
 console.log('checking counts', counts);
 
-const features = ["color", "diameter", "label"]
+const features = ['color', 'diameter', 'label'];
 
 // Testing questions
 const q = new Question(features, 1, 3);
@@ -50,14 +44,31 @@ console.log('gini with some mixing', giniSomeMix);
 const currentUncertainty = decision.gini(y);
 
 // How much info do we gain from partitioning Green?
-const greenPartition = decision.partition(X, y, new Question(features, 0, 'Green'));
-const greenInfo = decision.infoGain(greenPartition.trueRows, greenPartition.falseRows, currentUncertainty);
+const greenPartition = decision.partition(
+  X,
+  y,
+  new Question(features, 0, 'Green')
+);
+const greenInfo = decision.infoGain(
+  greenPartition.trueRows,
+  greenPartition.falseRows,
+  currentUncertainty
+);
 console.log('Green partition infogain', greenInfo);
 
 const redParition = decision.partition(X, y, new Question(features, 0, 'Red'));
-const redInfo = decision.infoGain(redParition.trueRows, redParition.falseRows, currentUncertainty);
+const redInfo = decision.infoGain(
+  redParition.trueRows,
+  redParition.falseRows,
+  currentUncertainty
+);
 console.log('Red parition infogain', redInfo);
 
 // find best split
 const bestSplit = decision.findBestSplit(X, y, features);
-console.log('bestSplit: ', bestSplit.bestQuestion.toString(), ' ', bestSplit.bestGain);
+console.log(
+  'bestSplit: ',
+  bestSplit.bestQuestion.toString(),
+  ' ',
+  bestSplit.bestGain
+);
