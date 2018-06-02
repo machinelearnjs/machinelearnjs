@@ -188,16 +188,44 @@ export class DecisionTreeClassifier {
     return { bestGain, bestQuestion };
   }
 
-
-
-  public fit({ X, y }) {
+  private buildTree({ X, y }) {
     const { bestGain, bestQuestion } = this.findBestSplit(X, y);
 
     if (bestGain === 0) {
       return new Leaf(y);
     }
 
-    // const { trueRows, falseRows } = this.partition(X, y, bestQuestion);
-    // trueBranch = fit()
+    // Partition the current passed in X ,y
+    const { trueX, trueY, falseX, falseY } = this.partition(X, y, bestQuestion);
+
+    // Recursively build the true branch
+    const trueBranch = this.buildTree({ X: trueX, y: trueY });
+
+    // Recursively build the false branch
+    const falseBranch = this.buildTree({ X: falseX, y: falseY });
+
+    return new DecisionNode(bestQuestion, trueBranch, falseBranch);
+  }
+
+  public fit({ X, y }) {
+    return this.buildTree({ X, y });
+  }
+
+  public printTree({ node, spacing = "" }) {
+    if (node instanceof Leaf) {
+      console.log(spacing + "" + JSON.stringify(node.predictions));
+      return;
+    }
+
+    // Print the question of the node
+    console.log(spacing + node.question.toString());
+
+    // Call this function recursively for true branch
+    console.log(spacing, '--> True');
+    this.printTree({ node: node.trueBranch, spacing: spacing + ' ' });
+
+    // Call this function recursively for false branch
+    console.log(spacing, '--> False');
+    this.printTree({ node: node.falseBranch, spacing: spacing + ' ' });
   }
 }
