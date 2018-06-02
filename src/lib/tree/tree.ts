@@ -81,6 +81,7 @@ export class DecisionNode {
 
 export class DecisionTreeClassifier {
   private featureLabels = null;
+  private tree = null;
 
   constructor({ featureLabels = null }) {
     this.featureLabels = featureLabels;
@@ -207,11 +208,58 @@ export class DecisionTreeClassifier {
     return new DecisionNode(bestQuestion, trueBranch, falseBranch);
   }
 
+	/**
+   * Fit date, which builds a tree
+	 * @param {any} X
+	 * @param {any} y
+	 * @returns {Leaf | DecisionNode}
+	 */
   public fit({ X, y }) {
-    return this.buildTree({ X, y });
+    this.tree = this.buildTree({ X, y });
   }
 
-  public printTree({ node, spacing = "" }) {
+	/**
+   * Public interface
+	 * @param {any} row
+	 * @returns {{} | {} | any | any | {} | any | any}
+	 */
+  public predict({ row }) {
+    return this._predict({ row, node: this.tree });
+  }
+
+	/**
+   * Predict a row value according to the fitted tree
+	 * @param {any} row
+	 * @param {any} node
+	 * @returns {any}
+	 * @private
+	 */
+  private _predict({ row, node }) {
+    if (node instanceof  Leaf) {
+      return node.predictions;
+    }
+
+    if (node.question.match(row)) {
+      return this._predict({ row, node: node.trueBranch });
+    } else {
+      return this._predict({ row, node: node.falseBranch });
+    }
+  }
+
+	/**
+   * Public interface for print tree
+	 * @param {any} spacing
+	 */
+  public printTree(spacing = '') {
+    this._printTree({ node: this.tree, spacing });
+  }
+
+	/**
+   * Recursively print
+	 * @param {any} node
+	 * @param {any} spacing
+	 */
+  private _printTree({ node, spacing = '' }) {
     if (node instanceof Leaf) {
       console.log(spacing + "" + JSON.stringify(node.predictions));
       return;
@@ -222,10 +270,10 @@ export class DecisionTreeClassifier {
 
     // Call this function recursively for true branch
     console.log(spacing, '--> True');
-    this.printTree({ node: node.trueBranch, spacing: spacing + ' ' });
+    this._printTree({ node: node.trueBranch, spacing: spacing + ' ' });
 
     // Call this function recursively for false branch
     console.log(spacing, '--> False');
-    this.printTree({ node: node.falseBranch, spacing: spacing + ' ' });
+    this._printTree({ node: node.falseBranch, spacing: spacing + ' ' });
   }
 }

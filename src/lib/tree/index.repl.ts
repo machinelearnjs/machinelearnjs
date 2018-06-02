@@ -73,5 +73,9 @@ console.log(
   bestSplit.bestGain
 );
 
-const myTree = decision.fit({ X, y });
-decision.printTree({ node: myTree });
+decision.fit({ X, y });
+decision.printTree();
+
+// predict
+const predictResult = decision.predict({ row: X[0] });
+console.log('predict result', predictResult);
