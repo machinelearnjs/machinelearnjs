@@ -4,13 +4,19 @@ import { DecisionTreeClassifier, Question } from "./tree";
 
 const decision = new DecisionTreeClassifier();
 
-const trainingData = [
-    ['Green', 3, 'Apple'],
-    ['Yellow', 3, 'Apple'],
-    ['Red', 1, 'Grape'],
-    ['Red', 1, 'Grape'],
-    ['Yellow', 3, 'Lemon'],
-]
+const X = [
+    ['Green', 3],
+    ['Yellow', 3],
+    ['Red', 1],
+    ['Red', 1],
+    ['Yellow', 3],
+];
+
+const y = ['Apple', 'Apple', 'Grape', 'Grape', 'Lemon'];
+
+// Class counts
+const counts = decision.classCounts(y);
+console.log('checking counts', counts);
 
 const features = ["color", "diameter", "label"]
 
@@ -23,12 +29,12 @@ const q2 = new Question(features, 0, 'Green');
 
 console.log('' + q2);
 
-const example = trainingData[1];
+const example = X[1];
 
 console.log(q.match(example));
 
 // Testing Decision tree
 
 // 1 partition
-const partResult = decision.partition(trainingData, new Question(features, 0, 'Red'));
+const partResult = decision.partition(X, new Question(features, 0, 'Red'));
 console.log(partResult);

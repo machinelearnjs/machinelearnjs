@@ -28,15 +28,16 @@ export class Question {
 }
 
 export class DecisionTreeClassifier {
-	public classCounts(rows) {
-		_.reduce(rows, (accum, val) => {
-			const count = _.get(accum, val);
-			if (count && count > 0) {
-				return _.set(accum, val, count + 1);
+	public classCounts(targets) {
+		// TODO: If targets is a multi-dimensional, automatically grab -1 index
+		return _.reduce(targets, (accum, target) => {
+			const count = _.get(accum, target);
+			if (_.isNumber(count) && count > 0) {
+				return _.set(accum, target, count + 1);
 			} else {
-				return _.set(accum, val, 0);
+				return _.set(accum, target, 1);
 			}
-		}, {})
+		}, {});
 	}
 
 	public partition(rows, question: Question) {
