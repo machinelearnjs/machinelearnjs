@@ -28,6 +28,34 @@ export class Question {
 }
 
 export class DecisionTreeClassifier {
+	public classCounts(rows) {
+		_.reduce(rows, (accum, val) => {
+			const count = _.get(accum, val);
+			if (count && count > 0) {
+				return _.set(accum, val, count + 1);
+			} else {
+				return _.set(accum, val, 0);
+			}
+		}, {})
+	}
+
+	public partition(rows, question: Question) {
+		let trueRows = [];
+		let falseRows = [];
+		_.forEach(rows, (row) => {
+			if (question.match(row)) {
+				trueRows.push(row);
+			} else {
+				falseRows.push(row);
+			}
+		});
+
+		return { trueRows, falseRows };
+	}
+
+	public gini() {
+
+	}
 
 	public fit() {
 
