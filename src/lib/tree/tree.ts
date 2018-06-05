@@ -154,6 +154,12 @@ export class DecisionTreeClassifier {
     return uncertainty - p * this.gini(left) - (1 - p) * this.gini(right);
   }
 
+	/**
+   * Find the best split
+	 * @param X
+	 * @param y
+	 * @returns {{bestGain: number; bestQuestion: any}}
+	 */
   public findBestSplit(X, y) {
     const uncertainty = this.gini(y);
     const nFeatures = _.size(X[0]);
