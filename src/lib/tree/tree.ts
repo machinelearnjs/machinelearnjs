@@ -60,8 +60,8 @@ export function classCounts(targets) {
 export class Leaf {
   public predictions = {};
   constructor(y) {
-    this.predictions = classCounts(y);
-    console.log('built pred', this.predictions);
+    // this.predictions = classCounts(y);
+    this.predictions = y;
   }
 }
 
@@ -84,6 +84,7 @@ export class DecisionTreeClassifier {
   private featureLabels = null;
   private tree = null;
   private verbose = true;
+  private y = [];
 
   constructor({ featureLabels = null, verbose = true }) {
     this.featureLabels = featureLabels;
@@ -225,6 +226,7 @@ export class DecisionTreeClassifier {
 	 * @returns {Leaf | DecisionNode}
 	 */
   public fit({ X, y }) {
+    this.y = y;
     this.tree = this.buildTree({ X, y });
   }
 
@@ -233,8 +235,56 @@ export class DecisionTreeClassifier {
 	 * @param {any} row
 	 * @returns {{} | {} | any | any | {} | any | any}
 	 */
-  public predict({ row }) {
+  public predictOne({ row }) {
     return this._predict({ row, node: this.tree });
+  }
+
+	/**
+   * Predict all X rows
+	 * @param {any} X
+	 * @returns {any[]}
+	 */
+  public predict({ X }) {
+    const predicted = _.map(X, (row) => {
+      const pred = this._predict({ row, node: this.tree });
+      return pred;
+    });
+    /*
+    // TODO: Fix below and return accuracies
+    const actual = _.map(this.y, (target) => {
+      let returning = {};
+      // returning[target] = _.get(classCounted, target)
+      return returning;
+    })
+    const accuracies = this.accuracyMetrics({
+      actualRows: actual,
+      predRows: predicted
+    });
+    */
+    return predicted;
+  }
+
+	/**
+   * Measure accuracy between actual row (X) vs predicted rows
+	 * @param {any} actualRows
+	 * @param {any} predRows
+	 * @returns {number}
+	 */
+  public accuracyMetrics({ actualRows, predRows }) {
+    let correct = 0;
+    const actualRowsLen = _.size(actualRows);
+    const predRowsLen = _.size(predRows);
+    if (actualRowsLen !== predRowsLen) {
+      throw Error('Actual rows and predicted rows are different in length');
+    }
+    const predRowsRange = _.range(0, predRowsLen);
+    correct = _.reduce(predRowsRange, (sum, index) => {
+      if (_.isEqual(actualRows[index], predRows[index])) {
+        return sum + 1;
+      }
+      return sum;
+    }, correct);
+    return correct / actualRowsLen * 100.0;
   }
 
 	/**
@@ -245,7 +295,6 @@ export class DecisionTreeClassifier {
 	 * @private
 	 */
   private _predict({ row, node }) {
-    console.log('predict checking node', node, '\n row ', row);
     if (node instanceof  Leaf) {
       return node.predictions;
     }
