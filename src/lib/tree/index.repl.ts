@@ -73,6 +73,8 @@ console.log(
   bestSplit.bestGain
 );
 
+const bestSplit2 = decision.findBestSplit2(X, y);
+
 decision.fit({ X, y });
 decision.printTree();
 
