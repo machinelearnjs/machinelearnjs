@@ -85,10 +85,12 @@ export class DecisionTreeClassifier {
   private tree = null;
   private verbose = true;
   private y = [];
+  private randomise = false;
 
-  constructor({ featureLabels = null, verbose = true }) {
+  constructor({ featureLabels = null, verbose = true, randomise = false }) {
     this.featureLabels = featureLabels;
     this.verbose = verbose;
+    this.randomise = randomise;
   }
   /**
    * Split rows into true and false according to quesiton.match result
@@ -162,54 +164,27 @@ export class DecisionTreeClassifier {
    * Find the best split
 	 * @param X
 	 * @param y
+   * @param {boolean} randomise
 	 * @returns {{bestGain: number; bestQuestion: any}}
 	 */
   public findBestSplit(X, y) {
     const uncertainty = this.gini(y);
-    const nFeatures = _.size(X[0]);
+    let nFeatures = _.size(X[0]);
     let bestGain = 0;
     let bestQuestion = null;
 
-    for (let col = 0; col < nFeatures; col++) {
-      const uniqFeatureValues = _.uniqBy(_.map(X, row => row[col]), x => x);
-      _.forEach(uniqFeatureValues, (feature) => {
-        const question = new Question(this.featureLabels, col, feature);
-
-        // Try splitting the dataset
-        const { trueY, falseY } = this.partition(X, y, question);
-
-        // Skip this dataset if it does not divide
-        if (_.size(trueY) === 0 || _.size(falseY) === 0) {
-          return;
-        }
-
-        // Calculate information gained from this split
-        const gain = this.infoGain(trueY, falseY, uncertainty);
-        if (this.verbose) {
-          console.log(`fn: ${col} fval: ${feature} gini: ${gain}`);
-        }
-        if (gain >= bestGain) {
-          bestGain = gain;
-          bestQuestion = question;
-        }
-      });
-    }
-    return { bestGain, bestQuestion };
-  }
-
-  public findBestSplit2(X, y) {
-    const uncertainty = this.gini(y);
-    const nFeatures = _.size(X[0]);
-    let bestGain = 0;
-    let bestQuestion = null;
-
-    // list of features is created by randomly selecting feature indices and adding them to a list
     let features = [];
-    while(features.length < nFeatures) {
-      const index = _.random(nFeatures);
-      if (!_.includes(features, index)) {
-        features.push(index);
-      }
+    console.log('checking randomize', this.randomise);
+    if (this.randomise) {
+      // a list of features is created by randomly selecting feature indices and adding them to a list
+			while (features.length < nFeatures) {
+				const index = _.random(nFeatures);
+				if (!_.includes(features, index)) {
+					features.push(index);
+				}
+			}
+		} else {
+      features = _.range(0, _.size(X[0]));
     }
     _.forEach(features, (col) => {
       const uniqFeatureValues = _.uniqBy(_.map(X, row => row[col]), x => x);
@@ -234,7 +209,7 @@ export class DecisionTreeClassifier {
           bestQuestion = question;
         }
       });
-    })
+    });
     return { bestGain, bestQuestion };
   }
 
