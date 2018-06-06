@@ -61,6 +61,7 @@ export class Leaf {
   public predictions = {};
   constructor(y) {
     this.predictions = classCounts(y);
+    console.log('built pred', this.predictions);
   }
 }
 
@@ -82,9 +83,11 @@ export class DecisionNode {
 export class DecisionTreeClassifier {
   private featureLabels = null;
   private tree = null;
+  private verbose = true;
 
-  constructor({ featureLabels = null }) {
+  constructor({ featureLabels = null, verbose = true }) {
     this.featureLabels = featureLabels;
+    this.verbose = verbose;
   }
   /**
    * Split rows into true and false according to quesiton.match result
@@ -185,7 +188,9 @@ export class DecisionTreeClassifier {
 
         // Calculate information gained from this split
         const gain = this.infoGain(trueY, falseY, uncertainty);
-
+        if (this.verbose) {
+          console.log(`fn: ${col} fval: ${feature} gini: ${gain}`);
+        }
         if (gain >= bestGain) {
           bestGain = gain;
           bestQuestion = question;
@@ -197,7 +202,6 @@ export class DecisionTreeClassifier {
 
   private buildTree({ X, y }) {
     const { bestGain, bestQuestion } = this.findBestSplit(X, y);
-
     if (bestGain === 0) {
       return new Leaf(y);
     }
@@ -241,6 +245,7 @@ export class DecisionTreeClassifier {
 	 * @private
 	 */
   private _predict({ row, node }) {
+    console.log('predict checking node', node, '\n row ', row);
     if (node instanceof  Leaf) {
       return node.predictions;
     }
