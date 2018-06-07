@@ -5,3 +5,5 @@ const y = [0, 1, 2, 3, 7];
 
 const randomForest = new RandomForestClassifier();
 randomForest.fit({ X, y });
+
+console.log(randomForest.predict([[ 0, 3 ], [2, 1]]));
