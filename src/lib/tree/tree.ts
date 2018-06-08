@@ -84,7 +84,6 @@ export class DecisionTreeClassifier {
   private featureLabels = null;
   private tree = null;
   private verbose = true;
-  private y = [];
   private randomise = false;
 
   constructor({ featureLabels = null, verbose = true, randomise = false }) {
@@ -238,7 +237,7 @@ export class DecisionTreeClassifier {
 	 * @returns {Leaf | DecisionNode}
 	 */
   public fit({ X, y }) {
-    this.y = y;
+    // this.y = y;
     this.tree = this.buildTree({ X, y });
   }
 

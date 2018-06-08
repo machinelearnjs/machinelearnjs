@@ -12,3 +12,6 @@ package-lock.json
 
 # Build
 .Trash-0
+
+# tsdoc
+docs/out

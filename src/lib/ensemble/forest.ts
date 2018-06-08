@@ -3,15 +3,10 @@ import { DecisionTreeClassifier } from "../tree/tree";
 
 export class RandomForestClassifier {
 	private trees = [];
-	private y = null;
 	private nEstimator;
-	private criterion;
-	private randomState;
 
-	constructor(props = { nEstimator: 10, criterion: 'gini', randomState: null }) {
+	constructor(props = { nEstimator: 10 }) {
 		this.nEstimator = props.nEstimator;
-		this.criterion = props. criterion;
-		this.randomState = props.randomState;
 	}
 
 	/**
@@ -20,7 +15,6 @@ export class RandomForestClassifier {
 	 * @param {any} y
 	 */
 	public fit({ X, y }) {
-		this.y = y;
 		this.trees = _.reduce(_.range(0, this.nEstimator), (sum) => {
 			const tree = new DecisionTreeClassifier({ featureLabels: null, randomise: true });
 			tree.fit({ X, y });
