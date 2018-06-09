@@ -42,10 +42,10 @@ export class CountVectorizer {
     return this.countVocab(doc);
   }
 
-	/**
+  /**
    * Array mapping from feature integer indices to feature name
- 	 * @returns {Object}
-	 */
+   * @returns {Object}
+   */
   public getFeatureNames(): object {
     if (!this.internalVocabulary) {
       throw new Error(

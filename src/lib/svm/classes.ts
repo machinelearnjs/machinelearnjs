@@ -10,58 +10,58 @@ export type Kernel = 'LINEAR' | 'POLYNOMIAL' | 'RBF' | 'SIGMOID';
  * Notice type is disabled as they are set statically from children classes
  */
 export interface Options {
-	/**
-	 * Degree of polynomial, test for polynomial kernel
-	 */
+  /**
+   * Degree of polynomial, test for polynomial kernel
+   */
   degree: number;
-	/**
-	 * Type of Kernel
-	 */
-	kernel: Kernel;
-	/**
-	 * Gamma parameter of the RBF, Polynomial and Sigmoid kernels. Default value is 1/num_features
-	 */
+  /**
+   * Type of Kernel
+   */
+  kernel: Kernel;
+  /**
+   * Gamma parameter of the RBF, Polynomial and Sigmoid kernels. Default value is 1/num_features
+   */
   gamma: number | null;
-	/**
-	 * coef0 parameter for Polynomial and Sigmoid kernels
-	 */
-	coef0: number;
-	/**
-	 * Cost parameter, for C SVC, Epsilon SVR and NU SVR
-	 */
+  /**
+   * coef0 parameter for Polynomial and Sigmoid kernels
+   */
+  coef0: number;
+  /**
+   * Cost parameter, for C SVC, Epsilon SVR and NU SVR
+   */
   cost: number;
-	/**
-	 * For NU SVC and NU SVR
-	 */
-	nu: number;
-	/**
-	 * For epsilon SVR
-	 */
+  /**
+   * For NU SVC and NU SVR
+   */
+  nu: number;
+  /**
+   * For epsilon SVR
+   */
   epsilon: number;
-	/**
-	 * Cache size in MB
-	 */
-	cacheSize: number;
-	/**
-	 * Tolerance
-	 */
+  /**
+   * Cache size in MB
+   */
+  cacheSize: number;
+  /**
+   * Tolerance
+   */
   tolerance: number;
-	/**
-	 * Use shrinking euristics (faster)
-	 */
+  /**
+   * Use shrinking euristics (faster)
+   */
   shrinking: boolean;
-	/**
-	 * weather to train SVC/SVR model for probability estimates,
-	 */
-	probabilityEstimates: boolean;
-	/**
-	 * Set weight for each possible class
-	 */
+  /**
+   * weather to train SVC/SVR model for probability estimates,
+   */
+  probabilityEstimates: boolean;
+  /**
+   * Set weight for each possible class
+   */
   weight: object | null;
-	/**
-	 * Print info during training if false (aka verbose)
-	 */
-	quiet: boolean;
+  /**
+   * Print info during training if false (aka verbose)
+   */
+  quiet: boolean;
 }
 
 /**
@@ -98,12 +98,12 @@ export class BaseSVM {
     return svmResolver;
   }
 
-	/**
+  /**
    * Fit the model according to the given training data.
-	 * @param {any[]} X
-	 * @param {any[]} y
-	 * @returns {Promise<void>}
-	 */
+   * @param {any[]} X
+   * @param {any[]} y
+   * @returns {Promise<void>}
+   */
   public async fit({ X = [], y = [] }: { X: any[]; y: any[] }): Promise<void> {
     if (!this.type) {
       throw new Error(`SVM type is unspecified ${this.type}`);
@@ -128,34 +128,34 @@ export class BaseSVM {
     return this.svm.predict(X);
   }
 
-	/**
+  /**
    * Get Kernel name type using string Kernel name
-	 * @param SVM
-	 * @param {string} name
-	 * @returns {number}
-	 */
+   * @param SVM
+   * @param {string} name
+   * @returns {number}
+   */
   private getKernel(SVM, name: string): number {
     return _.get(SVM.KERNEL_TYPES, name);
   }
 
-	/**
+  /**
    * Get Kernel type using string type name
-	 * @param SVM
-	 * @param {string} name
-	 * @returns {number}
-	 */
+   * @param SVM
+   * @param {string} name
+   * @returns {number}
+   */
   private getType(SVM, name: string): number {
     return _.get(SVM.SVM_TYPES, name);
   }
 
-	/**
+  /**
    * Get a consolidated options including type and Kernel
-	 * @param SVM
-	 * @param {Options} options
-	 * @param {Type} type
-	 * @param {Kernel} kernel
-	 * @returns {Object}
-	 */
+   * @param SVM
+   * @param {Options} options
+   * @param {Type} type
+   * @param {Kernel} kernel
+   * @returns {Object}
+   */
   private processOptions(
     SVM,
     options: Options,
@@ -173,7 +173,6 @@ export class BaseSVM {
       }
     )(options);
   }
-
 }
 
 /**

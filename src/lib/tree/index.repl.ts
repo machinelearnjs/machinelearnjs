@@ -13,7 +13,6 @@ const y = ['Apple', 'Apple', 'Grape', 'Grape', 'Lemon'];
 const counts = classCounts(y);
 console.log('checking counts', counts);
 
-
 // Testing questions
 const q = new Question(features, 1, 3);
 
@@ -91,5 +90,5 @@ const X2 = [[0, 0], [1, 1]];
 const Y2 = [0, 1];
 
 decision2.fit({ X: X2, y: Y2 });
-const predictResult2 = decision2.predictOne({ row: [2., 2.] });
-console.log('checkehc',predictResult2);
+const predictResult2 = decision2.predictOne({ row: [2, 2] });
+console.log('checkehc', predictResult2);

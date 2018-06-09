@@ -6,10 +6,10 @@ import * as _ from 'lodash';
 export class LabelEncoder {
   private classes: any[];
 
-	/**
+  /**
    * Fit label encoder
-	 * @param {any[]} X
-	 */
+   * @param {any[]} X
+   */
   public fit(X: any[] = null): void {
     if (_.isEmpty(X)) {
       throw new Error('X cannot be empty!');

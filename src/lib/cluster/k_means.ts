@@ -1,7 +1,6 @@
 import * as _ from 'lodash';
 import * as kmeans from 'node-kmeans';
 
-
 // Data source: LinkedIn
 const data = [
   { company: 'Microsoft', size: 91259, revenue: 60420 },

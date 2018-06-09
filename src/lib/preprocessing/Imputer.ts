@@ -28,10 +28,10 @@ export class Imputer {
     this.means = [];
   }
 
-	/**
+  /**
    * Fit the imputer on X.
-	 * @param {any[]} X - Input data in array or sparse matrix format
-	 */
+   * @param {any[]} X - Input data in array or sparse matrix format
+   */
   public fit(X): void {
     const _X = this.copy ? _.clone(X) : X;
     const check = checkArray(_X);
@@ -61,11 +61,11 @@ export class Imputer {
     }
   }
 
-	/**
+  /**
    * Fit to data, then transform it.
-	 * @param {any[]} X - Input data in array or sparse matrix format
-	 * @returns {any[]}
-	 */
+   * @param {any[]} X - Input data in array or sparse matrix format
+   * @returns {any[]}
+   */
   public fit_transform(X: any[]): any[] {
     const _X: any[] = _.clone(X);
     if (this.strategy === 'mean' && this.axis === 0) {

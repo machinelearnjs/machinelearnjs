@@ -98,12 +98,12 @@ export class OneHotEncoder {
     return _.map(encoded, row => this.decodeRow(row, decoders));
   }
 
-	/**
+  /**
    * Decode an encoded row back into its original format
-	 * @param row
-	 * @param decoders
-	 * @returns {Object}
-	 */
+   * @param row
+   * @param decoders
+   * @returns {Object}
+   */
   private decodeRow(row, decoders): object {
     let i = 0;
     let numFieldsDecoded = 0;
@@ -191,12 +191,12 @@ export class OneHotEncoder {
     }
   }
 
-	/**
+  /**
    * Calculating the sample standard deviation (vs population stddev).
-	 * @param lst
-	 * @param {number} mean
-	 * @returns {number}
-	 */
+   * @param lst
+   * @param {number} mean
+   * @returns {number}
+   */
   private calculateStd = (lst, mean: number) => {
     const deviations = _.map(lst, (n: number) => Math.pow(n - mean, 2));
     return Math.pow(_.sum(deviations) / (lst.length - 1), 0.5);
@@ -308,11 +308,11 @@ export class MinMaxScaler {
     this.featureRange = featureRange;
   }
 
-	/**
+  /**
    * Compute the minimum and maximum to be used for later scaling.
-	 * @param {number[]} X - Array or sparse-matrix data input
-	 */
-	public fit(X: number[]): void {
+   * @param {number[]} X - Array or sparse-matrix data input
+   */
+  public fit(X: number[]): void {
     this.dataMax = _.max(X); // What if X is multi-dimensional?
     this.dataMin = _.min(X);
     this.featureMax = this.featureRange[1];
@@ -323,11 +323,11 @@ export class MinMaxScaler {
     this.baseMin = this.featureMin - this.dataMin * this.scale;
   }
 
-	/**
+  /**
    * Fit to data, then transform it.
-	 * @param {number[]} X
-	 * @returns {any[]}
-	 */
+   * @param {number[]} X
+   * @returns {any[]}
+   */
   public fit_transform(X: number[]): any[] {
     return X.map(x => x * this.scale).map(x => x + this.baseMin);
   }
