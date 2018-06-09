@@ -1,3 +1,7 @@
+/**
+ * @ignore
+ * @type {Array<string>}
+ */
 export const ENGLISH_STOP_WORDS = [
   'a',
   'about',

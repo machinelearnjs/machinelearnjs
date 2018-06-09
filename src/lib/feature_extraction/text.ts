@@ -5,11 +5,12 @@ import { ENGLISH_STOP_WORDS } from './stop_words';
 
 export class CountVectorizer {
   public vocabulary: object = {};
+  /** @ignore */
   private internalVocabulary: string[];
 
   /**
-   * fit simply calls fit_transform
-   * @param {string[]} doc
+   * Learn a vocabulary dictionary of all tokens in the raw documents.
+   * @param {string[]} doc - An array of strings
    * @returns {CountVectorizer}
    */
   public fit(doc: string[]): this {
@@ -19,7 +20,7 @@ export class CountVectorizer {
 
   /**
    * fit transform applies
-   * @param {string[]} doc
+   * @param {string[]} doc - An array of strings
    * @returns {number[][]}
    */
   public fit_transform(doc: string[]): number[] {
@@ -31,14 +32,20 @@ export class CountVectorizer {
   }
 
   /**
-   * Dynamically transforms a doc on demand
-   * @param {string[]} doc
+   * Transform documents to document-term matrix.
+   * Extract token counts out of raw text documents using the vocabulary
+   * fitted with fit or the one provided to the constructor.
+   * @param {string[]} doc - An array of strings
    * @returns {number[][]}
    */
   public transform(doc: string[]): number[] {
     return this.countVocab(doc);
   }
 
+	/**
+   * Array mapping from feature integer indices to feature name
+ 	 * @returns {Object}
+	 */
   public getFeatureNames(): object {
     if (!this.internalVocabulary) {
       throw new Error(
@@ -49,9 +56,8 @@ export class CountVectorizer {
   }
 
   /**
-   * Build a tokenizer / vectorizer
-   * TODO: Check if buildAnalyzer make sense
-   * @returns {(x?) => any}
+   * Build a tokenizer/vectorizer
+   * @returns {(x: string) => string[]}
    */
   public buildAnalyzer(): (x: string) => string[] {
     return x => this.preprocess(x, { removeSW: true });
@@ -89,6 +95,7 @@ export class CountVectorizer {
   }
 
   /**
+   * @ignore
    * Counting number of vocab occurences in the current token of a sentence
    * ['yoshua', 'bengio', 'deep', 'learning'] = vocabulary
    * ['yohua', 'bengio'] => tokens
@@ -131,6 +138,7 @@ export class CountVectorizer {
   }
 
   /**
+   * @ignore
    * preprocess a line of text by applying
    * 1) tokenization
    * 2) removing stopwords

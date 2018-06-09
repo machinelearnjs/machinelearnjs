@@ -1,10 +1,26 @@
-/* tslint:disable */
-import { LinearRegression } from './base';
+import * as SimpleLinearRegression from 'ml-regression-simple-linear';
 
-const lr = new LinearRegression();
+/**
+ * Ordinary least squares Linear Regression.
+ */
+export class LinearRegression {
+  private lr: any = null;
 
-const X = [0.5, 1, 1.5, 2, 2.5];
-const y = [0, 1, 2, 3, 4];
+	/**
+   * fit linear model
+	 * @param {any} X
+	 * @param {any} y
+	 */
+  public fit({ X, y }: { X: number[], y: number[] }): void {
+    this.lr = new SimpleLinearRegression(X, y);
+  }
 
-lr.fit({ X, y });
-console.log('checking pred X:', lr.predict(3));
+	/**
+   * Predict using the linear model
+	 * @param {number} X
+	 * @returns {number}
+	 */
+  public predict(X: number): number {
+    return this.lr.predict(X);
+  }
+}

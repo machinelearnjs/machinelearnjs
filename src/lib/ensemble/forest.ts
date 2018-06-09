@@ -5,14 +5,18 @@ export class RandomForestClassifier {
 	private trees = [];
 	private nEstimator;
 
+	/**
+	 * RandomForestClassifier hey bro
+	 */
 	constructor(props = { nEstimator: 10 }) {
 		this.nEstimator = props.nEstimator;
 	}
 
 	/**
-	 * Fit data and build list of trees
-	 * @param {any} X
-	 * @param {any} y
+	 * Build a forest of trees from the training set (X, y).
+	 * @param {Array} X - array-like or sparse matrix of shape = [n_samples, n_features]
+	 * @param {Array} y - array-like, shape = [n_samples] or [n_samples, n_outputs]
+	 * @returns void
 	 */
 	public fit({ X, y }) {
 		this.trees = _.reduce(_.range(0, this.nEstimator), (sum) => {
@@ -20,12 +24,14 @@ export class RandomForestClassifier {
 			tree.fit({ X, y });
 			return _.concat(sum, [tree]);
 		}, []);
-		console.log('checking tres', this.trees.length);
 	}
 
 	/**
-	 * Predict classification
-	 * @param X
+	 * Predict class for X.
+	 *
+	 * The predicted class of an input sample is a vote by the trees in the forest, weighted by their probability estimates.
+	 * That is, the predicted class is the one with highest mean probability estimate across the trees.
+	 * @param {Array} X - array-like or sparse matrix of shape = [n_samples]
 	 * @returns {string[]}
 	 */
 	public predict(X) {
@@ -36,10 +42,11 @@ export class RandomForestClassifier {
 	}
 
 	/**
+	 * @hidden
 	 * Bagging prediction help method
 	 * According to the predictions returns by the trees, it will select the
 	 * class with the maximum number (votes)
-	 * @param {Array<any>} predictions
+	 * @param {Array<any>} predictions - List of initial predictions that may look like [ [1, 2], [1, 1] ... ]
 	 * @returns {string[]}
 	 */
 	private baggingPrediction(predictions: Array<any>) {

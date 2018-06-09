@@ -1,6 +1,6 @@
-# scikit-learn-js
+# Kalimdor.js
 
-scikit-learn-js is a Javascript, which is written in Typescript, port of 
+Kalimdor.js is a Javascript, which is written in Typescript, port of 
 famous Python Machine Learning library Scikit-learn. This Javascript library is
 still growing and many APIs are scheduled to be ported over or integrated. 
 
