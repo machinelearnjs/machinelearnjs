@@ -27,7 +27,6 @@ export interface Options {
 }
 
 export class BaseSVM {
-  // TODO: Create SVM type
   public svm: any;
   public type: Type;
   public options: Options;
@@ -109,6 +108,19 @@ export class BaseSVM {
   }
 }
 
+/**
+ * C-Support Vector Classification.
+ *
+ * The implementation is based on libsvm. The fit time complexity is more than
+ * quadratic with the number of samples which makes it hard to scale to dataset
+ * with more than a couple of 10000 samples.
+ *
+ * The multiclass support is handled according to a one-vs-one scheme.
+ *
+ * For details on the precise mathematical formulation of the provided kernel
+ * functions and how gamma, coef0 and degree affect each other, see the corresponding
+ * section in the narrative documentation: Kernel functions.
+ */
 export class SVC extends BaseSVM {
   constructor() {
     super();
@@ -116,6 +128,15 @@ export class SVC extends BaseSVM {
   }
 }
 
+/**
+ * Linear Support Vector Regression.
+ *
+ * Similar to SVR with parameter kernel=’linear’, but implemented in terms of
+ * liblinear rather than libsvm, so it has more flexibility in the choice of
+ * penalties and loss functions and should scale better to large numbers of samples.
+ *
+ * This class supports both dense and sparse input.
+ */
 export class SVR extends BaseSVM {
   constructor() {
     super();
