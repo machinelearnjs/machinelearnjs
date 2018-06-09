@@ -1,5 +1,9 @@
 import * as _ from 'lodash';
 
+/**
+ * Question used by decision tree algorithm to determine whether to split branch or not
+ * @ignore
+ */
 export class Question {
   private features = [];
   private column = null;
@@ -30,10 +34,10 @@ export class Question {
 }
 
 /**
- * According to the given targets array, count occurences into an object
- * Increment the value as they occur
- * @param targets
- * @returns {{}}
+ * According to the given targets array, count occurrences into an object.
+ * Also it increment the value as they occur.
+ * @param {any[]} targets - list of classes
+ * @returns {}
  */
 export function classCounts(targets) {
   // TODO: If targets is a multi-dimensional, automatically grab -1 index
@@ -54,8 +58,8 @@ export function classCounts(targets) {
 
 /**
  * A leaf node classifies data.
- *
  * It holds an object of data Class (e.g. Apple) -> count
+ * @ignore
  */
 export class Leaf {
   public predictions = {};
@@ -67,6 +71,7 @@ export class Leaf {
 
 /**
  * It holds a reference to the question, and to the two children nodes
+ * @ignore
  */
 export class DecisionNode {
   public question = null;
@@ -80,6 +85,9 @@ export class DecisionNode {
   }
 }
 
+/**
+ * A decision tree classifier.
+ */
 export class DecisionTreeClassifier {
   private featureLabels = null;
   private tree = null;
@@ -91,14 +99,14 @@ export class DecisionTreeClassifier {
     this.verbose = verbose;
     this.randomise = randomise;
   }
-  /**
-   * Split rows into true and false according to quesiton.match result
-   * @param X
-   * @param y
-   * @param {Question} question
-   * @returns {{trueRows: Array; falseRows: Array}}
-   */
-  public partition(
+	/**
+   * Partition X and y into true and false branches
+	 * @param X
+	 * @param y
+	 * @param {Question} question
+	 * @returns {{trueX: Array<any>; trueY: Array<any>; falseX: Array<any>; falseY: Array<any>}}
+	 */
+  private partition(
     X,
     y,
     question: Question
@@ -125,9 +133,10 @@ export class DecisionTreeClassifier {
   /**
    * Calculate the gini impurity of rows
    * Checkout: https://en.wikipedia.org/wiki/Decision_tree_learning#Gini_impurity
-   * @param targets
+	 * @param targets
+	 * @returns {number}
    */
-  public gini(targets) {
+  private gini(targets) {
     const counts = classCounts(targets);
     let impurity = 1;
     const keys = _.keys(counts);
@@ -154,19 +163,19 @@ export class DecisionTreeClassifier {
    * @param uncertainty
    * @returns {number}
    */
-  public infoGain(left, right, uncertainty) {
+  private infoGain(left, right, uncertainty) {
     const p = _.size(left) / (_.size(left) + _.size(right));
     return uncertainty - p * this.gini(left) - (1 - p) * this.gini(right);
   }
 
 	/**
-   * Find the best split
+   * Find the best split for the current X and y.
 	 * @param X
 	 * @param y
    * @param {boolean} randomise
 	 * @returns {{bestGain: number; bestQuestion: any}}
 	 */
-  public findBestSplit(X, y) {
+  private findBestSplit(X, y) {
     const uncertainty = this.gini(y);
     let nFeatures = _.size(X[0]);
     let bestGain = 0;
@@ -212,6 +221,12 @@ export class DecisionTreeClassifier {
     return { bestGain, bestQuestion };
   }
 
+	/**
+   * Interactively build tree until it reaches the terminal nodes
+	 * @param {any} X
+	 * @param {any} y
+	 * @returns {any}
+	 */
   private buildTree({ X, y }) {
     const { bestGain, bestQuestion } = this.findBestSplit(X, y);
     if (bestGain === 0) {
@@ -242,37 +257,24 @@ export class DecisionTreeClassifier {
   }
 
 	/**
-   * Public interface
+   * Predict one row
 	 * @param {any} row
-	 * @returns {{} | {} | any | any | {} | any | any}
+	 * @returns any[any[]]}
 	 */
   public predictOne({ row }) {
     return this._predict({ row, node: this.tree });
   }
 
 	/**
-   * Predict all X rows
-	 * @param {any} X
+   * Predict multiple rows
+	 * @param {any[]} X
 	 * @returns {any[]}
 	 */
   public predict({ X }) {
-    const predicted = _.map(X, (row) => {
-      const pred = this._predict({ row, node: this.tree });
-      return pred;
+    return _.map(X, (row) => {
+      return this._predict({ row, node: this.tree });
     });
-    /*
-    // TODO: Fix below and return accuracies
-    const actual = _.map(this.y, (target) => {
-      let returning = {};
-      // returning[target] = _.get(classCounted, target)
-      return returning;
-    })
-    const accuracies = this.accuracyMetrics({
-      actualRows: actual,
-      predRows: predicted
-    });
-    */
-    return predicted;
+    // TODO: Return accuracies as well
   }
 
 	/**
@@ -318,15 +320,18 @@ export class DecisionTreeClassifier {
   }
 
 	/**
-   * Public interface for print tree
+   * Public interface for printing the current tree
 	 * @param {any} spacing
 	 */
   public printTree(spacing = '') {
+    if (!this.tree) {
+      throw new Error('You cannot print an empty tree');
+    }
     this._printTree({ node: this.tree, spacing });
   }
 
 	/**
-   * Recursively print
+   * Recursively print the tree into console
 	 * @param {any} node
 	 * @param {any} spacing
 	 */
