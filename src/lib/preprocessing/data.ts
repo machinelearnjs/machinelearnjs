@@ -308,7 +308,11 @@ export class MinMaxScaler {
     this.featureRange = featureRange;
   }
 
-  public fit(X: number[]): void {
+	/**
+   * Compute the minimum and maximum to be used for later scaling.
+	 * @param {number[]} X - Array or sparse-matrix data input
+	 */
+	public fit(X: number[]): void {
     this.dataMax = _.max(X); // What if X is multi-dimensional?
     this.dataMin = _.min(X);
     this.featureMax = this.featureRange[1];
@@ -319,11 +323,30 @@ export class MinMaxScaler {
     this.baseMin = this.featureMin - this.dataMin * this.scale;
   }
 
+	/**
+   * Fit to data, then transform it.
+	 * @param {number[]} X
+	 * @returns {any[]}
+	 */
   public fit_transform(X: number[]): any[] {
     return X.map(x => x * this.scale).map(x => x + this.baseMin);
   }
 }
 
+/**
+ * Binarize data (set feature values to 0 or 1) according to a threshold
+ *
+ * Values greater than the threshold map to 1, while values less than or equal
+ * to the threshold map to 0. With the default threshold of 0, only positive values map to 1.
+ *
+ * Binarization is a common operation on text count data where the analyst ca
+ * decide to only consider the presence or absence of a feature rather than a
+ * quantified number of occurrences for instance.
+ *
+ * It can also be used as a pre-processing step for estimators that consider
+ * boolean random variables (e.g. modelled using the Bernoulli distribution in
+ * a Bayesian setting).
+ */
 export class Binarizer {
   private threshold: number;
   private copy: boolean;
