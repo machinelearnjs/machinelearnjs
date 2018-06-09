@@ -278,6 +278,22 @@ export class OneHotEncoder {
   }
 }
 
+/**
+ * Transforms features by scaling each feature to a given range.
+ *
+ * This estimator scales and translates each feature individually such that it is in the given range on the training set, i.e. between zero and one.
+ *
+ * The transformation is given by:
+ *
+ * ```
+ * X_std = (X - X.min(axis=0)) / (X.max(axis=0) - X.min(axis=0))
+ * X_scaled = X_std * (max - min) + min
+ * ```
+ *
+ * where min, max = feature_range.
+ *
+ * This transformation is often used as an alternative to zero mean, unit variance scaling.
+ */
 export class MinMaxScaler {
   private featureRange;
   private dataMax: number;
