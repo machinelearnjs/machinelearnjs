@@ -10,22 +10,63 @@ export type Kernel = 'LINEAR' | 'POLYNOMIAL' | 'RBF' | 'SIGMOID';
  * Notice type is disabled as they are set statically from children classes
  */
 export interface Options {
-  // type:Type;
-  degree: number; // Degree of polynomial, test for polynomial kernel
-  kernel: Kernel;
-  gamma: number | null; // Gamma parameter of the RBF, Polynomial and Sigmoid kernels. Default value is 1/num_features
-  coef0: number; // coef0 parameter for Polynomial and Sigmoid kernels
-  cost: number; // Cost parameter, for C SVC, Epsilon SVR and NU SVR
-  nu: number; // For NU SVC and NU SVR
-  epsilon: number; // For epsilon SVR
-  cacheSize: number; // Cache size in MB
-  tolerance: number; // Tolerance
-  shrinking: boolean; // Use shrinking euristics (faster),
-  probabilityEstimates: boolean; // weather to train SVC/SVR model for probability estimates,
-  weight: object | null; // Set weight for each possible class
-  quiet: boolean; // Print info during training if false (aka verbose)
+	/**
+	 * Degree of polynomial, test for polynomial kernel
+	 */
+  degree: number;
+	/**
+	 * Type of Kernel
+	 */
+	kernel: Kernel;
+	/**
+	 * Gamma parameter of the RBF, Polynomial and Sigmoid kernels. Default value is 1/num_features
+	 */
+  gamma: number | null;
+	/**
+	 * coef0 parameter for Polynomial and Sigmoid kernels
+	 */
+	coef0: number;
+	/**
+	 * Cost parameter, for C SVC, Epsilon SVR and NU SVR
+	 */
+  cost: number;
+	/**
+	 * For NU SVC and NU SVR
+	 */
+	nu: number;
+	/**
+	 * For epsilon SVR
+	 */
+  epsilon: number;
+	/**
+	 * Cache size in MB
+	 */
+	cacheSize: number;
+	/**
+	 * Tolerance
+	 */
+  tolerance: number;
+	/**
+	 * Use shrinking euristics (faster)
+	 */
+  shrinking: boolean;
+	/**
+	 * weather to train SVC/SVR model for probability estimates,
+	 */
+	probabilityEstimates: boolean;
+	/**
+	 * Set weight for each possible class
+	 */
+  weight: object | null;
+	/**
+	 * Print info during training if false (aka verbose)
+	 */
+	quiet: boolean;
 }
 
+/**
+ * BaseSVM class used by all parent SVM classes that are based on libsvm
+ */
 export class BaseSVM {
   public svm: any;
   public type: Type;
@@ -49,15 +90,73 @@ export class BaseSVM {
     };
   }
 
-  public getKernel(SVM, name: string): number {
+  /**
+   * Load SVM object by resolving the default promise
+   * @returns {Promise<any>}
+   */
+  public async loadSVM(): Promise<any> {
+    return svmResolver;
+  }
+
+	/**
+   * Fit the model according to the given training data.
+	 * @param {any[]} X
+	 * @param {any[]} y
+	 * @returns {Promise<void>}
+	 */
+  public async fit({ X = [], y = [] }: { X: any[]; y: any[] }): Promise<void> {
+    if (!this.type) {
+      throw new Error(`SVM type is unspecified ${this.type}`);
+    }
+    const SVM = await this.loadSVM();
+    const options = this.processOptions(
+      SVM,
+      this.options,
+      this.type,
+      this.options.kernel
+    );
+    this.svm = new SVM(options);
+    this.svm.train(X, y);
+  }
+
+  /**
+   * Predict using the linear model
+   * @param {number[]} X
+   * @returns {number[]}
+   */
+  public predict(X: number[]): number[] {
+    return this.svm.predict(X);
+  }
+
+	/**
+   * Get Kernel name type using string Kernel name
+	 * @param SVM
+	 * @param {string} name
+	 * @returns {number}
+	 */
+  private getKernel(SVM, name: string): number {
     return _.get(SVM.KERNEL_TYPES, name);
   }
 
-  public getType(SVM, name: string): number {
+	/**
+   * Get Kernel type using string type name
+	 * @param SVM
+	 * @param {string} name
+	 * @returns {number}
+	 */
+  private getType(SVM, name: string): number {
     return _.get(SVM.SVM_TYPES, name);
   }
 
-  public processOptions(
+	/**
+   * Get a consolidated options including type and Kernel
+	 * @param SVM
+	 * @param {Options} options
+	 * @param {Type} type
+	 * @param {Kernel} kernel
+	 * @returns {Object}
+	 */
+  private processOptions(
     SVM,
     options: Options,
     type: Type,
@@ -75,37 +174,6 @@ export class BaseSVM {
     )(options);
   }
 
-  /**
-   * Load SVM object by resolving the default promise
-   * @returns {Promise<any>}
-   */
-  public async loadSVM(): Promise<any> {
-    return svmResolver;
-  }
-
-  public async fit({ X = [], y = [] }: { X: any[]; y: any[] }): Promise<void> {
-    if (!this.type) {
-      throw new Error(`SVM type is unspecified ${this.type}`);
-    }
-    const SVM = await this.loadSVM();
-    const options = this.processOptions(
-      SVM,
-      this.options,
-      this.type,
-      this.options.kernel
-    );
-    this.svm = new SVM(options);
-    this.svm.train(X, y);
-  }
-
-  /**
-   * Default predict
-   * @param {number[]} X
-   * @returns {number[]}
-   */
-  public predict(X: number[]): number[] {
-    return this.svm.predict(X);
-  }
 }
 
 /**
@@ -144,6 +212,13 @@ export class SVR extends BaseSVM {
   }
 }
 
+/**
+ * Unsupervised Outlier Detection.
+ *
+ * Estimate the support of a high-dimensional distribution.
+ *
+ * The implementation is based on libsvm.
+ */
 export class OneClassSVM extends BaseSVM {
   constructor() {
     super();
@@ -151,6 +226,13 @@ export class OneClassSVM extends BaseSVM {
   }
 }
 
+/**
+ * Nu-Support Vector Classification.
+ *
+ * Similar to SVC but uses a parameter to control the number of support vectors.
+ *
+ * The implementation is based on libsvm.
+ */
 export class NuSVC extends BaseSVM {
   constructor() {
     super();
@@ -158,6 +240,15 @@ export class NuSVC extends BaseSVM {
   }
 }
 
+/**
+ * Nu Support Vector Regression.
+ *
+ * Similar to NuSVC, for regression, uses a parameter nu to control the number
+ * of support vectors. However, unlike NuSVC, where nu replaces C, here nu
+ * replaces the parameter epsilon of epsilon-SVR.
+ *
+ * The implementation is based on libsvm.
+ */
 export class NuSVR extends BaseSVM {
   constructor() {
     super();
