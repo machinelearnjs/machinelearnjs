@@ -34,23 +34,36 @@ interface NumberOneHot {
   decode: NumberOneHotDecoder;
 }
 
+/**
+ * Encode categorical integer features using a one-hot aka one-of-K scheme.
+ *
+ * The input to this transformer should be a matrix of integers, denoting the
+ * values taken on by categorical (discrete) features. The output will be a sparse
+ * matrix where each column corresponds to one possible value of one feature.
+ * It is assumed that input features take on values in the range [0, n_values).
+ *
+ * This encoding is needed for feeding categorical data to many
+ * scikit-learn estimators, notably linear models and SVMs with the standard kernels.
+ *
+ * Note: a one-hot encoding of y labels should use a LabelBinarizer instead.
+ */
 export class OneHotEncoder {
   /**
-   * encode
+   * encode data according to dataKeys and labelKeys
    *
    * @param data - list of records to encode
-   * @param opts - dataKeys: independent variables, labelKeys: dependent variables; mandatory
+   * @param options - dataKeys: independent variables, labelKeys: dependent variables; mandatory
    * @return {{data: Array, decoders: Array}} - see readme for full explanation
    */
   public encode(
     data,
-    opts = { dataKeys: null, labelKeys: null }
+    options = { dataKeys: null, labelKeys: null }
   ): { data: any[]; decoders: any[] } {
-    const labelKeys = opts.labelKeys;
+    const labelKeys = options.labelKeys;
     const decoders = [];
 
     // shortcut to allow caller to default to "all non-label keys are data keys"
-    const dataKeys = opts.dataKeys ? opts.dataKeys : _.keys(data[0]);
+    const dataKeys = options.dataKeys ? options.dataKeys : _.keys(data[0]);
     // maybe a little too clever but also the simplest;
     // serialize every value for a given data key, then zip the results back up into a (possibly nested) array
     const transform = (keys: string[]) =>
@@ -79,20 +92,19 @@ export class OneHotEncoder {
   }
 
   /**
-   * decode
-   *
-   * Transform the encoded data back into its original format
+   * Decode the encoded data back into its original format
    */
   public decode(encoded, decoders): any[] {
     return _.map(encoded, row => this.decodeRow(row, decoders));
   }
 
-  /**
-   * decodeRow
-   *
-   * Transform an encoded row back into its original format
-   */
-  public decodeRow(row, decoders): object {
+	/**
+   * Decode an encoded row back into its original format
+	 * @param row
+	 * @param decoders
+	 * @returns {Object}
+	 */
+  private decodeRow(row, decoders): object {
     let i = 0;
     let numFieldsDecoded = 0;
     const record = {};
@@ -123,30 +135,6 @@ export class OneHotEncoder {
       i += decoder.offset ? decoder.offset : 1;
     }
     return record;
-    /*
-    // Performs the inverse operation of "encode".
-    function getValue(
-      X: Array<string | boolean | number>,
-      ix: number,
-      decoder: any
-    ):
-      // Currently supported types
-      any
-    {
-
-      switch (decoder.type) {
-        case 'string': {
-          const data = X.slice(ix, ix + decoder.offset);
-          return decoder.lookupTable[_.indexOf(data, 1)];
-        }
-        case 'boolean':
-          return !!X[ix];
-        case 'number':
-          return decoder.std * X[ix] + decoder.mean;
-        default:
-          return X[ix];
-      }
-    } */
   }
 
   /**
@@ -203,14 +191,19 @@ export class OneHotEncoder {
     }
   }
 
-  // NOTE: this is calculating the sample standard deviation (vs population stddev).
-  // Shouldn't matter for our purposes as long as it's consistent.
+	/**
+   * Calculating the sample standard deviation (vs population stddev).
+	 * @param lst
+	 * @param {number} mean
+	 * @returns {number}
+	 */
   private calculateStd = (lst, mean: number) => {
     const deviations = _.map(lst, (n: number) => Math.pow(n - mean, 2));
     return Math.pow(_.sum(deviations) / (lst.length - 1), 0.5);
   };
 
   /**
+   * One hot encode a number value
    *
    * @param type
    * @param key
@@ -227,9 +220,12 @@ export class OneHotEncoder {
   }
 
   /**
+   * One hot encode a boolean value
+   *
    * Example usage:
    * boolEncoder.encode(true) => 1
    * boolEncoder.encode(false) => 0
+   *
    * @param type
    * @param key
    * @param values
@@ -243,7 +239,10 @@ export class OneHotEncoder {
   }
 
   /**
+   * One hot encode a string value
+   *
    * Example for internal reference (unnecessary details for those just using this module)
+   *
    * const encoder = buildOneHot(['RAIN', 'RAIN', 'SUN'])
    * // encoder == { encode: () => ... , lookupTable: ['RAIN', 'SUN'] }
    * encoder.encode('SUN')  // [0, 1]

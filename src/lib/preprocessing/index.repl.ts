@@ -2,7 +2,6 @@
 import { OneHotEncoder, MinMaxScaler } from './data';
 
 // Playing around with onehotencoder
-console.log('Playing with one hot encoder');
 const enc = new OneHotEncoder();
 const planetList = [
   { planet: 'mars', isGasGiant: false, value: 10 },

@@ -2,6 +2,9 @@ import * as _ from 'lodash';
 import math from '../utils/MathExtra';
 import { checkArray } from '../utils/validation';
 
+/**
+ * Imputation transformer for completing missing values.
+ */
 export class Imputer {
   private missingValues: number | null;
   private strategy: string;
@@ -10,14 +13,6 @@ export class Imputer {
   private copy: boolean;
   private means: number[];
 
-  /**
-   *
-   * @param {any} missingValues
-   * @param {string} strategy
-   * @param {number} axis   0 = column axis & 1 = row axis
-   * @param {number} verbose
-   * @param {boolean} copy
-   */
   constructor({
     missingValues = null,
     strategy = 'mean',
@@ -33,20 +28,24 @@ export class Imputer {
     this.means = [];
   }
 
-  public fit(_X): void {
-    const X = this.copy ? _.clone(_X) : _X;
-    const check = checkArray(X);
+	/**
+   * Fit the imputer on X.
+	 * @param {any[]} X - Input data in array or sparse matrix format
+	 */
+  public fit(X): void {
+    const _X = this.copy ? _.clone(X) : X;
+    const check = checkArray(_X);
     if (!check.isArray) {
       throw new Error('X is not an array!');
     }
-    const rowLen = math.contrib.size(X, 0);
-    const colLen = math.contrib.size(X, 1);
+    const rowLen = math.contrib.size(_X, 0);
+    const colLen = math.contrib.size(_X, 1);
     const rowRange = math.contrib.range(0, rowLen);
     const colRange = math.contrib.range(0, colLen);
     if (this.strategy === 'mean') {
       if (this.axis === 0) {
         const colNumbers: any = _.map(colRange, col =>
-          math.subset(X, math.index(rowRange, col))
+          math.subset(_X, math.index(rowRange, col))
         );
         this.means = this.calcArrayMean(colNumbers, [
           'flatten',
@@ -54,7 +53,7 @@ export class Imputer {
           'mean'
         ]);
       } else if (this.axis === 1) {
-        const rowNumbers = _.map(rowRange, row => _.get(X, `[${row}]`));
+        const rowNumbers = _.map(rowRange, row => _.get(_X, `[${row}]`));
         this.means = this.calcArrayMean(rowNumbers, ['filter', 'mean']);
       }
     } else {
@@ -62,6 +61,11 @@ export class Imputer {
     }
   }
 
+	/**
+   * Fit to data, then transform it.
+	 * @param {any[]} X - Input data in array or sparse matrix format
+	 * @returns {any[]}
+	 */
   public fit_transform(X: any[]): any[] {
     const _X: any[] = _.clone(X);
     if (this.strategy === 'mean' && this.axis === 0) {
@@ -102,9 +106,9 @@ export class Imputer {
    * @param matrix
    * @param {string[]} steps
    */
-  // TODO: Fix any return type
-  // TODO: Fix matrix type any
   private calcArrayMean = (matrix: any, steps: string[]): any =>
+    // TODO: Fix any return type
+    // TODO: Fix matrix type any
     _.reduce(
       steps,
       (result, step: string) => {
