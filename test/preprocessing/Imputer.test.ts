@@ -11,6 +11,15 @@ describe('Imputer', () => {
     expect(_.isEqual(result, expectedResult)).toBe(true);
   });
 
+  it('fit data with dimensions mismatching', () => {
+    const textX = [[2, 3], [1, 1, null], [2, 3, 1]];
+    const imp = new Imputer({ missingValues: null, axis: 0 });
+    expect(() => {
+      imp.fit(textX);
+      imp.fit_transform([[null, 2], [1, 2, 3], [null, 2, 1]]);
+    }).toThrow('Dimension mismatch (3 != 2)');
+  });
+
   it('fitting invalid data type should throw an error', () => {
     // String
     expect(() => {
