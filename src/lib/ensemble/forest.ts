@@ -18,7 +18,7 @@ export class RandomForestClassifier {
    * @param {Array} y - array-like, shape = [n_samples] or [n_samples, n_outputs]
    * @returns void
    */
-  public fit({ X, y }) {
+  public fit({ X, y }): void {
     this.trees = _.reduce(
       _.range(0, this.nEstimator),
       sum => {
@@ -41,8 +41,8 @@ export class RandomForestClassifier {
    * @param {Array} X - array-like or sparse matrix of shape = [n_samples]
    * @returns {string[]}
    */
-  public predict(X) {
-    let predictions = _.map(this.trees, tree => {
+  public predict(X): [] {
+    const predictions = _.map(this.trees, tree => {
       return tree.predict({ X });
     });
     return this.baggingPrediction(predictions);
@@ -56,13 +56,13 @@ export class RandomForestClassifier {
    * @param {Array<any>} predictions - List of initial predictions that may look like [ [1, 2], [1, 1] ... ]
    * @returns {string[]}
    */
-  private baggingPrediction(predictions: Array<any>) {
+  private baggingPrediction(predictions: any[]): [] {
     const counts = _.countBy(predictions, x => x);
     const countsArray = _.reduce(
       _.keys(counts),
-      (sum, key) => {
-        let returning = {};
-        returning[key] = counts[key];
+      (sum, k) => {
+        const returning = {};
+        returning[k] = counts[k];
         return _.concat(sum, returning);
       },
       []

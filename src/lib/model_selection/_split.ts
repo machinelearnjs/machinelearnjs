@@ -33,7 +33,6 @@ export class KFold {
         []
       );
       const trainIndex = _.pullAll(_.clone(xRange), testIndex);
-      console.log('train', trainIndex, 'test index', testIndex);
     });
   }
 }

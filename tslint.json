@@ -11,6 +11,7 @@
     "no-var-keyword": true,
     "no-parameter-reassignment": true,
     "typedef": [true, "call-signature"],
+    "prefer-for-of": false,
 
     // Immutability rules
     "readonly-keyword": false,

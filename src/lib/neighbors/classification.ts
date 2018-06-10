@@ -1,9 +1,9 @@
+import * as _ from 'lodash';
+import euclideanDistance from 'ml-distance-euclidean';
 import KDTree from './KDTree';
-import * as euclideanDistance from 'ml-distance-euclidean';
 
-interface Options {
-  distance: (any) => any;
-  k: number;
+interface KNCOptions {
+  distance: () => any | null;
 }
 
 export class KNeighborsClassifier {
@@ -11,7 +11,7 @@ export class KNeighborsClassifier {
   private k = null;
   private classes = null;
   private isEuclidean = null;
-  private options: Options;
+  private options: KNCOptions;
 
   /**
    * @param {Array} dataset
@@ -20,11 +20,11 @@ export class KNeighborsClassifier {
    * @param {number} [options.k=numberOfClasses + 1] - Number of neighbors to classify.
    * @param {function} [options.distance=euclideanDistance] - Distance function that takes two parameters.
    */
-  constructor(options = { distance: null, k: 0 }) {
+  constructor(options: KNCOptions = { distance: null, k: 0 }) {
     this.options = options;
   }
 
-  public fit({ X, y }) {
+  public fit({ X, y }): void {
     if (X === true) {
       const model = y;
       this.kdTree = new KDTree(model.kdTree, this.options);
@@ -36,7 +36,8 @@ export class KNeighborsClassifier {
 
     const classes = new Set(y);
 
-    const { distance = euclideanDistance, k = classes.size + 1 } = this.options;
+    const distance = _.get(this.options, 'distance', euclideanDistance);
+    const k = _.get(this.options, 'k', classes.size + 1);
 
     const points = new Array(X.length);
     for (let i = 0; i < points.length; ++i) {
@@ -59,7 +60,7 @@ export class KNeighborsClassifier {
    * @param {function} distance=euclideanDistance - distance function must be provided if the model wasn't trained with euclidean distance.
    * @return {KNN}
    */
-  public load(model, distance = euclideanDistance) {
+  public load(model, distance = euclideanDistance): KNeighborsClassifier {
     if (model.name !== 'KNN') {
       throw new Error('invalid model: ' + model.name);
     }
@@ -80,13 +81,19 @@ export class KNeighborsClassifier {
    * Return a JSON containing the kd-tree model.
    * @return {object} JSON KNN model.
    */
-  public toJSON() {
+  public toJSON(): {
+    classes: any[],
+    isEuclidean: boolean,
+    k: number,
+    kdTree: KDTree,
+    name: string
+  } {
     return {
-      name: 'KNN',
-      kdTree: this.kdTree,
-      k: this.k,
       classes: this.classes,
-      isEuclidean: this.isEuclidean
+      isEuclidean: this.isEuclidean,
+      k: this.k,
+      kdTree: this.kdTree,
+      name: 'KNN'
     };
   }
 
@@ -95,7 +102,7 @@ export class KNeighborsClassifier {
    * @param {Array} dataset
    * @return {Array} predictions
    */
-  public predict(dataset) {
+  public predict(dataset): {} {
     if (Array.isArray(dataset)) {
       if (typeof dataset[0] === 'number') {
         return getSinglePrediction(this, dataset);
@@ -114,7 +121,7 @@ export class KNeighborsClassifier {
   }
 }
 
-function getSinglePrediction(knn, currentCase) {
+function getSinglePrediction(knn, currentCase): {} {
   const nearestPoints = knn.kdTree.nearest(currentCase, knn.k);
   const pointsPerClass = {};
   let predictedClass = -1;
@@ -124,10 +131,9 @@ function getSinglePrediction(knn, currentCase) {
   for (const element of knn.classes) {
     pointsPerClass[element] = 0;
   }
-
   for (let i = 0; i < nearestPoints.length; ++i) {
-    let currentClass = nearestPoints[i][0][lastElement];
-    let currentPoints = ++pointsPerClass[currentClass];
+    const currentClass = nearestPoints[i][0][lastElement];
+    const currentPoints = ++pointsPerClass[currentClass];
     if (currentPoints > maxPoints) {
       predictedClass = currentClass;
       maxPoints = currentPoints;

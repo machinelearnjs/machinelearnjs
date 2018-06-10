@@ -67,6 +67,7 @@ export default class KDTree {
 
     function nearestSearch(node) {
       const dimension = dimensions[node.dimension];
+      console.log('metric', metric);
       const ownDistance = metric(point, node.obj);
       const linearPoint = {};
       let bestChild, linearDistance, otherChild, i;
@@ -89,6 +90,7 @@ export default class KDTree {
       linearDistance = metric(linearPoint, node.obj);
 
       if (node.right === null && node.left === null) {
+        console.log('checking peek', bestNodes.peek());
         if (bestNodes.size() < maxNodes || ownDistance < bestNodes.peek()[1]) {
           saveNode(node, ownDistance);
         }

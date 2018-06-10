@@ -1,6 +1,6 @@
 /* tslint:disable */
 
-import { DecisionTreeClassifier, Question, classCounts } from './tree';
+import { DecisionTreeClassifier } from './tree';
 
 const features = ['color', 'diameter', 'label'];
 const decision = new DecisionTreeClassifier({ featureLabels: features });
@@ -8,7 +8,7 @@ const decision = new DecisionTreeClassifier({ featureLabels: features });
 const X = [['Green', 3], ['Yellow', 3], ['Red', 1], ['Red', 1], ['Yellow', 3]];
 
 const y = ['Apple', 'Apple', 'Grape', 'Grape', 'Lemon'];
-
+/*
 // Class counts
 const counts = classCounts(y);
 console.log('checking counts', counts);
@@ -73,7 +73,7 @@ console.log(
 );
 
 const bestSplit2 = decision.findBestSplit(X, y);
-
+*/
 decision.fit({ X, y });
 decision.printTree();
 
@@ -91,4 +91,4 @@ const Y2 = [0, 1];
 
 decision2.fit({ X: X2, y: Y2 });
 const predictResult2 = decision2.predictOne({ row: [2, 2] });
-console.log('checkehc', predictResult2);
+console.log('checking predict 2', predictResult2);

@@ -1,5 +1,11 @@
 import * as _ from 'lodash';
 
+export interface Options {
+  featureLabels?: null | any[];
+  verbose?: boolean;
+  randomise?: boolean;
+}
+
 /**
  * Question used by decision tree algorithm to determine whether to split branch or not
  * @ignore
@@ -15,7 +21,7 @@ export class Question {
     this.value = value;
   }
 
-  public match(example) {
+  public match(example): boolean {
     const val = example[this.column];
     if (_.isNumber(val)) {
       return val >= this.value;
@@ -41,7 +47,7 @@ export class Question {
  * @param {any[]} targets - list of classes
  * @returns {}
  */
-export function classCounts(targets) {
+export function classCounts(targets): {} {
   // TODO: If targets is a multi-dimensional, automatically grab -1 index
 
   return _.reduce(
@@ -64,7 +70,7 @@ export function classCounts(targets) {
  * @ignore
  */
 export class Leaf {
-  public predictions = {};
+  public predictions = [];
   constructor(y) {
     // this.predictions = classCounts(y);
     this.predictions = y;
@@ -96,11 +102,84 @@ export class DecisionTreeClassifier {
   private verbose = true;
   private randomise = false;
 
-  constructor({ featureLabels = null, verbose = true, randomise = false }) {
-    this.featureLabels = featureLabels;
-    this.verbose = verbose;
-    this.randomise = randomise;
+  constructor(options: Options) {
+    this.featureLabels = _.get(options, 'featureLabels', null);
+    this.verbose = _.get(options, 'verbose', false);
+    this.randomise = _.get(options, 'randomise', false);
   }
+
+  /**
+   * Fit date, which builds a tree
+   * @param {any} X
+   * @param {any} y
+   * @returns {Leaf | DecisionNode}
+   */
+  public fit({ X, y }): void {
+    // this.y = y;
+    this.tree = this.buildTree({ X, y });
+  }
+
+  /**
+   * Predict one row
+   * @param {any} row
+   * @returns any[any[]]}
+   */
+  public predictOne({ row }): any {
+    // TODO: Fix any return type
+    return this._predict({ row, node: this.tree });
+  }
+
+  /**
+   * Predict multiple rows
+   * @param {any[]} X
+   * @returns {any[]}
+   */
+  public predict({ X }): any {
+    // TODO: Fix any return type
+    return _.map(X, row => {
+      return this._predict({ row, node: this.tree });
+    });
+    // TODO: Return accuracies as well
+  }
+
+  /**
+   * Measure accuracy between actual row (X) vs predicted rows
+   * @param {any} actualRows
+   * @param {any} predRows
+   * @returns {number}
+   */
+  public accuracyMetrics({ actualRows, predRows }): number {
+    let correct = 0;
+    const actualRowsLen = _.size(actualRows);
+    const predRowsLen = _.size(predRows);
+    if (actualRowsLen !== predRowsLen) {
+      throw Error('Actual rows and predicted rows are different in length');
+    }
+    const predRowsRange = _.range(0, predRowsLen);
+    correct = _.reduce(
+      predRowsRange,
+      (sum, index) => {
+        if (_.isEqual(actualRows[index], predRows[index])) {
+          return sum + 1;
+        }
+        return sum;
+      },
+      correct
+    );
+    return correct / actualRowsLen * 100.0;
+  }
+
+  /**
+   * Public interface for printing the current tree
+   * @param {any} spacing
+   */
+  public printTree(spacing = ''):void {
+    if (!this.tree) {
+      throw new Error('You cannot print an empty tree');
+    }
+    this._printTree({ node: this.tree, spacing });
+  }
+
   /**
    * Partition X and y into true and false branches
    * @param X
@@ -113,15 +192,15 @@ export class DecisionTreeClassifier {
     y,
     question: Question
   ): {
-    trueX: Array<any>;
-    trueY: Array<any>;
-    falseX: Array<any>;
-    falseY: Array<any>;
+    trueX: any[];
+    trueY: any[];
+    falseX: any[];
+    falseY: any[];
   } {
-    let trueX = [];
-    let trueY = [];
-    let falseX = [];
-    let falseY = [];
+    const trueX = [];
+    const trueY = [];
+    const falseX = [];
+    const falseY = [];
     const xLen = _.size(X);
     _.forEach(_.range(0, xLen), xIndex => {
       const row = X[xIndex];
@@ -143,7 +222,7 @@ export class DecisionTreeClassifier {
    * @param targets
    * @returns {number}
    */
-  private gini(targets) {
+  private gini(targets): number {
     const counts = classCounts(targets);
     let impurity = 1;
     const keys = _.keys(counts);
@@ -154,7 +233,7 @@ export class DecisionTreeClassifier {
         throw Error('Invalid class count detected!');
       }
 
-      let probOfClass = count / _.size(targets);
+      const probOfClass = count / _.size(targets);
       impurity -= Math.pow(probOfClass, 2);
     });
     return impurity;
@@ -170,7 +249,7 @@ export class DecisionTreeClassifier {
    * @param uncertainty
    * @returns {number}
    */
-  private infoGain(left, right, uncertainty) {
+  private infoGain(left, right, uncertainty): number {
     const p = _.size(left) / (_.size(left) + _.size(right));
     return uncertainty - p * this.gini(left) - (1 - p) * this.gini(right);
   }
@@ -182,14 +261,13 @@ export class DecisionTreeClassifier {
    * @param {boolean} randomise
    * @returns {{bestGain: number; bestQuestion: any}}
    */
-  private findBestSplit(X, y) {
+  private findBestSplit(X, y): { bestGain: number, bestQuestion: Question } {
     const uncertainty = this.gini(y);
-    let nFeatures = _.size(X[0]);
+    const nFeatures = _.size(X[0]);
     let bestGain = 0;
     let bestQuestion = null;
 
     let features = [];
-    console.log('checking randomize', this.randomise);
     if (this.randomise) {
       // a list of features is created by randomly selecting feature indices and adding them to a list
       while (features.length < nFeatures) {
@@ -217,7 +295,7 @@ export class DecisionTreeClassifier {
         // Calculate information gained from this split
         const gain = this.infoGain(trueY, falseY, uncertainty);
         if (this.verbose) {
-          console.log(`fn: ${col} fval: ${feature} gini: ${gain}`);
+          console.info(`fn: ${col} fval: ${feature} gini: ${gain}`);
         }
         if (gain >= bestGain) {
           bestGain = gain;
@@ -234,7 +312,7 @@ export class DecisionTreeClassifier {
    * @param {any} y
    * @returns {any}
    */
-  private buildTree({ X, y }) {
+  private buildTree({ X, y }): DecisionNode | Leaf {
     const { bestGain, bestQuestion } = this.findBestSplit(X, y);
     if (bestGain === 0) {
       return new Leaf(y);
@@ -253,72 +331,13 @@ export class DecisionTreeClassifier {
   }
 
   /**
-   * Fit date, which builds a tree
-   * @param {any} X
-   * @param {any} y
-   * @returns {Leaf | DecisionNode}
-   */
-  public fit({ X, y }) {
-    // this.y = y;
-    this.tree = this.buildTree({ X, y });
-  }
-
-  /**
-   * Predict one row
-   * @param {any} row
-   * @returns any[any[]]}
-   */
-  public predictOne({ row }) {
-    return this._predict({ row, node: this.tree });
-  }
-
-  /**
-   * Predict multiple rows
-   * @param {any[]} X
-   * @returns {any[]}
-   */
-  public predict({ X }) {
-    return _.map(X, row => {
-      return this._predict({ row, node: this.tree });
-    });
-    // TODO: Return accuracies as well
-  }
-
-  /**
-   * Measure accuracy between actual row (X) vs predicted rows
-   * @param {any} actualRows
-   * @param {any} predRows
-   * @returns {number}
-   */
-  public accuracyMetrics({ actualRows, predRows }) {
-    let correct = 0;
-    const actualRowsLen = _.size(actualRows);
-    const predRowsLen = _.size(predRows);
-    if (actualRowsLen !== predRowsLen) {
-      throw Error('Actual rows and predicted rows are different in length');
-    }
-    const predRowsRange = _.range(0, predRowsLen);
-    correct = _.reduce(
-      predRowsRange,
-      (sum, index) => {
-        if (_.isEqual(actualRows[index], predRows[index])) {
-          return sum + 1;
-        }
-        return sum;
-      },
-      correct
-    );
-    return correct / actualRowsLen * 100.0;
-  }
-
-  /**
    * Predict a row value according to the fitted tree
    * @param {any} row
    * @param {any} node
    * @returns {any}
    * @private
    */
-  private _predict({ row, node }) {
+  private _predict({ row, node }): any[] {
     if (node instanceof Leaf) {
       return node.predictions;
     }
@@ -331,36 +350,25 @@ export class DecisionTreeClassifier {
   }
 
   /**
-   * Public interface for printing the current tree
-   * @param {any} spacing
-   */
-  public printTree(spacing = '') {
-    if (!this.tree) {
-      throw new Error('You cannot print an empty tree');
-    }
-    this._printTree({ node: this.tree, spacing });
-  }
-
-  /**
    * Recursively print the tree into console
    * @param {any} node
    * @param {any} spacing
    */
-  private _printTree({ node, spacing = '' }) {
+  private _printTree({ node, spacing = '' }):void {
     if (node instanceof Leaf) {
-      console.log(spacing + '' + JSON.stringify(node.predictions));
+      console.info(spacing + '' + JSON.stringify(node.predictions));
       return;
     }
 
     // Print the question of the node
-    console.log(spacing + node.question.toString());
+    console.info(spacing + node.question.toString());
 
     // Call this function recursively for true branch
-    console.log(spacing, '--> True');
+    console.info(spacing, '--> True');
     this._printTree({ node: node.trueBranch, spacing: spacing + ' ' });
 
     // Call this function recursively for false branch
-    console.log(spacing, '--> False');
+    console.info(spacing, '--> False');
     this._printTree({ node: node.falseBranch, spacing: spacing + ' ' });
   }
 }
