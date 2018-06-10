@@ -173,7 +173,7 @@ export class DecisionTreeClassifier {
    * Public interface for printing the current tree
    * @param {any} spacing
    */
-  public printTree(spacing = ''):void {
+  public printTree(spacing = ''): void {
     if (!this.tree) {
       throw new Error('You cannot print an empty tree');
     }
@@ -261,7 +261,7 @@ export class DecisionTreeClassifier {
    * @param {boolean} randomise
    * @returns {{bestGain: number; bestQuestion: any}}
    */
-  private findBestSplit(X, y): { bestGain: number, bestQuestion: Question } {
+  private findBestSplit(X, y): { bestGain: number; bestQuestion: Question } {
     const uncertainty = this.gini(y);
     const nFeatures = _.size(X[0]);
     let bestGain = 0;
@@ -354,7 +354,7 @@ export class DecisionTreeClassifier {
    * @param {any} node
    * @param {any} spacing
    */
-  private _printTree({ node, spacing = '' }):void {
+  private _printTree({ node, spacing = '' }): void {
     if (node instanceof Leaf) {
       console.info(spacing + '' + JSON.stringify(node.predictions));
       return;

@@ -35,6 +35,26 @@ describe('data:OneHotEncoder', () => {
     const decodedInfo = enc.decode(encodeInfo.data, encodeInfo.decoders);
     expect(_.isEqual(planetList, decodedInfo)).toBe(true);
   });
+
+  it("Invalid data key 'values' should throw an Error", () => {
+    const enc = new OneHotEncoder();
+    expect(() => {
+      enc.encode(planetList, {
+        dataKeys: ['values'],
+        labelKeys: ['planet']
+      });
+    }).toThrow('Cannot find values from data');
+  });
+
+  it("Invalid label key 'planot' should throw an Error", () => {
+    const enc = new OneHotEncoder();
+    expect(() => {
+      enc.encode(planetList, {
+        dataKeys: ['value'],
+        labelKeys: ['planot']
+      });
+    }).toThrow('Cannot find planot from labels');
+  });
 });
 
 describe('data:MinMaxScaler', () => {

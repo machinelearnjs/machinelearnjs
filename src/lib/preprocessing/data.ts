@@ -64,13 +64,34 @@ export class OneHotEncoder {
 
     // shortcut to allow caller to default to "all non-label keys are data keys"
     const dataKeys = options.dataKeys ? options.dataKeys : _.keys(data[0]);
+    // validations
+    if (_.size(data) < 1) {
+      throw Error('data cannot be empty!');
+    }
+    // data keys
+    _.forEach(dataKeys, dataKey => {
+      // TODO: it's only checking data[0] -> It should also check all the others
+      if (!_.has(data[0], dataKey)) {
+        // TODO: Find the correct error to throw
+        throw Error(`Cannot find ${dataKey} from data`);
+      }
+    });
+
+    // label keys
+    _.forEach(labelKeys, labelKey => {
+      // TODO: it's only checking data[0] -> It should also check all the others
+      if (!_.has(data[0], labelKey)) {
+        // TODO Find the correct error to throw
+        throw Error(`Cannot find ${labelKey} from labels`);
+      }
+    });
+
     // maybe a little too clever but also the simplest;
     // serialize every value for a given data key, then zip the results back up into a (possibly nested) array
     const transform = (keys: string[]) =>
       _.zip(
         ..._.map(keys, (key: string) => {
           const standardized = this.standardizeField(key, data);
-
           const encoded = _.get(standardized, 'encoded');
           const decode = _.get(standardized, 'decode');
           if (encoded && decode) {

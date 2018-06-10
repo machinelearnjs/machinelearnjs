@@ -83,11 +83,11 @@ export class KNeighborsClassifier {
    * @return {object} JSON KNN model.
    */
   public toJSON(): {
-    classes: any[],
-    isEuclidean: boolean,
-    k: number,
-    kdTree: KDTree,
-    name: string
+    classes: any[];
+    isEuclidean: boolean;
+    k: number;
+    kdTree: KDTree;
+    name: string;
   } {
     return {
       classes: this.classes,

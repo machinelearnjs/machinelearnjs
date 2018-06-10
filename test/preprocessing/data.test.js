@@ -28,6 +28,15 @@ describe('data:OneHotEncoder', function () {
         var decodedInfo = enc.decode(encodeInfo.data, encodeInfo.decoders);
         expect(_.isEqual(planetList, decodedInfo)).toBe(true);
     });
+    it('Invalid key values should throw an Error', function () {
+        var enc = new data_1.OneHotEncoder();
+        expect(function () {
+            var encodeInfo = enc.encode(planetList, {
+                dataKeys: ['values'],
+                labelKeys: ['planet']
+            });
+        }).toThrow('Cannot find values from data');
+    });
 });
 describe('data:MinMaxScaler', function () {
     it('should feature range [0, 1] of [4, 5, 6] return [0, 0.5, 1]', function () {
