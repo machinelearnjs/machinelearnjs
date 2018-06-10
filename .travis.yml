@@ -19,3 +19,4 @@ script:
   - yarn test:unit
   - yarn test:lint
   - yarn test:nsp
+  - yarn doc
