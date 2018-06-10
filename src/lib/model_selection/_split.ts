@@ -12,11 +12,11 @@ export class KFold {
     this.randomState = randomState;
   }
 
-  public split(X): void {
+  public split(X): any[] {
     const binSize = _.floor(_.size(X) / this.k);
     const xRange = _.range(0, _.size(X));
     const splitRange = _.range(0, this.k);
-    _.forEach(splitRange, index => {
+    return _.reduce(splitRange, (sum, index) => {
       // Calculate binSizeRange according to k value. e.g. 0 -> [0,1]. 1 -> [2, 3].
       const binSizeRange = _.range(index * binSize, index * binSize + binSize);
       // X index range used for test set. It can either be shuffled e.g. [ 2, 0, 1 ] or raw value [ 0, 1, 2 ]
@@ -33,7 +33,8 @@ export class KFold {
         []
       );
       const trainIndex = _.pullAll(_.clone(xRange), testIndex);
-    });
+      return _.concat(sum, [{ trainIndex, testIndex }]);
+    }, []);
   }
 }
 

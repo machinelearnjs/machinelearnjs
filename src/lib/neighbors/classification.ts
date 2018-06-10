@@ -2,8 +2,9 @@ import * as _ from 'lodash';
 import euclideanDistance from 'ml-distance-euclidean';
 import KDTree from './KDTree';
 
-interface KNCOptions {
-  distance: () => any | null;
+export interface KNCOptions {
+  distance: any;
+  k: number;
 }
 
 export class KNeighborsClassifier {

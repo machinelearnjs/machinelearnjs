@@ -7,7 +7,6 @@ node_js:
   - 9
 # keep the npm cache to speed up installs
 cache:
-  yarn: true
   directories:
   - "$HOME/.npm"
 

@@ -41,7 +41,7 @@ export class RandomForestClassifier {
    * @param {Array} X - array-like or sparse matrix of shape = [n_samples]
    * @returns {string[]}
    */
-  public predict(X): [] {
+  public predict(X): any[] {
     const predictions = _.map(this.trees, tree => {
       return tree.predict({ X });
     });
@@ -56,7 +56,7 @@ export class RandomForestClassifier {
    * @param {Array<any>} predictions - List of initial predictions that may look like [ [1, 2], [1, 1] ... ]
    * @returns {string[]}
    */
-  private baggingPrediction(predictions: any[]): [] {
+  private baggingPrediction(predictions: any[]): string[] {
     const counts = _.countBy(predictions, x => x);
     const countsArray = _.reduce(
       _.keys(counts),

@@ -14,20 +14,20 @@ describe('math.contrib.size', () => {
   });
   it('should throw an error because X is null', () => {
     const testX = null;
-    expect(function() {
+    expect(() => {
       math.contrib.size(testX, 1);
     }).toThrow('Invalid input array of size 0!');
   });
   it('should throw an error because X is an empty array', () => {
     const testX = [];
-    expect(function() {
+    expect(() => {
       math.contrib.size(testX, 1);
     }).toThrow('Invalid input array of size 0!');
   });
   it('should throw an error because axis is invalid', () => {
     const testX = [[1, 2], [2, 3]];
     const axis = 12;
-    expect(function() {
+    expect(() => {
       math.contrib.size(testX, axis);
     }).toThrow(`Invalid axis value ${axis} was given`);
   });
@@ -37,14 +37,12 @@ describe('math.contrib.range', () => {
   it('should return [0, 1, 2, 3]', () => {
     const result = math.contrib.range(0, 4);
     const expected = [0, 1, 2, 3];
-    console.log('checking range result ', result);
     expect(_.isEqual(result, expected)).toBe(true);
   });
 
   it('should return [-2, -1, 0, 1]', () => {
     const result = math.contrib.range(-2, 2);
     const expected = [-2, -1, 0, 1];
-    console.log('result', result);
     expect(_.isEqual(result, expected)).toBe(true);
   });
 
