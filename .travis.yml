@@ -1,12 +1,18 @@
 sudo: false
 language: node_js
 node_js:
+  - 6
+  - 7
   - 8
   - 9
 # keep the npm cache to speed up installs
 cache:
+  yarn: true
   directories:
   - "$HOME/.npm"
-after_success:
-  - npx nyc report --reporter=lcov | npx codecov
-  - npm run cov:check
+
+script:
+  - yarn build
+  - yarn test:unit
+  - yarn test:lint
+  - yarn test:nsp
