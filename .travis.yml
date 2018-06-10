@@ -12,6 +12,7 @@ cache:
 
 install:
   - npm install
+  - npm install -g npx
 
 script:
   - yarn build
