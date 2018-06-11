@@ -1,4 +1,4 @@
-# Kalimdor.js
+# Kalimdor
 
 Kalimdor.js is a Javascript, which is written in Typescript, port of 
 famous Python Machine Learning library Scikit-learn. This Javascript library is
@@ -6,13 +6,9 @@ still growing and many APIs are scheduled to be ported over or integrated.
 
 # Installation
 
-Requirements:
-
-- Node version >= 7
-
 ```bash
-# yan add --save scikit-learn-js
-# npm install --save scikit-learn-js
+# yan add --save kalimdor
+# npm install --save kalimdor
 ```
 
 # Development
