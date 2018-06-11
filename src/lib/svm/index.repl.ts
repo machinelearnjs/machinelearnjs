@@ -3,7 +3,6 @@ import { SVC, SVR } from './classes';
 
 console.log('running xor example');
 
-
 async function svcTest() {
   console.log('inside svctest');
   const svc2 = new SVC();
@@ -29,7 +28,6 @@ async function xor() {
 }
 
 xor().then(() => console.log('finished SVC'));
-
 
 async function xor2() {
   const svr = new SVR();

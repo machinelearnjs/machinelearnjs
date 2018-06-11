@@ -114,9 +114,16 @@ export class DecisionTreeClassifier {
    * @param {any} y
    * @returns {Leaf | DecisionNode}
    */
-  public fit({ X, y }: { X: any[], y: any[] }): void {
+  public fit({ X, y }: { X: any[]; y: any[] }): void {
     // this.y = y;
-    if (!X || !y || !_.isArray(X) || !_.isArray(y) || _.isEmpty(X) || _.isEmpty(y)) {
+    if (
+      !X ||
+      !y ||
+      !_.isArray(X) ||
+      !_.isArray(y) ||
+      _.isEmpty(X) ||
+      _.isEmpty(y)
+    ) {
       throw Error('Cannot accept non Array values for X and y');
     }
     this.tree = this.buildTree({ X, y });
@@ -138,7 +145,10 @@ export class DecisionTreeClassifier {
    * @param {any[]} X
    * @returns {any[]}
    */
-  public predict({ X }): any {
+  public predict({ X }: { X: any[] }): any {
+    if (!_.isArray(X)) {
+      throw Error('X need to be an array!');
+    }
     // TODO: Fix any return type
     return _.map(X, row => {
       return this._predict({ row, node: this.tree });
