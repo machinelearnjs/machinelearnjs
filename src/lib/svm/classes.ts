@@ -129,6 +129,15 @@ export class BaseSVM {
   }
 
   /**
+   * Predict the label of one sample.
+   * @param {number[]} X
+   * @returns {number[]}
+   */
+  public predictOne(X: number[]): number[] {
+    return this.svm.predictOne(X);
+  }
+
+  /**
    * Get Kernel name type using string Kernel name
    * @param SVM
    * @param {string} name
