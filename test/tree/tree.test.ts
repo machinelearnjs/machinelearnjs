@@ -24,13 +24,38 @@ describe('tree:DecisionTreeClassifier', () => {
 		expect(_.isEqual(['Grape', 'Grape'], predictResult)).toBe(true)
 	});
 
-	// TODO: Print tests
-
-	it('Should predict number [2, 2] as', () => {
+	it('Should predict number [2, 2] as [1]', () => {
 		const decision = new DecisionTreeClassifier();
 		decision.fit({ X: numberX, y: numberY });
 		const predictResult = decision.predictOne({ row: [2, 2] });
-		console.log('pred result', predictResult);
-		expect(_.isEqual(['Grape', 'Grape'], predictResult)).toBe(true)
+		expect(_.isEqual([1], predictResult)).toBe(true);
 	});
+
+	it('Should predict number [-2, -1] as [0]', () => {
+		const decision = new DecisionTreeClassifier();
+		decision.fit({ X: numberX, y: numberY });
+		const predictResult = decision.predictOne({ row: [-2, -1] });
+		expect(_.isEqual([0], predictResult)).toBe(true);
+	});
+
+	it('It should predictOne raw number value', () => {
+		const decision = new DecisionTreeClassifier();
+		decision.fit({ X: numberX, y: numberY });
+		const predictResult = decision.predictOne({ row: 1 });
+		expect(_.isEqual(predictResult, [0])).toBe(true);
+	});
+
+	// TODO: Test tree prints
+
+	// Exceptions
+	it('Should not fit if invalid data is given', () => {
+		const decision = new DecisionTreeClassifier();
+		const exepctedError = 'Cannot accept non Array values for X and y';
+		expect(() => decision.fit({ X: null, y: null })).toThrow(exepctedError);
+		expect(() => decision.fit({ X: 1, y: 2 })).toThrow(exepctedError);
+		expect(() => decision.fit({ X: true, y: true })).toThrow(exepctedError);
+		expect(() => decision.fit({ X: [], y: [] })).toThrow(exepctedError);
+		expect(() => decision.fit({ X: -1, y: -2 })).toThrow(exepctedError);
+	});
+
 });
