@@ -28,14 +28,23 @@ describe('data:OneHotEncoder', function () {
         var decodedInfo = enc.decode(encodeInfo.data, encodeInfo.decoders);
         expect(_.isEqual(planetList, decodedInfo)).toBe(true);
     });
-    it('Invalid key values should throw an Error', function () {
+    it("Invalid data key 'values' should throw an Error", function () {
         var enc = new data_1.OneHotEncoder();
         expect(function () {
-            var encodeInfo = enc.encode(planetList, {
+            enc.encode(planetList, {
                 dataKeys: ['values'],
                 labelKeys: ['planet']
             });
         }).toThrow('Cannot find values from data');
+    });
+    it("Invalid label key 'planot' should throw an Error", function () {
+        var enc = new data_1.OneHotEncoder();
+        expect(function () {
+            enc.encode(planetList, {
+                dataKeys: ['value'],
+                labelKeys: ['planot']
+            });
+        }).toThrow('Cannot find planot from labels');
     });
 });
 describe('data:MinMaxScaler', function () {
