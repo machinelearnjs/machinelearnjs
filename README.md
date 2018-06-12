@@ -60,3 +60,6 @@ Testing ensures you that you are currently using the most stable version of Kali
 $ npm run test
 ```
 
+# Contributing
+
+We simply follow "fork-and-pull" workflow of Github. Please read CONTRIBUTING.md for more detail.
