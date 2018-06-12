@@ -3,6 +3,8 @@
 Kalimdor.js is a Machine Learning library written in Typescript. It solves Machine Learning problems
 and teaches users how Machine Learning algorithms work.
 
+<img src="https://i.imgur.com/b7GUoKa.png">
+
 # User Installation
 
 Using yarn

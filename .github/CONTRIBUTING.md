@@ -1,3 +1,12 @@
-# Example Contributing Guidelines
+# Contributing to Kalimdor.js
 
-This is an example of GitHub's contributing guidelines file. Check out GitHub's [CONTRIBUTING.md help center article](https://help.github.com/articles/setting-guidelines-for-repository-contributors/) for more information.
+All sort of contributions are welcome and there are no complicated rules with it.
+We appreciate:
+- New features
+- Bug fixes
+- Suggestions
+- Ideas
+
+### How to make contribution
+
+Please 
