@@ -1,11 +1,11 @@
 {
-  "name": "kalidor-js",
+  "name": "kalimdor",
   "version": "1.0.0",
-  "description": "Machine Learning in Javascript",
+  "description": "Machine Learning library for the web and Node",
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
   "module": "build/module/index.js",
-  "repository": "https://github.com/deepcollege/scikit-learn-js",
+  "repository": "https://github.com/JasonShin/kalimdor",
   "license": "MIT",
   "keywords": [],
   "scripts": {
