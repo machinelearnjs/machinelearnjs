@@ -12,7 +12,19 @@ export class KFold {
     this.randomState = randomState;
   }
 
-  public split(X): any[] {
+  public split({ X, y }): any[] {
+    if (_.size(X) !== _.size(y)) {
+      throw Error('X and y must have an identical size');
+    }
+
+    if (this.k > _.size(X) || this.k > _.size(y)) {
+      throw Error(
+        `Cannot have number of splits k=${
+          this.k
+        } greater than the number of samples: ${_.size(X)}`
+      );
+    }
+
     const binSize = _.floor(_.size(X) / this.k);
     const xRange = _.range(0, _.size(X));
     const splitRange = _.range(0, this.k);
