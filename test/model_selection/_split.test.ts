@@ -138,5 +138,16 @@ describe('_split:train_test_split', () => {
       .toBe(true);
   });
 
+  it('Should use default test and train sizes', () => {
+    const { xTrain, yTrain, xTest, yTest } = train_test_split(X1, y1);
+    expect(_.isEqual(xTrain, [ [ 8, 9 ], [ 6, 7 ], [ 4, 5 ], [ 0, 1 ] ]))
+      .toBe(true);
+    expect(_.isEqual(yTrain, [ 4, 3, 2, 0 ]))
+      .toBe(true);
+    expect(_.isEqual(xTest, [ [ 2, 3 ] ]))
+      .toBe(true);
+    expect(_.isEqual(yTest, [ 1 ]))
+      .toBe(true);
+  });
 
 });
