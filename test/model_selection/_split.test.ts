@@ -167,4 +167,11 @@ describe('_split:train_test_split', () => {
 
   });
 
+  it('Should split X2 y2 with random_state: 42 test_size: .33 and train_size: .67', () => {
+    const { xTrain, yTrain, xTest, yTest } = train_test_split(X2, y2);
+    expect(_.isEqual(xTrain, [ [ 'five' ], [ 'four' ], [ 'one' ] ])).toBe(true);
+    expect(_.isEqual(yTrain, [ 'e', 'd', 'a' ])).toBe(true);
+    expect(_.isEqual(xTest, [ [ 'three' ] ])).toBe(true);
+    expect(_.isEqual(yTest, [ 'c' ])).toBe(true);
+  });
 });
