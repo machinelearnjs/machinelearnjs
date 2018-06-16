@@ -29,6 +29,12 @@ export class KFold {
     this.randomState = randomState;
   }
 
+	/**
+   *
+	 * @param {any} X - Training data, where n_samples is the number of samples and n_features is the number of features.
+	 * @param {any} y - The target variable for supervised learning problems.
+	 * @returns {any[]}
+	 */
   public split({ X, y }): any[] {
     if (_.size(X) !== _.size(y)) {
       throw Error('X and y must have an identical size');
