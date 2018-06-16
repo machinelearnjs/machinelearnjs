@@ -150,4 +150,15 @@ describe('_split:train_test_split', () => {
       .toBe(true);
   });
 
+  it('Should sum of test_size and train_size match the input size', () => {
+    const options = {
+      test_size: 0.11,
+      train_size: 0.12,
+      random_state: 10
+    };
+    expect(() => {
+      train_test_split(X1, y1, options);
+		}).toThrow('Sum of test_size and train_size does not match the input size');
+
+  });
 });

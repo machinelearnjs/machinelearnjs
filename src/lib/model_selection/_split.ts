@@ -107,9 +107,16 @@ export function train_test_split(
   yTest: any[];
   yTrain: any[];
 } {
+  if (!_.isArray(X) || !_.isArray(y)) {
+    throw Error('X and y must be array');
+  }
   // Training dataset size accoding to X
   const trainSizeLength: number = _.round(train_size * X.length);
   const testSizeLength: number = _.round(test_size * X.length);
+
+  if ((trainSizeLength + testSizeLength) !== X.length) {
+    throw Error('Sum of test_size and train_size does not match the input size');
+  }
   // Initiate Random engine
   const randomEngine = Random.engines.mt19937();
   randomEngine.seed(random_state);
