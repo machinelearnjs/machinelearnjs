@@ -95,8 +95,8 @@ export function train_test_split(
   y = [],
   {
     // Options
-    test_size = 0.2,
-    train_size = 0.8,
+    test_size = 0.25,
+    train_size = 0.75,
     random_state = 0
     // shuffle = false,
     // stratify = false
@@ -107,10 +107,6 @@ export function train_test_split(
   yTest: any[];
   yTrain: any[];
 } {
-  /* if (_.isEmpty(test_size) && _.isEmpty(train_size)) {
-		test_size = 0.25
-		console.warn(`test_size and train_size are both empty. Setting test size to 0.25 by default`)
-	} */
   // Training dataset size accoding to X
   const trainSizeLength: number = _.round(train_size * X.length);
   const testSizeLength: number = _.round(test_size * X.length);
@@ -147,10 +143,17 @@ export function train_test_split(
     yTest.push(y[index]);
     y.splice(index, 1);
   }
+
+  // Filter return results
+  const clean = _.flowRight(
+    // Filter out any undefined values
+    items => _.filter(items, item => !_.isUndefined(item))
+  );
+
   return {
-    xTest,
-    xTrain,
-    yTest,
-    yTrain
+    xTest: clean(xTest),
+    xTrain: clean(xTrain),
+    yTest: clean(yTest),
+    yTrain: clean(yTrain)
   };
 }

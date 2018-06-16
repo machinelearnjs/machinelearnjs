@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { KFold } from '../../src/lib/model_selection/_split';
+import { KFold, train_test_split } from '../../src/lib/model_selection/_split';
 
 describe('_split:KFold', () => {
   const X1 = [[1], [2], [3], [4], [5], [6], [7], [8], [9], [10]];
@@ -99,3 +99,44 @@ describe('_split:KFold', () => {
   });
 });
 
+describe('_split:train_test_split', () => {
+  const X1 = [[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]];
+  const y1 = [0, 1, 2, 3, 4];
+
+  it('Should split X1 y1 with random_state: 42 test_size: .33 and train_size: .67', () => {
+    const options = {
+      test_size: 0.33,
+      train_size: 0.67,
+      random_state: 42
+    };
+    const { xTrain, yTrain, xTest, yTest } = train_test_split(X1, y1, options);
+    expect(_.isEqual(xTrain, [ [ 4, 5 ], [ 8, 9 ], [ 2, 3 ] ]))
+      .toBe(true);
+    expect(_.isEqual(yTrain, [ 2, 4, 1 ]))
+      .toBe(true);
+    expect(_.isEqual(xTest, [ [ 0, 1 ], [ 6, 7 ] ]))
+      .toBe(true);
+    expect(_.isEqual(yTest, [ 0, 3 ]))
+      .toBe(true);
+  });
+
+  it('Should split X1, y1 with random_state 100 test_size: .50 train_size: .50', () => {
+    const options = {
+      test_size: 0.50,
+      train_size: 0.50,
+      random_state: 100
+    };
+    const { xTrain, yTrain, xTest, yTest } = train_test_split(X1, y1, options);
+
+    expect(_.isEqual(xTrain, [ [ 0, 1 ], [ 2, 3 ], [ 8, 9 ] ]))
+      .toBe(true);
+    expect(_.isEqual(yTrain, [ 0, 1, 4 ]))
+      .toBe(true);
+    expect(_.isEqual(xTest, [ [ 6, 7 ], [ 4, 5 ] ]))
+      .toBe(true);
+    expect(_.isEqual(yTest, [ 3, 2 ]))
+      .toBe(true);
+  });
+
+
+});
