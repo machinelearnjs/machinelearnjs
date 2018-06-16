@@ -92,4 +92,10 @@ describe('_split:KFold', () => {
       });
     }).toThrow('X and y must have an identical size');
   });
+
+  it('Should throw an error if K is less than 2', () => {
+    expect(() => new KFold({ k: 1 }))
+      .toThrow('Number of folds cannot be less than 2');
+  });
 });
+
