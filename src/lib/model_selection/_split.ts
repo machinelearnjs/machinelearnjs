@@ -13,13 +13,13 @@ export class KFold {
   public shuffle: boolean;
   public randomState: number | null;
 
-	/**
+  /**
    *
-	 * @param {any} k - Number of folds. Must be at least 2.
-	 * @param {any} shuffle - Whether to shuffle the data before splitting into batches.
-	 * @param {any} randomState - If int, random_state is the seed used by the random number generator; If RandomState instance, random_state is the random number generator;
+   * @param {any} k - Number of folds. Must be at least 2.
+   * @param {any} shuffle - Whether to shuffle the data before splitting into batches.
+   * @param {any} randomState - If int, random_state is the seed used by the random number generator; If RandomState instance, random_state is the random number generator;
    *                            If None, the random number generator is the RandomState instance used by np.random. Used when shuffle === true.
-	 */
+   */
   constructor({ k = 2, shuffle = false, randomState = null }) {
     if (k < 2) {
       throw Error('Number of folds cannot be less than 2');
@@ -29,12 +29,12 @@ export class KFold {
     this.randomState = randomState;
   }
 
-	/**
+  /**
    *
-	 * @param {any} X - Training data, where n_samples is the number of samples and n_features is the number of features.
-	 * @param {any} y - The target variable for supervised learning problems.
-	 * @returns {any[]}
-	 */
+   * @param {any} X - Training data, where n_samples is the number of samples and n_features is the number of features.
+   * @param {any} y - The target variable for supervised learning problems.
+   * @returns {any[]}
+   */
   public split({ X, y }): any[] {
     if (_.size(X) !== _.size(y)) {
       throw Error('X and y must have an identical size');
@@ -88,7 +88,6 @@ export class KFold {
  * @param {Number} train_size
  * @param {Number} random_state
  * @param {boolean} shuffle
- * @param stratify
  * return X_train, y_train, X_test, y_test
  */
 export function train_test_split(
