@@ -80,46 +80,56 @@ export class KFold {
   }
 }
 
+export interface TrainTestSplitOptions {
+  test_size: number;
+  train_size: number;
+  random_state: number;
+}
+
 /**
- * Split arrays or matrices into random train and test subsets
- * @param {any[]} X
- * @param {any[]} y
- * @param {Number} test_size
- * @param {Number} train_size
- * @param {Number} random_state
- * @param {boolean} shuffle
- * return X_train, y_train, X_test, y_test
+ *  Split arrays or matrices into random train and test subsets
+ * @param {Array} X
+ * @param {Array} y
+ * @param {TrainTestSplitOptions} options
+ * @returns {{xTest: any[]; xTrain: any[]; yTest: any[]; yTrain: any[]}}
  */
 export function train_test_split(
   X = [],
   y = [],
-  {
-    // Options
-    test_size = 0.25,
-    train_size = 0.75,
-    random_state = 0
-    // shuffle = false,
-    // stratify = false
-  } = {}
+  options: TrainTestSplitOptions = null,
 ): {
   xTest: any[];
   xTrain: any[];
   yTest: any[];
   yTrain: any[];
 } {
-  if (!_.isArray(X) || !_.isArray(y)) {
+  const trainSize = _.get(options, 'train_size', 0.75);
+  const testSize = _.get(options, 'test_size', 0.25);
+  const randomState = _.get(options, 'random_state', 0);
+  const clone = _.get(options, 'clone', true);
+
+  let _X = X;
+  let _y = y;
+  // Cloning ..
+  if (clone) {
+    _X = _.cloneDeep(X);
+    _y = _.cloneDeep(y);
+  }
+
+  // Checking if either of these params is not array
+  if (!_.isArray(_X) || !_.isArray(_y)) {
     throw Error('X and y must be array');
   }
   // Training dataset size accoding to X
-  const trainSizeLength: number = _.round(train_size * X.length);
-  const testSizeLength: number = _.round(test_size * X.length);
+  const trainSizeLength: number = _.round(trainSize * _X.length);
+  const testSizeLength: number = _.round(testSize * _X.length);
 
-  if ((trainSizeLength + testSizeLength) !== X.length) {
-    throw Error('Sum of test_size and train_size does not match the input size');
+  if (_.round(testSize + trainSize) !== 1) {
+    throw Error('Sum of test_size and train_size does not equal 1');
   }
   // Initiate Random engine
   const randomEngine = Random.engines.mt19937();
-  randomEngine.seed(random_state);
+  randomEngine.seed(randomState);
 
   // split
   const xTrain = [];
@@ -132,31 +142,28 @@ export function train_test_split(
     const index = Random.integer(0, X.length - 1)(randomEngine);
 
     // X_train
-    xTrain.push(X[index]);
-    X.splice(index, 1);
+    xTrain.push(_X[index]);
+    _X.splice(index, 1);
 
     // y_train
-    yTrain.push(y[index]);
-    y.splice(index, 1);
+    yTrain.push(_y[index]);
+    _y.splice(index, 1);
   }
 
   while (xTest.length < testSizeLength) {
-    const index = Random.integer(0, X.length - 1)(randomEngine);
+    const index = Random.integer(0, _X.length - 1)(randomEngine);
     // X test
-    xTest.push(X[index]);
-    X.splice(index, 1);
+    xTest.push(_X[index]);
+    _X.splice(index, 1);
 
     // y train
-    yTest.push(y[index]);
-    y.splice(index, 1);
+    yTest.push(_y[index]);
+    _y.splice(index, 1);
   }
 
   // Filter return results
-  const clean = _.flowRight(
-    // Filter out any undefined values
-    items => _.filter(items, item => !_.isUndefined(item))
-  );
-
+  const clean = (items: any[]) =>
+    _.filter(items, (item: any) => !_.isUndefined(item));
   return {
     xTest: clean(xTest),
     xTrain: clean(xTrain),

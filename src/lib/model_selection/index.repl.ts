@@ -15,7 +15,6 @@ console.log(
   })
 );
 
-/*
 const kf = new KFold({ k: 10 });
 const X2 = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 console.log(kf.split({ X: X2, y: X2 }));
@@ -23,4 +22,3 @@ console.log(kf.split({ X: X2, y: X2 }));
 const kf2 = new KFold({ k: 10, shuffle: true });
 const X3 = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 console.log(kf2.split({ X: X3, y: X2 }));
-*/
