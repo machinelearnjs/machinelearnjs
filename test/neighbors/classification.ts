@@ -1,0 +1,3 @@
+describe('classification:KNeighborsClassifier', () => {
+	it();
+});
