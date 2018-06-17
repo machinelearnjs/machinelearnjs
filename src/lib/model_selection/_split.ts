@@ -1,18 +1,53 @@
 import * as _ from 'lodash';
 import * as Random from 'random-js';
 
+/**
+ * K-Folds cross-validator
+ *
+ * Provides train/test indices to split data in train/test sets. Split dataset into k consecutive folds (without shuffling by default).
+ *
+ * Each fold is then used once as a validation while the k - 1 remaining folds form the training set.
+ */
 export class KFold {
   public k: number;
   public shuffle: boolean;
   public randomState: number | null;
 
+  /**
+   *
+   * @param {any} k - Number of folds. Must be at least 2.
+   * @param {any} shuffle - Whether to shuffle the data before splitting into batches.
+   * @param {any} randomState - If int, random_state is the seed used by the random number generator; If RandomState instance, random_state is the random number generator;
+   *                            If None, the random number generator is the RandomState instance used by np.random. Used when shuffle === true.
+   */
   constructor({ k = 2, shuffle = false, randomState = null }) {
+    if (k < 2) {
+      throw Error('Number of folds cannot be less than 2');
+    }
     this.k = k;
     this.shuffle = shuffle;
     this.randomState = randomState;
   }
 
-  public split(X): any[] {
+  /**
+   *
+   * @param {any} X - Training data, where n_samples is the number of samples and n_features is the number of features.
+   * @param {any} y - The target variable for supervised learning problems.
+   * @returns {any[]}
+   */
+  public split({ X, y }): any[] {
+    if (_.size(X) !== _.size(y)) {
+      throw Error('X and y must have an identical size');
+    }
+
+    if (this.k > _.size(X) || this.k > _.size(y)) {
+      throw Error(
+        `Cannot have number of splits k=${
+          this.k
+        } greater than the number of samples: ${_.size(X)}`
+      );
+    }
+
     const binSize = _.floor(_.size(X) / this.k);
     const xRange = _.range(0, _.size(X));
     const splitRange = _.range(0, this.k);
@@ -45,44 +80,56 @@ export class KFold {
   }
 }
 
+export interface TrainTestSplitOptions {
+  test_size: number;
+  train_size: number;
+  random_state: number;
+}
+
 /**
- * Split arrays or matrices into random train and test subsets
- * @param {any[]} X
- * @param {any[]} y
- * @param {Number} test_size
- * @param {Number} train_size
- * @param {Number} random_state
- * @param {boolean} shuffle
- * @param stratify
- * return X_train, y_train, X_test, y_test
+ *  Split arrays or matrices into random train and test subsets
+ * @param {Array} X
+ * @param {Array} y
+ * @param {TrainTestSplitOptions} options
+ * @returns {{xTest: any[]; xTrain: any[]; yTest: any[]; yTrain: any[]}}
  */
 export function train_test_split(
   X = [],
   y = [],
-  {
-    // Options
-    test_size = 0.2,
-    train_size = 0.8,
-    random_state = 0
-    // shuffle = false,
-    // stratify = false
-  } = {}
+  options: TrainTestSplitOptions = null,
 ): {
   xTest: any[];
   xTrain: any[];
   yTest: any[];
   yTrain: any[];
 } {
-  /* if (_.isEmpty(test_size) && _.isEmpty(train_size)) {
-		test_size = 0.25
-		console.warn(`test_size and train_size are both empty. Setting test size to 0.25 by default`)
-	} */
+  const trainSize = _.get(options, 'train_size', 0.75);
+  const testSize = _.get(options, 'test_size', 0.25);
+  const randomState = _.get(options, 'random_state', 0);
+  const clone = _.get(options, 'clone', true);
+
+  let _X = X;
+  let _y = y;
+  // Cloning ..
+  if (clone) {
+    _X = _.cloneDeep(X);
+    _y = _.cloneDeep(y);
+  }
+
+  // Checking if either of these params is not array
+  if (!_.isArray(_X) || !_.isArray(_y)) {
+    throw Error('X and y must be array');
+  }
   // Training dataset size accoding to X
-  const trainSizeLength: number = _.round(train_size * X.length);
-  const testSizeLength: number = _.round(test_size * X.length);
+  const trainSizeLength: number = _.round(trainSize * _X.length);
+  const testSizeLength: number = _.round(testSize * _X.length);
+
+  if (_.round(testSize + trainSize) !== 1) {
+    throw Error('Sum of test_size and train_size does not equal 1');
+  }
   // Initiate Random engine
   const randomEngine = Random.engines.mt19937();
-  randomEngine.seed(random_state);
+  randomEngine.seed(randomState);
 
   // split
   const xTrain = [];
@@ -95,28 +142,32 @@ export function train_test_split(
     const index = Random.integer(0, X.length - 1)(randomEngine);
 
     // X_train
-    xTrain.push(X[index]);
-    X.splice(index, 1);
+    xTrain.push(_X[index]);
+    _X.splice(index, 1);
 
     // y_train
-    yTrain.push(y[index]);
-    y.splice(index, 1);
+    yTrain.push(_y[index]);
+    _y.splice(index, 1);
   }
 
   while (xTest.length < testSizeLength) {
-    const index = Random.integer(0, X.length - 1)(randomEngine);
+    const index = Random.integer(0, _X.length - 1)(randomEngine);
     // X test
-    xTest.push(X[index]);
-    X.splice(index, 1);
+    xTest.push(_X[index]);
+    _X.splice(index, 1);
 
     // y train
-    yTest.push(y[index]);
-    y.splice(index, 1);
+    yTest.push(_y[index]);
+    _y.splice(index, 1);
   }
+
+  // Filter return results
+  const clean = (items: any[]) =>
+    _.filter(items, (item: any) => !_.isUndefined(item));
   return {
-    xTest,
-    xTrain,
-    yTest,
-    yTrain
+    xTest: clean(xTest),
+    xTrain: clean(xTrain),
+    yTest: clean(yTest),
+    yTrain: clean(yTrain)
   };
 }

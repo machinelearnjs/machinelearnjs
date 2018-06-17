@@ -12,6 +12,7 @@
     "no-parameter-reassignment": true,
     "typedef": [true, "call-signature"],
     "prefer-for-of": false,
+    "variable-name": [true, "allow-leading-underscore"],
 
     // Immutability rules
     "readonly-keyword": false,
