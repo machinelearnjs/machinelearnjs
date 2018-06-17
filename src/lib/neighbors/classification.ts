@@ -25,6 +25,11 @@ export class KNeighborsClassifier {
     this.options = options;
   }
 
+  /**
+   * Train the classifier with input and output data
+   * @param {any} X
+   * @param {any} y
+   */
   public fit({ X, y }): void {
     if (X === true) {
       const model = y;
@@ -37,8 +42,12 @@ export class KNeighborsClassifier {
 
     const classes = new Set(y);
 
-    const distance = _.get(this.options, 'distance', euclideanDistance);
-    const k = _.get(this.options, 'k', classes.size + 1);
+    // Placeholder _dist function, it can be null as a default value
+    const _dist = _.get(this.options, 'distance');
+    const distance = _dist ? _dist : euclideanDistance;
+    // Placeholder _k value, it can be 0
+    const _k = _.get(this.options, 'k');
+    const k = _k ? _k : classes.size + 1;
 
     const points = new Array(X.length);
     for (let i = 0; i < points.length; ++i) {

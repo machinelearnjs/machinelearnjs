@@ -96,7 +96,7 @@ export interface TrainTestSplitOptions {
 export function train_test_split(
   X = [],
   y = [],
-  options: TrainTestSplitOptions = null,
+  options: TrainTestSplitOptions = null
 ): {
   xTest: any[];
   xTrain: any[];
