@@ -107,6 +107,19 @@ export class KNeighborsClassifier {
     };
   }
 
+	/**
+   * Predict single value from a list of data
+	 * @param {Array} dataset
+	 * @returns number
+	 */
+  public predictOne(dataset) {
+    if (Array.isArray(dataset) && typeof dataset[0] === 'number') {
+      return getSinglePrediction(this, dataset);
+    } else {
+      throw new TypeError('Passed in dataset is not an array');
+    }
+  }
+
   /**
    * Predicts the output given the matrix to predict.
    * @param {Array} dataset
@@ -114,9 +127,7 @@ export class KNeighborsClassifier {
    */
   public predict(dataset): {} {
     if (Array.isArray(dataset)) {
-      if (typeof dataset[0] === 'number') {
-        return getSinglePrediction(this, dataset);
-      } else if (
+      if (
         Array.isArray(dataset[0]) &&
         typeof dataset[0][0] === 'number'
       ) {
