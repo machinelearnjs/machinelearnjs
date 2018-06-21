@@ -116,7 +116,7 @@ export class KNeighborsClassifier {
     if (Array.isArray(dataset) && typeof dataset[0] === 'number') {
       return getSinglePrediction(this, dataset);
     } else {
-      throw new TypeError('Passed in dataset is not an array');
+      throw new TypeError('Passed in dataset is not a single dimensional array');
     }
   }
 
@@ -148,10 +148,9 @@ function getSinglePrediction(knn, currentCase): {} {
   let predictedClass = -1;
   let maxPoints = -1;
   const lastElement = nearestPoints[0][0].length - 1;
-
-  for (const element of knn.classes) {
+  knn.classes.forEach((element) => {
     pointsPerClass[element] = 0;
-  }
+  });
   for (let i = 0; i < nearestPoints.length; ++i) {
     const currentClass = nearestPoints[i][0][lastElement];
     const currentPoints = ++pointsPerClass[currentClass];
