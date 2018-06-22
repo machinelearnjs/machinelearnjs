@@ -108,16 +108,18 @@ export class KNeighborsClassifier {
     };
   }
 
-	/**
+  /**
    * Predict single value from a list of data
-	 * @param {Array} dataset
-	 * @returns number
-	 */
+   * @param {Array} dataset
+   * @returns number
+   */
   public predictOne(dataset) {
     if (math.contrib.isArrayOf(dataset, 'number')) {
       return getSinglePrediction(this, dataset);
     } else {
-      throw new TypeError('Passed in dataset is not a single dimensional array');
+      throw new TypeError(
+        'Passed in dataset is not a single dimensional array'
+      );
     }
   }
 
@@ -136,7 +138,9 @@ export class KNeighborsClassifier {
       }
       return predictions;
     }
-    throw new TypeError('The dataset to predict must be a matrix or lists of list');
+    throw new TypeError(
+      'The dataset to predict must be a matrix or lists of list'
+    );
   }
 }
 
@@ -146,7 +150,7 @@ function getSinglePrediction(knn, currentCase): {} {
   let predictedClass = -1;
   let maxPoints = -1;
   const lastElement = nearestPoints[0][0].length - 1;
-  knn.classes.forEach((element) => {
+  knn.classes.forEach(element => {
     pointsPerClass[element] = 0;
   });
   for (let i = 0; i < nearestPoints.length; ++i) {

@@ -64,25 +64,25 @@ describe('math.contrib.isMatrixOf', () => {
   });
 
   it('should fail to validate [[1, "a", 2], [1, 2, 3]]', () => {
-    const result = math.contrib.isMatrixOf([[1, "a", 2], [1, 2, 3]], 'number');
+    const result = math.contrib.isMatrixOf([[1, 'a', 2], [1, 2, 3]], 'number');
     expect(result).toBe(false);
   });
 
   it('should fail to valid []', () => {
     expect(() => {
-      math.contrib.isMatrixOf([], 'number')
+      math.contrib.isMatrixOf([], 'number');
     }).toThrow('Cannot perform isMatrixOf number unless the data is matrix');
   });
 });
 
 describe('math.contrib.isMatrix', () => {
   it('should validate true [[1,2], [2, 3]]', () => {
-    const result = math.contrib.isMatrix([ [1, 2], [2, 3] ]);
+    const result = math.contrib.isMatrix([[1, 2], [2, 3]]);
     expect(result).toBe(true);
   });
 
   it('should validate true [[1, true], ["a", 2]]', () => {
-    const result = math.contrib.isMatrix([[1, true], ["a", 2]]);
+    const result = math.contrib.isMatrix([[1, true], ['a', 2]]);
     expect(result).toBe(true);
   });
 
