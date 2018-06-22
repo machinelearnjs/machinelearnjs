@@ -96,3 +96,21 @@ describe('math.contrib.isMatrix', () => {
     expect(result).toBe(false);
   });
 });
+
+describe('math.contrib.isArrayOf', () => {
+  it('should validate true number of [1, 2, 3]', () => {
+    const result = math.contrib.isArrayOf([1, 2, 3], 'number');
+    expect(result).toBe(true);
+  });
+
+  it('should validate true string of ["a", "b"]', () => {
+    const result = math.contrib.isArrayOf(['a', 'b'], 'string');
+    expect(result).toBe(true);
+  });
+
+  it('should throw an exception if type is abcd', () => {
+    expect(() => {
+      math.contrib.isArrayOf(['a', 'b'], 'abcd');
+    }).toThrow('Failed to check the array content of type abcd');
+  });
+});

@@ -72,6 +72,8 @@ const isMatrix = (matrix) => {
 const isArrayOf = (arr, _type='number') => {
   if (_type === 'number') {
     return !arr.some(isNaN);
+  } else if (_type === 'string') {
+    return !arr.some(x => !_.isString(x));
   }
   throw Error(`Failed to check the array content of type ${_type}`);
 }
