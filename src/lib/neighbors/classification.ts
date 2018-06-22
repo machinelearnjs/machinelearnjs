@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import euclideanDistance from 'ml-distance-euclidean';
 import KDTree from './KDTree';
+import math from '../utils/MathExtra';
 
 export interface KNCOptions {
   distance: any;
@@ -113,7 +114,7 @@ export class KNeighborsClassifier {
 	 * @returns number
 	 */
   public predictOne(dataset) {
-    if (Array.isArray(dataset) && typeof dataset[0] === 'number') {
+    if (math.contrib.isArrayOf(dataset, 'number')) {
       return getSinglePrediction(this, dataset);
     } else {
       throw new TypeError('Passed in dataset is not a single dimensional array');
@@ -122,23 +123,20 @@ export class KNeighborsClassifier {
 
   /**
    * Predicts the output given the matrix to predict.
-   * @param {Array} dataset
+   * @param {Array} dataset: two dimensional vector
    * @return {Array} predictions
    */
   public predict(dataset): {} {
-    if (Array.isArray(dataset)) {
-      if (
-        Array.isArray(dataset[0]) &&
-        typeof dataset[0][0] === 'number'
-      ) {
-        const predictions = new Array(dataset.length);
-        for (let i = 0; i < dataset.length; i++) {
-          predictions[i] = getSinglePrediction(this, dataset[i]);
-        }
-        return predictions;
+    console.log(dataset);
+    const isAllNumber = math.contrib.isMatrixOf(dataset, 'number');
+    if (isAllNumber) {
+      const predictions = new Array(dataset.length);
+      for (let i = 0; i < dataset.length; i++) {
+        predictions[i] = getSinglePrediction(this, dataset[i]);
       }
+      return predictions;
     }
-    throw new TypeError('dataset to predict must be an array or a matrix');
+    throw new TypeError('The dataset to predict must be a matrix or lists of list');
   }
 }
 

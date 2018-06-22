@@ -31,9 +31,49 @@ const range = (start: number, stop: number) => {
   return _.range(start, stop);
 };
 
+/**
+ * Checking the maxtrix is a matrix of a certain data type (e.g. number)
+ * The function also performs isMatrix against the passed in dataset
+ * @param matrix
+ * @param {string} _type
+ */
+const isMatrixOf = (matrix, _type='number') => {
+  if (!isMatrix(matrix)) {
+    throw Error(`Cannot perform isMatrixOf ${_type} unless the matrix is matrix`);
+  }
+  if (_type === 'number') {
+    // Checking each elements inside the matrix is not number
+    // Returns an array of result per row
+    const vectorChecks = matrix.map(arr => arr.some(x => !_.isNumber(x)));
+    // All should be false
+    return vectorChecks.indexOf(true) === -1;
+  }
+  throw Error('Cannot check matrix of an unknown type');
+}
+
+/**
+ * Checking the matrix is a data of multiple rows
+ * @param matrix
+ * @returns {boolean}
+ */
+const isMatrix = (matrix) => {
+  const isAllArray = matrix.map(arr => _.isArray(arr));
+  return isAllArray.indexOf(false) === -1;
+}
+
+const isArrayOf = (arr, _type='number') => {
+  if (_type === 'number') {
+    return !arr.some(isNaN);
+  }
+  throw Error(`Failed to check the array content of type ${_type}`);
+}
+
 const contrib = {
   range,
-  size
+  size,
+  isMatrix,
+  isMatrixOf,
+  isArrayOf
 };
 
 // Exporting merged result

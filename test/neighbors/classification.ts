@@ -55,4 +55,12 @@ describe('classification:KNeighborsClassifier', () => {
 		const expected = [ 'a', 'a', 'a' ];
 		expect(_.isEqual(pred, expected)).toBe(true);
 	});
+
+	it('should throw an error if string is the first array element', () => {
+		const knn = new KNeighborsClassifier();
+		knn.fit({ X: X2, y: y2 });
+		expect(() => {
+			knn.predict([ [1, 'a', 4], [0], [9, 5] ]);
+		}).toThrow('The dataset to predict must be a matrix or lists of list');
+	});
 });
