@@ -39,16 +39,21 @@ const range = (start: number, stop: number) => {
  */
 const isMatrixOf = (matrix, _type='number') => {
   if (!isMatrix(matrix)) {
-    throw Error(`Cannot perform isMatrixOf ${_type} unless the matrix is matrix`);
+    throw Error(`Cannot perform isMatrixOf ${_type} unless the data is matrix`);
   }
-  if (_type === 'number') {
-    // Checking each elements inside the matrix is not number
-    // Returns an array of result per row
-    const vectorChecks = matrix.map(arr => arr.some(x => !_.isNumber(x)));
-    // All should be false
-    return vectorChecks.indexOf(true) === -1;
-  }
-  throw Error('Cannot check matrix of an unknown type');
+  // Checking each elements inside the matrix is not number
+  // Returns an array of result per row
+  const vectorChecks = matrix.map(arr => arr.some(x => {
+    // Checking type of each element
+    if (_type === 'number') {
+      return !_.isNumber(x);
+    } else {
+      throw Error('Cannot check matrix of an unknown type');
+    }
+	}));
+  // All should be false
+  return vectorChecks.indexOf(true) === -1;
+
 }
 
 /**
@@ -57,6 +62,9 @@ const isMatrixOf = (matrix, _type='number') => {
  * @returns {boolean}
  */
 const isMatrix = (matrix) => {
+  if (_.size(matrix) === 0) {
+    return false;
+  }
   const isAllArray = matrix.map(arr => _.isArray(arr));
   return isAllArray.indexOf(false) === -1;
 }
