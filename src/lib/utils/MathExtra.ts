@@ -80,11 +80,11 @@ const isArrayOf = (arr, _type = 'number') => {
 };
 
 const contrib = {
-  range,
-  size,
+  isArrayOf,
   isMatrix,
   isMatrixOf,
-  isArrayOf
+  range,
+  size,
 };
 
 // Exporting merged result

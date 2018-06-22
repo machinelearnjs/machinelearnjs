@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import euclideanDistance from 'ml-distance-euclidean';
-import KDTree from './KDTree';
 import math from '../utils/MathExtra';
+import KDTree from './KDTree';
 
 export interface KNCOptions {
   distance: any;
@@ -113,7 +113,7 @@ export class KNeighborsClassifier {
    * @param {Array} dataset
    * @returns number
    */
-  public predictOne(dataset) {
+  public predictOne(dataset): any {
     if (math.contrib.isArrayOf(dataset, 'number')) {
       return getSinglePrediction(this, dataset);
     } else {
@@ -129,7 +129,6 @@ export class KNeighborsClassifier {
    * @return {Array} predictions
    */
   public predict(dataset): {} {
-    console.log(dataset);
     const isAllNumber = math.contrib.isMatrixOf(dataset, 'number');
     if (isAllNumber) {
       const predictions = new Array(dataset.length);
