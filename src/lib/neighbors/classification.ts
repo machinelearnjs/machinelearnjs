@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import euclideanDistance from 'ml-distance-euclidean';
+import math from '../utils/MathExtra';
 import KDTree from './KDTree';
 
 export interface KNCOptions {
@@ -25,6 +26,11 @@ export class KNeighborsClassifier {
     this.options = options;
   }
 
+  /**
+   * Train the classifier with input and output data
+   * @param {any} X
+   * @param {any} y
+   */
   public fit({ X, y }): void {
     if (X === true) {
       const model = y;
@@ -37,8 +43,15 @@ export class KNeighborsClassifier {
 
     const classes = new Set(y);
 
-    const distance = _.get(this.options, 'distance', euclideanDistance);
-    const k = _.get(this.options, 'k', classes.size + 1);
+    // Doing a unary operation since _.get will only use the default value
+    // if the original value is undefined. However, options.distance is not undefined
+    // Reference: https://lodash.com/docs/4.17.10#get
+    const _dist = _.get(this.options, 'distance');
+    const distance = _dist ? _dist : euclideanDistance;
+
+    // Placeholder _k value, it can be 0
+    const _k = _.get(this.options, 'k');
+    const k = _k ? _k : classes.size + 1;
 
     const points = new Array(X.length);
     for (let i = 0; i < points.length; ++i) {
@@ -99,26 +112,37 @@ export class KNeighborsClassifier {
   }
 
   /**
-   * Predicts the output given the matrix to predict.
+   * Predict single value from a list of data
    * @param {Array} dataset
+   * @returns number
+   */
+  public predictOne(dataset): any {
+    if (math.contrib.isArrayOf(dataset, 'number')) {
+      return getSinglePrediction(this, dataset);
+    } else {
+      throw new TypeError(
+        'Passed in dataset is not a single dimensional array'
+      );
+    }
+  }
+
+  /**
+   * Predicts the output given the matrix to predict.
+   * @param {Array} dataset: two dimensional vector
    * @return {Array} predictions
    */
   public predict(dataset): {} {
-    if (Array.isArray(dataset)) {
-      if (typeof dataset[0] === 'number') {
-        return getSinglePrediction(this, dataset);
-      } else if (
-        Array.isArray(dataset[0]) &&
-        typeof dataset[0][0] === 'number'
-      ) {
-        const predictions = new Array(dataset.length);
-        for (let i = 0; i < dataset.length; i++) {
-          predictions[i] = getSinglePrediction(this, dataset[i]);
-        }
-        return predictions;
+    const isAllNumber = math.contrib.isMatrixOf(dataset, 'number');
+    if (isAllNumber) {
+      const predictions = new Array(dataset.length);
+      for (let i = 0; i < dataset.length; i++) {
+        predictions[i] = getSinglePrediction(this, dataset[i]);
       }
+      return predictions;
     }
-    throw new TypeError('dataset to predict must be an array or a matrix');
+    throw new TypeError(
+      'The dataset to predict must be a matrix or lists of list'
+    );
   }
 }
 
@@ -128,10 +152,9 @@ function getSinglePrediction(knn, currentCase): {} {
   let predictedClass = -1;
   let maxPoints = -1;
   const lastElement = nearestPoints[0][0].length - 1;
-
-  for (const element of knn.classes) {
+  knn.classes.forEach(element => {
     pointsPerClass[element] = 0;
-  }
+  });
   for (let i = 0; i < nearestPoints.length; ++i) {
     const currentClass = nearestPoints[i][0][lastElement];
     const currentPoints = ++pointsPerClass[currentClass];

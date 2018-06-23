@@ -56,3 +56,61 @@ describe('math.contrib.range', () => {
     );
   });
 });
+
+describe('math.contrib.isMatrixOf', () => {
+  it('should validate [[1, 2, 3], [1, 2, 3]], number true', () => {
+    const result = math.contrib.isMatrixOf([[1, 2, 3], [1, 2, 3]], 'number');
+    expect(result).toBe(true);
+  });
+
+  it('should fail to validate [[1, "a", 2], [1, 2, 3]]', () => {
+    const result = math.contrib.isMatrixOf([[1, 'a', 2], [1, 2, 3]], 'number');
+    expect(result).toBe(false);
+  });
+
+  it('should fail to valid []', () => {
+    expect(() => {
+      math.contrib.isMatrixOf([], 'number');
+    }).toThrow('Cannot perform isMatrixOf number unless the data is matrix');
+  });
+});
+
+describe('math.contrib.isMatrix', () => {
+  it('should validate true [[1,2], [2, 3]]', () => {
+    const result = math.contrib.isMatrix([[1, 2], [2, 3]]);
+    expect(result).toBe(true);
+  });
+
+  it('should validate true [[1, true], ["a", 2]]', () => {
+    const result = math.contrib.isMatrix([[1, true], ['a', 2]]);
+    expect(result).toBe(true);
+  });
+
+  it('should validate false []', () => {
+    const result = math.contrib.isMatrix([]);
+    expect(result).toBe(false);
+  });
+
+  it('should validate false 123', () => {
+    const result = math.contrib.isMatrix(123);
+    expect(result).toBe(false);
+  });
+});
+
+describe('math.contrib.isArrayOf', () => {
+  it('should validate true number of [1, 2, 3]', () => {
+    const result = math.contrib.isArrayOf([1, 2, 3], 'number');
+    expect(result).toBe(true);
+  });
+
+  it('should validate true string of ["a", "b"]', () => {
+    const result = math.contrib.isArrayOf(['a', 'b'], 'string');
+    expect(result).toBe(true);
+  });
+
+  it('should throw an exception if type is abcd', () => {
+    expect(() => {
+      math.contrib.isArrayOf(['a', 'b'], 'abcd');
+    }).toThrow('Failed to check the array content of type abcd');
+  });
+});

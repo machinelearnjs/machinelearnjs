@@ -6,7 +6,7 @@ const y = [0, 1, 2, 3, 4];
 
 console.log('original X', X);
 console.log('original y', y);
-console.log('train test split')
+console.log('train test split');
 console.log(
   train_test_split(X, y, {
     test_size: 0.33,
