@@ -43,9 +43,12 @@ export class KNeighborsClassifier {
 
     const classes = new Set(y);
 
-    // Placeholder _dist function, it can be null as a default value
+    // Doing a unary operation since _.get will only use the default value
+    // if the original value is undefined. However, options.distance is not undefined
+    // Reference: https://lodash.com/docs/4.17.10#get
     const _dist = _.get(this.options, 'distance');
     const distance = _dist ? _dist : euclideanDistance;
+
     // Placeholder _k value, it can be 0
     const _k = _.get(this.options, 'k');
     const k = _k ? _k : classes.size + 1;
