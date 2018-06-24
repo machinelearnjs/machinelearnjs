@@ -15,5 +15,4 @@ package-lock.json
 .Trash-0
 
 # tsdoc
-docs/out
-docs/doc_source
+docs/md_base

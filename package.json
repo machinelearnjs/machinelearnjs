@@ -27,7 +27,7 @@
     "cov:send": "nyc report --reporter=lcov > coverage.lcov && codecov",
     "cov:check": "nyc report && nyc check-coverage --lines 100 --functions 100 --branches 100",
     "doc": "npx typedoc --out docs/out --theme ./docs/themes/kalimdor/ --tsconfig tdconfig.json --excludePrivate",
-    "doc:md": "rm -rf docs/md && npx typedoc --out docs/md --theme markdown --tsconfig tdconfig.json --excludePrivate",
+    "doc:md": "npx typedoc --out docs/md_base --theme markdown --tsconfig tdconfig.json --excludePrivate",
     "doc:json": "npx typedoc --json docs/out.json --tsconfig tdconfig.json --excludePrivate",
     "doc:publish": "gh-pages -m \"[ci skip] Updates\" -d build/docs",
     "version": "standard-version",

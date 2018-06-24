@@ -1,5 +1,6 @@
+// TODO: Document required node version
 const _ = require('lodash');
-const fs = require('fs-extra');
+const fs = require('fs');
 const path = require('path');
 
 // Params
@@ -13,11 +14,6 @@ fs.readdir(srcRoot, (err, folders) => {
 	if (err) {
 		console.error(err);
 		exit();
-	}
-
-	// Cleaning the existing output directory
-	if (!fs.existsSync(outdir)){
-		fs.removeSync(outdir);
 	}
 
 	// Making sure we are only dealing with lib folders
@@ -67,6 +63,7 @@ fs.readdir(srcRoot, (err, folders) => {
 		_.forEach(files, (f) => {
 			const fullFilePath = path.join(srcRoot, f);
 			const moduleContent = fs.readFileSync(fullFilePath);
+
 			fs.appendFileSync(outputModuleFile, moduleContent, { flag: 'a' });
 		});
 	});
