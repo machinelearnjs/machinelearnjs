@@ -1,10 +1,24 @@
 const _ = require('lodash');
-const fs = require('fs');
-
+const fs = require('fs-extra');
 const path = require('path');
+
+// Params
 const srcRoot = path.join(__dirname, '../src/lib');
+const outdir = path.join(__dirname, 'doc_source');
+const whilelist = /^[\d\w]+.ts$/;
+const blackList = ['index.ts', 'index.repl.ts'];
 
 fs.readdir(srcRoot, (err, folders) => {
+
+	if (err) {
+		console.error(err);
+		exit();
+	}
+
+	// Cleaning the existing output directory
+	if (!fs.existsSync(outdir)){
+		fs.removeSync(outdir);
+	}
 
 	// Making sure we are only dealing with lib folders
 	const libFolders = _.filter(folders, (f) => {
@@ -12,9 +26,10 @@ fs.readdir(srcRoot, (err, folders) => {
 		return fs.lstatSync(fullPath).isDirectory();
 	});
 
-	const whilelist = /^[\d\w]+.ts$/;
-	const blackList = ['index.ts', 'index.repl.ts'];
-	// Squashing lib into a file
+
+	// Getting library files
+	// e.g. [ ensemble/forest.ts ], [ preprocessing/Imputer.ts ]
+	// TODO Support deeper file path files
 	const libFiles = _.map(libFolders, (folder) => {
 
 		// Getting the folder full path
@@ -38,8 +53,24 @@ fs.readdir(srcRoot, (err, folders) => {
 		});
 	});
 
-	console.log('Checking error', err);
-	console.log('getting the list dir', folders);
-	console.log('lib folders ', libFolders);
-	console.log('libFiles', libFiles);
+	// Creating the source out directory if not exists
+	if (!fs.existsSync(outdir)){
+		fs.mkdirSync(outdir);
+	}
+
+	// Writing to each module file
+	_.forEach(libFiles, (files) => {
+		// from [ ensemble/forest.ts ] -> [ensemble, forest.ts] -> ensemble
+		const moduleName = files[0].split('/')[0];
+		const outputModuleFile = path.join(outdir, `${moduleName}.ts`);
+
+		_.forEach(files, (f) => {
+			const fullFilePath = path.join(srcRoot, f);
+			const moduleContent = fs.readFileSync(fullFilePath);
+			fs.appendFileSync(outputModuleFile, moduleContent, { flag: 'a' });
+		});
+	});
+
+	console.log('List of module folders: \n', libFolders);
+	console.log('List of module files: \n', libFiles);
 });

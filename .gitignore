@@ -16,3 +16,4 @@ package-lock.json
 
 # tsdoc
 docs/out
+docs/doc_source
