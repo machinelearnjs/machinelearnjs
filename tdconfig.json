@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "es5",
     "outDir": "build/main",
-    "rootDir": "src",
+    "rootDir": "src/lib",
     "moduleResolution": "node",
     "module": "commonjs",
     "declaration": true,
@@ -39,7 +39,7 @@
     "types": ["node"],
     "typeRoots": ["node_modules/@types", "src/types"]
   },
-  "include": ["src/**/*.ts"],
-  "exclude": ["node_modules/**", "src/lib/**/*.repl.ts"],
+  "include": ["src/lib/**/*.ts"],
+  "exclude": ["node_modules/**", "src/**/*.repl.ts"],
   "compileOnSave": false
 }
