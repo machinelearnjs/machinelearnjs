@@ -1,4 +1,0 @@
-# neighbors.getSinglePrediction
-
-<!-- Methods -->
-

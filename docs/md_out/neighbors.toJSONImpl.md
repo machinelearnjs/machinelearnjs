@@ -1,4 +1,0 @@
-# neighbors.toJSONImpl
-
-<!-- Methods -->
-

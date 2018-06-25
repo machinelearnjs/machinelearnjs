@@ -1,4 +1,0 @@
-# metrics.zeroOneLoss
-
-<!-- Methods -->
-

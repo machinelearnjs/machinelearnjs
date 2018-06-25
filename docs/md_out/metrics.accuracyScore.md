@@ -1,4 +1,0 @@
-# metrics.accuracyScore
-
-<!-- Methods -->
-

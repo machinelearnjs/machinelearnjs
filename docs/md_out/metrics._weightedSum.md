@@ -1,4 +1,0 @@
-# metrics._weightedSum
-
-<!-- Methods -->
-
