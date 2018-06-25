@@ -1,13 +1,22 @@
 const fs = require('fs');
 const path = require('path');
 const _ = require('lodash');
+const Handlebars = require('handlebars');
 const docsJson = require('../docs.json');
 
 // Params
+const themePath = path.join(__dirname, '../themes/markdown');
+const eneityPageFile = 'entity_page.hbs';
 const outputPath = path.join(__dirname, '../md_out');
 const pathDelimeter = '.';
 const entityKindWhitelist = ['Class', 'Function'];   // Whitelisting kinds when grabbing class or method
 const moduleNameBlackList = ["\""];
+
+
+// pages
+const entityPagePath = path.join(themePath, eneityPageFile);
+const entityPageContent = fs.readFileSync(entityPagePath, 'utf8');
+
 
 // 1. data preprocessing
 const cleanName = (name) => {
@@ -50,10 +59,48 @@ if (!fs.existsSync(outputPath)){
   fs.mkdirSync(outputPath);
 }
 
+// Handlebar helpers
+
+const KindStringConst = 'Constructor';
+// 1. Check if the conditional is Constructor
+Handlebars.registerHelper("ifConstructor", (conditional, options) => {
+  if (_.isEqual(conditional, KindStringConst)) {
+    return options.fn(this);
+  } else {
+    return options.inverse(this);
+  }
+});
+
+Handlebars.registerHelper("hasConstructor", (children, options) => {
+  if (children) {
+    const hasConst = children.some((prop) => {
+      return prop.kindString === KindStringConst;
+    });
+    return hasConst ? options.fn(this) : options.inverse(this);
+  } else {
+    return options.inverse(this);
+  }
+});
+
+// 2. Check if the conditional is Method
+Handlebars.registerHelper("ifMethod", (conditional, options) => {
+  if (_.isEqual(conditional, 'Method')) {
+    return options.fn(this);
+  } else {
+    return options.inverse(this);
+  }
+});
+
+// 3. Check if the conditional is
+
+
 // Writing each entity page
 _.forEach(orderedFirstChildren, (entityChild) => {
   const fullPath = path.join(outputPath, `${entityChild.name}.md`);
-  fs.appendFileSync(fullPath, '#test!', { flag: 'a' });
+  const template = Handlebars.compile(entityPageContent);
+  const compiledPage = template(entityChild);
+  // Write actual file
+  fs.appendFileSync(fullPath, compiledPage, { flag: 'a' });
 
 });
 

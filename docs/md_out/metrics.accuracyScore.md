@@ -1,0 +1,4 @@
+# metrics.accuracyScore
+
+<!-- Methods -->
+
