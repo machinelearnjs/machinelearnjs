@@ -16,4 +16,4 @@ package-lock.json
 
 # tsdoc
 docs/md_base
-docs/out.json
+docs/docs.json
