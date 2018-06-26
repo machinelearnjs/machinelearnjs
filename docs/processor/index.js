@@ -62,8 +62,11 @@ if (!fs.existsSync(outputPath)){
 // Handlebar helpers
 
 const KindStringConst = 'Constructor';
-// 1. Check if the conditional is Constructor
+const kindStringMethod = 'Method';
+
+/** Check if a child is a Constructor */
 Handlebars.registerHelper("ifConstructor", (conditional, options) => {
+  console.log('checking conditional', conditional);
   if (_.isEqual(conditional, KindStringConst)) {
     return options.fn(this);
   } else {
@@ -71,27 +74,26 @@ Handlebars.registerHelper("ifConstructor", (conditional, options) => {
   }
 });
 
-Handlebars.registerHelper("hasConstructor", (children, options) => {
-  if (children) {
-    const hasConst = children.some((prop) => {
-      return prop.kindString === KindStringConst;
-    });
-    return hasConst ? options.fn(this) : options.inverse(this);
-  } else {
-    return options.inverse(this);
-  }
-});
-
-// 2. Check if the conditional is Method
+/** Check if a child is a Method */
 Handlebars.registerHelper("ifMethod", (conditional, options) => {
-  if (_.isEqual(conditional, 'Method')) {
+  if (_.isEqual(conditional, kindStringMethod)) {
     return options.fn(this);
   } else {
     return options.inverse(this);
   }
 });
 
-// 3. Check if the conditional is
+/** Check a collection if it has any Constructors */
+Handlebars.registerHelper("hasConstructor", (children, options) => {
+  if (children) {
+    const hasConst = children.some((prop) => {
+      return prop.kindString === KindStringConst;
+    });
+    return hasConst ? options.fn(children) : options.inverse(children);
+  } else {
+    return options.inverse(children);
+  }
+});
 
 
 // Writing each entity page
