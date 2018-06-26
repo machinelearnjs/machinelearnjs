@@ -1,19 +1,30 @@
 # {{ name }}
 
-{{#hasConstructor children}}
-    {{newLine}}### Constructor
+{{#filterConstructor children}}
+    {{newLine}}### Constructors
     {{#each this}}
-        {{#ifConstructor this.kindString}}
-            {{newLine}}* [constructor](#constructor)
-        {{/ifConstructor}}
+        {{newLine}}* [constructor](#constructor)
     {{/each}}
-{{/hasConstructor}}
+{{/filterConstructor}}
 
-{{#hasMethod children}}
-    {{#ifMethod this.kindString}}
-    {{/ifMethod}}
-{{/hasMethod}}
+{{#filterMethod children}}
+    {{newLine}}### Methods
+    {{#each this}}
+        {{newLine}}* [{{this.name}}](#{{this.name}})
+    {{/each}}
+{{/filterMethod}}
 
-### constructor
+---
 
-testing!
+{{#filterConstructor children}}
+    {{newLine}}# Constructors
+    {{newLine}}---
+    {{#each this}}
+        {{newLine}}### {{this.name}}
+        {{#each this.signatures}}
+            {{newLine}}{{this.name}}{{methodBracket this.parameters}}
+        {{/each}}
+        {{newLine}}Defined in {{getSourceLink this.sources}}
+        {{newLine}}{{this.comment.shortText}}
+    {{/each}}
+{{/filterConstructor}}

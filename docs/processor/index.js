@@ -3,6 +3,7 @@ const path = require('path');
 const _ = require('lodash');
 const Handlebars = require('handlebars');
 const docsJson = require('../docs.json');
+const pjson = require('../../package.json');
 
 // Params
 const themePath = path.join(__dirname, '../themes/markdown');
@@ -70,20 +71,20 @@ const kindStringMethod = 'Method';
  * @param options
  * @param kind
  */
-const ifChildX = (conditional, options, kind) => {
-  if (_.isEqual(conditional, kind)) {
-    return options.fn(this);
+const ifChildX = (child, options, kind) => {
+  if (_.isEqual(child.kindString, kind)) {
+    return options.fn(child);
   } else {
-    return options.inverse(this);
+    return options.inverse(child);
   }
 }
 /** Check if a child is a Constructor */
-Handlebars.registerHelper("ifConstructor", (conditional, options) =>
-  ifChildX(conditional, options, kindStringConst));
+Handlebars.registerHelper("ifConstructor", (child, options) =>
+  ifChildX(child, options, kindStringConst));
 
 /** Check if a child is a Method */
-Handlebars.registerHelper("ifMethod", (conditional, options) =>
-  ifChildX(conditional, options, kindStringMethod));
+Handlebars.registerHelper("ifMethod", (child, options) =>
+  ifChildX(child, options, kindStringMethod));
 
 
 /**
@@ -113,6 +114,45 @@ Handlebars.registerHelper("hasMethod", (children, options) =>
   hasCollectionX(children, options, kindStringMethod));
 
 
+/** Filtering  */
+const filterByKind = (children, options, kind) => {
+  if (children) {
+    const filtered = children.filter((child) => {
+      return child.kindString === kind;
+    });
+    return _.isEmpty(filtered) ? options.inverse(this) : options.fn(filtered);
+  } else {
+    return options.inverse(children);
+  }
+}
+
+Handlebars.registerHelper("filterConstructor", (children, options) =>
+  filterByKind(children, options, kindStringConst));
+
+Handlebars.registerHelper("filterMethod", (children, options) =>
+  filterByKind(children, options, kindStringMethod));
+
+
+/** Renderers */
+
+/**
+ * Gets method () block next to the method name
+ * e.g. (props: any, x: string)
+ **/
+Handlebars.registerHelper('methodBracket', (parameters) => {
+  const params = _.map(parameters, (param) => {
+    const paramType = _.isString(param.type) ? param.type : 'object';
+    return `${param.name}: *\`${paramType}\`*`;
+  });
+  return `(${params.join(',')})`
+});
+
+Handlebars.registerHelper('getSourceLink', (sources) => {
+  const defined =_.map(sources, (src) => {
+    return `[${src.fileName}:${src.line}](${pjson.repository}/blob/master/src/lib/${src.fileName}#L${src.line})`
+  });
+  return defined.join(',');
+});
 
 /** Create a newline */
 Handlebars.registerHelper('newLine', () => '\n');
