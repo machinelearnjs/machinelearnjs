@@ -22,9 +22,34 @@
     {{#each this}}
         {{newLine}}### {{this.name}}
         {{#each this.signatures}}
-            {{newLine}}{{this.name}}{{methodBracket this.parameters}}
+            {{newLine}}⊕ **{{this.name}}**{{methodBracket this.parameters}}
         {{/each}}
         {{newLine}}Defined in {{getSourceLink this.sources}}
         {{newLine}}{{this.comment.shortText}}
+        {{newLine}}**Parameters:**
+        {{#each this.signatures}}
+            {{newLine}}{{constructParamTable this.parameters}}
+            {{newLine}}**Returns:** {{ this.type.name }}
+        {{/each}}
     {{/each}}
 {{/filterConstructor}}
+
+---
+
+{{#filterMethod children}}
+    {{newLine}}# Constructors
+    {{newLine}}---
+    {{#each this}}
+        {{newLine}}### {{this.name}}
+        {{#each this.signatures}}
+            {{newLine}}▸ **{{this.name}}**{{methodBracket this.parameters}}
+        {{/each}}
+        {{newLine}}Defined in {{getSourceLink this.sources}}
+        {{newLine}}{{this.comment.shortText}}
+        {{newLine}}**Parameters:**
+        {{#each this.signatures}}
+            {{newLine}}{{constructParamTable this.parameters}}
+            {{newLine}}**Returns:** {{renderMethodReturnType this.type}}
+        {{/each}}
+    {{/each}}
+{{/filterMethod}}

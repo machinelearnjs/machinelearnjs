@@ -87,14 +87,7 @@ Handlebars.registerHelper("ifMethod", (child, options) =>
   ifChildX(child, options, kindStringMethod));
 
 
-/**
- * Check if a collection has any X
- * Returns the children back in the end
- * @param children
- * @param options
- * @param kind
- * @returns {*}
- */
+/** Check if a collection has any X */
 const hasCollectionX = (children, options, kind) => {
   if (children) {
     const hasConst = children.some((prop) => {
@@ -114,7 +107,7 @@ Handlebars.registerHelper("hasMethod", (children, options) =>
   hasCollectionX(children, options, kindStringMethod));
 
 
-/** Filtering  */
+/** Filtering by kind and return a filtered collection */
 const filterByKind = (children, options, kind) => {
   if (children) {
     const filtered = children.filter((child) => {
@@ -133,6 +126,71 @@ Handlebars.registerHelper("filterMethod", (children, options) =>
   filterByKind(children, options, kindStringMethod));
 
 
+/** Construct parameters table */
+const PARAM_REFLECTION = 'reflection';
+const PARAM_INTRINSIC = 'intrinsic';
+const PARAM_ARRAY = 'array';
+const constructParamTable = (parameters) => {
+  /**
+   * Prioritise getting text instead of shortText
+   * @param param
+   */
+  const getText = (param) => {
+    const text = _.get(param,'comment.text');
+    const shortText =  _.get(param,'comment.shortText')
+    if (text) {
+      return text;
+    } else if (shortText) {
+      return shortText;
+    }
+    return undefined;
+  }
+  // Going through the method level params
+  // e.g. test(a: {}, b: number, c: string)
+  // a -> b -> c
+  const consolidatedParams = _.map(parameters, (param) => {
+    const paramType = param.type.type
+    if (PARAM_REFLECTION === paramType) {
+      // 1. Handle reflection/named param
+      const namedParams = _.map(param.type.declaration.children, (namedParam) => {
+        return [`${param.name}.${namedParam.name}`, namedParam.type.name, namedParam.defaultValue, getText(namedParam)];
+      });
+      return _.flatten(namedParams);
+    } else if (PARAM_INTRINSIC === paramType) {
+      return [param.name, param.type.name, param.defaultValue, getText(param)];
+    } else if (PARAM_ARRAY === paramType) {
+      return [param.name, param.type.name, param.defaultValue, getText(param)];
+    }
+  });
+  const tableHeader = '| Param | Type | Default | Description |\n';
+  const tableSplit = '| ------ | ------ | ------ | ------ |\n';
+  let stringBuilder = `${tableHeader}${tableSplit}`;
+  // TODO: Is there a better way of building a string??.. should we do it from the template?
+  for (let i = 0; i < _.size(consolidatedParams); i++) {
+    const [name, type, defaultValue, description] = consolidatedParams[i];
+    stringBuilder += `| ${name} | ${type} | ${defaultValue} | ${description}\n`;
+    if (i !== _.size(consolidatedParams) -1) {
+      stringBuilder += tableSplit;
+    }
+  }
+  return stringBuilder;
+}
+
+Handlebars.registerHelper('constructParamTable', (parameters) => constructParamTable(parameters));
+
+/** Print method return type */
+const RETURN_TYPE_INSTRINSIC = 'intrinsic';
+const RETURN_TYPE_ARRAY = 'array';
+const renderMethodReturnType = (type) => {
+  if (type.type === RETURN_TYPE_INSTRINSIC) {
+    return type.name;
+  } else if (type.type === RETURN_TYPE_ARRAY) {
+    return `${type.elementType.name}[]`;
+  }
+}
+
+Handlebars.registerHelper('renderMethodReturnType', (type) => renderMethodReturnType(type));
+
 /** Renderers */
 
 /**
@@ -147,6 +205,10 @@ Handlebars.registerHelper('methodBracket', (parameters) => {
   return `(${params.join(',')})`
 });
 
+/**
+ * Get a source link such as
+ * [ensemble/forest.ts:6](https://github.com/JasonShin/kalimdorjs/blob/master/src/lib/ensemble/forest.ts#L6)
+ */
 Handlebars.registerHelper('getSourceLink', (sources) => {
   const defined =_.map(sources, (src) => {
     return `[${src.fileName}:${src.line}](${pjson.repository}/blob/master/src/lib/${src.fileName}#L${src.line})`
