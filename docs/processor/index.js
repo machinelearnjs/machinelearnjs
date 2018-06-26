@@ -61,39 +61,61 @@ if (!fs.existsSync(outputPath)){
 
 // Handlebar helpers
 
-const KindStringConst = 'Constructor';
+const kindStringConst = 'Constructor';
 const kindStringMethod = 'Method';
 
-/** Check if a child is a Constructor */
-Handlebars.registerHelper("ifConstructor", (conditional, options) => {
-  console.log('checking conditional', conditional);
-  if (_.isEqual(conditional, KindStringConst)) {
+/**
+ * Check if a child is an instance of X
+ * @param conditional
+ * @param options
+ * @param kind
+ */
+const ifChildX = (conditional, options, kind) => {
+  if (_.isEqual(conditional, kind)) {
     return options.fn(this);
   } else {
     return options.inverse(this);
   }
-});
+}
+/** Check if a child is a Constructor */
+Handlebars.registerHelper("ifConstructor", (conditional, options) =>
+  ifChildX(conditional, options, kindStringConst));
 
 /** Check if a child is a Method */
-Handlebars.registerHelper("ifMethod", (conditional, options) => {
-  if (_.isEqual(conditional, kindStringMethod)) {
-    return options.fn(this);
-  } else {
-    return options.inverse(this);
-  }
-});
+Handlebars.registerHelper("ifMethod", (conditional, options) =>
+  ifChildX(conditional, options, kindStringMethod));
 
-/** Check a collection if it has any Constructors */
-Handlebars.registerHelper("hasConstructor", (children, options) => {
+
+/**
+ * Check if a collection has any X
+ * Returns the children back in the end
+ * @param children
+ * @param options
+ * @param kind
+ * @returns {*}
+ */
+const hasCollectionX = (children, options, kind) => {
   if (children) {
     const hasConst = children.some((prop) => {
-      return prop.kindString === KindStringConst;
+      return prop.kindString === kind;
     });
     return hasConst ? options.fn(children) : options.inverse(children);
   } else {
     return options.inverse(children);
   }
-});
+}
+
+
+Handlebars.registerHelper("hasConstructor", (children, options) =>
+  hasCollectionX(children, options, kindStringConst));
+
+Handlebars.registerHelper("hasMethod", (children, options) =>
+  hasCollectionX(children, options, kindStringMethod));
+
+
+
+/** Create a newline */
+Handlebars.registerHelper('newLine', () => '\n');
 
 
 // Writing each entity page

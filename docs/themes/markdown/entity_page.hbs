@@ -1,18 +1,19 @@
 # {{ name }}
 
-<!-- Methods -->
 {{#hasConstructor children}}
-    ### Constructor
+    {{newLine}}### Constructor
     {{#each this}}
         {{#ifConstructor this.kindString}}
-            const
-            {{ this.name }}
+            {{newLine}}* [constructor](#constructor)
         {{/ifConstructor}}
     {{/each}}
 {{/hasConstructor}}
 
-{{#each children}}
+{{#hasMethod children}}
     {{#ifMethod this.kindString}}
     {{/ifMethod}}
+{{/hasMethod}}
 
-{{/each}}
+### constructor
+
+testing!
