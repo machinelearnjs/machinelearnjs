@@ -1,19 +1,13 @@
-import * as _ from 'lodash';
 import euclideanDistance from 'ml-distance-euclidean';
 import math from '../utils/MathExtra';
 import KDTree from './KDTree';
-
-export interface KNCOptions {
-  distance: any;
-  k: number;
-}
 
 export class KNeighborsClassifier {
   private kdTree = null;
   private k = null;
   private classes = null;
   private isEuclidean = null;
-  private options: KNCOptions;
+  private distance = null;
 
   /**
    * @param {Array} dataset
@@ -22,8 +16,9 @@ export class KNeighborsClassifier {
    * @param {number} [options.k=numberOfClasses + 1] - Number of neighbors to classify.
    * @param {function} [options.distance=euclideanDistance] - Distance function that takes two parameters.
    */
-  constructor(options: KNCOptions = { distance: null, k: 0 }) {
-    this.options = options;
+  constructor(options: { distance: any, k: number } = { distance: null, k: 0 }) {
+    this.distance = options.distance;
+    this.k = options.k;
   }
 
   /**
@@ -34,7 +29,7 @@ export class KNeighborsClassifier {
   public fit({ X, y }): void {
     if (X === true) {
       const model = y;
-      this.kdTree = new KDTree(model.kdTree, this.options);
+      this.kdTree = new KDTree(model.kdTree, { distance: this.distance, k: this.k });
       this.k = model.k;
       this.classes = new Set(model.classes);
       this.isEuclidean = model.isEuclidean;
@@ -46,12 +41,10 @@ export class KNeighborsClassifier {
     // Doing a unary operation since _.get will only use the default value
     // if the original value is undefined. However, options.distance is not undefined
     // Reference: https://lodash.com/docs/4.17.10#get
-    const _dist = _.get(this.options, 'distance');
-    const distance = _dist ? _dist : euclideanDistance;
+    const distance = this.distance ? this.distance : euclideanDistance;
 
     // Placeholder _k value, it can be 0
-    const _k = _.get(this.options, 'k');
-    const k = _k ? _k : classes.size + 1;
+    const k = this.k ? this.k : classes.size + 1;
 
     const points = new Array(X.length);
     for (let i = 0; i < points.length; ++i) {
@@ -88,7 +81,7 @@ export class KNeighborsClassifier {
         'the model was created with the default distance function. Do not load it with another one'
       );
     }
-    return new KNeighborsClassifier(this.options);
+    return new KNeighborsClassifier({ distance: this.distance, k: this.k });
   }
 
   /**
