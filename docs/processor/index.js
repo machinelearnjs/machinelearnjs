@@ -164,27 +164,33 @@ const constructParamTable = (parameters) => {
   // Going through the method level params
   // e.g. test(a: {}, b: number, c: string)
   // a -> b -> c
-  const consolidatedParams = _.map(parameters, (param) => {
+  const consolidatedParams = _.reduce(parameters, (sum, param) => {
     const paramType = param.type.type
     if (PARAM_REFLECTION === paramType) {
       // 1. Handle reflection/named param
-      const namedParams = _.map(param.type.declaration.children, (namedParam) => {
-        return [`${param.name}.${namedParam.name}`, namedParam.type.name, namedParam.defaultValue, getText(namedParam)];
+      // e.g. x: { test1, test2 }
+      _.forEach(param.type.declaration.children, (namedParam) => {
+        sum.push([`${param.name}.${namedParam.name}`, namedParam.type.name, namedParam.defaultValue, getText(namedParam)]);
       });
-      return _.flatten(namedParams);
     } else if (PARAM_INTRINSIC === paramType) {
-      return [param.name, param.type.name, param.defaultValue, getText(param)];
+      //  2. Handle any intrintic params
+      // e.g. x: number
+      sum.push([param.name, param.type.name, param.defaultValue, getText(param)]);
     } else if (PARAM_ARRAY === paramType) {
-      return [param.name, param.type.name, param.defaultValue, getText(param)];
+      // 3. Handle any array params
+      // e.g. string[]
+      sum.push([param.name, param.type.name, param.defaultValue, getText(param)]);
     } else if (PARAM_REFERENCE === paramType) {
+      // 4. Handle any Interface params
+      // e.g. x: Options
       const foundRef = searchInterface(param.type.id);
-      const interfaceParams = _.map(foundRef.children, (prop) => {
-        return [`${param.name}.${prop.name}`, prop.type.name, prop.defaultValue, getText(prop)];
+      _.forEach(foundRef.children, (prop) => {
+        sum.push([`${param.name}.${prop.name}`, prop.type.name, prop.defaultValue, getText(prop)]);
       });
-      console.log('checking interface param', interfaceParams);
-      return _.flatten(interfaceParams);
     }
-  });
+    return sum;
+  }, []);
+  // flatten any [ [ [] ] ] 3rd layer arrays
   const tableHeader = '| Param | Type | Default | Description |\n';
   const tableSplit = '| ------ | ------ | ------ | ------ |\n';
   let stringBuilder = `${tableHeader}${tableSplit}`;
