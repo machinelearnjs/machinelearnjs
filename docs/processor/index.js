@@ -36,18 +36,20 @@ const aggregatedFirstChildren = _.reduce(docsJson.children, (aggregation, module
   // Grabbing each class or method of the module
   // Also it squashes the entities by moduelName.entityName e.g. preprocessing.OneHotEncoder
   const squashedEntityList = _.reduce(moduleChild.children, (entityList, entityChild) => {
+
     // Filter by entityKindWhitelist
     if (entityKindWhitelist.indexOf(entityChild.kindString) !== -1) {
       // each function or class name
-
       const entityName = entityChild.name;
       const fullEntityName = [cleanedModuleName, entityName].join(pathDelimeter);
       const newEntityChild = _.set(entityChild, 'name', fullEntityName);
-      return _.concat(entityList, newEntityChild);
+      return _.concat(entityList, [newEntityChild]);
     }
+    return entityList;
   }, []);
   // Filter out undefined entity appended as a result of whitelisting during the reduce
   const filteredEntityList = _.filter(squashedEntityList, (x) => !_.isUndefined(x));
+
   // Concat the squashedEntityList to the _.reduce aggregation
   // Also applies a shallow flatten as squashedEntityList is an array
   return _.flatten(_.concat(aggregation, filteredEntityList));
@@ -126,11 +128,24 @@ Handlebars.registerHelper("filterConstructor", (children, options) =>
 Handlebars.registerHelper("filterMethod", (children, options) =>
   filterByKind(children, options, kindStringMethod));
 
+/** Search tree to find an entity with the ID */
+const searchInterface = (id) => {
+  let candidate = null;
+  _.forEach(docsJson.children, (module) => {
+    _.forEach(module.children, (entity) => {
+      if (entity.id === id) {
+        candidate = entity;
+      }
+    });
+  });
+  return candidate;
+}
 
 /** Construct parameters table */
 const PARAM_REFLECTION = 'reflection';
 const PARAM_INTRINSIC = 'intrinsic';
 const PARAM_ARRAY = 'array';
+const PARAM_REFERENCE = 'reference';
 const constructParamTable = (parameters) => {
   /**
    * Prioritise getting text instead of shortText
@@ -161,6 +176,13 @@ const constructParamTable = (parameters) => {
       return [param.name, param.type.name, param.defaultValue, getText(param)];
     } else if (PARAM_ARRAY === paramType) {
       return [param.name, param.type.name, param.defaultValue, getText(param)];
+    } else if (PARAM_REFERENCE === paramType) {
+      const foundRef = searchInterface(param.type.id);
+      const interfaceParams = _.map(foundRef.children, (prop) => {
+        return [`${param.name}.${prop.name}`, prop.type.name, prop.defaultValue, getText(prop)];
+      });
+      console.log('checking interface param', interfaceParams);
+      return _.flatten(interfaceParams);
     }
   });
   const tableHeader = '| Param | Type | Default | Description |\n';
