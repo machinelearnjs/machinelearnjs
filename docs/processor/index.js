@@ -36,9 +36,10 @@ const aggregatedFirstChildren = _.reduce(docsJson.children, (aggregation, module
   // Grabbing each class or method of the module
   // Also it squashes the entities by moduelName.entityName e.g. preprocessing.OneHotEncoder
   const squashedEntityList = _.reduce(moduleChild.children, (entityList, entityChild) => {
-    // Filter by kindWhiteList
+    // Filter by entityKindWhitelist
     if (entityKindWhitelist.indexOf(entityChild.kindString) !== -1) {
       // each function or class name
+
       const entityName = entityChild.name;
       const fullEntityName = [cleanedModuleName, entityName].join(pathDelimeter);
       const newEntityChild = _.set(entityChild, 'name', fullEntityName);
@@ -219,9 +220,9 @@ Handlebars.registerHelper('getSourceLink', (sources) => {
 /** Create a newline */
 Handlebars.registerHelper('newLine', () => '\n');
 
-
 // Writing each entity page
 _.forEach(orderedFirstChildren, (entityChild) => {
+
   const fullPath = path.join(outputPath, `${entityChild.name}.md`);
   const template = Handlebars.compile(entityPageContent);
   const compiledPage = template(entityChild);
