@@ -5,14 +5,22 @@ const Handlebars = require('handlebars');
 const docsJson = require('../docs.json');
 const pjson = require('../../package.json');
 
-// Params
+// Params for doc pages
 const themePath = path.join(__dirname, '../themes/markdown');
 const eneityPageFile = 'entity_page.hbs';
-const outputPath = path.join(__dirname, '../md_out');
+const pagesOutputPath = path.join(__dirname, '../md_out/pages');
 const pathDelimeter = '.';
 const entityKindWhitelist = ['Class', 'Function'];   // Whitelisting kinds when grabbing class or method
 const moduleNameBlackList = ["\""];
 
+// Params for other pages e.g. README
+const defaultREADME = true; // To use the default readme
+let srcReadMePath = path.join(__dirname, '../../README.md');
+const destReadMePath = path.join(__dirname, '../md_out/README.md');
+
+if (!defaultREADME) {
+  console.error('Handle default readme false');
+}
 
 // pages
 const entityPagePath = path.join(themePath, eneityPageFile);
@@ -59,56 +67,23 @@ const aggregatedFirstChildren = _.reduce(docsJson.children, (aggregation, module
 const orderedFirstChildren = _.orderBy(aggregatedFirstChildren, ["name"]);
 
 // Creating the source out directory if not exists
-if (!fs.existsSync(outputPath)){
-  fs.mkdirSync(outputPath);
+// 1. Creating pages output dir
+
+// 1.1. creating the first portion: /Users/jasons/Desktop/kalimdorjs/docs/md_out
+const pagesOutputPathFirst = pagesOutputPath.split('/').slice(0, -1).join('/')
+if (!fs.existsSync(pagesOutputPathFirst)){
+  fs.mkdirSync(pagesOutputPathFirst);
 }
+
+// 1.2. creating the second portion: /Users/jasons/Desktop/kalimdorjs/docs/md_out/pages
+if (!fs.existsSync(pagesOutputPath)) {
+  fs.mkdirSync(pagesOutputPath);
+}
+
 
 // Handlebar helpers
-
 const kindStringConst = 'Constructor';
 const kindStringMethod = 'Method';
-
-/**
- * Check if a child is an instance of X
- * @param conditional
- * @param options
- * @param kind
- */
-const ifChildX = (child, options, kind) => {
-  if (_.isEqual(child.kindString, kind)) {
-    return options.fn(child);
-  } else {
-    return options.inverse(child);
-  }
-}
-/** Check if a child is a Constructor */
-Handlebars.registerHelper("ifConstructor", (child, options) =>
-  ifChildX(child, options, kindStringConst));
-
-/** Check if a child is a Method */
-Handlebars.registerHelper("ifMethod", (child, options) =>
-  ifChildX(child, options, kindStringMethod));
-
-
-/** Check if a collection has any X */
-const hasCollectionX = (children, options, kind) => {
-  if (children) {
-    const hasConst = children.some((prop) => {
-      return prop.kindString === kind;
-    });
-    return hasConst ? options.fn(children) : options.inverse(children);
-  } else {
-    return options.inverse(children);
-  }
-}
-
-
-Handlebars.registerHelper("hasConstructor", (children, options) =>
-  hasCollectionX(children, options, kindStringConst));
-
-Handlebars.registerHelper("hasMethod", (children, options) =>
-  hasCollectionX(children, options, kindStringMethod));
-
 
 /** Filtering by kind and return a filtered collection */
 const filterByKind = (children, options, kind) => {
@@ -251,11 +226,14 @@ Handlebars.registerHelper('newLine', () => '\n');
 // Writing each entity page
 _.forEach(orderedFirstChildren, (entityChild) => {
 
-  const fullPath = path.join(outputPath, `${entityChild.name}.md`);
+  // 1. pages/
+  const fullPath = path.join(pagesOutputPath, `${entityChild.name}.md`);
   const template = Handlebars.compile(entityPageContent);
   const compiledPage = template(entityChild);
-  // Write actual file
   fs.appendFileSync(fullPath, compiledPage, { flag: 'a' });
+
+  // 2. Other pages
+  fs.createReadStream(srcReadMePath).pipe(fs.createWriteStream(destReadMePath));
 
 });
 
