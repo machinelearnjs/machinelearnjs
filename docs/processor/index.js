@@ -6,13 +6,17 @@ const docsJson = require('../docs.json');
 const pjson = require('../../package.json');
 
 // Params for doc pages
+const pageSrcPath = path.join(__dirname, '../pages');
+const pageDestPath = path.join(__dirname, '../md_out');
 const themePath = path.join(__dirname, '../themes/markdown');
 const eneityPageFile = 'entity_page.hbs';
-const pagesOutputPath = path.join(__dirname, '../md_out/pages');
+const apiOutputPath = path.join(__dirname, '../md_out/api');
 const pathDelimeter = '.';
 const entityKindWhitelist = ['Class', 'Function'];   // Whitelisting kinds when grabbing class or method
 const moduleNameBlackList = ["\""];
 
+const vuepressConfigPath = path.join(__dirname, '../md_out/.vuepress');
+const vuepressExtraConfigPath = path.join(__dirname, '../md_out/.vuepress/extra.json');
 // Params for other pages e.g. README
 const defaultREADME = true; // To use the default readme
 let srcReadMePath = path.join(__dirname, '../../README.md');
@@ -22,9 +26,32 @@ if (!defaultREADME) {
   console.error('Handle default readme false');
 }
 
-// pages
-const entityPagePath = path.join(themePath, eneityPageFile);
-const entityPageContent = fs.readFileSync(entityPagePath, 'utf8');
+// Params for the config file
+const srcConfigPath = path.join(__dirname, '../config.js');
+const destConfigPath = path.join(__dirname, '../md_out/.vuepress/config.js');
+
+// themes hbs files
+const entityPageThemePath = path.join(themePath, eneityPageFile);
+const entityPageThemeContent = fs.readFileSync(entityPageThemePath, 'utf8');
+
+// 1. Creating pages output dir
+
+// 1.1. creating the first portion: /Users/jasons/Desktop/kalimdorjs/docs/md_out
+const apiOutputPathFirst = apiOutputPath.split('/').slice(0, -1).join('/')
+if (!fs.existsSync(apiOutputPathFirst)){
+  fs.mkdirSync(apiOutputPathFirst);
+}
+
+// 1.2. creating the second portion: /Users/jasons/Desktop/kalimdorjs/docs/md_out/pages
+if (!fs.existsSync(apiOutputPath)) {
+  fs.mkdirSync(apiOutputPath);
+}
+
+// Creating the source out directory if not exists
+// 2. creating the .vuepress dir
+if (!fs.existsSync(vuepressConfigPath)){
+  fs.mkdirSync(vuepressConfigPath);
+}
 
 
 // 1. data preprocessing
@@ -65,21 +92,6 @@ const aggregatedFirstChildren = _.reduce(docsJson.children, (aggregation, module
 
 // Ordering each entity by its name
 const orderedFirstChildren = _.orderBy(aggregatedFirstChildren, ["name"]);
-
-// Creating the source out directory if not exists
-// 1. Creating pages output dir
-
-// 1.1. creating the first portion: /Users/jasons/Desktop/kalimdorjs/docs/md_out
-const pagesOutputPathFirst = pagesOutputPath.split('/').slice(0, -1).join('/')
-if (!fs.existsSync(pagesOutputPathFirst)){
-  fs.mkdirSync(pagesOutputPathFirst);
-}
-
-// 1.2. creating the second portion: /Users/jasons/Desktop/kalimdorjs/docs/md_out/pages
-if (!fs.existsSync(pagesOutputPath)) {
-  fs.mkdirSync(pagesOutputPath);
-}
-
 
 // Handlebar helpers
 const kindStringConst = 'Constructor';
@@ -227,13 +239,31 @@ Handlebars.registerHelper('newLine', () => '\n');
 _.forEach(orderedFirstChildren, (entityChild) => {
 
   // 1. pages/
-  const fullPath = path.join(pagesOutputPath, `${entityChild.name}.md`);
-  const template = Handlebars.compile(entityPageContent);
+  // - create pages using the content
+  const fullPath = path.join(apiOutputPath, `${entityChild.name}.md`);
+  const template = Handlebars.compile(entityPageThemeContent);
   const compiledPage = template(entityChild);
   fs.appendFileSync(fullPath, compiledPage, { flag: 'a' });
 
-  // 2. Other pages
-  fs.createReadStream(srcReadMePath).pipe(fs.createWriteStream(destReadMePath));
-
 });
 
+const extraConfig = {
+  apiSidebar: _.map(orderedFirstChildren, (child) => `./${child.name}`)
+}
+
+// 2. Other pages
+fs.createReadStream(srcReadMePath).pipe(fs.createWriteStream(destReadMePath));
+
+// 3. Writing extraConfig object as .vuepress/extra.json
+fs.writeFileSync(vuepressExtraConfigPath, JSON.stringify(extraConfig), 'utf-8');
+
+// 4. config
+fs.createReadStream(srcConfigPath).pipe(fs.createWriteStream(destConfigPath));
+
+// 5. Sync pages
+_.forEach(fs.readdirSync(pageSrcPath), (file) => {
+  console.log(file);
+  const fullSrcFilePath = path.join(pageSrcPath, file);
+  const fullDestFilePath = path.join(pageDestPath, file);
+  fs.createReadStream(fullSrcFilePath).pipe(fs.createWriteStream(fullDestFilePath));
+});
