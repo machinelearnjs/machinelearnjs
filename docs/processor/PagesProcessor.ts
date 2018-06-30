@@ -14,6 +14,7 @@ export class PagesProcessor extends BaseProcesser {
   private pageDestPath = path.join(__dirname, '../md_out');
 
   constructor({ defaultREADME = true }) {
+    super();
     this.defaultREADME = defaultREADME;
   }
 
