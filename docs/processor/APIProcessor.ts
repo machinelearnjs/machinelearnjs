@@ -12,6 +12,8 @@ export class APIProcessor extends BaseProcesser {
   private themePath = path.join(__dirname, '../themes/markdown');
   private entityPageFile = 'entity_page.hbs';
   private apiOutputPath = path.join(__dirname, '../md_out/api');
+  private srcApiHomePage = path.join(__dirname, '../pages/API.md');
+  private destApiHomePage = path.join(__dirname, '../md_out/api/README.md');
   private pathDelimeter = '.';
   private entityKindWhitelist = ['Class', 'Function']; // Whitelisting kinds when grabbing class or method
   private moduleNameBlackList = ['"'];
@@ -90,6 +92,12 @@ export class APIProcessor extends BaseProcesser {
     }
   }
 
+  private processHomePage() {
+    fs
+      .createReadStream(this.srcApiHomePage)
+      .pipe(fs.createWriteStream(this.destApiHomePage));
+  }
+
   /**
    * Run the processor
    * @param hbs
@@ -103,6 +111,9 @@ export class APIProcessor extends BaseProcesser {
 
     // Order API children
     this.apiChildren = this.retrieveOrderedAPIs(docsJson);
+    // TODO: Process homepage to display all the APIs on the homepage
+    console.log(this.apiChildren);
+    this.processHomePage();
     _.forEach(this.apiChildren, entityChild => {
       // 1. pages/
       // - create pages using the content
