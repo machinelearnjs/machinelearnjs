@@ -4,13 +4,19 @@ import { APIProcessor } from './APIProcessor';
 const docsJson = require('../docs.json');
 const pjson = require('../../package.json');
 
+// File's Class|Method kind
 const kindStringConst = 'Constructor';
 const kindStringMethod = 'Method';
 
+// Parameter type
 const paramTypeReflection = 'reflection';
 const paramTypeIntrinsic = 'intrinsic';
 const paramTypeArray = 'array';
 const paramTypeReference = 'reference';
+
+// Return type
+const returnTypeIntrinsic = 'intrinsic';
+const returnTypeArray = 'array';
 
 export class HandlebarHelpers {
 
@@ -38,21 +44,22 @@ export class HandlebarHelpers {
 	 * @param id
 	 * @returns {any}
 	 */
-  private searchInterface(docs, id) {
+  static searchInterface(docs, id) {
     let candidate = null;
-    _.forEach(docs, (module) => {
+    _.forEach(docs.children, (module) => {
       _.forEach(module.children, (entity) => {
         if (entity.id === id) {
           candidate = entity;
         }
       });
     });
+    console.log('candidate', candidate);
     return candidate;
   }
 
   static constructParamTable(parameters) {
     /**
-     * Prioritise getting text instead of shortText
+     * Prioritise getting text instead of shortText description
      * @param param
      */
     const getText = (param) => {
@@ -70,7 +77,7 @@ export class HandlebarHelpers {
     // a -> b -> c
     const consolidatedParams = _.reduce(parameters, (sum, param) => {
       const paramType = param.type.type
-      if (paramTypeReference === paramType) {
+      if (paramTypeReflection === paramType) {
         // 1. Handle reflection/named param
         // e.g. x: { test1, test2 }
         _.forEach(param.type.declaration.children, (namedParam) => {
@@ -87,7 +94,9 @@ export class HandlebarHelpers {
       } else if (paramTypeReference === paramType) {
         // 4. Handle any Interface params
         // e.g. x: Options
-        const foundRef = this.searchInterface(param.type.id);
+				console.log('param type', param.type.id);
+        const foundRef = this.searchInterface(docsJson, param.type.id);
+        console.log('checking found ref', foundRef);
         _.forEach(foundRef.children, (prop) => {
           sum.push([`${param.name}.${prop.name}`, prop.type.name, prop.defaultValue, getText(prop)]);
         });
@@ -108,6 +117,54 @@ export class HandlebarHelpers {
     }
     return stringBuilder;
   }
+
+	/**
+   * Renders method return type
+	 * @param type
+	 * @returns {string}
+	 */
+  static renderMethodReturnType(type) {
+    if (type.type === returnTypeIntrinsic) {
+      return type.name;
+    } else if (type.type === returnTypeArray) {
+      return `${type.elementType.name}[]`;
+    }
+  }
+
+	/**
+   * Gets method () block next to the method name
+   * e.g. (props: any, x: string)
+	 * @param parameters
+	 * @returns {string}
+	 */
+  static renderMethodBracket(parameters) {
+    const params = _.map(parameters, (param) => {
+      const paramType = _.isString(param.type) ? param.type : 'object';
+      return `${param.name}: *\`${paramType}\`*`;
+    });
+    return `(${params.join(',')})`
+  }
+
+	/**
+   * Get a source link such as
+   * [ensemble/forest.ts:6](https://github.com/JasonShin/kalimdorjs/blob/master/src/lib/ensemble/forest.ts#L6)
+   * @param sources
+	 * @returns {string}
+	 */
+  static renderSourceLink(sources) {
+    const defined =_.map(sources, (src) => {
+      return `[${src.fileName}:${src.line}](${pjson.repository}/blob/master/src/lib/${src.fileName}#L${src.line})`
+    });
+    return defined.join(',');
+  }
+
+	/**
+   * Renders a new line
+	 * @returns {string}
+	 */
+	static renderNewLine() {
+    return '\n';
+  }
 }
 
 Handlebars.registerHelper("filterConstructor", (children, options) =>
@@ -116,126 +173,19 @@ Handlebars.registerHelper("filterConstructor", (children, options) =>
 Handlebars.registerHelper("filterMethod", (children, options) =>
   HandlebarHelpers.filterByKind(children, options, kindStringMethod));
 
-/** Search tree to find an entity with the ID */
-const searchInterface = (id) => {
-  let candidate = null;
-  _.forEach(docsJson.children, (module) => {
-    _.forEach(module.children, (entity) => {
-      if (entity.id === id) {
-        candidate = entity;
-      }
-    });
-  });
-  return candidate;
-}
+Handlebars.registerHelper('constructParamTable', (parameters) =>
+  HandlebarHelpers.constructParamTable(parameters));
 
-/** Construct parameters table */
-const PARAM_REFLECTION = 'reflection';
-const PARAM_INTRINSIC = 'intrinsic';
-const PARAM_ARRAY = 'array';
-const PARAM_REFERENCE = 'reference';
-const constructParamTable = (parameters) => {
-  /**
-   * Prioritise getting text instead of shortText
-   * @param param
-   */
-  const getText = (param) => {
-    const text = _.get(param,'comment.text');
-    const shortText =  _.get(param,'comment.shortText')
-    if (text) {
-      return text;
-    } else if (shortText) {
-      return shortText;
-    }
-    return undefined;
-  }
-  // Going through the method level params
-  // e.g. test(a: {}, b: number, c: string)
-  // a -> b -> c
-  const consolidatedParams = _.reduce(parameters, (sum, param) => {
-    const paramType = param.type.type
-    if (PARAM_REFLECTION === paramType) {
-      // 1. Handle reflection/named param
-      // e.g. x: { test1, test2 }
-      _.forEach(param.type.declaration.children, (namedParam) => {
-        sum.push([`${param.name}.${namedParam.name}`, namedParam.type.name, namedParam.defaultValue, getText(namedParam)]);
-      });
-    } else if (PARAM_INTRINSIC === paramType) {
-      //  2. Handle any intrintic params
-      // e.g. x: number
-      sum.push([param.name, param.type.name, param.defaultValue, getText(param)]);
-    } else if (PARAM_ARRAY === paramType) {
-      // 3. Handle any array params
-      // e.g. string[]
-      sum.push([param.name, param.type.name, param.defaultValue, getText(param)]);
-    } else if (PARAM_REFERENCE === paramType) {
-      // 4. Handle any Interface params
-      // e.g. x: Options
-      const foundRef = searchInterface(param.type.id);
-      _.forEach(foundRef.children, (prop) => {
-        sum.push([`${param.name}.${prop.name}`, prop.type.name, prop.defaultValue, getText(prop)]);
-      });
-    }
-    return sum;
-  }, []);
-  // flatten any [ [ [] ] ] 3rd layer arrays
-  const tableHeader = '| Param | Type | Default | Description |\n';
-  const tableSplit = '| ------ | ------ | ------ | ------ |\n';
-  let stringBuilder = `${tableHeader}${tableSplit}`;
-  // TODO: Is there a better way of building a string??.. should we do it from the template?
-  for (let i = 0; i < _.size(consolidatedParams); i++) {
-    const [name, type, defaultValue, description] = consolidatedParams[i];
-    stringBuilder += `| ${name} | ${type} | ${defaultValue} | ${description}\n`;
-    if (i !== _.size(consolidatedParams) -1) {
-      stringBuilder += tableSplit;
-    }
-  }
-  return stringBuilder;
-}
+Handlebars.registerHelper('renderMethodReturnType', (type) =>
+  HandlebarHelpers.renderMethodReturnType(type));
 
-Handlebars.registerHelper('constructParamTable', (parameters) => constructParamTable(parameters));
+Handlebars.registerHelper('methodBracket', (parameters) =>
+  HandlebarHelpers.renderMethodBracket(parameters));
 
-/** Print method return type */
-const RETURN_TYPE_INSTRINSIC = 'intrinsic';
-const RETURN_TYPE_ARRAY = 'array';
-const renderMethodReturnType = (type) => {
-  if (type.type === RETURN_TYPE_INSTRINSIC) {
-    return type.name;
-  } else if (type.type === RETURN_TYPE_ARRAY) {
-    return `${type.elementType.name}[]`;
-  }
-}
+Handlebars.registerHelper('getSourceLink', (sources) =>
+  HandlebarHelpers.renderSourceLink(sources));
 
-Handlebars.registerHelper('renderMethodReturnType', (type) => renderMethodReturnType(type));
-
-/** Renderers */
-
-/**
- * Gets method () block next to the method name
- * e.g. (props: any, x: string)
- **/
-Handlebars.registerHelper('methodBracket', (parameters) => {
-  const params = _.map(parameters, (param) => {
-    const paramType = _.isString(param.type) ? param.type : 'object';
-    return `${param.name}: *\`${paramType}\`*`;
-  });
-  return `(${params.join(',')})`
-});
-
-/**
- * Get a source link such as
- * [ensemble/forest.ts:6](https://github.com/JasonShin/kalimdorjs/blob/master/src/lib/ensemble/forest.ts#L6)
- */
-Handlebars.registerHelper('getSourceLink', (sources) => {
-  const defined =_.map(sources, (src) => {
-    return `[${src.fileName}:${src.line}](${pjson.repository}/blob/master/src/lib/${src.fileName}#L${src.line})`
-  });
-  return defined.join(',');
-});
-
-/** Create a newline */
-Handlebars.registerHelper('newLine', () => '\n');
-
+Handlebars.registerHelper('newLine', HandlebarHelpers.renderNewLine);
 
 const processor = new APIProcessor();
 processor.run(Handlebars);

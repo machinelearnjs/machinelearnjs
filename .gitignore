@@ -2,6 +2,7 @@ node_modules
 build
 src/**/*.js
 test/**/*.js
+docs/processor/**/*.js
 
 coverage
 .nyc_output
