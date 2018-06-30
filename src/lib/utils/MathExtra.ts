@@ -84,7 +84,7 @@ const contrib = {
   isMatrix,
   isMatrixOf,
   range,
-  size,
+  size
 };
 
 // Exporting merged result

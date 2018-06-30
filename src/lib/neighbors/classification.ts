@@ -16,7 +16,9 @@ export class KNeighborsClassifier {
    * @param {number} [options.k=numberOfClasses + 1] - Number of neighbors to classify.
    * @param {function} [options.distance=euclideanDistance] - Distance function that takes two parameters.
    */
-  constructor(options: { distance: any, k: number } = { distance: null, k: 0 }) {
+  constructor(
+    options: { distance: any; k: number } = { distance: null, k: 0 }
+  ) {
     this.distance = options.distance;
     this.k = options.k;
   }
@@ -29,7 +31,10 @@ export class KNeighborsClassifier {
   public fit({ X, y }): void {
     if (X === true) {
       const model = y;
-      this.kdTree = new KDTree(model.kdTree, { distance: this.distance, k: this.k });
+      this.kdTree = new KDTree(model.kdTree, {
+        distance: this.distance,
+        k: this.k
+      });
       this.k = model.k;
       this.classes = new Set(model.classes);
       this.isEuclidean = model.isEuclidean;

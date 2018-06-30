@@ -13,7 +13,7 @@
     "build": "run-s clean && run-p build:*",
     "build:main": "tsc -p tsconfig.json",
     "build:module": "tsc -p tsconfig.module.json",
-    "fix": "prettier \"src/**/*.ts\" \"test/**/*.ts\" --write",
+    "fix": "prettier \"src/**/*.ts\" \"test/**/*.ts\" \"docs/**/*.ts\" --write",
     "test": "npx run-s build test:*",
     "test:lint": "npx tslint --force -t verbose 'test/**/*.ts' 'src/**/*.ts'",
     "test:unit": "npx jest",

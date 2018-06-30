@@ -1,3 +1,1 @@
-class BaseProcessor {
-
-}
+class BaseProcessor {}
