@@ -93,6 +93,8 @@ const aggregatedFirstChildren = _.reduce(docsJson.children, (aggregation, module
 // Ordering each entity by its name
 const orderedFirstChildren = _.orderBy(aggregatedFirstChildren, ["name"]);
 
+console.log('checking orderd first children', orderedFirstChildren);
+
 // Handlebar helpers
 const kindStringConst = 'Constructor';
 const kindStringMethod = 'Method';
