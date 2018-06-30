@@ -1,6 +1,8 @@
 import * as _ from 'lodash';
 import * as Handlebars from 'handlebars';
 import { APIProcessor } from './APIProcessor';
+import { PagesProcessor } from './PagesProcessor';
+import { ConfigProcessor } from './ConfigProcessor';
 const docsJson = require('../docs.json');
 const pjson = require('../../package.json');
 
@@ -52,7 +54,6 @@ export class HandlebarHelpers {
         }
       });
     });
-    console.log('candidate', candidate);
     return candidate;
   }
 
@@ -110,9 +111,7 @@ export class HandlebarHelpers {
         } else if (paramTypeReference === paramType) {
           // 4. Handle any Interface params
           // e.g. x: Options
-          console.log('param type', param.type.id);
           const foundRef = this.searchInterface(docsJson, param.type.id);
-          console.log('checking found ref', foundRef);
           _.forEach(foundRef.children, prop => {
             sum.push([
               `${param.name}.${prop.name}`,
@@ -218,6 +217,12 @@ Handlebars.registerHelper('getSourceLink', sources =>
 
 Handlebars.registerHelper('newLine', HandlebarHelpers.renderNewLine);
 
-// Process API docs
-const processor = new APIProcessor();
-processor.run(Handlebars);
+// Processors
+const apiProcessor = new APIProcessor();
+apiProcessor.run(Handlebars);
+
+const pagesProcessor = new PagesProcessor({ defaultREADME: true });
+pagesProcessor.run();
+
+const configProcessor = new ConfigProcessor();
+configProcessor.run({ apiChildren: apiProcessor.apiChildren });

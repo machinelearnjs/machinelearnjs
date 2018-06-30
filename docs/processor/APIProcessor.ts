@@ -1,19 +1,20 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as _ from 'lodash';
+import { BaseProcesser } from './BaseProcesser';
 const docsJson = require('../docs.json');
 
 /**
  * Processor used to process API docs located under lib/src/
  */
-export class APIProcessor {
+export class APIProcessor extends BaseProcesser {
+  public apiChildren = [];
   private themePath = path.join(__dirname, '../themes/markdown');
   private entityPageFile = 'entity_page.hbs';
   private apiOutputPath = path.join(__dirname, '../md_out/api');
   private pathDelimeter = '.';
   private entityKindWhitelist = ['Class', 'Function']; // Whitelisting kinds when grabbing class or method
   private moduleNameBlackList = ['"'];
-
   /**
    * Util funciton to clean any unwanted chars
    * @param name
@@ -82,17 +83,27 @@ export class APIProcessor {
     return _.orderBy(aggregatedFirstChildren, ['name']);
   }
 
+  private createDir() {
+    // 1.2. creating the second portion: /Users/jasons/Desktop/kalimdorjs/docs/md_out/pages
+    if (!fs.existsSync(this.apiOutputPath)) {
+      fs.mkdirSync(this.apiOutputPath);
+    }
+  }
+
   /**
    * Run the processor
    * @param hbs
    */
   public run(hbs) {
+    // Creating required dir
+    this.createDir();
     // themes hbs files paths
     const entityPageThemePath = path.join(this.themePath, this.entityPageFile);
     const entityPageThemeContent = fs.readFileSync(entityPageThemePath, 'utf8');
 
-    const orderedFirstChildren = this.retrieveOrderedAPIs(docsJson);
-    _.forEach(orderedFirstChildren, entityChild => {
+    // Order API children
+    this.apiChildren = this.retrieveOrderedAPIs(docsJson);
+    _.forEach(this.apiChildren, entityChild => {
       // 1. pages/
       // - create pages using the content
       const fullPath = path.join(this.apiOutputPath, `${entityChild.name}.md`);

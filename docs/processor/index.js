@@ -47,12 +47,6 @@ if (!fs.existsSync(apiOutputPath)) {
   fs.mkdirSync(apiOutputPath);
 }
 
-// Creating the source out directory if not exists
-// 2. creating the .vuepress dir
-if (!fs.existsSync(vuepressConfigPath)){
-  fs.mkdirSync(vuepressConfigPath);
-}
-
 
 // 1. data preprocessing
 const cleanName = (name) => {
@@ -93,7 +87,6 @@ const aggregatedFirstChildren = _.reduce(docsJson.children, (aggregation, module
 // Ordering each entity by its name
 const orderedFirstChildren = _.orderBy(aggregatedFirstChildren, ["name"]);
 
-console.log('checking orderd first children', orderedFirstChildren);
 
 // Handlebar helpers
 const kindStringConst = 'Constructor';
@@ -264,7 +257,6 @@ fs.createReadStream(srcConfigPath).pipe(fs.createWriteStream(destConfigPath));
 
 // 5. Sync pages
 _.forEach(fs.readdirSync(pageSrcPath), (file) => {
-  console.log(file);
   const fullSrcFilePath = path.join(pageSrcPath, file);
   const fullDestFilePath = path.join(pageDestPath, file);
   fs.createReadStream(fullSrcFilePath).pipe(fs.createWriteStream(fullDestFilePath));
