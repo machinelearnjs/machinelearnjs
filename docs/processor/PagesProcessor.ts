@@ -27,6 +27,9 @@ export class PagesProcessor extends BaseProcesser {
       .pipe(fs.createWriteStream(this.destReadMePath));
   }
 
+  /**
+   * Sync any md files located under docs/pages folder to the root of md_out
+   */
   private syncOtherPages() {
     _.forEach(fs.readdirSync(this.pageSrcPath), file => {
       const fullSrcFilePath = path.join(this.pageSrcPath, file);
@@ -37,6 +40,9 @@ export class PagesProcessor extends BaseProcesser {
     });
   }
 
+  /**
+   * Run the processor
+   */
   public run() {
     // 1. homepage
     this.processHomePage();

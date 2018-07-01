@@ -11,7 +11,7 @@ export class APIProcessor extends BaseProcesser {
   public apiChildren = [];
   private themePath = path.join(__dirname, '../themes/markdown');
   private entityPageFile = 'entity_page.hbs';
-  private homePageFile = 'api_readme.hbs'
+  private homePageFile = 'api_readme.hbs';
   private apiOutputPath = path.join(__dirname, '../md_out/api');
   private srcApiHomeTheme = path.join(this.themePath, this.homePageFile);
   private destApiHomePage = path.join(__dirname, '../md_out/api/README.md');
@@ -86,44 +86,48 @@ export class APIProcessor extends BaseProcesser {
     return _.orderBy(aggregatedFirstChildren, ['name']);
   }
 
-	/**
+  /**
    * Create API directory if not exist
-	 */
-	private createDir() {
+   */
+  private createDir() {
     // 1.2. creating the second portion: /Users/jasons/Desktop/kalimdorjs/docs/md_out/pages
     if (!fs.existsSync(this.apiOutputPath)) {
       fs.mkdirSync(this.apiOutputPath);
     }
   }
 
-	/**
+  /**
    * Process API folder's homepage aka README
-	 */
+   */
   private processHomePage(hbs, apiChildren) {
-
-    const grouped = _.groupBy(apiChildren, (o) => o.name.split(this.pathDelimeter)[0]);
-	  const keys = _.keys(grouped);
-	  const restructedChildren = _.map(keys, (key) => {
-	    return {
-	      key,
-        value: _.get(grouped, key),
+    const grouped = _.groupBy(
+      apiChildren,
+      o => o.name.split(this.pathDelimeter)[0]
+    );
+    const keys = _.keys(grouped);
+    const restructedChildren = _.map(keys, key => {
+      return {
+        key,
+        value: _.get(grouped, key)
       };
     });
 
     const apiHomePageThemeContent = fs.readFileSync(
-      this.srcApiHomeTheme, 'utf8');
+      this.srcApiHomeTheme,
+      'utf8'
+    );
     const template = hbs.compile(apiHomePageThemeContent);
     const compiledPage = template(restructedChildren);
     fs.appendFileSync(this.destApiHomePage, compiledPage, { flag: 'a' });
   }
 
-	/**
+  /**
    * Processes API entity pages
-	 * @param hbs
-	 * @param children
-	 */
+   * @param hbs
+   * @param children
+   */
   private processAPIEntityPage(hbs, children) {
-     // themes hbs files paths
+    // themes hbs files paths
     const entityPageThemePath = path.join(this.themePath, this.entityPageFile);
     const entityPageThemeContent = fs.readFileSync(entityPageThemePath, 'utf8');
 
