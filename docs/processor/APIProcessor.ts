@@ -11,8 +11,9 @@ export class APIProcessor extends BaseProcesser {
   public apiChildren = [];
   private themePath = path.join(__dirname, '../themes/markdown');
   private entityPageFile = 'entity_page.hbs';
+  private homePageFile = 'api_readme.hbs'
   private apiOutputPath = path.join(__dirname, '../md_out/api');
-  private srcApiHomePage = path.join(__dirname, '../pages/API.md');
+  private srcApiHomeTheme = path.join(this.themePath, this.homePageFile);
   private destApiHomePage = path.join(__dirname, '../md_out/api/README.md');
   private pathDelimeter = '.';
   private entityKindWhitelist = ['Class', 'Function']; // Whitelisting kinds when grabbing class or method
@@ -85,17 +86,55 @@ export class APIProcessor extends BaseProcesser {
     return _.orderBy(aggregatedFirstChildren, ['name']);
   }
 
-  private createDir() {
+	/**
+   * Create API directory if not exist
+	 */
+	private createDir() {
     // 1.2. creating the second portion: /Users/jasons/Desktop/kalimdorjs/docs/md_out/pages
     if (!fs.existsSync(this.apiOutputPath)) {
       fs.mkdirSync(this.apiOutputPath);
     }
   }
 
-  private processHomePage() {
-    fs
-      .createReadStream(this.srcApiHomePage)
-      .pipe(fs.createWriteStream(this.destApiHomePage));
+	/**
+   * Process API folder's homepage aka README
+	 */
+  private processHomePage(hbs, apiChildren) {
+
+    const grouped = _.groupBy(apiChildren, (o) => o.name.split(this.pathDelimeter)[0]);
+	  const keys = _.keys(grouped);
+	  const restructedChildren = _.map(keys, (key) => {
+	    return {
+	      key,
+        value: _.get(grouped, key),
+      };
+    });
+
+    const apiHomePageThemeContent = fs.readFileSync(
+      this.srcApiHomeTheme, 'utf8');
+    const template = hbs.compile(apiHomePageThemeContent);
+    const compiledPage = template(restructedChildren);
+    fs.appendFileSync(this.destApiHomePage, compiledPage, { flag: 'a' });
+  }
+
+	/**
+   * Processes API entity pages
+	 * @param hbs
+	 * @param children
+	 */
+  private processAPIEntityPage(hbs, children) {
+     // themes hbs files paths
+    const entityPageThemePath = path.join(this.themePath, this.entityPageFile);
+    const entityPageThemeContent = fs.readFileSync(entityPageThemePath, 'utf8');
+
+    _.forEach(children, entityChild => {
+      // 1. pages/
+      // - create pages using the content
+      const fullPath = path.join(this.apiOutputPath, `${entityChild.name}.md`);
+      const template = hbs.compile(entityPageThemeContent);
+      const compiledPage = template(entityChild);
+      fs.appendFileSync(fullPath, compiledPage, { flag: 'a' });
+    });
   }
 
   /**
@@ -105,22 +144,13 @@ export class APIProcessor extends BaseProcesser {
   public run(hbs) {
     // Creating required dir
     this.createDir();
-    // themes hbs files paths
-    const entityPageThemePath = path.join(this.themePath, this.entityPageFile);
-    const entityPageThemeContent = fs.readFileSync(entityPageThemePath, 'utf8');
 
     // Order API children
     this.apiChildren = this.retrieveOrderedAPIs(docsJson);
     // TODO: Process homepage to display all the APIs on the homepage
-    console.log(this.apiChildren);
-    this.processHomePage();
-    _.forEach(this.apiChildren, entityChild => {
-      // 1. pages/
-      // - create pages using the content
-      const fullPath = path.join(this.apiOutputPath, `${entityChild.name}.md`);
-      const template = hbs.compile(entityPageThemeContent);
-      const compiledPage = template(entityChild);
-      fs.appendFileSync(fullPath, compiledPage, { flag: 'a' });
-    });
+    this.processHomePage(hbs, this.apiChildren);
+
+    // Process API pages
+    this.processAPIEntityPage(hbs, this.apiChildren);
   }
 }

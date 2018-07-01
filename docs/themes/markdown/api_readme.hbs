@@ -1,0 +1,11 @@
+# API Reference
+
+This is the class and function reference of Kalimdor.js. It will give you details on
+each individual API but it may not explain the full usage.
+
+{{#each this}}
+    {{newLine}}### {{ key }}
+    {{#each this.value}}
+        {{newLine}}- [{{ name }}](./{{name}}.md)
+    {{/each}}
+{{/each}}
