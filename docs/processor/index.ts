@@ -21,6 +21,7 @@ const returnTypeIntrinsic = 'intrinsic';
 const returnTypeArray = 'array';
 
 export class HandlebarHelpers {
+
   /**
    * Filters a children by a kind name such as Constructor or Method
    * @param children
@@ -58,6 +59,9 @@ export class HandlebarHelpers {
   }
 
   static constructParamTable(parameters) {
+    // Param table characters blacklist
+    const paramTableCharsBlackList = ['\n', '_'];
+
     /**
      * Prioritise getting text instead of shortText description
      * @param param
@@ -72,6 +76,13 @@ export class HandlebarHelpers {
       }
       return undefined;
     };
+    const cleanTableText = (text) => {
+      const blacklistCleaned = _.reduce(paramTableCharsBlackList, (result, rmChar) => {
+        return _.replace(result, rmChar, '');
+      }, text);
+      return _.trim(blacklistCleaned);
+    }
+
     // Going through the method level params
     // e.g. test(a: {}, b: number, c: string)
     // a -> b -> c
@@ -132,7 +143,11 @@ export class HandlebarHelpers {
     // TODO: Is there a better way of building a string??.. should we do it from the template?
     for (let i = 0; i < _.size(consolidatedParams); i++) {
       const [name, type, defaultValue, description] = consolidatedParams[i];
-      stringBuilder += `| ${name} | ${type} | ${defaultValue} | ${description}\n`;
+      const cleanName = cleanTableText(name);
+      const cleanType = cleanTableText(type);
+      const cleanDefaultValue = cleanTableText(defaultValue);
+      const cleanDescription = cleanTableText(description);
+      stringBuilder += `| ${cleanName} | ${cleanType} | ${cleanDefaultValue} | ${cleanDescription}\n`;
       if (i !== _.size(consolidatedParams) - 1) {
         stringBuilder += tableSplit;
       }
