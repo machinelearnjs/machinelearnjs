@@ -8,7 +8,6 @@
     {{newLine}}Defined in {{getSourceLink this.sources}}
     {{newLine}}{{this.comment.shortText}}
     {{newLine}}**Parameters:**
-    {{this.signatures}}
     {{#each this.signatures}}
         {{newLine}}{{constructParamTable this.parameters}}
         {{newLine}}**Returns:** {{renderMethodReturnType this.type}}
