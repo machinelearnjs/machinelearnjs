@@ -21,6 +21,9 @@ const returnTypeIntrinsic = 'intrinsic';
 const returnTypeArray = 'array';
 
 export class HandlebarHelpers {
+  static ifEquals(x, y, options) {
+    return _.isEqual(x, y) ? options.fn(this) : options.inverse(this);
+  }
   /**
    * Filters a children by a kind name such as Constructor or Method
    * @param children
@@ -205,6 +208,10 @@ export class HandlebarHelpers {
     return '\n';
   }
 }
+
+Handlebars.registerHelper('ifEquals', (x, y, options) =>
+  HandlebarHelpers.ifEquals(x, y, options)
+)
 
 Handlebars.registerHelper('filterConstructor', (children, options) =>
   HandlebarHelpers.filterByKind(children, options, kindStringConst)

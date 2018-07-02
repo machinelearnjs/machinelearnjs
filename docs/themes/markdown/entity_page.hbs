@@ -1,55 +1,63 @@
 # {{ name }}
 
-{{#filterConstructor children}}
-    {{newLine}}### Constructors
-    {{#each this}}
-        {{newLine}}* [constructor](#constructor)
-    {{/each}}
-{{/filterConstructor}}
+{{#ifEquals this.kindString "Function"}}
 
-{{#filterMethod children}}
-    {{newLine}}### Methods
-    {{#each this}}
-        {{newLine}}* [{{this.name}}](#{{this.name}})
-    {{/each}}
-{{/filterMethod}}
+    This is a function
 
----
+{{else}}
 
-{{#filterConstructor children}}
-    {{newLine}}# Constructors
-    {{newLine}}---
-    {{#each this}}
-        {{newLine}}### {{this.name}}
-        {{#each this.signatures}}
-            {{newLine}}⊕ **{{this.name}}**{{methodBracket this.parameters}}
+    {{#filterConstructor children}}
+        {{newLine}}### Constructors
+        {{#each this}}
+            {{newLine}}* [constructor](#constructor)
         {{/each}}
-        {{newLine}}Defined in {{getSourceLink this.sources}}
-        {{newLine}}{{this.comment.shortText}}
-        {{newLine}}**Parameters:**
-        {{#each this.signatures}}
-            {{newLine}}{{constructParamTable this.parameters}}
-            {{newLine}}**Returns:** {{ this.type.name }}
-        {{/each}}
-    {{/each}}
-{{/filterConstructor}}
+    {{/filterConstructor}}
 
----
+    {{#filterMethod children}}
+        {{newLine}}### Methods
+        {{#each this}}
+            {{newLine}}* [{{this.name}}](#{{this.name}})
+        {{/each}}
+    {{/filterMethod}}
 
-{{#filterMethod children}}
-    {{newLine}}# Constructors
-    {{newLine}}---
-    {{#each this}}
-        {{newLine}}### {{this.name}}
-        {{#each this.signatures}}
-            {{newLine}}▸ **{{this.name}}**{{methodBracket this.parameters}}
+    ---
+
+    {{#filterConstructor children}}
+        {{newLine}}# Constructors
+        {{newLine}}---
+        {{#each this}}
+            {{newLine}}### {{this.name}}
+            {{#each this.signatures}}
+                {{newLine}}⊕ **{{this.name}}**{{methodBracket this.parameters}}
+            {{/each}}
+            {{newLine}}Defined in {{getSourceLink this.sources}}
+            {{newLine}}{{this.comment.shortText}}
+            {{newLine}}**Parameters:**
+            {{#each this.signatures}}
+                {{newLine}}{{constructParamTable this.parameters}}
+                {{newLine}}**Returns:** {{ this.type.name }}
+            {{/each}}
         {{/each}}
-        {{newLine}}Defined in {{getSourceLink this.sources}}
-        {{newLine}}{{this.comment.shortText}}
-        {{newLine}}**Parameters:**
-        {{#each this.signatures}}
-            {{newLine}}{{constructParamTable this.parameters}}
-            {{newLine}}**Returns:** {{renderMethodReturnType this.type}}
+    {{/filterConstructor}}
+
+    ---
+
+    {{#filterMethod children}}
+        {{newLine}}# Constructors
+        {{newLine}}---
+        {{#each this}}
+            {{newLine}}### {{this.name}}
+            {{#each this.signatures}}
+                {{newLine}}▸ **{{this.name}}**{{methodBracket this.parameters}}
+            {{/each}}
+            {{newLine}}Defined in {{getSourceLink this.sources}}
+            {{newLine}}{{this.comment.shortText}}
+            {{newLine}}**Parameters:**
+            {{#each this.signatures}}
+                {{newLine}}{{constructParamTable this.parameters}}
+                {{newLine}}**Returns:** {{renderMethodReturnType this.type}}
+            {{/each}}
         {{/each}}
-    {{/each}}
-{{/filterMethod}}
+    {{/filterMethod}}
+
+{{/ifEquals}}
