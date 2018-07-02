@@ -21,7 +21,6 @@ const returnTypeIntrinsic = 'intrinsic';
 const returnTypeArray = 'array';
 
 export class HandlebarHelpers {
-
   /**
    * Filters a children by a kind name such as Constructor or Method
    * @param children
@@ -76,12 +75,16 @@ export class HandlebarHelpers {
       }
       return undefined;
     };
-    const cleanTableText = (text) => {
-      const blacklistCleaned = _.reduce(paramTableCharsBlackList, (result, rmChar) => {
-        return _.replace(result, rmChar, '');
-      }, text);
+    const cleanTableText = text => {
+      const blacklistCleaned = _.reduce(
+        paramTableCharsBlackList,
+        (result, rmChar) => {
+          return _.replace(result, rmChar, '');
+        },
+        text
+      );
       return _.trim(blacklistCleaned);
-    }
+    };
 
     // Going through the method level params
     // e.g. test(a: {}, b: number, c: string)
@@ -148,9 +151,6 @@ export class HandlebarHelpers {
       const cleanDefaultValue = cleanTableText(defaultValue);
       const cleanDescription = cleanTableText(description);
       stringBuilder += `| ${cleanName} | ${cleanType} | ${cleanDefaultValue} | ${cleanDescription}\n`;
-      if (i !== _.size(consolidatedParams) - 1) {
-        stringBuilder += tableSplit;
-      }
     }
     return stringBuilder;
   }

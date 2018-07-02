@@ -151,6 +151,7 @@ export class APIProcessor extends BaseProcesser {
 
     // Order API children
     this.apiChildren = this.retrieveOrderedAPIs(docsJson);
+    console.log(this.apiChildren);
     // TODO: Process homepage to display all the APIs on the homepage
     this.processHomePage(hbs, this.apiChildren);
 
