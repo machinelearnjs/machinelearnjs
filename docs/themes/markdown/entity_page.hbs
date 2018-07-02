@@ -1,11 +1,22 @@
 # {{ name }}
 
-{{#ifEquals this.kindString "Function"}}
+{{#ifEquals this this.kindString "Function"}}
 
-    This is a function
+    {{#each this.signatures}}
+        {{newLine}}▸ **{{this.name}}**{{methodBracket this.parameters}}
+    {{/each}}
+    {{newLine}}Defined in {{getSourceLink this.sources}}
+    {{newLine}}{{this.comment.shortText}}
+    {{newLine}}**Parameters:**
+    {{this.signatures}}
+    {{#each this.signatures}}
+        {{newLine}}{{constructParamTable this.parameters}}
+        {{newLine}}**Returns:** {{renderMethodReturnType this.type}}
+    {{/each}}
 
 {{else}}
 
+    This is a class
     {{#filterConstructor children}}
         {{newLine}}### Constructors
         {{#each this}}
@@ -43,7 +54,7 @@
     ---
 
     {{#filterMethod children}}
-        {{newLine}}# Constructors
+        {{newLine}}# Methods
         {{newLine}}---
         {{#each this}}
             {{newLine}}### {{this.name}}
