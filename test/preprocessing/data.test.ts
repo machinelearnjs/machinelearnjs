@@ -1,10 +1,6 @@
 // tslint:disable:no-expression-statement
 import * as _ from 'lodash';
-import {
-  Binarizer,
-  MinMaxScaler,
-  OneHotEncoder
-} from '../../src/lib/preprocessing/data';
+import { Binarizer, MinMaxScaler, OneHotEncoder } from '../../src/lib/preprocessing/data';
 
 describe('data:OneHotEncoder', () => {
   // Datasets for OneHotEncoding

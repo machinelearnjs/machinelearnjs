@@ -48,9 +48,7 @@ export class CountVectorizer {
    */
   public getFeatureNames(): object {
     if (!this.internalVocabulary) {
-      throw new Error(
-        'You must fit a document first before you can retrieve the feature names!'
-      );
+      throw new Error('You must fit a document first before you can retrieve the feature names!');
     }
     return this.internalVocabulary;
   }
@@ -152,8 +150,7 @@ export class CountVectorizer {
       (x: string) => tokenizer.tokenize(x),
       (x: string[]) => x.join(' '),
       // TODO: Somehow it's removing too many words??!!
-      (x: string[]) =>
-        removeSW ? sw.removeStopwords(x, ENGLISH_STOP_WORDS) : x,
+      (x: string[]) => (removeSW ? sw.removeStopwords(x, ENGLISH_STOP_WORDS) : x),
       (x: string) => x.split(' ')
     )(text);
   }

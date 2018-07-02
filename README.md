@@ -10,7 +10,7 @@ and teaches users how Machine Learning algorithms work.
 Using yarn
 
 ```bash
-$ yan add kalimdor
+$ yarn add kalimdor
 ```
 
 Using NPM

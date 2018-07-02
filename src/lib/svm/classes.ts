@@ -109,12 +109,7 @@ export class BaseSVM {
       throw new Error(`SVM type is unspecified ${this.type}`);
     }
     const SVM = await this.loadSVM();
-    const options = this.processOptions(
-      SVM,
-      this.options,
-      this.type,
-      this.options.kernel
-    );
+    const options = this.processOptions(SVM, this.options, this.type, this.options.kernel);
     this.svm = new SVM(options);
     this.svm.train(X, y);
   }
@@ -165,12 +160,7 @@ export class BaseSVM {
    * @param {Kernel} kernel
    * @returns {Object}
    */
-  private processOptions(
-    SVM,
-    options: Options,
-    type: Type,
-    kernel: Kernel
-  ): object {
+  private processOptions(SVM, options: Options, type: Type, kernel: Kernel): object {
     return _.flowRight(
       opts => {
         const foundType = this.getType(SVM, type);

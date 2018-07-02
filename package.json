@@ -5,7 +5,7 @@
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
   "module": "build/module/index.js",
-  "repository": "https://github.com/JasonShin/kalimdor",
+  "repository": "https://github.com/JasonShin/kalimdorjs",
   "license": "MIT",
   "keywords": [],
   "scripts": {
@@ -13,7 +13,7 @@
     "build": "run-s clean && run-p build:*",
     "build:main": "tsc -p tsconfig.json",
     "build:module": "tsc -p tsconfig.module.json",
-    "fix": "prettier \"src/**/*.ts\" \"test/**/*.ts\" --write",
+    "fix": "npx prettier \"src/**/*.ts\" \"test/**/*.ts\" \"docs/**/*.ts\" --print-width 120 --write",
     "test": "npx run-s build test:*",
     "test:lint": "npx tslint --force -t verbose 'test/**/*.ts' 'src/**/*.ts'",
     "test:unit": "npx jest",
@@ -26,8 +26,9 @@
     "cov:html": "nyc report --reporter=html",
     "cov:send": "nyc report --reporter=lcov > coverage.lcov && codecov",
     "cov:check": "nyc report && nyc check-coverage --lines 100 --functions 100 --branches 100",
-    "doc": "npx typedoc --out docs/out --theme ./docs/themes/kalimdor/ --tsconfig tdconfig.json --excludePrivate",
-    "doc:json": "npx typedoc --json docs/out.json --tsconfig tdconfig.json --excludePrivate",
+    "doc": "rm -rf docs/md_out && yarn doc:json && tsc ./docs/processor/index.ts && node ./docs/processor",
+    "doc:md": "rm -rf docs/md_out && tsc ./docs/processor/index.ts && node ./docs/processor",
+    "doc:json": "npx typedoc --json docs/docs.json --tsconfig tdconfig.json --excludePrivate",
     "doc:publish": "gh-pages -m \"[ci skip] Updates\" -d build/docs",
     "version": "standard-version",
     "reset": "git clean -dfx && git reset --hard && npm i",
@@ -36,6 +37,7 @@
     "prepare-release": "run-s all version doc:publish"
   },
   "//": {
+    "doc:md": "rm -rf docs/md_base && npx typedoc --out docs/md_base --theme markdown --tsconfig tdconfig.json --excludePrivate",
     "preinstall": "node -e \"if(process.env.npm_execpath.indexOf('yarn') === -1) throw new Warning('It is recommended to install Kalimdorjs with Yarn: https://yarnpkg.com/')\""
   },
   "scripts-info": {
@@ -83,6 +85,7 @@
     "codecov": "^3.0.0",
     "cz-conventional-changelog": "^2.1.0",
     "gh-pages": "^1.0.0",
+    "handlebars": "^4.0.11",
     "npm-run-all": "^4.1.2",
     "npm-scripts-info": "^0.3.6",
     "nsp": "^3.2.1",
@@ -95,6 +98,7 @@
     "tslint-config-prettier": "^1.8.0",
     "tslint-immutable": "^4.5.1",
     "typedoc": "^0.11.1",
+    "typedoc-plugin-markdown": "^1.1.13",
     "typescript": "^2.4.1"
   },
   "jest": {

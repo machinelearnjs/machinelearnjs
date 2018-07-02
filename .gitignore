@@ -2,6 +2,7 @@ node_modules
 build
 src/**/*.js
 test/**/*.js
+docs/processor/**/*.js
 
 coverage
 .nyc_output
@@ -15,4 +16,6 @@ package-lock.json
 .Trash-0
 
 # tsdoc
-docs/out
+docs/md_base
+docs/md_out
+docs/docs.json

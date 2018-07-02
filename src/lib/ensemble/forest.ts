@@ -6,9 +6,18 @@ export class RandomForestClassifier {
   private nEstimator;
 
   /**
-   * RandomForestClassifier hey bro
+   *
+   * @param {{nEstimator: number}} props
    */
-  constructor(props = { nEstimator: 10 }) {
+  constructor(
+    props: {
+      /** test estimator type! */
+      nEstimator: number;
+    } = {
+      /** test estimator default! */
+      nEstimator: 10
+    }
+  ) {
     this.nEstimator = props.nEstimator;
   }
 

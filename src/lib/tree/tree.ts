@@ -32,9 +32,7 @@ export class Question {
 
   public toString(): string {
     if (!this.features) {
-      throw Error(
-        'You must provide feature labels in order to render toString!'
-      );
+      throw Error('You must provide feature labels in order to render toString!');
     }
     const condition = _.isNumber(this.value) ? '>=' : '==';
     return `Is ${this.features[this.column]} ${condition} ${this.value}`;
@@ -116,14 +114,7 @@ export class DecisionTreeClassifier {
    */
   public fit({ X, y }: { X: any[]; y: any[] }): void {
     // this.y = y;
-    if (
-      !X ||
-      !y ||
-      !_.isArray(X) ||
-      !_.isArray(y) ||
-      _.isEmpty(X) ||
-      _.isEmpty(y)
-    ) {
+    if (!X || !y || !_.isArray(X) || !_.isArray(y) || _.isEmpty(X) || _.isEmpty(y)) {
       throw Error('Cannot accept non Array values for X and y');
     }
     this.tree = this.buildTree({ X, y });
