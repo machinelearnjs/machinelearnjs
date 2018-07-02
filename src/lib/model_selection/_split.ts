@@ -41,11 +41,7 @@ export class KFold {
     }
 
     if (this.k > _.size(X) || this.k > _.size(y)) {
-      throw Error(
-        `Cannot have number of splits k=${
-          this.k
-        } greater than the number of samples: ${_.size(X)}`
-      );
+      throw Error(`Cannot have number of splits k=${this.k} greater than the number of samples: ${_.size(X)}`);
     }
 
     const binSize = _.floor(_.size(X) / this.k);
@@ -55,15 +51,9 @@ export class KFold {
       splitRange,
       (sum, index) => {
         // Calculate binSizeRange according to k value. e.g. 0 -> [0,1]. 1 -> [2, 3].
-        const binSizeRange = _.range(
-          index * binSize,
-          index * binSize + binSize
-        );
+        const binSizeRange = _.range(index * binSize, index * binSize + binSize);
         // X index range used for test set. It can either be shuffled e.g. [ 2, 0, 1 ] or raw value [ 0, 1, 2 ]
-        const testXRange = _.flowRight(
-          x => (this.shuffle ? _.shuffle(x) : x),
-          () => _.clone(xRange)
-        )();
+        const testXRange = _.flowRight(x => (this.shuffle ? _.shuffle(x) : x), () => _.clone(xRange))();
         // Getting testIndex according to binSizeRange from testXRange
         const testIndex = _.reduce(
           binSizeRange,
@@ -162,8 +152,7 @@ export function train_test_split(
   }
 
   // Filter return results
-  const clean = (items: any[]) =>
-    _.filter(items, (item: any) => !_.isUndefined(item));
+  const clean = (items: any[]) => _.filter(items, (item: any) => !_.isUndefined(item));
   return {
     xTest: clean(xTest),
     xTrain: clean(xTrain),

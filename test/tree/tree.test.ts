@@ -2,13 +2,7 @@ import * as _ from 'lodash';
 import { DecisionTreeClassifier } from '../../src/lib/tree/tree';
 
 describe('tree:DecisionTreeClassifier', () => {
-  const fruitX = [
-    ['Green', 3],
-    ['Yellow', 3],
-    ['Red', 1],
-    ['Red', 1],
-    ['Yellow', 3]
-  ];
+  const fruitX = [['Green', 3], ['Yellow', 3], ['Red', 1], ['Red', 1], ['Yellow', 3]];
   const fruitY = ['Apple', 'Apple', 'Grape', 'Grape', 'Lemon'];
 
   const numberX = [[0, 0], [1, 1]];

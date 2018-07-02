@@ -22,9 +22,7 @@ export class PagesProcessor extends BaseProcesser {
    * Process and sync the homepage as md_out/README.md
    */
   private processHomePage() {
-    fs
-      .createReadStream(this.srcReadMePath)
-      .pipe(fs.createWriteStream(this.destReadMePath));
+    fs.createReadStream(this.srcReadMePath).pipe(fs.createWriteStream(this.destReadMePath));
   }
 
   /**
@@ -34,9 +32,7 @@ export class PagesProcessor extends BaseProcesser {
     _.forEach(fs.readdirSync(this.pageSrcPath), file => {
       const fullSrcFilePath = path.join(this.pageSrcPath, file);
       const fullDestFilePath = path.join(this.pageDestPath, file);
-      fs
-        .createReadStream(fullSrcFilePath)
-        .pipe(fs.createWriteStream(fullDestFilePath));
+      fs.createReadStream(fullSrcFilePath).pipe(fs.createWriteStream(fullDestFilePath));
     });
   }
 

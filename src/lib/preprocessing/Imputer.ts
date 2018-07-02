@@ -44,14 +44,8 @@ export class Imputer {
     const colRange = math.contrib.range(0, colLen);
     if (this.strategy === 'mean') {
       if (this.axis === 0) {
-        const colNumbers: any = _.map(colRange, col =>
-          math.subset(_X, math.index(rowRange, col))
-        );
-        this.means = this.calcArrayMean(colNumbers, [
-          'flatten',
-          'filter',
-          'mean'
-        ]);
+        const colNumbers: any = _.map(colRange, col => math.subset(_X, math.index(rowRange, col)));
+        this.means = this.calcArrayMean(colNumbers, ['flatten', 'filter', 'mean']);
       } else if (this.axis === 1) {
         const rowNumbers = _.map(rowRange, row => _.get(_X, `[${row}]`));
         this.means = this.calcArrayMean(rowNumbers, ['filter', 'mean']);
@@ -85,11 +79,7 @@ export class Imputer {
         }
       }
     } else {
-      throw new Error(
-        `Unknown transformation with strategy ${this.strategy} and axis ${
-          this.axis
-        }`
-      );
+      throw new Error(`Unknown transformation with strategy ${this.strategy} and axis ${this.axis}`);
     }
     return _X;
   }

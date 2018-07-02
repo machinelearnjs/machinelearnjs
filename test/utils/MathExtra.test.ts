@@ -51,9 +51,7 @@ describe('math.contrib.range', () => {
   });
 
   it('should throw an invalid error', () => {
-    expect(() => math.contrib.range('test', 2)).toThrow(
-      'start and stop arguments need to be numbers'
-    );
+    expect(() => math.contrib.range('test', 2)).toThrow('start and stop arguments need to be numbers');
   });
 });
 

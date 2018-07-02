@@ -16,9 +16,7 @@ export class KNeighborsClassifier {
    * @param {number} [options.k=numberOfClasses + 1] - Number of neighbors to classify.
    * @param {function} [options.distance=euclideanDistance] - Distance function that takes two parameters.
    */
-  constructor(
-    options: { distance: any; k: number } = { distance: null, k: 0 }
-  ) {
+  constructor(options: { distance: any; k: number } = { distance: null, k: 0 }) {
     this.distance = options.distance;
     this.k = options.k;
   }
@@ -77,14 +75,10 @@ export class KNeighborsClassifier {
       throw new Error('invalid model: ' + model.name);
     }
     if (!model.isEuclidean && distance === euclideanDistance) {
-      throw new Error(
-        'a custom distance function was used to create the model. Please provide it again'
-      );
+      throw new Error('a custom distance function was used to create the model. Please provide it again');
     }
     if (model.isEuclidean && distance !== euclideanDistance) {
-      throw new Error(
-        'the model was created with the default distance function. Do not load it with another one'
-      );
+      throw new Error('the model was created with the default distance function. Do not load it with another one');
     }
     return new KNeighborsClassifier({ distance: this.distance, k: this.k });
   }
@@ -118,9 +112,7 @@ export class KNeighborsClassifier {
     if (math.contrib.isArrayOf(dataset, 'number')) {
       return getSinglePrediction(this, dataset);
     } else {
-      throw new TypeError(
-        'Passed in dataset is not a single dimensional array'
-      );
+      throw new TypeError('Passed in dataset is not a single dimensional array');
     }
   }
 
@@ -138,9 +130,7 @@ export class KNeighborsClassifier {
       }
       return predictions;
     }
-    throw new TypeError(
-      'The dataset to predict must be a matrix or lists of list'
-    );
+    throw new TypeError('The dataset to predict must be a matrix or lists of list');
   }
 }
 

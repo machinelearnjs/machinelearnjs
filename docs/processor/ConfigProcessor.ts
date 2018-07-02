@@ -5,15 +5,9 @@ import { BaseProcesser } from './BaseProcesser';
 
 export class ConfigProcessor extends BaseProcesser {
   private vuepressConfigPath = path.join(__dirname, '../md_out/.vuepress');
-  private vuepressExtraConfigPath = path.join(
-    __dirname,
-    '../md_out/.vuepress/extra.json'
-  );
+  private vuepressExtraConfigPath = path.join(__dirname, '../md_out/.vuepress/extra.json');
   private srcConfigPath = path.join(__dirname, '../config.js');
-  private destConfigPath = path.join(
-    __dirname,
-    '../md_out/.vuepress/config.js'
-  );
+  private destConfigPath = path.join(__dirname, '../md_out/.vuepress/config.js');
 
   private createDir() {
     // Creating the source out directory if not exists
@@ -33,15 +27,9 @@ export class ConfigProcessor extends BaseProcesser {
       apiSidebar: _.map(apiChildren, child => `./${child.name}`)
     };
     // 2. Writing extraConfig object as .vuepress/extra.json
-    fs.writeFileSync(
-      this.vuepressExtraConfigPath,
-      JSON.stringify(extraConfig),
-      'utf-8'
-    );
+    fs.writeFileSync(this.vuepressExtraConfigPath, JSON.stringify(extraConfig), 'utf-8');
 
     // 3. config
-    fs
-      .createReadStream(this.srcConfigPath)
-      .pipe(fs.createWriteStream(this.destConfigPath));
+    fs.createReadStream(this.srcConfigPath).pipe(fs.createWriteStream(this.destConfigPath));
   }
 }

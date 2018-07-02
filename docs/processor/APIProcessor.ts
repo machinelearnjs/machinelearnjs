@@ -54,14 +54,10 @@ export class APIProcessor extends BaseProcesser {
           moduleChild.children,
           (entityList, entityChild) => {
             // Filter by entityKindWhitelist
-            if (
-              this.entityKindWhitelist.indexOf(entityChild.kindString) !== -1
-            ) {
+            if (this.entityKindWhitelist.indexOf(entityChild.kindString) !== -1) {
               // each function or class name
               const entityName = entityChild.name;
-              const fullEntityName = [cleanedModuleName, entityName].join(
-                this.pathDelimeter
-              );
+              const fullEntityName = [cleanedModuleName, entityName].join(this.pathDelimeter);
               const newEntityChild = _.set(entityChild, 'name', fullEntityName);
               return _.concat(entityList, [newEntityChild]);
             }
@@ -70,10 +66,7 @@ export class APIProcessor extends BaseProcesser {
           []
         );
         // Filter out undefined entity appended as a result of whitelisting during the reduce
-        const filteredEntityList = _.filter(
-          squashedEntityList,
-          x => !_.isUndefined(x)
-        );
+        const filteredEntityList = _.filter(squashedEntityList, x => !_.isUndefined(x));
 
         // Concat the squashedEntityList to the _.reduce aggregation
         // Also applies a shallow flatten as squashedEntityList is an array
@@ -100,10 +93,7 @@ export class APIProcessor extends BaseProcesser {
    * Process API folder's homepage aka README
    */
   private processHomePage(hbs, apiChildren) {
-    const grouped = _.groupBy(
-      apiChildren,
-      o => o.name.split(this.pathDelimeter)[0]
-    );
+    const grouped = _.groupBy(apiChildren, o => o.name.split(this.pathDelimeter)[0]);
     const keys = _.keys(grouped);
     const restructedChildren = _.map(keys, key => {
       return {
@@ -112,10 +102,7 @@ export class APIProcessor extends BaseProcesser {
       };
     });
 
-    const apiHomePageThemeContent = fs.readFileSync(
-      this.srcApiHomeTheme,
-      'utf8'
-    );
+    const apiHomePageThemeContent = fs.readFileSync(this.srcApiHomeTheme, 'utf8');
     const template = hbs.compile(apiHomePageThemeContent);
     const compiledPage = template(restructedChildren);
     fs.appendFileSync(this.destApiHomePage, compiledPage, { flag: 'a' });

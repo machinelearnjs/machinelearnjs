@@ -23,10 +23,7 @@ declare module 'sha.js' {
 
   export interface Hash extends NodeJS.ReadWriteStream {
     // tslint:disable:no-method-signature
-    update(
-      data: string | Buffer | DataView,
-      inputEncoding?: Utf8AsciiLatin1Encoding
-    ): Hash;
+    update(data: string | Buffer | DataView, inputEncoding?: Utf8AsciiLatin1Encoding): Hash;
     digest(): Buffer;
     digest(encoding: HexBase64Latin1Encoding): string;
     // tslint:enable:no-method-signature

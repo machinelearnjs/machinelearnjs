@@ -69,18 +69,14 @@ describe('_split:KFold', () => {
     const kf = new KFold({ k: 50 });
     expect(() => {
       kf.split({ X: X2, y: y2 });
-    }).toThrow(
-      'Cannot have number of splits k=50 greater than the number of samples: 10'
-    );
+    }).toThrow('Cannot have number of splits k=50 greater than the number of samples: 10');
   });
 
   it('should k=50 of sample type 2 throw an k=50- greater than number of sample=10 error', () => {
     const kf = new KFold({ k: 50 });
     expect(() => {
       kf.split({ X: X2, y: y2 });
-    }).toThrow(
-      'Cannot have number of splits k=50 greater than the number of samples: 10'
-    );
+    }).toThrow('Cannot have number of splits k=50 greater than the number of samples: 10');
   });
 
   it('X and y size mismatch', () => {
@@ -94,9 +90,7 @@ describe('_split:KFold', () => {
   });
 
   it('Should throw an error if K is less than 2', () => {
-    expect(() => new KFold({ k: 1 })).toThrow(
-      'Number of folds cannot be less than 2'
-    );
+    expect(() => new KFold({ k: 1 })).toThrow('Number of folds cannot be less than 2');
   });
 });
 

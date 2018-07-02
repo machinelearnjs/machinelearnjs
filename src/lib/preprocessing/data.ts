@@ -55,10 +55,7 @@ export class OneHotEncoder {
    * @param options - dataKeys: independent variables, labelKeys: dependent variables; mandatory
    * @return {{data: Array, decoders: Array}} - see readme for full explanation
    */
-  public encode(
-    data,
-    options = { dataKeys: null, labelKeys: null }
-  ): { data: any[]; decoders: any[] } {
+  public encode(data, options = { dataKeys: null, labelKeys: null }): { data: any[]; decoders: any[] } {
     const labelKeys = options.labelKeys;
     const decoders = [];
 
@@ -169,10 +166,7 @@ export class OneHotEncoder {
    * @param data: the entire dataset
    * @returns {any}
    */
-  private standardizeField(
-    key,
-    data
-  ): StringOneHot | BooleanOneHot | NumberOneHot | any[] {
+  private standardizeField(key, data): StringOneHot | BooleanOneHot | NumberOneHot | any[] {
     const type = typeof data[0][key];
     const values = _.map(data, key);
     switch (type) {
@@ -283,9 +277,7 @@ export class OneHotEncoder {
       return value;
     });
 
-    const encoded = _.map(values, (value: string) =>
-      _.range(0, i).map(pos => (_.get(lookup, value) === pos ? 1 : 0))
-    );
+    const encoded = _.map(values, (value: string) => _.range(0, i).map(pos => (_.get(lookup, value) === pos ? 1 : 0)));
 
     return {
       decode: {

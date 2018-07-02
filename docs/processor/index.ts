@@ -21,15 +21,15 @@ const returnTypeIntrinsic = 'intrinsic';
 const returnTypeArray = 'array';
 
 export class HandlebarHelpers {
-	/**
+  /**
    * check equality of x and y.
    * If they are equal, returns true(context e.g. children) || false(context e.g. children)
-	 * @param children
-	 * @param x
-	 * @param y
-	 * @param options
-	 * @returns {any}
-	 */
+   * @param children
+   * @param x
+   * @param y
+   * @param options
+   * @returns {any}
+   */
   static ifEquals(children, x, y, options) {
     return _.isEqual(x, y) ? options.fn(children) : options.inverse(children);
   }
@@ -67,6 +67,29 @@ export class HandlebarHelpers {
       });
     });
     return candidate;
+  }
+
+  /**
+   * Check if a signatures collection is empty
+   * 1. If signature itself is empty or undefined
+   * 2. If the first signature does not contain "parameters"
+   * @param context - current context, typically this
+   * @param options
+   */
+  static isSignatureValid(context, options) {
+    const signatures = context.signatures;
+    if (_.isEmpty(signatures) || !signatures) {
+      return options.inverse(context);
+    }
+
+    const firstSignature = _.first(signatures);
+    const firstSignatureParams = _.get(firstSignature, 'parameters');
+    if (_.isEmpty(firstSignatureParams) || !firstSignatureParams) {
+      return options.inverse(context);
+    }
+
+    // Otherwise returns true
+    return options.fn(context);
   }
 
   static constructParamTable(parameters) {
@@ -119,32 +142,17 @@ export class HandlebarHelpers {
         } else if (paramTypeIntrinsic === paramType) {
           //  2. Handle any intrintic params
           // e.g. x: number
-          sum.push([
-            param.name,
-            param.type.name,
-            param.defaultValue,
-            getText(param)
-          ]);
+          sum.push([param.name, param.type.name, param.defaultValue, getText(param)]);
         } else if (paramTypeArray === paramType) {
           // 3. Handle any array params
           // e.g. string[]
-          sum.push([
-            param.name,
-            param.type.name,
-            param.defaultValue,
-            getText(param)
-          ]);
+          sum.push([param.name, param.type.name, param.defaultValue, getText(param)]);
         } else if (paramTypeReference === paramType) {
           // 4. Handle any Interface params
           // e.g. x: Options
           const foundRef = this.searchInterface(docsJson, param.type.id);
           _.forEach(foundRef.children, prop => {
-            sum.push([
-              `${param.name}.${prop.name}`,
-              prop.type.name,
-              prop.defaultValue,
-              getText(prop)
-            ]);
+            sum.push([`${param.name}.${prop.name}`, prop.type.name, prop.defaultValue, getText(prop)]);
           });
         }
         return sum;
@@ -202,9 +210,7 @@ export class HandlebarHelpers {
    */
   static renderSourceLink(sources) {
     const defined = _.map(sources, src => {
-      return `[${src.fileName}:${src.line}](${
-        pjson.repository
-      }/blob/master/src/lib/${src.fileName}#L${src.line})`;
+      return `[${src.fileName}:${src.line}](${pjson.repository}/blob/master/src/lib/${src.fileName}#L${src.line})`;
     });
     return defined.join(',');
   }
@@ -218,9 +224,11 @@ export class HandlebarHelpers {
   }
 }
 
-Handlebars.registerHelper('ifEquals', (children, x, y, options) =>
-  HandlebarHelpers.ifEquals(children, x, y, options)
-)
+Handlebars.registerHelper('ifEquals', (children, x, y, options) => HandlebarHelpers.ifEquals(children, x, y, options));
+
+Handlebars.registerHelper('isSignatureValid', (context, options) =>
+  HandlebarHelpers.isSignatureValid(context, options)
+);
 
 Handlebars.registerHelper('filterConstructor', (children, options) =>
   HandlebarHelpers.filterByKind(children, options, kindStringConst)
@@ -230,21 +238,13 @@ Handlebars.registerHelper('filterMethod', (children, options) =>
   HandlebarHelpers.filterByKind(children, options, kindStringMethod)
 );
 
-Handlebars.registerHelper('constructParamTable', parameters =>
-  HandlebarHelpers.constructParamTable(parameters)
-);
+Handlebars.registerHelper('constructParamTable', parameters => HandlebarHelpers.constructParamTable(parameters));
 
-Handlebars.registerHelper('renderMethodReturnType', type =>
-  HandlebarHelpers.renderMethodReturnType(type)
-);
+Handlebars.registerHelper('renderMethodReturnType', type => HandlebarHelpers.renderMethodReturnType(type));
 
-Handlebars.registerHelper('methodBracket', parameters =>
-  HandlebarHelpers.renderMethodBracket(parameters)
-);
+Handlebars.registerHelper('methodBracket', parameters => HandlebarHelpers.renderMethodBracket(parameters));
 
-Handlebars.registerHelper('getSourceLink', sources =>
-  HandlebarHelpers.renderSourceLink(sources)
-);
+Handlebars.registerHelper('getSourceLink', sources => HandlebarHelpers.renderSourceLink(sources));
 
 Handlebars.registerHelper('newLine', HandlebarHelpers.renderNewLine);
 
