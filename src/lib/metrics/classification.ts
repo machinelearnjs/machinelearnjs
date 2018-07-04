@@ -14,7 +14,6 @@ function _weightedSum({
   }
 }
 
-
 /**
  * @ignore
  * Validator for classification exceptions
@@ -50,22 +49,16 @@ export const validateInitialInputs = (y_true, y_pred, labels, options = {}) => {
   // Checking labels equal to both y_true and y_pred classes
   // Labels is optional
   if (labels) {
-    const yTrueCls = _.flowRight(
-      x => _.sortBy(x,y => y),
-      x => _.uniq(x)
-    )(y_true);
+    const yTrueCls = _.flowRight(x => _.sortBy(x, y => y), x => _.uniq(x))(y_true);
 
-    const yPredCls =  _.flowRight(
-      x => _.sortBy(x,y => y),
-      x => _.uniq(x)
-    )(y_pred);
+    const yPredCls = _.flowRight(x => _.sortBy(x, y => y), x => _.uniq(x))(y_pred);
 
     const sortedLabels = _.sortBy(labels, x => x);
     if (!_.isEqual(sortedLabels, yTrueCls) || !_.isEqual(sortedLabels, yPredCls)) {
       throw new Error('Labels must match the classes');
     }
   }
-}
+};
 
 /**
  *
@@ -110,20 +103,20 @@ export function zeroOneLoss({
 }
 
 export interface ConfusionMatrixOptions {
-	/**
+  /**
    * Ground truth (correct) target values.
-	 */
-	y_true: any[],
-	/**
+   */
+  y_true: any[];
+  /**
    * Estimated targets as returned by a classifier.
-	 */
-	y_pred: any[],
-	/**
+   */
+  y_pred: any[];
+  /**
    * List of labels to index the matrix. This may be used to reorder or
    * select a subset of labels. If none is given, those that appear
    * at least once in y_true or y_pred are used in sorted order.
-	 */
-	labels?: any[],
+   */
+  labels?: any[];
 }
 
 export function confusion_matrix(options: ConfusionMatrixOptions): number[] {
@@ -139,38 +132,40 @@ export function confusion_matrix(options: ConfusionMatrixOptions): number[] {
   const yPredCls = _.uniqBy(y_pred, x => x);
 
   // TODO: Issue was raisen to fix the typing: https://github.com/josdejong/mathjs/issues/1150
-  const placeholder:any = math.zeros(_.size(yTrueCls), _.size(yTrueCls));
+  const placeholder: any = math.zeros(_.size(yTrueCls), _.size(yTrueCls));
 
-  // Mutable zeros pla
-  let zerosPlaceholder = placeholder.toJSON().data;
+  // Mutable zeros to contain matrix values
+  let zerosPlaceholder = JSON.parse(placeholder);
 
   // Calculating the confusion matrix
   // Looping the index for y_true
   const rowRange = _.range(0, _.size(zerosPlaceholder));
-  _.forEach(rowRange, (rowIndex) => {
-
+  _.forEach(rowRange, rowIndex => {
     // Looping the index for y_pred
     const colRange = _.range(0, _.size(zerosPlaceholder[rowIndex]));
-    _.forEach(colRange, (colIndex) => {
+    _.forEach(colRange, colIndex => {
       // Get current target y true and y pred
       const yTargetTrueVal = yTrueCls[rowIndex];
       const yTargetPredVal = yPredCls[colIndex];
 
       // Looping the range of y true for pairing
       const yTrueRange = _.range(0, _.size(y_true));
-      const score = _.reduce(yTrueRange, (sum, n) => {
-        const trueVal = y_true[n];
-        const predVal = y_pred[n];
+      const score = _.reduce(
+        yTrueRange,
+        (sum, n) => {
+          const trueVal = y_true[n];
+          const predVal = y_pred[n];
 
-        if (_.isEqual(trueVal, yTargetTrueVal) && _.isEqual(predVal, yTargetPredVal)) {
-          return sum + 1;
-        }
-        return sum;
-      }, 0);
+          if (_.isEqual(trueVal, yTargetTrueVal) && _.isEqual(predVal, yTargetPredVal)) {
+            return sum + 1;
+          }
+          return sum;
+        },
+        0
+      );
 
       // Recording the score
       zerosPlaceholder[rowIndex][colIndex] = score;
-
     });
   });
 

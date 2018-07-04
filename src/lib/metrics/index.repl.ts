@@ -37,9 +37,8 @@ const matrix2 = confusion_matrix({
 console.log(matrix2);
 
 const matrix3 = confusion_matrix({
-  y_true: ["cat", "ant", "cat", "cat", "ant", "bird"],
-  y_pred: ["ant", "ant", "cat", "cat", "ant", "cat"]
+  y_true: ['cat', 'ant', 'cat', 'cat', 'ant', 'bird'],
+  y_pred: ['ant', 'ant', 'cat', 'cat', 'ant', 'cat']
 });
 
 console.log(matrix3);
-
