@@ -94,7 +94,7 @@ export class HandlebarHelpers {
 
   static constructParamTable(parameters) {
     // Param table characters blacklist
-    const paramTableCharsBlackList = ['\n', '_'];
+    const paramTableCharsBlackList = [/\n/g, /\r\n/g, '_'];
 
     /**
      * Prioritise getting text instead of shortText description
@@ -110,7 +110,13 @@ export class HandlebarHelpers {
       }
       return undefined;
     };
-    const cleanTableText = text => {
+
+		/**
+     * Generic clean function before displaying it on the table parameters
+		 * @param text
+		 * @returns {string}
+		 */
+		const cleanTableText = text => {
       const blacklistCleaned = _.reduce(
         paramTableCharsBlackList,
         (result, rmChar) => {
