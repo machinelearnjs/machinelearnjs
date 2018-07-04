@@ -35,4 +35,17 @@ describe('classification:confusion_matrix', () => {
     });
     expect(_.isEqual(expectedResult, matrixResult)).toBe(true);
   });
+
+  it('should throw an y_true empty exception', () => {
+    expect(() => {
+      confusion_matrix({ y_true: [], y_pred: [] });
+    }).toThrow('y_true cannot be null or empty');
+  });
+
+  it('should throw y_pred empty exception', () => {
+    expect(() => {
+      confusion_matrix({ y_true: yTrue2, y_pred: [] });
+    }).toThrow('y_pred cannot be null or empty');
+  });
+
 });

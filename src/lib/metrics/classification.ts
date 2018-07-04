@@ -33,12 +33,12 @@ export const validateInitialInputs = (y_true, y_pred, labels, options = {}) => {
     }
   }
 
-  // Checking nullity
-  if (!y_true) {
-    throw new Error('y_true cannot be null');
+  // Checking nullity or empty
+  if (!y_true || _.isEmpty(y_true)) {
+    throw new Error('y_true cannot be null or empty');
   }
-  if (!y_pred) {
-    throw new Error('y_pred cannot be null');
+  if (!y_pred || _.isEmpty(y_pred)) {
+    throw new Error('y_pred cannot be null or empty');
   }
 
   // Checking the size equality
