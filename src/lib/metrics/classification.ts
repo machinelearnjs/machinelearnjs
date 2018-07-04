@@ -59,3 +59,26 @@ export function zeroOneLoss({
   // TODO: Fix return 0; implement when normalize === false
   return 0;
 }
+
+interface ConfusionMatrixOptions {
+	/**
+   * Ground truth (correct) target values.
+	 */
+	y_true: any[],
+	/**
+   * Estimated targets as returned by a classifier.
+	 */
+	y_pred: any[],
+	/**
+   * List of labels to index the matrix. This may be used to reorder or
+   * select a subset of labels. If none is given, those that appear
+   * at least once in y_true or y_pred are used in sorted order.
+	 */
+	labels: any[],
+}
+
+export function confusion_matrix(options: ConfusionMatrixOptions): number[] {
+  const y_true = _.get(options, 'y_true', null);
+  const y_pred = _.get(options, 'y_pred', null);
+  const labels = _.get(options, 'labels', null);
+}
