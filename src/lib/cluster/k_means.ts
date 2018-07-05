@@ -1,7 +1,42 @@
 import * as _ from 'lodash';
 import * as kmeans from 'node-kmeans';
 
+interface KMeansOptions {
+	/**
+   * Number of clusters
+	 */
+	k: number,
+	/**
+   * Choice of distance method. Defaulting to euclidean
+	 */
+	distance: 'euclidean' | 'manhattan',
+}
+
+export class KMeans {
+  private k: number;
+  private distance: string;
+  constructor(opions: KMeansOptions = {
+    k = 3,
+    distance = 'euclidean'
+  }) {
+    this.k = _.get(opions, 'k', 3);
+    this.distance = _.get(options, 'distance', 'euclidean');
+  }
+
+  private getInitialCentroids(X: number[], k: number) {
+    const centroidsRange = _.range(0, k);
+    return _.reduce(centroidsRange, (centroids, i) => {
+      return _.concat(centroids, X[i]);
+    }, []);
+  }
+
+  public fit(X) {
+
+  }
+}
+
 // Data source: LinkedIn
+/*
 const data = [
   { company: 'Microsoft', size: 91259, revenue: 60420 },
   { company: 'IBM', size: 400000, revenue: 98787 },
@@ -24,3 +59,4 @@ kmeans.clusterize(vectors, { k: 4 }, err => {
     // silence is golden
   }
 });
+*/
