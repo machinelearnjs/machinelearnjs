@@ -1,21 +1,6 @@
 /* tslint:disable */
-import * as ConfusionMatrix from 'ml-confusion-matrix';
 
-/**
- * Reference: http://www.dataschool.io/simple-guide-to-confusion-matrix-terminology/
- * Official API Doc: https://mljs.github.io/confusion-matrix/
- * @param yTrue
- * @param yPred
- */
-export const confusion_matrix = ConfusionMatrix;
-
-const cm2 = new confusion_matrix([[13, 2], [10, 5]], ['cheese', 'dog']);
-
-console.log('acc', cm2.getAccuracy());
-console.log(cm2.getFalseCount());
-console.log(cm2.getIndex('dog'));
-
-import { accuracyScore, zeroOneLoss } from './classification';
+import { accuracyScore, zeroOneLoss, confusion_matrix } from './classification';
 
 const accResult = accuracyScore({
   y_true: [0, 1, 2, 3],
@@ -38,3 +23,22 @@ const loss_zero_one_result = zeroOneLoss({
 });
 
 console.log('loss zero one ', loss_zero_one_result);
+
+const matrix1 = confusion_matrix({
+  y_true: [1, 2, 3],
+  y_pred: [1, 2, 3]
+});
+console.log(matrix1);
+
+const matrix2 = confusion_matrix({
+  y_true: [2, 0, 2, 2, 0, 1],
+  y_pred: [0, 0, 2, 2, 0, 2]
+});
+console.log(matrix2);
+
+const matrix3 = confusion_matrix({
+  y_true: ['cat', 'ant', 'cat', 'cat', 'ant', 'bird'],
+  y_pred: ['ant', 'ant', 'cat', 'cat', 'ant', 'cat']
+});
+
+console.log(matrix3);
