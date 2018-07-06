@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import * as Random from 'random-js';
 import math from '../utils/MathExtra';
 
 export interface KMeansOptions {
@@ -14,11 +15,16 @@ export interface KMeansOptions {
    * Relative tolerance with regards to inertia to declare convergence
    */
   maxIteration?: number;
+	/**
+   * Random state value for sorting centroids during the getInitialCentroid phase
+	 */
+	randomState?: number;
 }
 
 export class KMeans {
   private k: number;
   private distance;
+  private randomState: number;
   private maxIteration: number;
   private centroids: number[];
   private assignment: number[];
@@ -34,7 +40,6 @@ export class KMeans {
     this.k = _.get(options, 'k', 3);
     // Assigning a distance method
     const distanceType = _.get(options, 'distance', 'euclidean');
-
     switch (distanceType) {
       case 'euclidean':
         this.distance = math.contrib.euclideanDistance;
@@ -45,23 +50,29 @@ export class KMeans {
       default:
         throw new Error(`Unknown distance type ${distanceType}`);
     }
-
+    this.randomState = _.get(options, 'randomState', 0);
     this.maxIteration = _.get(options, 'maxIteration', 300);
     this.centroids = [];
   }
 
+	/**
+   * Get initial centroids from X of k
+	 * @param {number[]} X
+	 * @param {number} k
+	 * @returns {number[]}
+	 */
   private getInitialCentroids(X: number[], k: number) {
-    // TODO: Work on the random state
-    /* const randomEngine = Random.engines.mt19937();
-    randomEngine.seed(randomState);
-*/
     // Create an initial copy
     let centroids = _.clone(X);
-    // Sort it randomly
-    // TODO: Random seed
-    /* centroids.sort(() => {
-      return Math.round(Math.random()) - 0.5;
-    }); */
+    // Sort the centroid randomly if the randomState is greater than 0
+    if (this.randomState > 0) {
+      const randomEngine = Random.engines.mt19937();
+      randomEngine.seed(this.randomState);
+      centroids.sort(() => {
+        const randomInt = Random.integer(0, 1)(randomEngine);
+        return Math.round(randomInt) - 0.5;
+      });
+    }
     return centroids.slice(0, k);
   }
 
@@ -78,6 +89,11 @@ export class KMeans {
     return index;
   }
 
+	/**
+   *
+	 * @param {any} X
+	 * @returns {{centroids: number[]; clusters: number[]}}
+	 */
   public fit({ X }) {
     this.assignment = new Array(_.size(X));
     this.centroids = this.getInitialCentroids(X, this.k);
@@ -135,41 +151,14 @@ export class KMeans {
     };
   }
 
+	/**
+   * Predicts the cluster index with the given X
+	 * @param {any} X
+	 * @returns {number[]}
+	 */
   public predict({ X }) {
-    this.assignment = new Array(_.size(X));
-
-    _.forEach(X, (data, i) => {
-      this.assignment[i] = this.getClosestCentroids(data, this.centroids, this.distance);
+    return _.map(X, (data) => {
+      return this.getClosestCentroids(data, this.centroids, this.distance);
     });
-    console.log('pred', this.assignment);
-
   }
 }
-
-// Data source: LinkedIn
-/*
-import * as kmeans from 'node-kmeans';
-
-const data = [
-  { company: 'Microsoft', size: 91259, revenue: 60420 },
-  { company: 'IBM', size: 400000, revenue: 98787 },
-  { company: 'Skype', size: 700, revenue: 716 },
-  { company: 'SAP', size: 48000, revenue: 11567 },
-  { company: 'Yahoo!', size: 14000, revenue: 6426 },
-  { company: 'eBay', size: 15000, revenue: 8700 }
-];
-
-// Create the data 2D-array (vectors) describing the data
-const vectors = [];
-for (let i = 0; i < data.length; i++) {
-  vectors[i] = [_.get(data, `[${i}].size`), _.get(data, `[${i}].revenue`)];
-}
-
-kmeans.clusterize(vectors, { k: 4 }, err => {
-  if (err) {
-    console.error(err);
-  } else {
-    // silence is golden
-  }
-});
-*/
