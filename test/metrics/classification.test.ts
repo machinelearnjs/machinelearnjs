@@ -47,5 +47,4 @@ describe('classification:confusion_matrix', () => {
       confusion_matrix({ y_true: yTrue2, y_pred: [] });
     }).toThrow('y_pred cannot be null or empty');
   });
-
 });

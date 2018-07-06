@@ -111,12 +111,12 @@ export class HandlebarHelpers {
       return undefined;
     };
 
-		/**
+    /**
      * Generic clean function before displaying it on the table parameters
-		 * @param text
-		 * @returns {string}
-		 */
-		const cleanTableText = text => {
+     * @param text
+     * @returns {string}
+     */
+    const cleanTableText = text => {
       const blacklistCleaned = _.reduce(
         paramTableCharsBlackList,
         (result, rmChar) => {

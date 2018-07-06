@@ -85,24 +85,31 @@ const isArrayOf = (arr, _type = 'number') => {
   throw Error(`Failed to check the array content of type ${_type}`);
 };
 
-
 const euclideanDistance = (v1: number[], v2: number[]): number => {
   const v1Range = _.range(0, v1.length);
   const initialTotal = 0;
-  const total = _.reduce(v1Range, (total, i) => {
-    return total + Math.pow(v2[i] - v1[i], 2);
-  }, initialTotal);
+  const total = _.reduce(
+    v1Range,
+    (total, i) => {
+      return total + Math.pow(v2[i] - v1[i], 2);
+    },
+    initialTotal
+  );
 
   return Math.sqrt(total);
-}
+};
 
 const manhattanDistance = (v1: number[], v2: number[]): number => {
   const v1Range = _.range(0, v1.length);
   const initialTotal = 0;
-  return _.reduce(v1Range, (total, i) => {
-    return total + Math.abs(v2[i] - v1[i]);
-  }, initialTotal);
-}
+  return _.reduce(
+    v1Range,
+    (total, i) => {
+      return total + Math.abs(v2[i] - v1[i]);
+    },
+    initialTotal
+  );
+};
 
 const contrib = {
   isArrayOf,
