@@ -15,12 +15,15 @@ export interface KMeansOptions {
    * Relative tolerance with regards to inertia to declare convergence
    */
   maxIteration?: number;
-	/**
+  /**
    * Random state value for sorting centroids during the getInitialCentroid phase
-	 */
-	randomState?: number;
+   */
+  randomState?: number;
 }
 
+/**
+ * K-Means clustering
+ */
 export class KMeans {
   private k: number;
   private distance;
@@ -55,12 +58,12 @@ export class KMeans {
     this.centroids = [];
   }
 
-	/**
+  /**
    * Get initial centroids from X of k
-	 * @param {number[]} X
-	 * @param {number} k
-	 * @returns {number[]}
-	 */
+   * @param {number[]} X
+   * @param {number} k
+   * @returns {number[]}
+   */
   private getInitialCentroids(X: number[], k: number) {
     // Create an initial copy
     let centroids = _.clone(X);
@@ -89,11 +92,11 @@ export class KMeans {
     return index;
   }
 
-	/**
+  /**
    *
-	 * @param {any} X
-	 * @returns {{centroids: number[]; clusters: number[]}}
-	 */
+   * @param {any} X
+   * @returns {{centroids: number[]; clusters: number[]}}
+   */
   public fit({ X }) {
     this.assignment = new Array(_.size(X));
     this.centroids = this.getInitialCentroids(X, this.k);
@@ -114,7 +117,7 @@ export class KMeans {
 
       // Updating the location of each centroid
       for (let j = 0; j < this.k; j++) {
-        let assigned:any = [];
+        let assigned: any = [];
         for (let i = 0; i < this.assignment.length; i++) {
           if (this.assignment[i] == j) {
             assigned.push(X[i]);
@@ -126,8 +129,8 @@ export class KMeans {
         }
 
         // Getting the original data point
-        let centroid:any = this.centroids[j];
-        let newCentroid:any = new Array(centroid.length);
+        let centroid: any = this.centroids[j];
+        let newCentroid: any = new Array(centroid.length);
 
         for (let g = 0; g < centroid.length; g++) {
           let sum = 0;
@@ -151,13 +154,13 @@ export class KMeans {
     };
   }
 
-	/**
+  /**
    * Predicts the cluster index with the given X
-	 * @param {any} X
-	 * @returns {number[]}
-	 */
+   * @param {any} X
+   * @returns {number[]}
+   */
   public predict({ X }) {
-    return _.map(X, (data) => {
+    return _.map(X, data => {
       return this.getClosestCentroids(data, this.centroids, this.distance);
     });
   }
