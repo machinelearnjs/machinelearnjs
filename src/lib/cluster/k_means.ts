@@ -95,8 +95,9 @@ export class KMeans {
         }
 
         // Getting the original data point
-        let centroid: any = this.centroids[j];
-        let newCentroid: any = new Array(centroid.length);
+        // TODO: Fix any type
+        const centroid: any = this.centroids[j];
+        const newCentroid: any = new Array(centroid.length);
 
         for (let g = 0; g < centroid.length; g++) {
           let sum = 0;
@@ -106,7 +107,7 @@ export class KMeans {
           newCentroid[g] = sum / assigned.length;
 
           // Does not converge yet
-          if (newCentroid[g] != centroid[g]) {
+          if (newCentroid[g] !== centroid[g]) {
             movement = true;
           }
         }
