@@ -25,18 +25,18 @@ export interface KMeansOptions {
  * K-Means clustering
  */
 export class KMeans {
-  private k: number;
+  private assignment: number[];
+  private centroids: number[];
+  private clusters: number[];
   private distance;
+  private k: number;
   private randomState: number;
   private maxIteration: number;
-  private centroids: number[];
-  private assignment: number[];
-  private clusters: number[];
 
   constructor(
     options: KMeansOptions = {
-      k: 3,
       distance: 'euclidean',
+      k: 3,
       maxIteration: 300
     }
   ) {
@@ -59,45 +59,11 @@ export class KMeans {
   }
 
   /**
-   * Get initial centroids from X of k
-   * @param {number[]} X
-   * @param {number} k
-   * @returns {number[]}
-   */
-  private getInitialCentroids(X: number[], k: number) {
-    // Create an initial copy
-    let centroids = _.clone(X);
-    // Sort the centroid randomly if the randomState is greater than 0
-    if (this.randomState > 0) {
-      const randomEngine = Random.engines.mt19937();
-      randomEngine.seed(this.randomState);
-      centroids.sort(() => {
-        const randomInt = Random.integer(0, 1)(randomEngine);
-        return Math.round(randomInt) - 0.5;
-      });
-    }
-    return centroids.slice(0, k);
-  }
-
-  private getClosestCentroids(data: number[], centroids: number[], distance) {
-    let min = Infinity;
-    let index = 0;
-    _.forEach(centroids, (centroid, i) => {
-      const dist = distance(data, centroid);
-      if (dist < min) {
-        min = dist;
-        index = i;
-      }
-    });
-    return index;
-  }
-
-  /**
-   *
+   * Compute k-means clustering.
    * @param {any} X
    * @returns {{centroids: number[]; clusters: number[]}}
    */
-  public fit({ X }) {
+  public fit({ X }):void {
     this.assignment = new Array(_.size(X));
     this.centroids = this.getInitialCentroids(X, this.k);
     this.clusters = new Array(this.k);
@@ -117,9 +83,9 @@ export class KMeans {
 
       // Updating the location of each centroid
       for (let j = 0; j < this.k; j++) {
-        let assigned: any = [];
+        const assigned: any = [];
         for (let i = 0; i < this.assignment.length; i++) {
-          if (this.assignment[i] == j) {
+          if (this.assignment[i] === j) {
             assigned.push(X[i]);
           }
         }
@@ -148,10 +114,7 @@ export class KMeans {
         this.clusters[j] = assigned;
       }
     }
-    return {
-      centroids: this.centroids,
-      clusters: this.clusters
-    };
+
   }
 
   /**
@@ -164,4 +127,58 @@ export class KMeans {
       return this.getClosestCentroids(data, this.centroids, this.distance);
     });
   }
+
+	/**
+   * Get the model details in JSON format
+	 * @returns {{k: number; clusters: number[]; centroids: number[]}}
+	 */
+  public toJSON() {
+    return {
+      k: this.k,
+      clusters: this.clusters,
+      centroids: this.centroids,
+    }
+  }
+
+  /**
+   * Get initial centroids from X of k
+   * @param {number[]} X
+   * @param {number} k
+   * @returns {number[]}
+   */
+  private getInitialCentroids(X: number[], k: number): number[] {
+    // Create an initial copy
+    const centroids = _.clone(X);
+    // Sort the centroid randomly if the randomState is greater than 0
+    if (this.randomState > 0) {
+      const randomEngine = Random.engines.mt19937();
+      randomEngine.seed(this.randomState);
+      centroids.sort(() => {
+        const randomInt = Random.integer(0, 1)(randomEngine);
+        return Math.round(randomInt) - 0.5;
+      });
+    }
+    return centroids.slice(0, k);
+  }
+
+	/**
+   * Get closest centroids based on the passed in distance method
+	 * @param {number[]} data
+	 * @param {number[]} centroids
+	 * @param distance
+	 * @returns {number}
+	 */
+  private getClosestCentroids(data: number[], centroids: number[], distance):number {
+    let min = Infinity;
+    let index = 0;
+    _.forEach(centroids, (centroid, i) => {
+      const dist = distance(data, centroid);
+      if (dist < min) {
+        min = dist;
+        index = i;
+      }
+    });
+    return index;
+  }
+
 }
