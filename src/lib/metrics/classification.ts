@@ -135,7 +135,7 @@ export function confusion_matrix(options: ConfusionMatrixOptions): number[] {
   const placeholder: any = math.zeros(_.size(yTrueCls), _.size(yTrueCls));
 
   // Mutable zeros to contain matrix values
-  let zerosPlaceholder = JSON.parse(placeholder);
+  const zerosPlaceholder = JSON.parse(placeholder);
 
   // Calculating the confusion matrix
   // Looping the index for y_true

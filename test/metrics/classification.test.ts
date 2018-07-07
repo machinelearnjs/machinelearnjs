@@ -12,8 +12,8 @@ describe('classification:confusion_matrix', () => {
   it('should yTrue1 and yPred1 return [ [ 1, 0, 0 ], [ 0, 1, 0 ], [ 0, 0, 1 ] ]', () => {
     const expectedResult = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
     const matrixResult = confusion_matrix({
-      y_true: yTrue1,
-      y_pred: yPred1
+      y_pred: yPred1,
+      y_true: yTrue1
     });
     expect(_.isEqual(expectedResult, matrixResult)).toBe(true);
   });
@@ -21,8 +21,8 @@ describe('classification:confusion_matrix', () => {
   it('should yTrue2 and yPred2 return [ [ 1, 2, 0 ], [ 2, 0, 0 ], [ 0, 1, 0 ] ]', () => {
     const expectedResult = [[1, 2, 0], [2, 0, 0], [0, 1, 0]];
     const matrixResult = confusion_matrix({
-      y_true: yTrue2,
-      y_pred: yPred2
+      y_pred: yPred2,
+      y_true: yTrue2
     });
     expect(_.isEqual(expectedResult, matrixResult)).toBe(true);
   });
@@ -30,8 +30,8 @@ describe('classification:confusion_matrix', () => {
   it('should yTrue3 and yPred3 return [ [ 1, 2, 0 ], [ 2, 0, 0 ], [ 0, 1, 0 ] ]', () => {
     const expectedResult = [[1, 2, 0], [2, 0, 0], [0, 1, 0]];
     const matrixResult = confusion_matrix({
-      y_true: yTrue3,
-      y_pred: yPred3
+      y_pred: yPred3,
+      y_true: yTrue3
     });
     expect(_.isEqual(expectedResult, matrixResult)).toBe(true);
   });

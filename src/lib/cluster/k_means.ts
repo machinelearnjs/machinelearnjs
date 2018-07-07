@@ -63,7 +63,7 @@ export class KMeans {
    * @param {any} X
    * @returns {{centroids: number[]; clusters: number[]}}
    */
-  public fit({ X }):void {
+  public fit({ X }): void {
     this.assignment = new Array(_.size(X));
     this.centroids = this.getInitialCentroids(X, this.k);
     this.clusters = new Array(this.k);
@@ -115,7 +115,6 @@ export class KMeans {
         this.clusters[j] = assigned;
       }
     }
-
   }
 
   /**
@@ -123,22 +122,22 @@ export class KMeans {
    * @param {any} X
    * @returns {number[]}
    */
-  public predict({ X }) {
+  public predict({ X }): number[] {
     return _.map(X, data => {
       return this.getClosestCentroids(data, this.centroids, this.distance);
     });
   }
 
-	/**
+  /**
    * Get the model details in JSON format
-	 * @returns {{k: number; clusters: number[]; centroids: number[]}}
-	 */
-  public toJSON() {
+   * @returns {{k: number; clusters: number[]; centroids: number[]}}
+   */
+  public toJSON(): { k: number; clusters: number[]; centroids: number[] } {
     return {
-      k: this.k,
-      clusters: this.clusters,
       centroids: this.centroids,
-    }
+      clusters: this.clusters,
+      k: this.k
+    };
   }
 
   /**
@@ -162,14 +161,14 @@ export class KMeans {
     return centroids.slice(0, k);
   }
 
-	/**
+  /**
    * Get closest centroids based on the passed in distance method
-	 * @param {number[]} data
-	 * @param {number[]} centroids
-	 * @param distance
-	 * @returns {number}
-	 */
-  private getClosestCentroids(data: number[], centroids: number[], distance):number {
+   * @param {number[]} data
+   * @param {number[]} centroids
+   * @param distance
+   * @returns {number}
+   */
+  private getClosestCentroids(data: number[], centroids: number[], distance): number {
     let min = Infinity;
     let index = 0;
     _.forEach(centroids, (centroid, i) => {
@@ -181,5 +180,4 @@ export class KMeans {
     });
     return index;
   }
-
 }

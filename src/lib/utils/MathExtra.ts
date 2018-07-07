@@ -90,8 +90,8 @@ const euclideanDistance = (v1: number[], v2: number[]): number => {
   const initialTotal = 0;
   const total = _.reduce(
     v1Range,
-    (total, i) => {
-      return total + Math.pow(v2[i] - v1[i], 2);
+    (sum, i) => {
+      return sum + Math.pow(v2[i] - v1[i], 2);
     },
     initialTotal
   );
@@ -112,13 +112,13 @@ const manhattanDistance = (v1: number[], v2: number[]): number => {
 };
 
 const contrib = {
+  euclideanDistance,
   isArrayOf,
   isMatrix,
   isMatrixOf,
+  manhattanDistance,
   range,
-  size,
-  euclideanDistance,
-  manhattanDistance
+  size
 };
 
 // Exporting merged result
