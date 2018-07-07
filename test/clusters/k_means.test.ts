@@ -39,7 +39,7 @@ describe('clusters:k_means', () => {
   });
 
   it('should predict [ 0, 0 ] from predVector2 prediction', () => {
-    const expectedResult = [ 0, 0 ];
+    const expectedResult = [0, 0];
     const kmean = new KMeans({ k: 3 });
     kmean.fit({ X: vector1 });
     const pred = kmean.predict({ X: predVector2 });
@@ -47,10 +47,10 @@ describe('clusters:k_means', () => {
   });
 
   it('should predict [ 0, 0 ] from predVector2 with X: vector1', () => {
-    const expectedResult = [ 0, 0 ];
+    const expectedResult = [0, 0];
     const kmean = new KMeans({ k: 2 });
     kmean.fit({ X: vector1 });
     const pred = kmean.predict({ X: predVector2 });
     expect(_.isEqual(expectedResult, pred)).toBe(true);
-  })
+  });
 });
