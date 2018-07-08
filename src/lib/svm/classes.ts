@@ -109,11 +109,8 @@ export class BaseSVM {
       throw new Error(`SVM type is unspecified ${this.type}`);
     }
     const SVM = await this.loadSVM();
-    console.log('checking loaded svm', SVM);
     const options = this.processOptions(SVM, this.options, this.type, this.options.kernel);
-    console.log('opts', options);
     this.svm = new SVM(options);
-    console.log('checking svm.train', this.svm.train);
     this.svm.train(X, y);
   }
 
@@ -123,7 +120,6 @@ export class BaseSVM {
    * @returns {number[]}
    */
   public predict(X: number[]): number[] {
-    console.log('checking predict', this.svm.predict);
     return this.svm.predict(X);
   }
 
