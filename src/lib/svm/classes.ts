@@ -94,7 +94,7 @@ export class BaseSVM {
    * Load SVM object by resolving the default promise
    * @returns {Promise<any>}
    */
-  public async loadSVM(): Promise<any> {
+  private async loadSVM(): Promise<any> {
     return svmResolver;
   }
 
