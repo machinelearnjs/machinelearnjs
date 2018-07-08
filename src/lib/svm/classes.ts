@@ -91,14 +91,6 @@ export class BaseSVM {
   }
 
   /**
-   * Load SVM object by resolving the default promise
-   * @returns {Promise<any>}
-   */
-  public async loadSVM(): Promise<any> {
-    return svmResolver;
-  }
-
-  /**
    * Fit the model according to the given training data.
    * @param {any[]} X
    * @param {any[]} y
@@ -130,6 +122,14 @@ export class BaseSVM {
    */
   public predictOne(X: number[]): number[] {
     return this.svm.predictOne(X);
+  }
+
+  /**
+   * Load SVM object by resolving the default promise
+   * @returns {Promise<any>}
+   */
+  private async loadSVM(): Promise<any> {
+    return svmResolver;
   }
 
   /**

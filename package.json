@@ -110,7 +110,8 @@
       "\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     },
     "testRegex": "/test/.*\\.(ts|tsx|js)$",
-    "verbose": true
+    "verbose": true,
+    "testEnvironment": "node"
   },
   "ava": {
     "failFast": true,
