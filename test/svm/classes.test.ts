@@ -1,17 +1,17 @@
 import * as _ from 'lodash';
 import {
+	NuSVC,
+	NuSVR,
+	OneClassSVM,
 	SVC,
 	SVR,
-	OneClassSVM,
-	NuSVC,
-	NuSVR
 } from '../../src/lib/svm/classes';
 
 jest.mock('libsvm-js', () => () =>
 	({
-		train: (X, y) => ({X, y}),
 		predict: X => X,
 		predictOne: X => X,
+		train: (X, y) => ({X, y}),
 	})
 );
 
