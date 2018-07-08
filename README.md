@@ -3,6 +3,9 @@
 Kalimdor.js is a Machine Learning library written in Typescript. It solves Machine Learning problems
 and teaches users how Machine Learning algorithms work.
 
+[![Build Status](https://travis-ci.com/JasonShin/kalimdorjs.svg?token=fyXsjBhWmxzn9Pe4yfJp&branch=master)](https://travis-ci.com/JasonShin/kalimdorjs)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/5a46165744674962a6d9d15c03e50d22)](https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=JasonShin/kalimdorjs&amp;utm_campaign=Badge_Grade)
+
 <img src="https://i.imgur.com/b7GUoKa.png">
 
 # User Installation
