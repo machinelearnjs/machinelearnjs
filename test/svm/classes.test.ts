@@ -25,6 +25,8 @@ describe('svm:classes', () => {
 			const feed = [-0.8, -1];
 			const result = svc.predict(feed);
 			expect(_.isEqual(result, feed)).toBe(true);
+			const result2 = svc.predictOne(feed);
+			expect(_.isEqual(result2, feed)).toBe(true);
 		});
 	});
 
@@ -34,6 +36,8 @@ describe('svm:classes', () => {
 			const feed = [-0.8, -1];
 			const result = svr.predict(feed);
 			expect(_.isEqual(result, feed)).toBe(true);
+			const result2 = svr.predictOne(feed);
+			expect(_.isEqual(result2, feed)).toBe(true);
 		});
 	});
 
@@ -43,6 +47,8 @@ describe('svm:classes', () => {
 			const feed = [-0.8, -1];
 			const result = ocv.predict(feed);
 			expect(_.isEqual(result, feed)).toBe(true);
+			const result2 = ocv.predictOne(feed);
+			expect(_.isEqual(result2, feed)).toBe(true);
 		});
 	});
 
@@ -52,6 +58,8 @@ describe('svm:classes', () => {
 			const feed = [-0.8, -1];
 			const result = nusvc.predict(feed);
 			expect(_.isEqual(result, feed)).toBe(true);
+			const result2 = nusvc.predictOne(feed);
+			expect(_.isEqual(result2, feed)).toBe(true);
 		});
 	});
 
@@ -61,6 +69,8 @@ describe('svm:classes', () => {
 			const feed = [-0.8, -1];
 			const result = nusvr.predict(feed);
 			expect(_.isEqual(result, feed)).toBe(true);
+			const result2 = nusvr.predictOne(feed);
+			expect(_.isEqual(result2, feed)).toBe(true);
 		});
 	});
 });
