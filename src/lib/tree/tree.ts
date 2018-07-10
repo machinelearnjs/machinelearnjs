@@ -44,6 +44,7 @@ export class Question {
  * Also it increment the value as they occur.
  * @param {any[]} targets - list of classes
  * @returns {}
+ * @ignore
  */
 export function classCounts(targets): {} {
   // TODO: If targets is a multi-dimensional, automatically grab -1 index

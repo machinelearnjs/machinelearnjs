@@ -2,6 +2,9 @@ import euclideanDistance from 'ml-distance-euclidean';
 import math from '../utils/MathExtra';
 import KDTree from './KDTree';
 
+/**
+ * Classifier implementing the k-nearest neighbors vote.
+ */
 export class KNeighborsClassifier {
   private kdTree = null;
   private k = null;
@@ -134,6 +137,12 @@ export class KNeighborsClassifier {
   }
 }
 
+/**
+ * Get the class with the max point
+ * @param knn
+ * @param currentCase
+ * @returns {{}}
+ */
 function getSinglePrediction(knn, currentCase): {} {
   const nearestPoints = knn.kdTree.nearest(currentCase, knn.k);
   const pointsPerClass = {};
