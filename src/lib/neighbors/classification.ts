@@ -137,6 +137,12 @@ export class KNeighborsClassifier {
   }
 }
 
+/**
+ * Get the class with the max point
+ * @param knn
+ * @param currentCase
+ * @returns {{}}
+ */
 function getSinglePrediction(knn, currentCase): {} {
   const nearestPoints = knn.kdTree.nearest(currentCase, knn.k);
   const pointsPerClass = {};
