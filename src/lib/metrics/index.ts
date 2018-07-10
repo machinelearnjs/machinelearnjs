@@ -1,11 +1,11 @@
 import {
 	accuracyScore,
+	confusion_matrix,
 	zeroOneLoss,
-	confusion_matrix
 } from './classification';
 
 export {
 	accuracyScore,
+	confusion_matrix,
 	zeroOneLoss,
-	confusion_matrix
 }

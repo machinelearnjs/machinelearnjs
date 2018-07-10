@@ -1,6 +1,9 @@
-import { train_test_split, KFold } from './_split';
+import {
+	KFold,
+	train_test_split
+} from './_split';
 
 export {
+	KFold,
 	train_test_split,
-	KFold
 }
