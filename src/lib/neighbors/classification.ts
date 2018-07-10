@@ -2,6 +2,9 @@ import euclideanDistance from 'ml-distance-euclidean';
 import math from '../utils/MathExtra';
 import KDTree from './KDTree';
 
+/**
+ * Classifier implementing the k-nearest neighbors vote.
+ */
 export class KNeighborsClassifier {
   private kdTree = null;
   private k = null;

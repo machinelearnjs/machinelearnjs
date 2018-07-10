@@ -2,6 +2,13 @@ import * as _ from 'lodash';
 import math from '../utils/MathExtra';
 import { checkArray } from '../utils/validation';
 
+/**
+ * util function to calculate a weighted sum
+ * @param {any} sampleScore
+ * @param {any} normalize
+ * @returns {number}
+ * @ignore
+ */
 function _weightedSum({
   sampleScore,
   // sampleWeight = null,
@@ -61,7 +68,10 @@ export const validateInitialInputs = (y_true, y_pred, labels, options = {}) => {
 };
 
 /**
+ * Accuracy classification score.
  *
+ * In multilabel classification, this function computes subset accuracy:
+ * the set of labels predicted for a sample must exactly match the corresponding set of labels in y_true.
  * @param {any} y_true
  * @param {any} y_pred
  * @param {any} normalize
@@ -89,6 +99,16 @@ number {
   });
 }
 
+/**
+ * Zero-one classification loss.
+ *
+ * If normalize is `true`, return the fraction of misclassifications (float),
+ * else it returns the number of misclassifications (int). The best performance is 0.
+ * @param {any} y_true
+ * @param {any} y_pred
+ * @param {any} normalize
+ * @returns {number}
+ */
 export function zeroOneLoss({
   y_true,
   y_pred,
@@ -101,6 +121,7 @@ export function zeroOneLoss({
   // TODO: Fix return 0; implement when normalize === false
   return 0;
 }
+
 
 export interface ConfusionMatrixOptions {
   /**
@@ -119,6 +140,16 @@ export interface ConfusionMatrixOptions {
   labels?: any[];
 }
 
+/**
+ * Compute confusion matrix to evaluate the accuracy of a classification
+ *
+ * By definition a confusion matrix C is such that C_{i, j} is equal to the number of observations known to be in group i but predicted to be in group j.
+ *
+ * Thus in binary classification, the count of true negatives is C_{0,0}, false negatives is C_{1,0}, true positives is C_{1,1} and false positives is C_{0,1}.
+ *
+ * @param {ConfusionMatrixOptions} options
+ * @returns {number[]}
+ */
 export function confusion_matrix(options: ConfusionMatrixOptions): number[] {
   const y_true = _.get(options, 'y_true', null);
   const y_pred = _.get(options, 'y_pred', null);
