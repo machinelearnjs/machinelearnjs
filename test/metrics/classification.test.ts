@@ -1,5 +1,33 @@
 import * as _ from 'lodash';
-import { confusion_matrix } from '../../src/lib/metrics/classification';
+import {
+  accuracyScore,
+  confusion_matrix
+} from '../../src/lib/metrics/classification';
+
+describe('classification:accuracy_score', () => {
+  const yTrue1 = [0, 1, 2, 3];
+  const yPred1 = [0, 2, 1, 3];
+  it('should yTrue1 and yPred1 return 0.5', () => {
+    const expectedResult = 0.5;
+    const result = accuracyScore({
+      y_true: yTrue1,
+      y_pred: yPred1
+    });
+
+    expect(result).toBe(expectedResult);
+  });
+
+  it('should yTrue1 and yPred1 with normalize:false return 2', () => {
+    const expectedResult = 2;
+    const result = accuracyScore({
+      y_true: yTrue1,
+      y_pred: yPred1,
+      normalize: false
+    });
+
+    expect(result).toBe(expectedResult);
+  });
+});
 
 describe('classification:confusion_matrix', () => {
   const yTrue1 = [1, 2, 3];
