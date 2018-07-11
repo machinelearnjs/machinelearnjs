@@ -15,7 +15,7 @@ const accResultNorm = accuracyScore({
   normalize: false
 });
 
-console.log('accuracy result iwht norm false ', accResultNorm);
+console.log('accuracy result with norm false ', accResultNorm);
 
 const loss_zero_one_result = zeroOneLoss({
   y_true: [1, 2, 3, 4],
