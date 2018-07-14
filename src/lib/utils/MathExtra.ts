@@ -85,6 +85,12 @@ const isArrayOf = (arr, _type = 'number') => {
   throw Error(`Failed to check the array content of type ${_type}`);
 };
 
+/**
+ *
+ * @param {number[]} v1
+ * @param {number[]} v2
+ * @returns {number}
+ */
 const euclideanDistance = (v1: number[], v2: number[]): number => {
   const v1Range = _.range(0, v1.length);
   const initialTotal = 0;
@@ -99,6 +105,12 @@ const euclideanDistance = (v1: number[], v2: number[]): number => {
   return Math.sqrt(total);
 };
 
+/**
+ *
+ * @param {number[]} v1
+ * @param {number[]} v2
+ * @returns {number}
+ */
 const manhattanDistance = (v1: number[], v2: number[]): number => {
   const v1Range = _.range(0, v1.length);
   const initialTotal = 0;
@@ -111,6 +123,34 @@ const manhattanDistance = (v1: number[], v2: number[]): number => {
   );
 };
 
+/**
+ * Subtracts two matrices
+ * @param X
+ * @param y
+ */
+const subtract = (X, y) => {
+  const _X = _.clone(X);
+  for (let rowIndex = 0; rowIndex < _X.length; rowIndex++) {
+    const row = X[rowIndex];
+    for (let colIndex = 0; colIndex < row.length; colIndex++) {
+      const column = row[colIndex];
+      // Supports y.length === 1 or y.length === row.length
+      if (y.length === 1) {
+        const subs = y[0];
+        _X[rowIndex][colIndex] = column - subs;
+      } else if (y.length === row.length) {
+        const subs = y[colIndex];
+        _X[rowIndex][colIndex] = column - subs;
+      } else {
+        throw Error(`Dimension of y ${y.length} and row ${row.length} are not compatible`);
+      }
+    }
+  }
+  return _X;
+}
+
+
+
 const contrib = {
   euclideanDistance,
   isArrayOf,
@@ -118,7 +158,8 @@ const contrib = {
   isMatrixOf,
   manhattanDistance,
   range,
-  size
+  size,
+  subtract
 };
 
 // Exporting merged result

@@ -1,14 +1,18 @@
+import * as numeric from 'numeric';
+import * as cov from 'compute-covariance'
+import { EVD } from 'ml-matrix';
 import math from '../utils/MathExtra';
 
 export class PCA {
 	public fit({ X }) {
-		math.contrib.subtract(X, [1]);
 		const A = X;
 		const AT = math.transpose(A);
 		const M = math.mean(AT, 1);
-		console.log('A', AT, ' M', M);
-		const C = math.subtract(A, M);
-		console.log(C);
+		const C = math.contrib.subtract(X, M);
+		const CT = math.transpose(C);
+		const CV = cov(CT);
+		const stuff = numeric.eig(CV);
+		console.log('checking stuff', stuff);
 	}
 }
 
