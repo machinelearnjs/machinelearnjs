@@ -1,3 +1,4 @@
+import * as _ from 'lodash';
 import * as numeric from 'numeric';
 import { EVD } from 'ml-matrix';
 import math from '../utils/MathExtra';
@@ -40,6 +41,12 @@ export class PCA {
 	 * @param {any} X
 	 */
 	public fit({ X }) {
+		if (!X || _.isEmpty(X)) {
+			throw Error('Cannot compute PCA with an empty value!');
+		}
+		if (!math.contrib.isMatrixOf(X)) {
+			throw Error('X must be a matrix of numbers');
+		}
 		const nSamples = X.length;
 		// Renaming X to A for readability
 		const A = X;
