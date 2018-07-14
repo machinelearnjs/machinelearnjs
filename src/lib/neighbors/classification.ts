@@ -1,4 +1,3 @@
-import euclideanDistance from 'ml-distance-euclidean';
 import math from '../utils/MathExtra';
 import KDTree from './KDTree';
 
@@ -44,7 +43,7 @@ export class KNeighborsClassifier {
     // Doing a unary operation since _.get will only use the default value
     // if the original value is undefined. However, options.distance is not undefined
     // Reference: https://lodash.com/docs/4.17.10#get
-    const distance = this.distance ? this.distance : euclideanDistance;
+    const distance = this.distance ? this.distance : math.contrib.euclideanDistance;
 
     // Placeholder _k value, it can be 0
     const k = this.k ? this.k : classes.size + 1;
@@ -61,7 +60,7 @@ export class KNeighborsClassifier {
     this.kdTree = new KDTree(points, distance);
     this.k = k;
     this.classes = classes;
-    this.isEuclidean = distance === euclideanDistance;
+    this.isEuclidean = distance === math.contrib.euclideanDistance;
   }
 
   /**
@@ -70,14 +69,14 @@ export class KNeighborsClassifier {
    * @param {function} distance=euclideanDistance - distance function must be provided if the model wasn't trained with euclidean distance.
    * @return {KNN}
    */
-  public load(model, distance = euclideanDistance): KNeighborsClassifier {
+  public load(model, distance = math.contrib.euclideanDistance): KNeighborsClassifier {
     if (model.name !== 'KNN') {
       throw new Error('invalid model: ' + model.name);
     }
-    if (!model.isEuclidean && distance === euclideanDistance) {
+    if (!model.isEuclidean && distance === math.contrib.euclideanDistance) {
       throw new Error('a custom distance function was used to create the model. Please provide it again');
     }
-    if (model.isEuclidean && distance !== euclideanDistance) {
+    if (model.isEuclidean && distance !== math.contrib.euclideanDistance) {
       throw new Error('the model was created with the default distance function. Do not load it with another one');
     }
     return new KNeighborsClassifier({ distance: this.distance, k: this.k });
