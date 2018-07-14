@@ -147,9 +147,7 @@ const subtract = (X, y) => {
     }
   }
   return _X;
-}
-
-
+};
 
 const contrib = {
   euclideanDistance,
