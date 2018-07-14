@@ -64,25 +64,6 @@ export class KNeighborsClassifier {
   }
 
   /**
-   * Create a new KNN instance with the given model.
-   * @param {object} model
-   * @param {function} distance=euclideanDistance - distance function must be provided if the model wasn't trained with euclidean distance.
-   * @return {KNN}
-   */
-  public load(model, distance = math.contrib.euclideanDistance): KNeighborsClassifier {
-    if (model.name !== 'KNN') {
-      throw new Error('invalid model: ' + model.name);
-    }
-    if (!model.isEuclidean && distance === math.contrib.euclideanDistance) {
-      throw new Error('a custom distance function was used to create the model. Please provide it again');
-    }
-    if (model.isEuclidean && distance !== math.contrib.euclideanDistance) {
-      throw new Error('the model was created with the default distance function. Do not load it with another one');
-    }
-    return new KNeighborsClassifier({ distance: this.distance, k: this.k });
-  }
-
-  /**
    * Return a JSON containing the kd-tree model.
    * @return {object} JSON KNN model.
    */
