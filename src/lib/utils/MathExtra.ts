@@ -79,6 +79,7 @@ const isMatrix = matrix => {
  * @param arr
  * @param {string} _type
  * @returns {boolean}
+ * @ignore
  */
 const isArrayOf = (arr, _type = 'number') => {
   if (_type === 'number') {
@@ -133,6 +134,7 @@ const manhattanDistance = (v1: number[], v2: number[]): number => {
  * Subtracts two matrices
  * @param X
  * @param y
+ * @ignore
  */
 const subtract = (X, y) => {
   const _X = _.clone(X);
