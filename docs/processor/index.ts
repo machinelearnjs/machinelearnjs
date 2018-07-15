@@ -3,25 +3,9 @@ import * as Handlebars from 'handlebars';
 import { APIProcessor } from './APIProcessor';
 import { PagesProcessor } from './PagesProcessor';
 import { ConfigProcessor } from './ConfigProcessor';
+import * as consts from './const';
 const docsJson = require('../docs.json');
 const pjson = require('../../package.json');
-
-// File's Class|Method kind
-const kindStringConst = 'Constructor';
-const kindStringMethod = 'Method';
-
-// Parameter type
-const paramTypeReflection = 'reflection';
-const paramTypeIntrinsic = 'intrinsic';
-const paramTypeArray = 'array';
-const paramTypeReference = 'reference';
-
-// Return type
-const returnTypeIntrinsic = 'intrinsic';
-const returnTypeArray = 'array';
-
-// Tags
-const tagTypeExample = 'example';
 
 export class HandlebarHelpers {
   /**
@@ -158,7 +142,7 @@ export class HandlebarHelpers {
       parameters,
       (sum, param) => {
         const paramType = param.type.type;
-        if (paramTypeReflection === paramType) {
+        if (consts.paramTypeReflection === paramType) {
           // 1. Handle reflection/named param
           // e.g. x: { test1, test2 }
           _.forEach(param.type.declaration.children, namedParam => {
@@ -169,15 +153,15 @@ export class HandlebarHelpers {
               getText(namedParam)
             ]);
           });
-        } else if (paramTypeIntrinsic === paramType) {
+        } else if (consts.paramTypeIntrinsic === paramType) {
           //  2. Handle any intrintic params
           // e.g. x: number
           sum.push([param.name, param.type.name, param.defaultValue, getText(param)]);
-        } else if (paramTypeArray === paramType) {
+        } else if (consts.paramTypeArray === paramType) {
           // 3. Handle any array params
           // e.g. string[]
           sum.push([param.name, param.type.name, param.defaultValue, getText(param)]);
-        } else if (paramTypeReference === paramType) {
+        } else if (consts.paramTypeReference === paramType) {
           // 4. Handle any Interface params
           // e.g. x: Options
           const foundRef = this.searchInterface(docsJson, param.type.id);
@@ -211,9 +195,9 @@ export class HandlebarHelpers {
    * @returns {string}
    */
   static renderMethodReturnType(type) {
-    if (type.type === returnTypeIntrinsic) {
+    if (type.type === consts.returnTypeIntrinsic) {
       return type.name;
-    } else if (type.type === returnTypeArray) {
+    } else if (type.type === consts.returnTypeArray) {
       return `${type.elementType.name}[]`;
     }
   }
@@ -254,31 +238,37 @@ export class HandlebarHelpers {
   }
 }
 
-Handlebars.registerHelper('ifEquals', (children, x, y, options) => HandlebarHelpers.ifEquals(children, x, y, options));
+Handlebars.registerHelper('ifEquals', (children, x, y, options) =>
+  HandlebarHelpers.ifEquals(children, x, y, options)
+);
 
 Handlebars.registerHelper('isSignatureValid', (context, options) =>
   HandlebarHelpers.isSignatureValid(context, options)
 );
 
 Handlebars.registerHelper('filterConstructor', (children, options) =>
-  HandlebarHelpers.filterByKind(children, options, kindStringConst)
+  HandlebarHelpers.filterByKind(children, options, consts.kindStringConst)
 );
 
 Handlebars.registerHelper('filterMethod', (children, options) =>
-  HandlebarHelpers.filterByKind(children, options, kindStringMethod)
+  HandlebarHelpers.filterByKind(children, options, consts.kindStringMethod)
 );
 
 Handlebars.registerHelper('filterTagExample', (children, options) =>
-  HandlebarHelpers.filterByTag(children, options, tagTypeExample)
+  HandlebarHelpers.filterByTag(children, options, consts.tagTypeExample)
 );
 
-Handlebars.registerHelper('constructParamTable', parameters => HandlebarHelpers.constructParamTable(parameters));
+Handlebars.registerHelper('constructParamTable', parameters =>
+  HandlebarHelpers.constructParamTable(parameters));
 
-Handlebars.registerHelper('renderMethodReturnType', type => HandlebarHelpers.renderMethodReturnType(type));
+Handlebars.registerHelper('renderMethodReturnType', type =>
+  HandlebarHelpers.renderMethodReturnType(type));
 
-Handlebars.registerHelper('methodBracket', parameters => HandlebarHelpers.renderMethodBracket(parameters));
+Handlebars.registerHelper('methodBracket', parameters =>
+  HandlebarHelpers.renderMethodBracket(parameters));
 
-Handlebars.registerHelper('getSourceLink', sources => HandlebarHelpers.renderSourceLink(sources));
+Handlebars.registerHelper('getSourceLink', sources =>
+  HandlebarHelpers.renderSourceLink(sources));
 
 Handlebars.registerHelper('newLine', HandlebarHelpers.renderNewLine);
 

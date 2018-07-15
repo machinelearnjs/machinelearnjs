@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as _ from 'lodash';
+import * as consts from './const';
 import { BaseProcesser } from './BaseProcesser';
 const docsJson = require('../docs.json');
 
@@ -16,7 +17,7 @@ export class APIProcessor extends BaseProcesser {
   private srcApiHomeTheme = path.join(this.themePath, this.homePageFile);
   private destApiHomePage = path.join(__dirname, '../md_out/api/README.md');
   private pathDelimeter = '.';
-  private entityKindWhitelist = ['Class', 'Function']; // Whitelisting kinds when grabbing class or method
+  private entityKindWhitelist = [consts.kindStringClass, consts.kindStringFunction]; // Whitelisting kinds when grabbing class or method
   private moduleNameBlackList = ['"'];
   /**
    * Util funciton to clean any unwanted chars
@@ -109,14 +110,29 @@ export class APIProcessor extends BaseProcesser {
   }
 
   /**
-   * Check if child's comment has and tag ignore
+   * Check if the passed in child has a commnet "ignore"
+   * 1. If child does not have comment, search for an identical signature and pull out @ignore tag if it exists
    * @param child
    */
   private isIgnore(child) {
-    const tags = _.get(child, 'comment.tags', []);
-    const ignore = _.find(tags, tag => {
-      return tag.tag === 'ignore';
+    // Find ignores from given tags
+    const findIgnores = tags => _.find(tags, tag => {
+      return tag.tag === consts.tagTypeIgnore;
     });
+
+    // If child does not have comment attribute by default, then search for a signature
+    if (!child.comment) {
+      const { signatures } = child;
+      const identSignature = _.find(signatures, sig => {
+        return sig.name === child.name;
+      });
+      const tags = _.get(identSignature, 'comment.tags', []);
+      const ignore = findIgnores(tags);
+      return !_.isEmpty(ignore);
+    }
+    // Otherwise, evaluate using the parent comment
+    const tags = _.get(child, 'comment.tags', []);
+    const ignore = findIgnores(tags)
     return !_.isEmpty(ignore);
   }
 
