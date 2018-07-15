@@ -238,9 +238,7 @@ export class HandlebarHelpers {
   }
 }
 
-Handlebars.registerHelper('ifEquals', (children, x, y, options) =>
-  HandlebarHelpers.ifEquals(children, x, y, options)
-);
+Handlebars.registerHelper('ifEquals', (children, x, y, options) => HandlebarHelpers.ifEquals(children, x, y, options));
 
 Handlebars.registerHelper('isSignatureValid', (context, options) =>
   HandlebarHelpers.isSignatureValid(context, options)
@@ -262,17 +260,13 @@ Handlebars.registerHelper('filterTagExample', (children, options) =>
   HandlebarHelpers.filterByTag(children, options, consts.tagTypeExample)
 );
 
-Handlebars.registerHelper('constructParamTable', parameters =>
-  HandlebarHelpers.constructParamTable(parameters));
+Handlebars.registerHelper('constructParamTable', parameters => HandlebarHelpers.constructParamTable(parameters));
 
-Handlebars.registerHelper('renderMethodReturnType', type =>
-  HandlebarHelpers.renderMethodReturnType(type));
+Handlebars.registerHelper('renderMethodReturnType', type => HandlebarHelpers.renderMethodReturnType(type));
 
-Handlebars.registerHelper('methodBracket', parameters =>
-  HandlebarHelpers.renderMethodBracket(parameters));
+Handlebars.registerHelper('methodBracket', parameters => HandlebarHelpers.renderMethodBracket(parameters));
 
-Handlebars.registerHelper('getSourceLink', sources =>
-  HandlebarHelpers.renderSourceLink(sources));
+Handlebars.registerHelper('getSourceLink', sources => HandlebarHelpers.renderSourceLink(sources));
 
 Handlebars.registerHelper('newLine', HandlebarHelpers.renderNewLine);
 

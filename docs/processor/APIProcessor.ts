@@ -116,9 +116,10 @@ export class APIProcessor extends BaseProcesser {
    */
   private isIgnore(child) {
     // Find ignores from given tags
-    const findIgnores = tags => _.find(tags, tag => {
-      return tag.tag === consts.tagTypeIgnore;
-    });
+    const findIgnores = tags =>
+      _.find(tags, tag => {
+        return tag.tag === consts.tagTypeIgnore;
+      });
 
     // If child does not have comment attribute by default, then search for a signature
     if (!child.comment) {
@@ -132,7 +133,7 @@ export class APIProcessor extends BaseProcesser {
     }
     // Otherwise, evaluate using the parent comment
     const tags = _.get(child, 'comment.tags', []);
-    const ignore = findIgnores(tags)
+    const ignore = findIgnores(tags);
     return !_.isEmpty(ignore);
   }
 
