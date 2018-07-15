@@ -34,16 +34,25 @@
         {{/each}}
     {{/filterConstructor}}
 
-    {{#filterMethod children}}
-        {{newLine}}### Methods
+    {{#filterProperty children}}
+        {{newLine}}### Properties
         {{#each this}}
             {{newLine}}* [{{this.name}}](#▸-{{this.name}})
         {{/each}}
+    {{/filterProperty}}
+
+    {{#filterMethod children}}
+        {{newLine}}### Methods
+        {{#each this}}
+            {{newLine}}* [{{this.name}}](#λ-{{this.name}})
+        {{/each}}
     {{/filterMethod}}
 
-    ---
+
 
     {{#filterConstructor children}}
+    ---
+
         {{newLine}}# Constructors
         {{newLine}}---
         {{#each this}}
@@ -70,9 +79,11 @@
         {{/each}}
     {{/filterConstructor}}
 
-    ---
+
 
     {{#filterProperty children}}
+    ---
+
         {{newLine}}# Properties
         {{newLine}}---
         {{#each this}}
@@ -83,9 +94,9 @@
         {{/each}}
     {{/filterProperty}}
 
+    {{#filterMethod children}}
     ---
 
-    {{#filterMethod children}}
         {{newLine}}# Methods
         {{newLine}}---
         {{#each this}}
