@@ -13,11 +13,11 @@ import math from '../utils/MathExtra';
  * Halko et al. 2009, depending on the shape
  * of the input data and the number of components to extract. (Will be implemented)
  *
- * @example testing
+ * @example
  * hello('test');
  *
  * @example
- * hey('test');
+ * hey("test");
  *
  */
 export class PCA {

@@ -20,6 +20,9 @@ const paramTypeReference = 'reference';
 const returnTypeIntrinsic = 'intrinsic';
 const returnTypeArray = 'array';
 
+// Tags
+const tagTypeExample = 'example';
+
 export class HandlebarHelpers {
   /**
    * check equality of x and y.
@@ -34,7 +37,7 @@ export class HandlebarHelpers {
     return _.isEqual(x, y) ? options.fn(children) : options.inverse(children);
   }
   /**
-   * Filters a children by a kind name such as Constructor or Method
+   * Filters children by a kind name such as Constructor or Method
    * @param children
    * @param options
    * @param kind
@@ -44,6 +47,27 @@ export class HandlebarHelpers {
     if (children) {
       const filtered = children.filter(child => {
         return child.kindString === kind;
+      });
+      return _.isEmpty(filtered) ? options.inverse(this) : options.fn(filtered);
+    } else {
+      return options.inverse(children);
+    }
+  }
+
+	/**
+   * Filters children by its tag name. For example filter by tag "example" of below
+   * [{"tag":"example","text":"\nhello('test');\n\n"}, {"tag": "somethingelse"}]
+   * would result in
+   * [{"tag":"example","text":"\nhello('test');\n\n"}]
+	 * @param children
+	 * @param options
+	 * @param tag
+	 * @returns {any}
+	 */
+  static filterByTag(children, options, tag) {
+    if (children) {
+      const filtered = children.filter(child => {
+        return  child.tag === tag;
       });
       return _.isEmpty(filtered) ? options.inverse(this) : options.fn(filtered);
     } else {
@@ -242,6 +266,10 @@ Handlebars.registerHelper('filterConstructor', (children, options) =>
 
 Handlebars.registerHelper('filterMethod', (children, options) =>
   HandlebarHelpers.filterByKind(children, options, kindStringMethod)
+);
+
+Handlebars.registerHelper('filterTagExample', (children, options) =>
+  HandlebarHelpers.filterByTag(children, options, tagTypeExample)
 );
 
 Handlebars.registerHelper('constructParamTable', parameters => HandlebarHelpers.constructParamTable(parameters));

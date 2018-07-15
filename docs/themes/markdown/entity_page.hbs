@@ -3,6 +3,12 @@
 {{ comment.shortText }}
 {{ comment.text }}
 
+{{#filterTagExample this.comment.tags}}
+    {{#each this}}
+        {{newLine}}```javascript{{{this.text}}}```
+    {{/each}}
+{{/filterTagExample}}
+
 {{#ifEquals this this.kindString "Function"}}
 
     {{#isSignatureValid this}}
