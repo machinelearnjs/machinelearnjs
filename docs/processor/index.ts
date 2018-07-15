@@ -54,20 +54,20 @@ export class HandlebarHelpers {
     }
   }
 
-	/**
+  /**
    * Filters children by its tag name. For example filter by tag "example" of below
    * [{"tag":"example","text":"\nhello('test');\n\n"}, {"tag": "somethingelse"}]
    * would result in
    * [{"tag":"example","text":"\nhello('test');\n\n"}]
-	 * @param children
-	 * @param options
-	 * @param tag
-	 * @returns {any}
-	 */
+   * @param children
+   * @param options
+   * @param tag
+   * @returns {any}
+   */
   static filterByTag(children, options, tag) {
     if (children) {
       const filtered = children.filter(child => {
-        return  child.tag === tag;
+        return child.tag === tag;
       });
       return _.isEmpty(filtered) ? options.inverse(this) : options.fn(filtered);
     } else {

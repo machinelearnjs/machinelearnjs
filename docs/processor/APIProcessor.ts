@@ -53,8 +53,8 @@ export class APIProcessor extends BaseProcesser {
         const squashedEntityList = _.reduce(
           moduleChild.children,
           (entityList, entityChild) => {
-            // Filter by entityKindWhitelist
-            if (this.entityKindWhitelist.indexOf(entityChild.kindString) !== -1) {
+            // Filter by entityKindWhitelist and skips if isIgnore comment is set
+            if (this.entityKindWhitelist.indexOf(entityChild.kindString) !== -1 && !this.isIgnore(entityChild)) {
               // each function or class name
               const entityName = entityChild.name;
               const fullEntityName = [cleanedModuleName, entityName].join(this.pathDelimeter);
@@ -106,6 +106,18 @@ export class APIProcessor extends BaseProcesser {
     const template = hbs.compile(apiHomePageThemeContent);
     const compiledPage = template(restructedChildren);
     fs.appendFileSync(this.destApiHomePage, compiledPage, { flag: 'a' });
+  }
+
+  /**
+   * Check if child's comment has and tag ignore
+   * @param child
+   */
+  private isIgnore(child) {
+    const tags = _.get(child, 'comment.tags', []);
+    const ignore = _.find(tags, tag => {
+      return tag.tag === 'ignore';
+    });
+    return !_.isEmpty(ignore);
   }
 
   /**

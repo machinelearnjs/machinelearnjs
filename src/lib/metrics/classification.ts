@@ -122,7 +122,6 @@ export function zeroOneLoss({
   return 0;
 }
 
-
 export interface ConfusionMatrixOptions {
   /**
    * Ground truth (correct) target values.

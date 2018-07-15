@@ -1,5 +1,3 @@
-import { CountVectorizer } from "./text";
+import { CountVectorizer } from './text';
 
-export {
-	CountVectorizer
-}
+export { CountVectorizer };

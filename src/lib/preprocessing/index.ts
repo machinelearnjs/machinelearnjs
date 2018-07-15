@@ -1,16 +1,5 @@
-import {
-	Binarizer,
-	MinMaxScaler,
-	OneHotEncoder,
-} from './data';
+import { Binarizer, MinMaxScaler, OneHotEncoder } from './data';
 
-import {
-	Imputer
-} from './Imputer';
+import { Imputer } from './Imputer';
 
-export {
-	Binarizer,
-	MinMaxScaler,
-	OneHotEncoder,
-	Imputer
-}
+export { Binarizer, MinMaxScaler, OneHotEncoder, Imputer };

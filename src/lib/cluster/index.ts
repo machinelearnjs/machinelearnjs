@@ -1,5 +1,3 @@
-import { KMeans } from "./k_means";
+import { KMeans } from './k_means';
 
-export {
-	KMeans
-}
+export { KMeans };
