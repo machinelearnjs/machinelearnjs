@@ -1,7 +1,7 @@
 # {{ name }}
 
-{{ comment.shortText }}
-{{ comment.text }}
+{{{ comment.shortText }}}
+{{{ comment.text }}}
 
 {{#filterTagExample this.comment.tags}}
     {{#each this}}
@@ -72,13 +72,26 @@
 
     ---
 
+    {{#filterProperty children}}
+        {{newLine}}# Properties
+        {{newLine}}---
+        {{#each this}}
+            {{newLine}}### ▸ {{this.name}}
+            {{newLine}}{{ this.comment.shortText }}
+            {{newLine}}{{ this.comment.text }}
+            {{newLine}}Defined in {{getSourceLink this.sources}}
+        {{/each}}
+    {{/filterProperty}}
+
+    ---
+
     {{#filterMethod children}}
         {{newLine}}# Methods
         {{newLine}}---
         {{#each this}}
             {{#isSignatureValid this}}
                 {{#each this.signatures}}
-                    {{newLine}}### ▸ {{this.name}}
+                    {{newLine}}### λ {{this.name}}
                     {{newLine}}{{ this.comment.shortText }}
                     {{newLine}}{{ this.comment.text }}
                 {{/each}}

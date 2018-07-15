@@ -3,6 +3,7 @@ export const kindStringClass = 'Class';
 export const kindStringConst = 'Constructor';
 export const kindStringFunction = 'Function';
 export const kindStringMethod = 'Method';
+export const kindStringProperty = 'Property';
 
 // Parameter type
 export const paramTypeReflection = 'reflection';

@@ -254,6 +254,10 @@ Handlebars.registerHelper('filterMethod', (children, options) =>
   HandlebarHelpers.filterByKind(children, options, consts.kindStringMethod)
 );
 
+Handlebars.registerHelper('filterProperty', (children, options) =>
+  HandlebarHelpers.filterByKind(children, options, consts.kindStringProperty)
+);
+
 Handlebars.registerHelper('filterTagExample', (children, options) =>
   HandlebarHelpers.filterByTag(children, options, consts.tagTypeExample)
 );
