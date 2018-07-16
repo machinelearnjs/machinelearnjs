@@ -22,12 +22,12 @@ function _weightedSum({
 }
 
 /**
- * @ignore
  * Validator for classification exceptions
  * @param y_true
  * @param y_pred
  * @param labels
  * @param options
+ * @ignore
  */
 export const validateInitialInputs = (y_true, y_pred, labels, options = {}) => {
   const checkMultiClass = _.get(options, 'multiclass');
@@ -72,6 +72,17 @@ export const validateInitialInputs = (y_true, y_pred, labels, options = {}) => {
  *
  * In multilabel classification, this function computes subset accuracy:
  * the set of labels predicted for a sample must exactly match the corresponding set of labels in y_true.
+ *
+ * @example
+ * import { accuracyScore } from 'kalimdor/metrics';
+ *
+ * const accResult = accuracyScore({
+ *   y_true: [0, 1, 2, 3],
+ *   y_pred: [0, 2, 1, 3]
+ * });
+ *
+ * // accuracy result: 0.5
+ *
  * @param {any} y_true
  * @param {any} y_pred
  * @param {any} normalize

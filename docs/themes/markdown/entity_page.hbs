@@ -3,13 +3,6 @@
 {{{ comment.shortText }}}
 {{{ comment.text }}}
 
-{{#filterTagExample this.comment.tags}}
-    {{newLine}}### Examples
-    {{#each this}}
-        {{newLine}}```javascript{{{this.text}}}```
-    {{/each}}
-{{/filterTagExample}}
-
 {{#ifEquals this this.kindString "Function"}}
 
     {{#isSignatureValid this}}
@@ -27,6 +20,13 @@
     {{/isSignatureValid}}
 
 {{else}}
+
+    {{#filterTagExample this.comment.tags}}
+        {{newLine}}### Examples
+        {{#each this}}
+            {{newLine}}```javascript{{{this.text}}}```
+        {{/each}}
+    {{/filterTagExample}}
 
     {{#filterConstructor children}}
         {{newLine}}### Constructors
