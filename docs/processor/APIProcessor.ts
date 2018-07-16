@@ -1,6 +1,6 @@
+import * as _ from 'lodash';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as _ from 'lodash';
 import * as consts from './const';
 import { BaseProcesser } from './BaseProcesser';
 const docsJson = require('../docs.json');

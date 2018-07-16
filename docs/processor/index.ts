@@ -100,7 +100,17 @@ export class HandlebarHelpers {
     return options.fn(context);
   }
 
-  static constructParamTable(parameters) {
+  /**
+   * Constructs a parameter table that may look something like:
+   * | Param | Type | Default | Description |
+   * | ------ | ------ | ------ | ------ |
+   * | _namedParameters.X | any |  | array-like or sparse matrix of shape &#x3D; [nsamples, n_features]
+   * | _namedParameters.y | any |  | array-like, shape &#x3D; [nsamples] or [n_samples, n_outputs]
+   *
+   * @param parameters
+   * @returns {string}
+   */
+  public static constructParamTable(parameters): string {
     // Param table characters blacklist
     const paramTableCharsBlackList = [/\n/g, /\r\n/g, '_'];
 
@@ -194,7 +204,7 @@ export class HandlebarHelpers {
    * @param type
    * @returns {string}
    */
-  static renderMethodReturnType(type) {
+  public static renderMethodReturnType(type): string {
     if (type.type === consts.returnTypeIntrinsic) {
       return type.name;
     } else if (type.type === consts.returnTypeArray) {
@@ -208,7 +218,7 @@ export class HandlebarHelpers {
    * @param parameters
    * @returns {string}
    */
-  static renderMethodBracket(parameters) {
+  public static renderMethodBracket(parameters): string {
     const params = _.map(parameters, param => {
       const paramType = _.isString(param.type) ? param.type : 'object';
       return `${param.name}: *\`${paramType}\`*`;
@@ -222,7 +232,7 @@ export class HandlebarHelpers {
    * @param sources
    * @returns {string}
    */
-  static renderSourceLink(sources) {
+  public static renderSourceLink(sources): string {
     const defined = _.map(sources, src => {
       return `[${src.fileName}:${src.line}](${pjson.repository}/blob/master/src/lib/${src.fileName}#L${src.line})`;
     });
@@ -233,7 +243,7 @@ export class HandlebarHelpers {
    * Renders a new line
    * @returns {string}
    */
-  static renderNewLine() {
+  public static renderNewLine(): string {
     return '\n';
   }
 }
