@@ -225,7 +225,7 @@ function renderMethodBracket(parameters): string {
     const paramType = _.isString(param.type) ? param.type : 'object';
     return `${param.name}: *\`${paramType}\`*`;
   });
-  return `(${params.join(',')})`;
+  return `(${params.join(', ')})`;
 }
 
 /**
