@@ -9,7 +9,7 @@ export class BaseProcesser {
   constructor() {
     this.makeBaseDir();
   }
-  protected makeBaseDir() {
+  protected makeBaseDir():void {
     if (!fs.existsSync(this.baseOutputDir)) {
       fs.mkdirSync(this.baseOutputDir);
     }

@@ -1,6 +1,6 @@
 import * as fs from 'fs';
-import * as path from 'path';
 import * as _ from 'lodash';
+import * as path from 'path';
 import { BaseProcesser } from './BaseProcesser';
 
 export class PagesProcessor extends BaseProcesser {
@@ -19,16 +19,27 @@ export class PagesProcessor extends BaseProcesser {
   }
 
   /**
+   * Run the processor
+   */
+  public run():void {
+    // 1. homepage
+    this.processHomePage();
+
+    // 2. all the other pages under docs/pages/
+    this.syncOtherPages();
+  }
+
+  /**
    * Process and sync the homepage as md_out/README.md
    */
-  private processHomePage() {
+  private processHomePage():void {
     fs.createReadStream(this.srcReadMePath).pipe(fs.createWriteStream(this.destReadMePath));
   }
 
   /**
    * Sync any md files located under docs/pages folder to the root of md_out
    */
-  private syncOtherPages() {
+  private syncOtherPages():void {
     _.forEach(fs.readdirSync(this.pageSrcPath), file => {
       const fullSrcFilePath = path.join(this.pageSrcPath, file);
       const fullDestFilePath = path.join(this.pageDestPath, file);
@@ -36,14 +47,4 @@ export class PagesProcessor extends BaseProcesser {
     });
   }
 
-  /**
-   * Run the processor
-   */
-  public run() {
-    // 1. homepage
-    this.processHomePage();
-
-    // 2. all the other pages under docs/pages/
-    this.syncOtherPages();
-  }
 }

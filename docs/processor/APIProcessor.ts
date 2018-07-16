@@ -1,9 +1,9 @@
-import * as _ from 'lodash';
 import * as fs from 'fs';
+import * as _ from 'lodash';
 import * as path from 'path';
-import * as consts from './const';
 import { BaseProcesser } from './BaseProcesser';
-const docsJson = require('../docs.json');
+import * as consts from './const';
+const docsJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../docs.json'), 'utf8'));
 
 /**
  * Processor used to process API docs located under lib/src/
@@ -19,6 +19,24 @@ export class APIProcessor extends BaseProcesser {
   private pathDelimeter = '.';
   private entityKindWhitelist = [consts.kindStringClass, consts.kindStringFunction]; // Whitelisting kinds when grabbing class or method
   private moduleNameBlackList = ['"'];
+
+  /**
+   * Run the processor
+   * @param hbs
+   */
+  public run(hbs):void {
+    // Creating required dir
+    this.createDir();
+
+    // Order API children
+    this.apiChildren = this.retrieveOrderedAPIs(docsJson);
+    // TODO: Process homepage to display all the APIs on the homepage
+    this.processHomePage(hbs, this.apiChildren);
+
+    // Process API pages
+    this.processAPIEntityPage(hbs, this.apiChildren);
+  }
+
   /**
    * Util funciton to clean any unwanted chars
    * @param name
@@ -39,7 +57,7 @@ export class APIProcessor extends BaseProcesser {
    * @param docs
    * @returns {any[]}
    */
-  private retrieveOrderedAPIs(docs) {
+  private retrieveOrderedAPIs(docs):any {
     // Aggregate children
     const aggregatedFirstChildren = _.reduce(
       docs.children,
@@ -83,7 +101,7 @@ export class APIProcessor extends BaseProcesser {
   /**
    * Create API directory if not exist
    */
-  private createDir() {
+  private createDir():void {
     // 1.2. creating the second portion: /Users/jasons/Desktop/kalimdorjs/docs/md_out/pages
     if (!fs.existsSync(this.apiOutputPath)) {
       fs.mkdirSync(this.apiOutputPath);
@@ -93,7 +111,7 @@ export class APIProcessor extends BaseProcesser {
   /**
    * Process API folder's homepage aka README
    */
-  private processHomePage(hbs, apiChildren) {
+  private processHomePage(hbs, apiChildren):void {
     const grouped = _.groupBy(apiChildren, o => o.name.split(this.pathDelimeter)[0]);
     const keys = _.keys(grouped);
     const restructedChildren = _.map(keys, key => {
@@ -114,10 +132,10 @@ export class APIProcessor extends BaseProcesser {
    * 1. If child does not have comment, search for an identical signature and pull out @ignore tag if it exists
    * @param child
    */
-  private isIgnore(child) {
+  private isIgnore(child):boolean {
     // Find ignores from given tags
-    const findIgnores = tags =>
-      _.find(tags, tag => {
+    const findIgnores = givenTags =>
+      _.find(givenTags, tag => {
         return tag.tag === consts.tagTypeIgnore;
       });
 
@@ -127,9 +145,9 @@ export class APIProcessor extends BaseProcesser {
       const identSignature = _.find(signatures, sig => {
         return sig.name === child.name;
       });
-      const tags = _.get(identSignature, 'comment.tags', []);
-      const ignore = findIgnores(tags);
-      return !_.isEmpty(ignore);
+      const foundTags = _.get(identSignature, 'comment.tags', []);
+      const foundIgnores = findIgnores(foundTags);
+      return !_.isEmpty(foundIgnores);
     }
     // Otherwise, evaluate using the parent comment
     const tags = _.get(child, 'comment.tags', []);
@@ -142,7 +160,7 @@ export class APIProcessor extends BaseProcesser {
    * @param hbs
    * @param children
    */
-  private processAPIEntityPage(hbs, children) {
+  private processAPIEntityPage(hbs, children):void {
     // themes hbs files paths
     const entityPageThemePath = path.join(this.themePath, this.entityPageFile);
     const entityPageThemeContent = fs.readFileSync(entityPageThemePath, 'utf8');
@@ -157,20 +175,4 @@ export class APIProcessor extends BaseProcesser {
     });
   }
 
-  /**
-   * Run the processor
-   * @param hbs
-   */
-  public run(hbs) {
-    // Creating required dir
-    this.createDir();
-
-    // Order API children
-    this.apiChildren = this.retrieveOrderedAPIs(docsJson);
-    // TODO: Process homepage to display all the APIs on the homepage
-    this.processHomePage(hbs, this.apiChildren);
-
-    // Process API pages
-    this.processAPIEntityPage(hbs, this.apiChildren);
-  }
 }
