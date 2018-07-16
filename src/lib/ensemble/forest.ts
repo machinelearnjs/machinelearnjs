@@ -1,6 +1,22 @@
 import * as _ from 'lodash';
 import { DecisionTreeClassifier } from '../tree/tree';
 
+/**
+ * Random forest classifier creates a set of decision trees from randomly selected subset of training set.
+ * It then aggregates the votes from different decision trees to decide the final class of the test object.
+ *
+ * @example
+ * import { RandomForestClassifier } from 'kalimdor/ensemble';
+ *
+ * const X = [[0, 0], [1, 1], [2, 1], [1, 5], [3, 2]];
+ * const y = [0, 1, 2, 3, 7];
+ *
+ * const randomForest = new RandomForestClassifier();
+ * randomForest.fit({ X, y });
+ *
+ * // Results in a value such as [ '7', '2' ].
+ * // Predictions will change as we have not set a seed value.
+ */
 export class RandomForestClassifier {
   private trees = [];
   private nEstimator;
