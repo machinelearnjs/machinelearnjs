@@ -24,7 +24,7 @@ export class APIProcessor extends BaseProcesser {
    * Run the processor
    * @param hbs
    */
-  public run(hbs):void {
+  public run(hbs): void {
     // Creating required dir
     this.createDir();
 
@@ -57,7 +57,7 @@ export class APIProcessor extends BaseProcesser {
    * @param docs
    * @returns {any[]}
    */
-  private retrieveOrderedAPIs(docs):any {
+  private retrieveOrderedAPIs(docs): any {
     // Aggregate children
     const aggregatedFirstChildren = _.reduce(
       docs.children,
@@ -101,7 +101,7 @@ export class APIProcessor extends BaseProcesser {
   /**
    * Create API directory if not exist
    */
-  private createDir():void {
+  private createDir(): void {
     // 1.2. creating the second portion: /Users/jasons/Desktop/kalimdorjs/docs/md_out/pages
     if (!fs.existsSync(this.apiOutputPath)) {
       fs.mkdirSync(this.apiOutputPath);
@@ -111,7 +111,7 @@ export class APIProcessor extends BaseProcesser {
   /**
    * Process API folder's homepage aka README
    */
-  private processHomePage(hbs, apiChildren):void {
+  private processHomePage(hbs, apiChildren): void {
     const grouped = _.groupBy(apiChildren, o => o.name.split(this.pathDelimeter)[0]);
     const keys = _.keys(grouped);
     const restructedChildren = _.map(keys, key => {
@@ -132,7 +132,7 @@ export class APIProcessor extends BaseProcesser {
    * 1. If child does not have comment, search for an identical signature and pull out @ignore tag if it exists
    * @param child
    */
-  private isIgnore(child):boolean {
+  private isIgnore(child): boolean {
     // Find ignores from given tags
     const findIgnores = givenTags =>
       _.find(givenTags, tag => {
@@ -160,7 +160,7 @@ export class APIProcessor extends BaseProcesser {
    * @param hbs
    * @param children
    */
-  private processAPIEntityPage(hbs, children):void {
+  private processAPIEntityPage(hbs, children): void {
     // themes hbs files paths
     const entityPageThemePath = path.join(this.themePath, this.entityPageFile);
     const entityPageThemeContent = fs.readFileSync(entityPageThemePath, 'utf8');
@@ -174,5 +174,4 @@ export class APIProcessor extends BaseProcesser {
       fs.appendFileSync(fullPath, compiledPage, { flag: 'a' });
     });
   }
-
 }

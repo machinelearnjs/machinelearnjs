@@ -21,7 +21,7 @@ export class PagesProcessor extends BaseProcesser {
   /**
    * Run the processor
    */
-  public run():void {
+  public run(): void {
     // 1. homepage
     this.processHomePage();
 
@@ -32,19 +32,18 @@ export class PagesProcessor extends BaseProcesser {
   /**
    * Process and sync the homepage as md_out/README.md
    */
-  private processHomePage():void {
+  private processHomePage(): void {
     fs.createReadStream(this.srcReadMePath).pipe(fs.createWriteStream(this.destReadMePath));
   }
 
   /**
    * Sync any md files located under docs/pages folder to the root of md_out
    */
-  private syncOtherPages():void {
+  private syncOtherPages(): void {
     _.forEach(fs.readdirSync(this.pageSrcPath), file => {
       const fullSrcFilePath = path.join(this.pageSrcPath, file);
       const fullDestFilePath = path.join(this.pageDestPath, file);
       fs.createReadStream(fullSrcFilePath).pipe(fs.createWriteStream(fullDestFilePath));
     });
   }
-
 }

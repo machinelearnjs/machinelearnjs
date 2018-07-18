@@ -92,7 +92,26 @@ export interface TrainTestSplitOptions {
 }
 
 /**
- *  Split arrays or matrices into random train and test subsets
+ * Split arrays or matrices into random train and test subsets
+ *
+ * @example
+ * import { train_test_split } from 'kalimdor/model_selection';
+ *
+ * const X = [[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]];
+ * const y = [0, 1, 2, 3, 4];
+ *
+ * train_test_split(X, y, {
+ *   test_size: 0.33,
+ *   train_size: 0.67,
+ *   random_state: 42
+ * });
+ *
+ * /*
+ * * { xTest: [ [ 0, 1 ], [ 8, 9 ] ],
+ * *  xTrain: [ [ 4, 5 ], [ 6, 7 ], [ 2, 3 ] ],
+ * *  yTest: [ 0, 4 ],
+ * *  yTrain: [ 2, 3, 1 ] }
+ *
  * @param {Array} X
  * @param {Array} y
  * @param {TrainTestSplitOptions} options

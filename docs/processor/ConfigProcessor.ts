@@ -19,7 +19,7 @@ export class ConfigProcessor extends BaseProcesser {
    * Runs the processor
    * @param {any} apiChildren
    */
-  public run({ apiChildren }):void {
+  public run({ apiChildren }): void {
     if (_.isEmpty(apiChildren)) {
       throw Error('Cannot execute the processor because apiChildren is empty');
     }
@@ -39,7 +39,7 @@ export class ConfigProcessor extends BaseProcesser {
   /**
    * Create dir if not exist, it can be abstracted to a Utils file
    */
-  private createDir():void {
+  private createDir(): void {
     // Creating the source out directory if not exists
     if (!fs.existsSync(this.vuepressConfigPath)) {
       fs.mkdirSync(this.vuepressConfigPath);
@@ -52,7 +52,7 @@ export class ConfigProcessor extends BaseProcesser {
    * @param apiChildren
    * @returns {Array}
    */
-  private buildSidebarJSON(apiChildren):SidebarDefinition[] {
+  private buildSidebarJSON(apiChildren): SidebarDefinition[] {
     return _.reduce(
       apiChildren,
       (sum, child) => {
@@ -64,7 +64,7 @@ export class ConfigProcessor extends BaseProcesser {
           const newDefinition = {
             children: [[`./${child.name}`, name]],
             collapsable: false,
-            title: module,
+            title: module
           };
           return _.concat(sum, [newDefinition]);
         } else {
@@ -79,5 +79,4 @@ export class ConfigProcessor extends BaseProcesser {
       []
     );
   }
-
 }

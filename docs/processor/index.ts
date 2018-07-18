@@ -7,7 +7,7 @@ import { ConfigProcessor } from './ConfigProcessor';
 import * as consts from './const';
 import { PagesProcessor } from './PagesProcessor';
 const docsJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../docs.json'), 'utf8'));
-const pjson  = JSON.parse(fs.readFileSync(path.join(__dirname, '../../package.json'), 'utf8'));
+const pjson = JSON.parse(fs.readFileSync(path.join(__dirname, '../../package.json'), 'utf8'));
 
 /**
  * check equality of x and y.
@@ -18,7 +18,7 @@ const pjson  = JSON.parse(fs.readFileSync(path.join(__dirname, '../../package.js
  * @param options
  * @returns {any}
  */
-function ifEquals(children, x, y, options):any {
+function ifEquals(children, x, y, options): any {
   return _.isEqual(x, y) ? options.fn(children) : options.inverse(children);
 }
 
@@ -29,12 +29,16 @@ function ifEquals(children, x, y, options):any {
  * @param kind
  * @returns {any}
  */
-function filterByKind(children, options, kind):any {
+function filterByKind(children, options, kind): any {
   if (children) {
     const filtered = children.filter(child => {
       return child.kindString === kind;
     });
-    return _.isEmpty(filtered) ? options.inverse(children) : options.fn(filtered);
+    // Filtering by isProtected = true
+    const publicFiltered = filtered.filter(filteredChild => {
+      return filteredChild.flags.isPublic;
+    });
+    return _.isEmpty(publicFiltered) ? options.inverse(children) : options.fn(publicFiltered);
   } else {
     return options.inverse(children);
   }
@@ -50,7 +54,7 @@ function filterByKind(children, options, kind):any {
  * @param tag
  * @returns {any}
  */
-function filterByTag(children, options, tag):any {
+function filterByTag(children, options, tag): any {
   if (children) {
     const filtered = children.filter(child => {
       return child.tag === tag;
@@ -67,7 +71,7 @@ function filterByTag(children, options, tag):any {
  * @param id
  * @returns {any}
  */
-function searchInterface(docs, id):any {
+function searchInterface(docs, id): any {
   let candidate = null;
   _.forEach(docs.children, module => {
     _.forEach(module.children, entity => {
@@ -86,7 +90,7 @@ function searchInterface(docs, id):any {
  * @param context - current context, typically this
  * @param options
  */
-function isSignatureValid(context, options):any {
+function isSignatureValid(context, options): any {
   const signatures = context.signatures;
   if (_.isEmpty(signatures) || !signatures) {
     return options.inverse(context);
@@ -249,12 +253,9 @@ function renderNewLine(): string {
   return '\n';
 }
 
-
 Handlebars.registerHelper('ifEquals', (children, x, y, options) => ifEquals(children, x, y, options));
 
-Handlebars.registerHelper('isSignatureValid', (context, options) =>
-  isSignatureValid(context, options)
-);
+Handlebars.registerHelper('isSignatureValid', (context, options) => isSignatureValid(context, options));
 
 Handlebars.registerHelper('filterConstructor', (children, options) =>
   filterByKind(children, options, consts.kindStringConst)
