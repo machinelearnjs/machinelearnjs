@@ -1,8 +1,11 @@
 import * as _ from 'lodash';
-import * as natural from 'natural';
+import { WordTokenizer } from 'natural';
 import * as sw from 'stopword';
 import { ENGLISH_STOP_WORDS } from './stop_words';
 
+/**
+ * 
+ */
 export class CountVectorizer {
   public vocabulary: object = {};
   /** @ignore */
@@ -145,7 +148,7 @@ export class CountVectorizer {
    * @returns {any}
    */
   private preprocess(text: string, { removeSW = false }): string[] {
-    const tokenizer = new natural.WordTokenizer();
+    const tokenizer = new WordTokenizer();
     return _.flowRight(
       (x: string) => tokenizer.tokenize(x),
       (x: string[]) => x.join(' '),
