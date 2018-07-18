@@ -46,6 +46,21 @@ interface NumberOneHot {
  * scikit-learn estimators, notably linear models and SVMs with the standard kernels.
  *
  * Note: a one-hot encoding of y labels should use a LabelBinarizer instead.
+ *
+ * @example
+ * const enc = new OneHotEncoder();
+ * const planetList = [
+ *  { planet: 'mars', isGasGiant: false, value: 10 },
+ *  { planet: 'saturn', isGasGiant: true, value: 20 },
+ *  { planet: 'jupiter', isGasGiant: true, value: 30 }
+ * ];
+ * const encodeInfo = enc.encode(planetList, {
+ *  dataKeys: ['value', 'isGasGiant'],
+ *  labelKeys: ['planet']
+ * });
+ * // encodeInfo.data -> [ [ -1, 0, 1, 0, 0 ], [ 0, 1, 0, 1, 0 ], [ 1, 1, 0, 0, 1 ] ]
+ * const decodedInfo = enc.decode(encodeInfo.data, encodeInfo.decoders);
+ * // gives you back the original value, which is `planetList`
  */
 export class OneHotEncoder {
   /**
