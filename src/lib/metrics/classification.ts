@@ -151,11 +151,24 @@ export interface ConfusionMatrixOptions {
 }
 
 /**
- * Compute confusion matrix to evaluate the accuracy of a classification
+ * A confusion matrix is a technique for summarizing the performance of a classification algorithm.
  *
- * By definition a confusion matrix C is such that C_{i, j} is equal to the number of observations known to be in group i but predicted to be in group j.
+ * Classification accuracy alone can be misleading if you have an unequal number of observations in each class or if you have more than two classes in your dataset.
  *
- * Thus in binary classification, the count of true negatives is C_{0,0}, false negatives is C_{1,0}, true positives is C_{1,1} and false positives is C_{0,1}.
+ * Calculating a confusion matrix can give you a better idea of what your classification model is getting right and what types of errors it is making.
+ *
+ * @example
+ * const matrix1 = confusion_matrix({
+ *   y_true: [1, 2, 3],
+ *   y_pred: [1, 2, 3]
+ * });
+ * console.log(matrix1); // [ [ 1, 0, 0 ], [ 0, 1, 0 ], [ 0, 0, 1 ] ]
+ *
+ * const matrix2 = confusion_matrix({
+ *   y_true: ['cat', 'ant', 'cat', 'cat', 'ant', 'bird'],
+ *   y_pred: ['ant', 'ant', 'cat', 'cat', 'ant', 'cat']
+ * });
+ * console.log(matrix2); // [ [ 1, 2, 0 ], [ 2, 0, 0 ], [ 0, 1, 0 ] ]
  *
  * @param {ConfusionMatrixOptions} options
  * @returns {number[]}
