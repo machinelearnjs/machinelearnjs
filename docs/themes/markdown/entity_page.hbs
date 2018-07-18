@@ -8,9 +8,16 @@
     {{#isSignatureValid this}}
         {{#each this.signatures}}
             {{newLine}}▸ **{{this.name}}**{{methodBracket this.parameters}}
+            {{newLine}}{{{this.comment.shortText}}}
+            {{newLine}}{{{this.comment.text}}}
+            {{#filterTagExample this.comment.tags}}
+                {{newLine}}### Usage
+                {{#each this}}
+                    {{newLine}}```javascript{{{this.text}}}```
+                {{/each}}
+            {{/filterTagExample}}
         {{/each}}
         {{newLine}}Defined in {{getSourceLink this.sources}}
-        {{newLine}}{{this.comment.shortText}}
 
         {{newLine}}**Parameters:**
         {{#each this.signatures}}
