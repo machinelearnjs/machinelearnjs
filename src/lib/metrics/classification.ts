@@ -115,6 +115,14 @@ number {
  *
  * If normalize is `true`, return the fraction of misclassifications (float),
  * else it returns the number of misclassifications (int). The best performance is 0.
+ *
+ * @example
+ * const loss_zero_one_result = zeroOneLoss({
+ *   y_true: [1, 2, 3, 4],
+ *   y_pred: [2, 2, 3, 5]
+ * });
+ * console.log(loss_zero_one_result); // 0.5
+ *
  * @param {any} y_true
  * @param {any} y_pred
  * @param {any} normalize
