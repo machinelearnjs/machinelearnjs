@@ -9,8 +9,8 @@ import { ENGLISH_STOP_WORDS } from './stop_words';
  * to encode new documents using that vocabulary.
  *
  * @example
- * const text1 = ['deep learning ian good fellow learning jason shin shin', 'yoshua bengio'];
- * const vocabCounts = cv.fit_transform(text1);
+ * const corpus = ['deep learning ian good fellow learning jason shin shin', 'yoshua bengio'];
+ * const vocabCounts = cv.fit_transform(corpus);
  * console.log(vocabCounts); // [ [ 0, 1, 1, 1, 1, 1, 2, 2, 0 ], [ 1, 0, 0, 0, 0, 0, 0, 0, 1 ] ]
  * console.log(cv.vocabulary); // { bengio: 0, deep: 1, fellow: 2, good: 3, ian: 4, jason: 5, learning: 6, shin: 7, yoshua: 8 }
  * console.log(cv.getFeatureNames()); // [ 'bengio', 'deep', 'fellow', 'good', 'ian', 'jason', 'learning', 'shin', 'yoshua' ]
