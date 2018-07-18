@@ -117,6 +117,8 @@ number {
  * else it returns the number of misclassifications (int). The best performance is 0.
  *
  * @example
+ * import { zeroOneLoss } from 'kalimdor/metrics';
+ *
  * const loss_zero_one_result = zeroOneLoss({
  *   y_true: [1, 2, 3, 4],
  *   y_pred: [2, 2, 3, 5]
@@ -166,6 +168,8 @@ export interface ConfusionMatrixOptions {
  * Calculating a confusion matrix can give you a better idea of what your classification model is getting right and what types of errors it is making.
  *
  * @example
+ * import { confusion_matrix } from 'kalimdor/metrics';
+ *
  * const matrix1 = confusion_matrix({
  *   y_true: [1, 2, 3],
  *   y_pred: [1, 2, 3]

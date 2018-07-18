@@ -7,11 +7,30 @@ import * as Random from 'random-js';
  * Provides train/test indices to split data in train/test sets. Split dataset into k consecutive folds (without shuffling by default).
  *
  * Each fold is then used once as a validation while the k - 1 remaining folds form the training set.
+ *
+ * @example
+ * import { KFold } from 'kalimdor/model_selection';
+ *
+ * const kFold = new KFold({ k: 5 });
+ * const X1 = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+ * console.log(kFold.split({ X: X1, y: X1 }));
+ *
+ * /* [ { trainIndex: [ 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 ],
+ * *  testIndex: [ 0, 1, 2, 3 ] },
+ * * { trainIndex: [ 0, 1, 2, 3, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 ],
+ * *  testIndex: [ 4, 5, 6, 7 ] },
+ * * { trainIndex: [ 0, 1, 2, 3, 4, 5, 6, 7, 12, 13, 14, 15, 16, 17, 18, 19 ],
+ * *  testIndex: [ 8, 9, 10, 11 ] },
+ * * { trainIndex: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 17, 18, 19 ],
+ * *  testIndex: [ 12, 13, 14, 15 ] },
+ * * { trainIndex: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ],
+ * *  testIndex: [ 16, 17, 18, 19 ] } ]
+ *
  */
 export class KFold {
-  public k: number;
-  public shuffle: boolean;
-  public randomState: number | null;
+  private k: number;
+  private shuffle: boolean;
+  private randomState: number | null;
 
   /**
    *

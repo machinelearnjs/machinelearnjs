@@ -9,6 +9,8 @@ import { ENGLISH_STOP_WORDS } from './stop_words';
  * to encode new documents using that vocabulary.
  *
  * @example
+ * import { CountVectorizer } from 'kalimdor/feature_extraction';
+ *
  * const corpus = ['deep learning ian good fellow learning jason shin shin', 'yoshua bengio'];
  * const vocabCounts = cv.fit_transform(corpus);
  * console.log(vocabCounts); // [ [ 0, 1, 1, 1, 1, 1, 2, 2, 0 ], [ 1, 0, 0, 0, 0, 0, 0, 0, 1 ] ]
@@ -72,7 +74,7 @@ export class CountVectorizer {
    * Build a tokenizer/vectorizer
    * @returns {(x: string) => string[]}
    */
-  public buildAnalyzer(): (x: string) => string[] {
+  private buildAnalyzer(): (x: string) => string[] {
     return x => this.preprocess(x, { removeSW: true });
   }
 
