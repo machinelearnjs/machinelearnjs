@@ -306,6 +306,14 @@ export class OneHotEncoder {
  * where min, max = feature_range.
  *
  * This transformation is often used as an alternative to zero mean, unit variance scaling.
+ *
+ * @example
+ * import { MinMaxScaler } from 'kalimdor/preprocessing';
+ *
+ * const minmaxScaler = new MinMaxScaler({ featureRange: [0, 1] });
+ * minmaxScaler.fit([4, 5, 6]);
+ * const result = minmaxScaler.fit_transform([4, 5, 6]);
+ * // [ 0, 0.5, 1 ]
  */
 export class MinMaxScaler {
   private featureRange;

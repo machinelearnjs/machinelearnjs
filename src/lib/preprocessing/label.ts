@@ -2,6 +2,16 @@ import * as _ from 'lodash';
 
 /**
  * Encode labels with value between 0 and n_classes-1.
+ *
+ * @example
+ * import { LabelEncoder } from 'kalimdor/preprocessing';
+ *
+ * const labelEncoder = new LabelEncoder();
+ * const labelX = ['amsterdam', 'paris', 'tokyo'];
+ * labelEncoder.fit(labelX);
+ * const transformX = ['tokyo', 'tokyo', 'paris'];
+ * const result = labelEncoder.transform(transformX);
+ * // [ 2, 2, 1 ]
  */
 export class LabelEncoder {
   private classes: any[];
