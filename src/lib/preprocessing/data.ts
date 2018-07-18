@@ -347,18 +347,20 @@ export class MinMaxScaler {
 }
 
 /**
- * Binarize data (set feature values to 0 or 1) according to a threshold
- *
- * Values greater than the threshold map to 1, while values less than or equal
- * to the threshold map to 0. With the default threshold of 0, only positive values map to 1.
- *
- * Binarization is a common operation on text count data where the analyst ca
- * decide to only consider the presence or absence of a feature rather than a
- * quantified number of occurrences for instance.
+ * Binarizer transform your data using a binary threshold.
+ * All values above the threshold are marked 1 and all equal to or below are marked as 0.
  *
  * It can also be used as a pre-processing step for estimators that consider
  * boolean random variables (e.g. modelled using the Bernoulli distribution in
  * a Bayesian setting).
+ *
+ * @example
+ * import { Binarizer } from 'kalimdor/preprocessing';
+ *
+ * const binX = [[1, -1, 2], [2, 0, 0], [0, 1, -1]];
+ * const binarizer = new Binarizer({ threshold: 0 });
+ * const result = binarizer.transform(binX);
+ * // [ [ 1, 0, 1 ], [ 1, 0, 0 ], [ 0, 1, 0 ] ]
  */
 export class Binarizer {
   private threshold: number;
