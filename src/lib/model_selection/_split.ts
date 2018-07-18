@@ -30,22 +30,18 @@ import * as Random from 'random-js';
 export class KFold {
   private k: number;
   private shuffle: boolean;
-  private randomState: number | null;
 
   /**
    *
    * @param {any} k - Number of folds. Must be at least 2.
    * @param {any} shuffle - Whether to shuffle the data before splitting into batches.
-   * @param {any} randomState - If int, random_state is the seed used by the random number generator; If RandomState instance, random_state is the random number generator;
-   *                            If None, the random number generator is the RandomState instance used by np.random. Used when shuffle === true.
    */
-  constructor({ k = 2, shuffle = false, randomState = null }) {
+  constructor({ k = 2, shuffle = false }) {
     if (k < 2) {
       throw Error('Number of folds cannot be less than 2');
     }
     this.k = k;
     this.shuffle = shuffle;
-    this.randomState = randomState;
   }
 
   /**
