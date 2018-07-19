@@ -1,30 +1,25 @@
 import { map, uniqBy } from 'lodash';
 import math from '../utils/MathExtra';
 import KDTree from './KDTree';
-const {
-  euclideanDistance,
-  manhattanDistance,
-  isMatrixOf,
-  isArrayOf
-} = math.contrib;
+const { euclideanDistance, manhattanDistance, isMatrixOf, isArrayOf } = math.contrib;
 
 const DIST_EUC = 'euclidean';
 const DIST_MAN = 'manhattan';
 const TYPE_KD = 'kdtree';
 
 export interface KNNClassifierOptions {
-	/**
+  /**
    * Choice of distance function, should choose between euclidean | manhattan
-	 */
-	distance: string;
-	/**
+   */
+  distance: string;
+  /**
    * Number of neighbors to classify
-	 */
+   */
   k: number;
-	/**
+  /**
    * Type of algorithm to use, choose between kdtree(default) | balltree | simple
-	 */
-	type: string;
+   */
+  type: string;
 }
 
 /**
@@ -48,7 +43,7 @@ export class KNeighborsClassifier {
     options: KNNClassifierOptions = {
       distance: DIST_EUC,
       k: 0,
-      type: TYPE_KD,
+      type: TYPE_KD
     }
   ) {
     // Handling distance
