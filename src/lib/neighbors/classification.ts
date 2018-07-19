@@ -1,5 +1,7 @@
+import { uniqBy, map } from 'lodash';
 import math from '../utils/MathExtra';
 import KDTree from './KDTree';
+const { isMatrixOf, isArrayOf } = math.contrib;
 
 /**
  * Classifier implementing the k-nearest neighbors vote.
@@ -12,8 +14,6 @@ export class KNeighborsClassifier {
   private distance = null;
 
   /**
-   * @param {Array} dataset
-   * @param {Array} labels
    * @param {object} options
    * @param {number} [options.k=numberOfClasses + 1] - Number of neighbors to classify.
    * @param {function} [options.distance=euclideanDistance] - Distance function that takes two parameters.
@@ -29,27 +29,16 @@ export class KNeighborsClassifier {
    * @param {any} y
    */
   public fit({ X, y }): void {
-    if (X === true) {
-      const model = y;
-      this.kdTree = new KDTree(model.kdTree, {
-        distance: this.distance,
-        k: this.k
-      });
-      this.k = model.k;
-      this.classes = new Set(model.classes);
-      this.isEuclidean = model.isEuclidean;
-      return;
-    }
-
-    const classes = new Set(y);
+    // Getting the classes from y
+    const classes = uniqBy(y, c => c);
 
     // Doing a unary operation since _.get will only use the default value
     // if the original value is undefined. However, options.distance is not undefined
     // Reference: https://lodash.com/docs/4.17.10#get
     const distance = this.distance ? this.distance : math.contrib.euclideanDistance;
 
-    // Placeholder _k value, it can be 0
-    const k = this.k ? this.k : classes.size + 1;
+    // Setting k; if it's null, use the class length
+    const k = this.k ? this.k : classes.length + 1;
 
     const points = new Array(X.length);
     for (let i = 0; i < points.length; ++i) {
@@ -60,10 +49,10 @@ export class KNeighborsClassifier {
       points[i].push(y[i]);
     }
 
+    // Finally assigning the prepared values to the class itself
     this.kdTree = new KDTree(points, distance);
     this.k = k;
     this.classes = classes;
-    this.isEuclidean = distance === math.contrib.euclideanDistance;
   }
 
   /**
@@ -72,7 +61,7 @@ export class KNeighborsClassifier {
    */
   public toJSON(): {
     classes: any[];
-    isEuclidean: boolean;
+    distance: string;
     k: number;
     kdTree: KDTree;
     name: string;
@@ -88,59 +77,47 @@ export class KNeighborsClassifier {
 
   /**
    * Predict single value from a list of data
-   * @param {Array} dataset
+   * @param {Array} X
    * @returns number
    */
-  public predictOne(dataset): any {
-    if (math.contrib.isArrayOf(dataset, 'number')) {
-      return getSinglePrediction(this, dataset);
+  public predict(X): any {
+    if (isArrayOf(X, 'number')) {
+      return this.getTreeBasedPrediction(X);
+    } else if (isMatrixOf(X, 'number')) {
+      return map(X, currentItem => this.getTreeBasedPrediction(currentItem));
     } else {
       throw new TypeError('Passed in dataset is not a single dimensional array');
     }
   }
 
   /**
-   * Predicts the output given the matrix to predict.
-   * @param {Array} dataset: two dimensional vector
-   * @return {Array} predictions
+   * Get the class with the max point
+   * @param current
+   * @returns {{}}
+   * @ignore
    */
-  public predict(dataset): {} {
-    const isAllNumber = math.contrib.isMatrixOf(dataset, 'number');
-    if (isAllNumber) {
-      const predictions = new Array(dataset.length);
-      for (let i = 0; i < dataset.length; i++) {
-        predictions[i] = getSinglePrediction(this, dataset[i]);
+  private getTreeBasedPrediction(current): {} {
+    const nearestPoints = this.kdTree.nearest(current, this.k);
+    const pointsPerClass = {};
+    let predictedClass = -1;
+    let maxPoints = -1;
+    const lastElement = nearestPoints[0][0].length - 1;
+
+    // Initialising the points placeholder per class
+    for (let j = 0; j < this.classes.length; j++) {
+      pointsPerClass[this.classes[j]] = 0;
+    }
+
+    // Voting the max value
+    for (let i = 0; i < nearestPoints.length; ++i) {
+      const currentClass = nearestPoints[i][0][lastElement];
+      const currentPoints = ++pointsPerClass[currentClass];
+      if (currentPoints > maxPoints) {
+        predictedClass = currentClass;
+        maxPoints = currentPoints;
       }
-      return predictions;
     }
-    throw new TypeError('The dataset to predict must be a matrix or lists of list');
-  }
-}
 
-/**
- * Get the class with the max point
- * @param knn
- * @param currentCase
- * @returns {{}}
- * @ignore
- */
-function getSinglePrediction(knn, currentCase): {} {
-  const nearestPoints = knn.kdTree.nearest(currentCase, knn.k);
-  const pointsPerClass = {};
-  let predictedClass = -1;
-  let maxPoints = -1;
-  const lastElement = nearestPoints[0][0].length - 1;
-  knn.classes.forEach(element => {
-    pointsPerClass[element] = 0;
-  });
-  for (let i = 0; i < nearestPoints.length; ++i) {
-    const currentClass = nearestPoints[i][0][lastElement];
-    const currentPoints = ++pointsPerClass[currentClass];
-    if (currentPoints > maxPoints) {
-      predictedClass = currentClass;
-      maxPoints = currentPoints;
-    }
+    return predictedClass;
   }
-
-  return predictedClass;
 }
