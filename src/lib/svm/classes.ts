@@ -9,7 +9,7 @@ export type Kernel = 'LINEAR' | 'POLYNOMIAL' | 'RBF' | 'SIGMOID';
  * Options used by sub classes
  * Notice type is disabled as they are set statically from children classes
  */
-export interface Options {
+export interface SVMOptions {
   /**
    * Degree of polynomial, test for polynomial kernel
    */
@@ -68,11 +68,11 @@ export interface Options {
  * BaseSVM class used by all parent SVM classes that are based on libsvm
  */
 export class BaseSVM {
-  public svm: any;
-  public type: Type;
-  public options: Options;
+  protected svm: any;
+  protected type: Type;
+  protected options: SVMOptions;
 
-  constructor(options: Options = null) {
+  constructor(options: SVMOptions = null) {
     this.options = {
       cacheSize: _.get(options, 'cacheSize', 100),
       coef0: _.get(options, 'coef0', 0),
@@ -160,7 +160,7 @@ export class BaseSVM {
    * @param {Kernel} kernel
    * @returns {Object}
    */
-  private processOptions(SVM, options: Options, type: Type, kernel: Kernel): object {
+  private processOptions(SVM, options: SVMOptions, type: Type, kernel: Kernel): object {
     return _.flowRight(
       opts => {
         const foundType = this.getType(SVM, type);
@@ -188,8 +188,8 @@ export class BaseSVM {
  * section in the narrative documentation: Kernel functions.
  */
 export class SVC extends BaseSVM {
-  constructor() {
-    super();
+  constructor(options: SVMOptions = null) {
+    super(options);
     this.type = 'C_SVC';
   }
 }
@@ -204,8 +204,8 @@ export class SVC extends BaseSVM {
  * This class supports both dense and sparse input.
  */
 export class SVR extends BaseSVM {
-  constructor() {
-    super();
+  constructor(options: SVMOptions = null) {
+    super(options);
     this.type = 'EPSILON_SVR';
   }
 }
@@ -218,8 +218,8 @@ export class SVR extends BaseSVM {
  * The implementation is based on libsvm.
  */
 export class OneClassSVM extends BaseSVM {
-  constructor() {
-    super();
+  constructor(options: SVMOptions = null) {
+    super(options);
     this.type = 'ONE_CLASS';
   }
 }
@@ -232,8 +232,8 @@ export class OneClassSVM extends BaseSVM {
  * The implementation is based on libsvm.
  */
 export class NuSVC extends BaseSVM {
-  constructor() {
-    super();
+  constructor(options: SVMOptions = null) {
+    super(options);
     this.type = 'NU_SVC';
   }
 }
@@ -248,8 +248,8 @@ export class NuSVC extends BaseSVM {
  * The implementation is based on libsvm.
  */
 export class NuSVR extends BaseSVM {
-  constructor() {
-    super();
+  constructor(options: SVMOptions = null) {
+    super(options);
     this.type = 'NU_SVR';
   }
 }

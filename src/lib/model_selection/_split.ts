@@ -7,26 +7,41 @@ import * as Random from 'random-js';
  * Provides train/test indices to split data in train/test sets. Split dataset into k consecutive folds (without shuffling by default).
  *
  * Each fold is then used once as a validation while the k - 1 remaining folds form the training set.
+ *
+ * @example
+ * import { KFold } from 'kalimdor/model_selection';
+ *
+ * const kFold = new KFold({ k: 5 });
+ * const X1 = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+ * console.log(kFold.split({ X: X1, y: X1 }));
+ *
+ * /* [ { trainIndex: [ 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 ],
+ * *  testIndex: [ 0, 1, 2, 3 ] },
+ * * { trainIndex: [ 0, 1, 2, 3, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 ],
+ * *  testIndex: [ 4, 5, 6, 7 ] },
+ * * { trainIndex: [ 0, 1, 2, 3, 4, 5, 6, 7, 12, 13, 14, 15, 16, 17, 18, 19 ],
+ * *  testIndex: [ 8, 9, 10, 11 ] },
+ * * { trainIndex: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 16, 17, 18, 19 ],
+ * *  testIndex: [ 12, 13, 14, 15 ] },
+ * * { trainIndex: [ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15 ],
+ * *  testIndex: [ 16, 17, 18, 19 ] } ]
+ *
  */
 export class KFold {
-  public k: number;
-  public shuffle: boolean;
-  public randomState: number | null;
+  private k: number;
+  private shuffle: boolean;
 
   /**
    *
    * @param {any} k - Number of folds. Must be at least 2.
    * @param {any} shuffle - Whether to shuffle the data before splitting into batches.
-   * @param {any} randomState - If int, random_state is the seed used by the random number generator; If RandomState instance, random_state is the random number generator;
-   *                            If None, the random number generator is the RandomState instance used by np.random. Used when shuffle === true.
    */
-  constructor({ k = 2, shuffle = false, randomState = null }) {
+  constructor({ k = 2, shuffle = false }) {
     if (k < 2) {
       throw Error('Number of folds cannot be less than 2');
     }
     this.k = k;
     this.shuffle = shuffle;
-    this.randomState = randomState;
   }
 
   /**
@@ -77,7 +92,26 @@ export interface TrainTestSplitOptions {
 }
 
 /**
- *  Split arrays or matrices into random train and test subsets
+ * Split arrays or matrices into random train and test subsets
+ *
+ * @example
+ * import { train_test_split } from 'kalimdor/model_selection';
+ *
+ * const X = [[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]];
+ * const y = [0, 1, 2, 3, 4];
+ *
+ * train_test_split(X, y, {
+ *   test_size: 0.33,
+ *   train_size: 0.67,
+ *   random_state: 42
+ * });
+ *
+ * /*
+ * * { xTest: [ [ 0, 1 ], [ 8, 9 ] ],
+ * *  xTrain: [ [ 4, 5 ], [ 6, 7 ], [ 2, 3 ] ],
+ * *  yTest: [ 0, 4 ],
+ * *  yTrain: [ 2, 3, 1 ] }
+ *
  * @param {Array} X
  * @param {Array} y
  * @param {TrainTestSplitOptions} options

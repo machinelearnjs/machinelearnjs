@@ -15,7 +15,7 @@ console.log(
   })
 );
 
-const kf = new KFold({ k: 10 });
+const kf = new KFold({ k: 5 });
 const X2 = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 console.log(kf.split({ X: X2, y: X2 }));
 

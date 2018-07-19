@@ -12,6 +12,9 @@
  * @license MIT License <http://www.opensource.org/licenses/mit-license.php>
  */
 
+/**
+ * @ignore
+ */
 export class Node {
   public obj = null;
   public left = null;
@@ -145,6 +148,12 @@ export default class KDTree {
   }
 }
 
+/**
+ *
+ * @param src
+ * @returns {Node}
+ * @ignore
+ */
 function toJSONImpl(src): Node {
   const dest = new Node(src.obj, src.dimension, null);
   if (src.left) dest.left = toJSONImpl(src.left);
@@ -152,6 +161,15 @@ function toJSONImpl(src): Node {
   return dest;
 }
 
+/**
+ *
+ * @param points
+ * @param depth
+ * @param parent
+ * @param dimensions
+ * @returns {any}
+ * @ignore
+ */
 function buildTree(points, depth, parent, dimensions) {
   const dim = depth % dimensions.length;
 
@@ -172,6 +190,10 @@ function buildTree(points, depth, parent, dimensions) {
   return node;
 }
 
+/**
+ * @param root
+ * @ignore
+ */
 function restoreParent(root) {
   if (root.left) {
     root.left.parent = root;
@@ -186,6 +208,9 @@ function restoreParent(root) {
 
 // Binary heap implementation from:
 // http://eloquentjavascript.net/appendix2.html
+/**
+ * @ignore
+ */
 class BinaryHeap {
   public content: Array<any> = [];
   public scoreFunction: any;

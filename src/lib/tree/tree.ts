@@ -94,6 +94,28 @@ export class DecisionNode {
 
 /**
  * A decision tree classifier.
+ *
+ * @example
+ * import { DecisionTreeClassifier } from 'kalimdor/tree';
+ * const features = ['color', 'diameter', 'label'];
+ * const decision = new DecisionTreeClassifier({ featureLabels: features });
+ *
+ * const X = [['Green', 3], ['Yellow', 3], ['Red', 1], ['Red', 1], ['Yellow', 3]];
+ * const y = ['Apple', 'Apple', 'Grape', 'Grape', 'Lemon'];
+ * decision.fit({ X, y });
+ * decision.printTree(); // try it out yourself! =)
+ *
+ * decision.predictOne({ row: X[0] }); // [ 'Apple' ]
+ * decision.predict({ X }); // [ [ 'Apple' ], [ 'Apple', 'Lemon' ], [ 'Grape', 'Grape' ], [ 'Grape', 'Grape' ], [ 'Apple', 'Lemon' ] ]
+ *
+ * @example
+ * import { DecisionTreeClassifier } from 'kalimdor/tree';
+ * const decision = new DecisionTreeClassifier({ featureLabels: null });
+ *
+ * const X = [[0, 0], [1, 1]];
+ * const Y = [0, 1];
+ * decision.fit({ X, y });
+ * decision2.predictOne({ row: [2, 2] }); // [ 1 ]
  */
 export class DecisionTreeClassifier {
   private featureLabels = null;
@@ -176,10 +198,10 @@ export class DecisionTreeClassifier {
   }
 
   /**
-   * Public interface for printing the current tree
-   * @param {any} spacing
+   * Recursively print the tree into console
+   * @param {string} spacing
    */
-  public printTree(spacing = ''): void {
+  public printTree(spacing: string = ''): void {
     if (!this.tree) {
       throw new Error('You cannot print an empty tree');
     }
@@ -356,7 +378,7 @@ export class DecisionTreeClassifier {
   }
 
   /**
-   * Recursively print the tree into console
+   * Private method for printing tree; required for recursion
    * @param {any} node
    * @param {any} spacing
    */

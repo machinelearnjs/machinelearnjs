@@ -15,7 +15,7 @@
     "build:module": "tsc -p tsconfig.module.json",
     "fix": "npx prettier \"src/**/*.ts\" \"test/**/*.ts\" \"docs/**/*.ts\" --config ./.prettierrc --write",
     "test": "npx run-s build test:*",
-    "test:lint": "npx tslint --force -t verbose 'test/**/*.ts' 'src/**/*.ts'",
+    "test:lint": "npx tslint --force -t verbose 'test/**/*.ts' 'src/**/*.ts' 'docs/**/*.ts'",
     "test:unit": "npx jest",
     "test:nsp": "nsp check",
     "watch": "./scripts/tmux-start.sh",

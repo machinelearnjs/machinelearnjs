@@ -1,5 +1,3 @@
-import { KNeighborsClassifier } from "./classification";
+import { KNeighborsClassifier } from './classification';
 
-export {
-	KNeighborsClassifier
-}
+export { KNeighborsClassifier };

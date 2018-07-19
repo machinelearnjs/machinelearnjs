@@ -1,8 +1,25 @@
 import * as _ from 'lodash';
-import * as natural from 'natural';
+import { WordTokenizer } from 'natural';
 import * as sw from 'stopword';
 import { ENGLISH_STOP_WORDS } from './stop_words';
 
+/**
+ * The CountVectorizer provides a simple way to both tokenize a collection
+ * of text documents and build a vocabulary of known words, but also
+ * to encode new documents using that vocabulary.
+ *
+ * @example
+ * import { CountVectorizer } from 'kalimdor/feature_extraction';
+ *
+ * const corpus = ['deep learning ian good fellow learning jason shin shin', 'yoshua bengio'];
+ * const vocabCounts = cv.fit_transform(corpus);
+ * console.log(vocabCounts); // [ [ 0, 1, 1, 1, 1, 1, 2, 2, 0 ], [ 1, 0, 0, 0, 0, 0, 0, 0, 1 ] ]
+ * console.log(cv.vocabulary); // { bengio: 0, deep: 1, fellow: 2, good: 3, ian: 4, jason: 5, learning: 6, shin: 7, yoshua: 8 }
+ * console.log(cv.getFeatureNames()); // [ 'bengio', 'deep', 'fellow', 'good', 'ian', 'jason', 'learning', 'shin', 'yoshua' ]
+ *
+ * const newVocabCounts = cv.transform(['ian good fellow jason duuog']);
+ * console.log(newVocabCounts); // [ [ 0, 0, 1, 1, 1, 1, 0, 0, 0 ] ]
+ */
 export class CountVectorizer {
   public vocabulary: object = {};
   /** @ignore */
@@ -57,7 +74,7 @@ export class CountVectorizer {
    * Build a tokenizer/vectorizer
    * @returns {(x: string) => string[]}
    */
-  public buildAnalyzer(): (x: string) => string[] {
+  private buildAnalyzer(): (x: string) => string[] {
     return x => this.preprocess(x, { removeSW: true });
   }
 
@@ -145,7 +162,7 @@ export class CountVectorizer {
    * @returns {any}
    */
   private preprocess(text: string, { removeSW = false }): string[] {
-    const tokenizer = new natural.WordTokenizer();
+    const tokenizer = new WordTokenizer();
     return _.flowRight(
       (x: string) => tokenizer.tokenize(x),
       (x: string[]) => x.join(' '),

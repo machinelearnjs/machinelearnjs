@@ -1,13 +1,23 @@
 # {{ name }}
 
+{{{ comment.shortText }}}
+{{{ comment.text }}}
+
 {{#ifEquals this this.kindString "Function"}}
 
     {{#isSignatureValid this}}
         {{#each this.signatures}}
             {{newLine}}▸ **{{this.name}}**{{methodBracket this.parameters}}
+            {{newLine}}{{{this.comment.shortText}}}
+            {{newLine}}{{{this.comment.text}}}
+            {{#filterTagExample this.comment.tags}}
+                {{newLine}}### Usage
+                {{#each this}}
+                    {{newLine}}```javascript{{{this.text}}}```
+                {{/each}}
+            {{/filterTagExample}}
         {{/each}}
         {{newLine}}Defined in {{getSourceLink this.sources}}
-        {{newLine}}{{this.comment.shortText}}
 
         {{newLine}}**Parameters:**
         {{#each this.signatures}}
@@ -18,6 +28,13 @@
 
 {{else}}
 
+    {{#filterTagExample this.comment.tags}}
+        {{newLine}}### Usage
+        {{#each this}}
+            {{newLine}}```javascript{{{this.text}}}```
+        {{/each}}
+    {{/filterTagExample}}
+
     {{#filterConstructor children}}
         {{newLine}}### Constructors
         {{#each this}}
@@ -25,20 +42,31 @@
         {{/each}}
     {{/filterConstructor}}
 
+    {{#filterProperty children}}
+        {{newLine}}### Properties
+        {{#each this}}
+            {{newLine}}* [{{this.name}}](#▸-{{this.name}})
+        {{/each}}
+    {{/filterProperty}}
+
     {{#filterMethod children}}
         {{newLine}}### Methods
         {{#each this}}
-            {{newLine}}* [{{this.name}}](#{{this.name}})
+            {{newLine}}* [{{this.name}}](#λ-{{this.name}})
         {{/each}}
     {{/filterMethod}}
 
-    ---
+
 
     {{#filterConstructor children}}
+    ---
+
         {{newLine}}# Constructors
         {{newLine}}---
         {{#each this}}
             {{newLine}}### {{this.name}}
+            {{newLine}}{{ this.comment.shortText }}
+            {{newLine}}{{ this.comment.text }}
 
             {{#isSignatureValid this}}
                 {{#each this.signatures}}
@@ -59,17 +87,32 @@
         {{/each}}
     {{/filterConstructor}}
 
+
+
+    {{#filterProperty children}}
     ---
 
+        {{newLine}}# Properties
+        {{newLine}}---
+        {{#each this}}
+            {{newLine}}### ▸ {{this.name}}
+            {{newLine}}{{ this.comment.shortText }}
+            {{newLine}}{{ this.comment.text }}
+            {{newLine}}Defined in {{getSourceLink this.sources}}
+        {{/each}}
+    {{/filterProperty}}
+
     {{#filterMethod children}}
+    ---
+
         {{newLine}}# Methods
         {{newLine}}---
         {{#each this}}
-            {{newLine}}### {{this.name}}
-
             {{#isSignatureValid this}}
                 {{#each this.signatures}}
-                    {{newLine}}▸ **{{this.name}}**{{methodBracket this.parameters}}
+                    {{newLine}}### λ {{this.name}}
+                    {{newLine}}{{ this.comment.shortText }}
+                    {{newLine}}{{ this.comment.text }}
                 {{/each}}
                 {{newLine}}Defined in {{getSourceLink this.sources}}
                 {{newLine}}{{this.comment.shortText}}

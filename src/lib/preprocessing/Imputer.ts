@@ -4,6 +4,15 @@ import { checkArray } from '../utils/validation';
 
 /**
  * Imputation transformer for completing missing values.
+ *
+ * @example
+ * import { Imputer } from 'preprocessing/Imputer';
+ *
+ * const testX = [[1, 2], [null, 3], [7, 6]];
+ * const imp = new Imputer({ missingValues: null, axis: 0 });
+ * imp.fit(testX);
+ * const impResult = imp.fit_transform([[null, 2], [6, null], [7, 6]]);
+ * // [ [ 4, 2 ], [ 6, 3.6666666666666665 ], [ 7, 6 ] ]
  */
 export class Imputer {
   private missingValues: number | null;

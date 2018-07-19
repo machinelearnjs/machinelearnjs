@@ -5,6 +5,7 @@ import * as math from 'mathjs';
  * Return the number of elements along a given axis.
  * @param {any} X: Array like input data
  * @param {any} axis
+ * @ignore
  */
 const size = (X, axis = 0) => {
   const rows = _.size(X);
@@ -23,6 +24,7 @@ const size = (X, axis = 0) => {
  * Get range of values
  * @param start
  * @param stop
+ * @ignore
  */
 const range = (start: number, stop: number) => {
   if (!_.isNumber(start) || !_.isNumber(stop)) {
@@ -36,6 +38,7 @@ const range = (start: number, stop: number) => {
  * The function also performs isMatrix against the passed in dataset
  * @param matrix
  * @param {string} _type
+ * @ignore
  */
 const isMatrixOf = (matrix, _type = 'number') => {
   if (!isMatrix(matrix)) {
@@ -61,6 +64,7 @@ const isMatrixOf = (matrix, _type = 'number') => {
  * Checking the matrix is a data of multiple rows
  * @param matrix
  * @returns {boolean}
+ * @ignore
  */
 const isMatrix = matrix => {
   if (_.size(matrix) === 0) {
@@ -75,6 +79,7 @@ const isMatrix = matrix => {
  * @param arr
  * @param {string} _type
  * @returns {boolean}
+ * @ignore
  */
 const isArrayOf = (arr, _type = 'number') => {
   if (_type === 'number') {
@@ -90,6 +95,7 @@ const isArrayOf = (arr, _type = 'number') => {
  * @param {number[]} v1
  * @param {number[]} v2
  * @returns {number}
+ * @ignore
  */
 const euclideanDistance = (v1: number[], v2: number[]): number => {
   const v1Range = _.range(0, v1.length);
@@ -110,6 +116,7 @@ const euclideanDistance = (v1: number[], v2: number[]): number => {
  * @param {number[]} v1
  * @param {number[]} v2
  * @returns {number}
+ * @ignore
  */
 const manhattanDistance = (v1: number[], v2: number[]): number => {
   const v1Range = _.range(0, v1.length);
@@ -127,6 +134,7 @@ const manhattanDistance = (v1: number[], v2: number[]): number => {
  * Subtracts two matrices
  * @param X
  * @param y
+ * @ignore
  */
 const subtract = (X, y) => {
   const _X = _.clone(X);

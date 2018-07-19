@@ -22,12 +22,12 @@ function _weightedSum({
 }
 
 /**
- * @ignore
  * Validator for classification exceptions
  * @param y_true
  * @param y_pred
  * @param labels
  * @param options
+ * @ignore
  */
 export const validateInitialInputs = (y_true, y_pred, labels, options = {}) => {
   const checkMultiClass = _.get(options, 'multiclass');
@@ -72,6 +72,17 @@ export const validateInitialInputs = (y_true, y_pred, labels, options = {}) => {
  *
  * In multilabel classification, this function computes subset accuracy:
  * the set of labels predicted for a sample must exactly match the corresponding set of labels in y_true.
+ *
+ * @example
+ * import { accuracyScore } from 'kalimdor/metrics';
+ *
+ * const accResult = accuracyScore({
+ *   y_true: [0, 1, 2, 3],
+ *   y_pred: [0, 2, 1, 3]
+ * });
+ *
+ * // accuracy result: 0.5
+ *
  * @param {any} y_true
  * @param {any} y_pred
  * @param {any} normalize
@@ -104,6 +115,16 @@ number {
  *
  * If normalize is `true`, return the fraction of misclassifications (float),
  * else it returns the number of misclassifications (int). The best performance is 0.
+ *
+ * @example
+ * import { zeroOneLoss } from 'kalimdor/metrics';
+ *
+ * const loss_zero_one_result = zeroOneLoss({
+ *   y_true: [1, 2, 3, 4],
+ *   y_pred: [2, 2, 3, 5]
+ * });
+ * console.log(loss_zero_one_result); // 0.5
+ *
  * @param {any} y_true
  * @param {any} y_pred
  * @param {any} normalize
@@ -121,7 +142,6 @@ export function zeroOneLoss({
   // TODO: Fix return 0; implement when normalize === false
   return 0;
 }
-
 
 export interface ConfusionMatrixOptions {
   /**
@@ -141,11 +161,26 @@ export interface ConfusionMatrixOptions {
 }
 
 /**
- * Compute confusion matrix to evaluate the accuracy of a classification
+ * A confusion matrix is a technique for summarizing the performance of a classification algorithm.
  *
- * By definition a confusion matrix C is such that C_{i, j} is equal to the number of observations known to be in group i but predicted to be in group j.
+ * Classification accuracy alone can be misleading if you have an unequal number of observations in each class or if you have more than two classes in your dataset.
  *
- * Thus in binary classification, the count of true negatives is C_{0,0}, false negatives is C_{1,0}, true positives is C_{1,1} and false positives is C_{0,1}.
+ * Calculating a confusion matrix can give you a better idea of what your classification model is getting right and what types of errors it is making.
+ *
+ * @example
+ * import { confusion_matrix } from 'kalimdor/metrics';
+ *
+ * const matrix1 = confusion_matrix({
+ *   y_true: [1, 2, 3],
+ *   y_pred: [1, 2, 3]
+ * });
+ * console.log(matrix1); // [ [ 1, 0, 0 ], [ 0, 1, 0 ], [ 0, 0, 1 ] ]
+ *
+ * const matrix2 = confusion_matrix({
+ *   y_true: ['cat', 'ant', 'cat', 'cat', 'ant', 'bird'],
+ *   y_pred: ['ant', 'ant', 'cat', 'cat', 'ant', 'cat']
+ * });
+ * console.log(matrix2); // [ [ 1, 2, 0 ], [ 2, 0, 0 ], [ 0, 1, 0 ] ]
  *
  * @param {ConfusionMatrixOptions} options
  * @returns {number[]}

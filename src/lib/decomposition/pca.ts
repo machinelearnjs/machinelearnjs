@@ -13,6 +13,14 @@ import math from '../utils/MathExtra';
  * Halko et al. 2009, depending on the shape
  * of the input data and the number of components to extract. (Will be implemented)
  *
+ * @example
+ * import { PCA } from 'kalimdor/decomposition';
+ *
+ * const pca = new PCA();
+ * const X = [[1, 2], [3, 4], [5, 6]];
+ * pca.fit({ X });
+ * console.log(pca.components); // result: [ [ 0.7071067811865476, 0.7071067811865474 ], [ 0.7071067811865474, -0.7071067811865476 ] ]
+ * console.log(pca.explained_variance); // result: [ [ -0.3535533905932736, 0 ], [ 0, 0.5 ], [ 0.35355339059327373, 0 ] ]
  */
 export class PCA {
   /**

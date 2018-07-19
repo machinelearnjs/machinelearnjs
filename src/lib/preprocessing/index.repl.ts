@@ -21,7 +21,7 @@ console.log(decodedInfo);
 const minmaxScaler = new MinMaxScaler({ featureRange: [0, 1] });
 minmaxScaler.fit([4, 5, 6]);
 const result = minmaxScaler.fit_transform([4, 5, 6]);
-console.log(result);
+console.log('minmax result', result);
 
 // Imputer
 import { Imputer } from './Imputer';

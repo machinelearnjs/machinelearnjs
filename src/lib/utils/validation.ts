@@ -9,6 +9,7 @@ import * as _ from 'lodash';
  *   If the given arr is an array then the value is true else false
  * @param arr
  * @returns {any}
+ * @ignore
  */
 export function checkArray(
   arr: any[]

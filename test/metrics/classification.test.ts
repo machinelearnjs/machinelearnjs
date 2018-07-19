@@ -1,9 +1,5 @@
 import * as _ from 'lodash';
-import {
-  accuracyScore,
-  confusion_matrix,
-  zeroOneLoss,
-} from '../../src/lib/metrics/classification';
+import { accuracyScore, confusion_matrix, zeroOneLoss } from '../../src/lib/metrics/classification';
 
 describe('classification:accuracy_score', () => {
   const yTrue1 = [0, 1, 2, 3];
@@ -15,7 +11,7 @@ describe('classification:accuracy_score', () => {
     const expectedResult = 0.5;
     const result = accuracyScore({
       y_pred: yPred1,
-      y_true: yTrue1,
+      y_true: yTrue1
     });
 
     expect(result).toBe(expectedResult);
@@ -26,7 +22,7 @@ describe('classification:accuracy_score', () => {
     const result = accuracyScore({
       normalize: false,
       y_pred: yPred1,
-      y_true: yTrue1,
+      y_true: yTrue1
     });
 
     expect(result).toBe(expectedResult);
@@ -36,7 +32,7 @@ describe('classification:accuracy_score', () => {
     const expectedResult = 0.5;
     const result = accuracyScore({
       y_pred: yPred2,
-      y_true: yTrue2,
+      y_true: yTrue2
     });
     expect(result).toBe(expectedResult);
   });
@@ -46,7 +42,7 @@ describe('classification:accuracy_score', () => {
     const result = accuracyScore({
       normalize: false,
       y_pred: yPred2,
-      y_true: yTrue2,
+      y_true: yTrue2
     });
     expect(result).toBe(expectedResult);
   });
@@ -56,7 +52,7 @@ describe('classification:accuracy_score', () => {
       accuracyScore({
         normalize: false,
         y_pred: yPred2,
-        y_true: [1],
+        y_true: [1]
       });
     }).toThrow('y_true and y_pred are not equal in size!');
   });
@@ -66,7 +62,7 @@ describe('classification:accuracy_score', () => {
       accuracyScore({
         normalize: false,
         y_pred: yPred2,
-        y_true: true,
+        y_true: true
       });
     }).toThrow('y_true cannot be null or empty');
   });
@@ -76,7 +72,7 @@ describe('classification:accuracy_score', () => {
       accuracyScore({
         normalize: false,
         y_pred: 1,
-        y_true: yTrue2,
+        y_true: yTrue2
       });
     }).toThrow('y_pred cannot be null or empty');
   });
@@ -92,7 +88,7 @@ describe('classification:zeroOneLoss', () => {
     const expectedResult = 0.5;
     const result = zeroOneLoss({
       y_pred: yPred1,
-      y_true: yTrue1,
+      y_true: yTrue1
     });
     expect(result).toBe(expectedResult);
   });
@@ -101,7 +97,7 @@ describe('classification:zeroOneLoss', () => {
     const expectedResult = 0.33333333333333337;
     const result = zeroOneLoss({
       y_pred: yPred2,
-      y_true: yTrue2,
+      y_true: yTrue2
     });
     expect(result).toBe(expectedResult);
   });
@@ -110,18 +106,17 @@ describe('classification:zeroOneLoss', () => {
     expect(() => {
       zeroOneLoss({
         y_pred: [1],
-        y_true: yTrue2,
+        y_true: yTrue2
       });
     }).toThrow('y_true and y_pred are not equal in size!');
   });
-
 
   it('should y_true non-array should throw an error', () => {
     expect(() => {
       accuracyScore({
         normalize: false,
         y_pred: yPred2,
-        y_true: true,
+        y_true: true
       });
     }).toThrow('y_true cannot be null or empty');
   });
@@ -131,7 +126,7 @@ describe('classification:zeroOneLoss', () => {
       accuracyScore({
         normalize: false,
         y_pred: 1,
-        y_true: yTrue2,
+        y_true: yTrue2
       });
     }).toThrow('y_pred cannot be null or empty');
   });

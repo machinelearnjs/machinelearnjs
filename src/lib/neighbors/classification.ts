@@ -122,6 +122,7 @@ export class KNeighborsClassifier {
  * @param knn
  * @param currentCase
  * @returns {{}}
+ * @ignore
  */
 function getSinglePrediction(knn, currentCase): {} {
   const nearestPoints = knn.kdTree.nearest(currentCase, knn.k);
