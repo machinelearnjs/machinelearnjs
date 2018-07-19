@@ -11,25 +11,16 @@ describe('classification:KNeighborsClassifier', () => {
     const knn = new KNeighborsClassifier();
     knn.fit({ X: X1, y: y1 });
     const expected = 1;
-    const pred = knn.predictOne([1, 2]);
+    const pred = knn.predict([1, 2]);
     expect(pred).toBe(expected);
   });
 
   it('should predict 0 for [0, 0, 0] against the sample 1', () => {
     const knn = new KNeighborsClassifier();
     knn.fit({ X: X1, y: y1 });
-    const pred = knn.predictOne([0, 0, 0]);
+    const pred = knn.predict([0, 0, 0]);
     const expected = 0;
     expect(pred).toBe(expected);
-  });
-
-  it('should predictOne throw an error if multi dimensional list is passed in', () => {
-    const knn = new KNeighborsClassifier();
-    knn.fit({ X: X1, y: y1 });
-    const expected = 'Passed in dataset is not a single dimensional array';
-    expect(() => {
-      knn.predictOne([[1, 1], [1, 1]]);
-    }).toThrow(expected);
   });
 
   it('should predict [ 1, 0, 1 ] for [ [1, 2], [0, 2], [9, 5] ]  against the sample 1', () => {
@@ -57,10 +48,11 @@ describe('classification:KNeighborsClassifier', () => {
   });
 
   it('should throw an error if string is the first array element', () => {
+    const expected = 'The dataset is neither an array or a matrix';
     const knn = new KNeighborsClassifier();
     knn.fit({ X: X2, y: y2 });
     expect(() => {
       knn.predict([[1, 'a', 4], [0], [9, 5]]);
-    }).toThrow('The dataset to predict must be a matrix or lists of list');
+    }).toThrow(expected);
   });
 });

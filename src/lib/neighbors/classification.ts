@@ -1,4 +1,4 @@
-import { uniqBy, map } from 'lodash';
+import { map, uniqBy } from 'lodash';
 import math from '../utils/MathExtra';
 import KDTree from './KDTree';
 const { isMatrixOf, isArrayOf } = math.contrib;
@@ -7,20 +7,22 @@ const { isMatrixOf, isArrayOf } = math.contrib;
  * Classifier implementing the k-nearest neighbors vote.
  */
 export class KNeighborsClassifier {
-  private kdTree = null;
+  private type = null;
+  private tree = null;
   private k = null;
   private classes = null;
-  private isEuclidean = null;
   private distance = null;
 
   /**
    * @param {object} options
    * @param {number} [options.k=numberOfClasses + 1] - Number of neighbors to classify.
    * @param {function} [options.distance=euclideanDistance] - Distance function that takes two parameters.
+   * @param {string} [options.type='kdtree'] - type of KNN algorithm to use. Choose between 'kdtree' (default), 'simple', 'balltree'
    */
-  constructor(options: { distance: any; k: number } = { distance: null, k: 0 }) {
+  constructor(options: { distance: any; k: number; type: string } = { distance: null, k: 0, type: 'kdtree' }) {
     this.distance = options.distance;
     this.k = options.k;
+    this.type = options.type;
   }
 
   /**
@@ -50,28 +52,26 @@ export class KNeighborsClassifier {
     }
 
     // Finally assigning the prepared values to the class itself
-    this.kdTree = new KDTree(points, distance);
+    if (this.type === 'kdtree') {
+      this.tree = new KDTree(points, distance);
+    }
     this.k = k;
     this.classes = classes;
   }
 
   /**
-   * Return a JSON containing the kd-tree model.
+   * Return a JSON representation
    * @return {object} JSON KNN model.
    */
   public toJSON(): {
     classes: any[];
-    distance: string;
     k: number;
-    kdTree: KDTree;
-    name: string;
+    type: string;
   } {
     return {
       classes: this.classes,
-      isEuclidean: this.isEuclidean,
       k: this.k,
-      kdTree: this.kdTree,
-      name: 'KNN'
+      type: this.type
     };
   }
 
@@ -82,11 +82,26 @@ export class KNeighborsClassifier {
    */
   public predict(X): any {
     if (isArrayOf(X, 'number')) {
-      return this.getTreeBasedPrediction(X);
+      return this.getSinglePred(X);
     } else if (isMatrixOf(X, 'number')) {
-      return map(X, currentItem => this.getTreeBasedPrediction(currentItem));
+      return map(X, currentItem => this.getSinglePred(currentItem));
     } else {
-      throw new TypeError('Passed in dataset is not a single dimensional array');
+      throw new TypeError('The dataset is neither an array or a matrix');
+    }
+  }
+
+  /**
+   * Runs a single prediction against an array based on kdTree or balltree or
+   * simple algo
+   * @param array
+   * @returns {{}}
+   */
+  private getSinglePred(array): any {
+    if (this.tree) {
+      return this.getTreeBasedPrediction(array);
+    } else {
+      // Run the simple KNN algorithm
+      return 0;
     }
   }
 
@@ -97,7 +112,7 @@ export class KNeighborsClassifier {
    * @ignore
    */
   private getTreeBasedPrediction(current): {} {
-    const nearestPoints = this.kdTree.nearest(current, this.k);
+    const nearestPoints = this.tree.nearest(current, this.k);
     const pointsPerClass = {};
     let predictedClass = -1;
     let maxPoints = -1;
