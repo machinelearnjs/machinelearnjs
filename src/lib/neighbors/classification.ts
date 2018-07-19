@@ -1,10 +1,41 @@
 import { map, uniqBy } from 'lodash';
 import math from '../utils/MathExtra';
 import KDTree from './KDTree';
-const { isMatrixOf, isArrayOf } = math.contrib;
+const {
+  euclideanDistance,
+  manhattanDistance,
+  isMatrixOf,
+  isArrayOf
+} = math.contrib;
+
+const DIST_EUC = 'euclidean';
+const DIST_MAN = 'manhattan';
+const TYPE_KD = 'kdtree';
+
+export interface KNNClassifierOptions {
+	/**
+   * Choice of distance function, should choose between euclidean | manhattan
+	 */
+	distance: string;
+	/**
+   * Number of neighbors to classify
+	 */
+  k: number;
+	/**
+   * Type of algorithm to use, choose between kdtree(default) | balltree | simple
+	 */
+	type: string;
+}
 
 /**
  * Classifier implementing the k-nearest neighbors vote.
+ *
+ * @example
+ * const knn = new KNeighborsClassifier();
+ * const X = [[0, 0, 0], [0, 1, 1], [1, 1, 0], [2, 2, 2], [1, 2, 2], [2, 1, 2]];
+ * const y = [0, 0, 0, 1, 1, 1];
+ * knn.fit({ X, y });
+ * console.log(knn.predict([1, 2])); // predicts 1
  */
 export class KNeighborsClassifier {
   private type = null;
@@ -13,14 +44,21 @@ export class KNeighborsClassifier {
   private classes = null;
   private distance = null;
 
-  /**
-   * @param {object} options
-   * @param {number} [options.k=numberOfClasses + 1] - Number of neighbors to classify.
-   * @param {function} [options.distance=euclideanDistance] - Distance function that takes two parameters.
-   * @param {string} [options.type='kdtree'] - type of KNN algorithm to use. Choose between 'kdtree' (default), 'simple', 'balltree'
-   */
-  constructor(options: { distance: any; k: number; type: string } = { distance: null, k: 0, type: 'kdtree' }) {
-    this.distance = options.distance;
+  constructor(
+    options: KNNClassifierOptions = {
+      distance: DIST_EUC,
+      k: 0,
+      type: TYPE_KD,
+    }
+  ) {
+    // Handling distance
+    if (options.distance === DIST_EUC) {
+      this.distance = euclideanDistance;
+    } else if (options.distance === DIST_MAN) {
+      this.distance = manhattanDistance;
+    } else {
+      throw new Error(`Unrecognised type of distance ${options.distance} was received`);
+    }
     this.k = options.k;
     this.type = options.type;
   }
@@ -34,26 +72,21 @@ export class KNeighborsClassifier {
     // Getting the classes from y
     const classes = uniqBy(y, c => c);
 
-    // Doing a unary operation since _.get will only use the default value
-    // if the original value is undefined. However, options.distance is not undefined
-    // Reference: https://lodash.com/docs/4.17.10#get
-    const distance = this.distance ? this.distance : math.contrib.euclideanDistance;
-
     // Setting k; if it's null, use the class length
     const k = this.k ? this.k : classes.length + 1;
 
+    //  Constructing the points placeholder
     const points = new Array(X.length);
     for (let i = 0; i < points.length; ++i) {
       points[i] = X[i].slice();
     }
-
     for (let i = 0; i < y.length; ++i) {
       points[i].push(y[i]);
     }
 
-    // Finally assigning the prepared values to the class itself
-    if (this.type === 'kdtree') {
-      this.tree = new KDTree(points, distance);
+    // Building a tree or algo according to this.type
+    if (this.type === TYPE_KD) {
+      this.tree = new KDTree(points, this.distance);
     }
     this.k = k;
     this.classes = classes;
