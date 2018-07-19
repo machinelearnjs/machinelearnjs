@@ -27,6 +27,7 @@
     "cov:send": "nyc report --reporter=lcov > coverage.lcov && codecov",
     "cov:check": "nyc report && nyc check-coverage --lines 100 --functions 100 --branches 100",
     "doc": "rm -rf docs/md_out && yarn doc:json && tsc ./docs/processor/index.ts && node ./docs/processor",
+    "doc:build": "yarn doc && cd docs/md_out && vuepress build",
     "doc:md": "rm -rf docs/md_out && tsc ./docs/processor/index.ts && node ./docs/processor",
     "doc:json": "npx typedoc --json docs/docs.json --tsconfig tdconfig.json --excludePrivate",
     "doc:publish": "gh-pages -m \"[ci skip] Updates\" -d build/docs",
