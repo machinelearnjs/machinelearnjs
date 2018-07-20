@@ -112,3 +112,68 @@ describe('math.contrib.isArrayOf', () => {
     }).toThrow('Failed to check the array content of type abcd');
   });
 });
+
+describe('math.contrib.covariance', () => {
+  // Normal arrays
+  const X1 = [1, 2, 4, 3, 5];
+  const y1 = [1, 3, 3, 2, 5];
+  const X1Mean = math.mean(X1);
+  const y1Mean = math.mean(y1);
+
+  // Size difference
+  const X2 = [1, 4, 7, 8, 9, 10, 10000000];
+  const y2 = [1, 2];
+
+  // Arrays with large numbers
+  const X3 = [9999999999999, 91284981294, 1912839, 12874991291923919];
+  const y3 = [8287288, 819191929129192, 727, 11];
+  const X3Mean = math.mean(X3);
+  const y3Mean = math.mean(y3);
+
+  it('should calculate covariance against x1 and y1', () => {
+    const result = math.contrib.covariance(X1, X1Mean, y1, y1Mean);
+    expect(result).toBe(8);
+  });
+
+  it('should throw an error when x and y are different in sizes', () => {
+    expect(() => {
+      math.contrib.covariance(X2, 1, y2, 2);
+    }).toThrow('X and y should match in size');
+  });
+
+  it('should calculate large numbers', () => {
+    const result = math.contrib.covariance(X3, X3Mean, y3, y3Mean);
+    const expected = -2.6387641603777603e30;
+    expect(expected).toBe(result);
+  });
+});
+
+describe('math.contrib.variance', () => {
+  // Normal arrays
+  const X1 = [1, 2, 4, 3, 5];
+  const X1Mean = math.mean(X1);
+
+  // Size difference
+  const X2 = null;
+
+  // Arrays with large numbers
+  const X3 = [9999999999999, 91284981294, 1912839, 12874991291923919];
+  const X3Mean = math.mean(X3);
+
+  it('should calculate variance against x1', () => {
+    const result = math.contrib.variance(X1, X1Mean);
+    expect(result).toBe(10);
+  });
+
+  it('should throw an error when x is not an array', () => {
+    expect(() => {
+      math.contrib.variance(X2, 1);
+    }).toThrow('X must be an array');
+  });
+
+  it('should calculate large numbers', () => {
+    const result = math.contrib.variance(X3, X3Mean);
+    const expected = 1.2425916250970963e32;
+    expect(expected).toBe(result);
+  });
+});
