@@ -1,18 +1,52 @@
-import * as SimpleLinearRegression from 'ml-regression-simple-linear';
+/**
+ * References:
+ * - https://machinelearningmastery.com/implement-simple-linear-regression-scratch-python/
+ */
+import { size } from 'lodash';
+import math from '../utils/MathExtra';
+
+export interface LinearRegressionModel {
+  /**
+   * Coefficients component: b0
+   */
+  b0: number;
+  /**
+   * Coefficients component: b1
+   */
+  b1: number;
+}
 
 /**
  * Ordinary least squares Linear Regression.
+ *
+ * @example
+ * import { LinearRegression } from './linear_regression';
+ * const linearRegression = new LinearRegression();
+ * const X = [1, 2, 4, 3, 5];
+ * const y = [1, 3, 3, 2, 5];
+ * linearRegression.fit({ X, y });
+ * console.log(lr.predict([1, 2]));
+ * // [ 1.1999999999999995, 1.9999999999999996 ]
  */
 export class LinearRegression {
-  private lr: any = null;
+  private b0: number;
+  private b1: number;
 
   /**
    * fit linear model
-   * @param {any} X
-   * @param {any} y
+   * @param {any} X - training values
+   * @param {any} y - target values
    */
   public fit({ X, y }: { X: number[]; y: number[] }): void {
-    this.lr = new SimpleLinearRegression(X, y);
+    if (!Array.isArray(X) || !Array.isArray(y)) {
+      throw new Error('X and y must be arrays');
+    }
+
+    if (size(X) !== size(y)) {
+      throw new Error('X and y must be equal in size');
+    }
+
+    this.coefficients(X, y); // getting b0 and b1
   }
 
   /**
@@ -20,7 +54,34 @@ export class LinearRegression {
    * @param {number} X
    * @returns {number}
    */
-  public predict(X: number): number {
-    return this.lr.predict(X);
+  public predict(X: number[]): number[] {
+    const preds = [];
+    for (let i = 0; i < size(X); i++) {
+      preds.push(this.b0 + this.b1 * X[i]);
+    }
+    return preds;
+  }
+
+  /**
+   * Returns the current LinearRegression model
+   * @returns {LinearRegressionModel}
+   */
+  public toJSON(): LinearRegressionModel {
+    return {
+      b0: this.b0,
+      b1: this.b1
+    };
+  }
+
+  /**
+   * Calculates coefficient for linear regression
+   * @param X - X values
+   * @param y - y targets
+   */
+  private coefficients(X, y): void {
+    const xMean = math.mean(X);
+    const yMean = math.mean(y);
+    this.b1 = math.contrib.covariance(X, xMean, y, yMean) / math.contrib.variance(X, xMean);
+    this.b0 = yMean - this.b1 * xMean;
   }
 }

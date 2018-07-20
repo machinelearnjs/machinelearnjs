@@ -157,7 +157,45 @@ const subtract = (X, y) => {
   return _X;
 };
 
+/**
+ * Calculates covariance
+ * @param X
+ * @param xMean
+ * @param y
+ * @param yMean
+ * @returns {number}
+ */
+const covariance = (X, xMean, y, yMean) => {
+  if (_.size(X) !== _.size(y)) {
+    throw new Error('X and y should match in size');
+  }
+  let covar = 0.0;
+  for (let i = 0; i < _.size(X); i++) {
+    covar += (X[i] - xMean) * (y[i] - yMean);
+  }
+  return covar;
+};
+
+/**
+ * Calculates the variance
+ * needed for linear regression
+ * @param X
+ * @param mean
+ * @returns {number}
+ */
+const variance = (X, mean) => {
+  if (!Array.isArray(X)) {
+    throw new Error('X must be an array');
+  }
+  let result = 0.0;
+  for (let i = 0; i < _.size(X); i++) {
+    result += Math.pow(X[i] - mean, 2);
+  }
+  return result;
+};
+
 const contrib = {
+  covariance,
   euclideanDistance,
   isArrayOf,
   isMatrix,
@@ -165,7 +203,8 @@ const contrib = {
   manhattanDistance,
   range,
   size,
-  subtract
+  subtract,
+  variance
 };
 
 // Exporting merged result
