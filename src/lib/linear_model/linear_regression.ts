@@ -5,7 +5,7 @@
 import { size } from 'lodash';
 import math from '../utils/MathExtra';
 
-interface LinearRegressionModel {
+export interface LinearRegressionModel {
   /**
    * Coefficients component: b0
    */
@@ -22,18 +22,6 @@ interface LinearRegressionModel {
 export class LinearRegression {
   private b0: number;
   private b1: number;
-
-  /**
-   * Calculates coefficient for linear regression
-   * @param X - X values
-   * @param y - y targets
-   */
-  private coefficients(X, y) {
-    const xMean = math.mean(X);
-    const yMean = math.mean(y);
-    this.b1 = math.contrib.covariance(X, xMean, y, yMean) / math.contrib.variance(X, xMean);
-    this.b0 = yMean - this.b1 * xMean;
-  }
 
   /**
    * fit linear model
@@ -58,7 +46,7 @@ export class LinearRegression {
    * @returns {number}
    */
   public predict(X: number[]): number[] {
-    let preds = [];
+    const preds = [];
     for (let i = 0; i < size(X); i++) {
       preds.push(this.b0 + this.b1 * X[i]);
     }
@@ -74,5 +62,17 @@ export class LinearRegression {
       b0: this.b0,
       b1: this.b1
     };
+  }
+
+  /**
+   * Calculates coefficient for linear regression
+   * @param X - X values
+   * @param y - y targets
+   */
+  private coefficients(X, y): void {
+    const xMean = math.mean(X);
+    const yMean = math.mean(y);
+    this.b1 = math.contrib.covariance(X, xMean, y, yMean) / math.contrib.variance(X, xMean);
+    this.b0 = yMean - this.b1 * xMean;
   }
 }
