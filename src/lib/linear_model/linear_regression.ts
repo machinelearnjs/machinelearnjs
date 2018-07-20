@@ -6,7 +6,13 @@ import { size } from 'lodash';
 import math from '../utils/MathExtra';
 
 interface LinearRegressionModel {
+  /**
+   * Coefficients component: b0
+   */
   b0: number;
+  /**
+   * Coefficients component: b1
+   */
   b1: number;
 }
 
@@ -19,8 +25,8 @@ export class LinearRegression {
 
   /**
    * Calculates coefficient for linear regression
-   * @param X
-   * @param y
+   * @param X - X values
+   * @param y - y targets
    */
   private coefficients(X, y) {
     const xMean = math.mean(X);
@@ -31,10 +37,18 @@ export class LinearRegression {
 
   /**
    * fit linear model
-   * @param {any} X
-   * @param {any} y
+   * @param {any} X - training values
+   * @param {any} y - target values
    */
   public fit({ X, y }: { X: number[]; y: number[] }): void {
+    if (!Array.isArray(X) || !Array.isArray(y)) {
+      throw new Error('X and y must be arrays');
+    }
+
+    if (size(X) !== size(y)) {
+      throw new Error('X and y must be equal in size');
+    }
+
     this.coefficients(X, y); // getting b0 and b1
   }
 
