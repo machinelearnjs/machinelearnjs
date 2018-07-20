@@ -36,8 +36,7 @@ function filterByKind(children, options, kind): any {
     });
     // Filtering by isProtected = true and any constructors (we always want to display constructors
     const publicFiltered = filtered.filter(filteredChild => {
-      return filteredChild.flags.isPublic ||
-        filteredChild.kindString === consts.kindStringConst;
+      return filteredChild.flags.isPublic || filteredChild.kindString === consts.kindStringConst;
     });
     return _.isEmpty(publicFiltered) ? options.inverse(children) : options.fn(publicFiltered);
   } else {
