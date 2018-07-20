@@ -173,6 +173,13 @@ const covariance = (X, xMean, y, yMean) => {
   return covar;
 };
 
+/**
+ * Calculates the variance
+ * needed for linear regression
+ * @param X
+ * @param mean
+ * @returns {number}
+ */
 const variance = (X, mean) => {
   let result = 0.0;
   for (let i = 0; i < _.size(X); i++) {
