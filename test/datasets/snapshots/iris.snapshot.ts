@@ -1,26 +1,5 @@
-import { BaseDataset } from "./BaseDataset";
-
-/**
- * The Iris flower data set or Fisher's Iris data set is a multivariate data set introduced by the British statistician and biologist Ronald Fisher
- * in his 1936 paper The use of multiple measurements in taxonomic problems as an example of linear discriminant analysis.
- *
- * It contains 50 samples with 3 classes of 'Setosa', 'versicolor' and 'virginica'
- *
- * @example
- * import { Iris } from 'kalimdor/datasets';
- *
- * const irisData = new Iris();
- * irisData.data; // returns the iris data (X)
- * irisData.targets // list of target values (y)
- * irisData.targetNames // list of labels
- * irisData.description // dataset description, copied from the original dataset README
- */
-export class Iris extends BaseDataset {
-	constructor() {
-		super();
-		this.targetNames = ['setosa', 'versicolor', 'virginica'];
-		this.data =
-			[[ 5.1,  3.5,  1.4,  0.2],
+const targetNames = ['setosa', 'versicolor', 'virginica'];
+const data = [[ 5.1,  3.5,  1.4,  0.2],
        [ 4.9,  3. ,  1.4,  0.2],
        [ 4.7,  3.2,  1.3,  0.2],
        [ 4.6,  3.1,  1.5,  0.2],
@@ -170,15 +149,16 @@ export class Iris extends BaseDataset {
        [ 6.5,  3. ,  5.2,  2. ],
        [ 6.2,  3.4,  5.4,  2.3],
        [ 5.9,  3. ,  5.1,  1.8]];
-		this.targets =
-			[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+
+const targets = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
        0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
        0, 0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
        1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
        1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2,
        2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2];
-		this.description = `1. Title: Iris Plants Database
+
+const description = `1. Title: Iris Plants Database
 	Updated Sept 21 by C.Blake - Added discrepency information
 
 2. Sources:
@@ -248,5 +228,9 @@ Summary Statistics:
 
 9. Class Distribution: 33.3% for each of 3 classes.`;
 
-	}
+export {
+	targetNames,
+	data,
+	targets,
+	description,
 }
