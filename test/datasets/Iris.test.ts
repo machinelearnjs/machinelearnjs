@@ -1,6 +1,4 @@
-import { isEqual } from 'lodash';
 import { Iris } from '../../src/lib/datasets';
-import * as irisSnapshot from './snapshots/iris.snapshot';
 
 describe('datasets:Iris', () => {
   let iris = null;
