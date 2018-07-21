@@ -1,3 +1,8 @@
+/**
+ * References:
+ * - https://archive.ics.uci.edu/ml/datasets/iris
+ * - https://en.wikipedia.org/wiki/Iris_flower_data_set
+ */
 import { BaseDataset } from './BaseDataset';
 
 /**
