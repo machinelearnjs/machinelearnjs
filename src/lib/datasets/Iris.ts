@@ -23,11 +23,10 @@ import { BaseDataset } from './BaseDataset';
  * irisData.description // dataset description, copied from the original dataset README
  */
 export class Iris extends BaseDataset {
-
-	/**
+  /**
    * Load datasets
-	 */
-	public load():void {
+   */
+  public load(): void {
     // prettier-ignore
     this.targetNames = ['setosa', 'versicolor', 'virginica'];
     // prettier-ignore
@@ -263,5 +262,4 @@ Summary Statistics:
 
 9. Class Distribution: 33.3% for each of 3 classes.`;
   }
-
 }
