@@ -1,4 +1,4 @@
-import * as fs from 'fs';
+import * as fs from 'fs-extra';
 import {
   concat,
   forEach,
@@ -35,7 +35,7 @@ export class ConfigProcessor extends BaseProcesser {
       throw Error('Cannot execute the processor because apiChildren is empty');
     }
     this.createDir();
-
+    // TODO: File copy operations can be simplified using fs-extra
     // 1. Build sidebar component list
     const extraConfig = {
       apiSidebar: this.buildSidebarJSON(apiChildren)
@@ -47,7 +47,7 @@ export class ConfigProcessor extends BaseProcesser {
     fs.createReadStream(this.srcConfigPath).pipe(fs.createWriteStream(this.destConfigPath));
 
     // 4. public
-    this.syncPublicFiles();
+    fs.copySync(this.srcPublicPath, this.destPublicPath);
 
     // 5. Style
     fs.createReadStream(this.srcOverrideStylePath).pipe(fs.createWriteStream(this.destOverrideStylePath));
@@ -65,17 +65,6 @@ export class ConfigProcessor extends BaseProcesser {
     if (!fs.existsSync(this.destPublicPath)) {
       fs.mkdirSync(this.destPublicPath);
     }
-  }
-
-	/**
-   * Sync any public assets to md_out/.vuepress/public
-	 */
-	private syncPublicFiles(): void {
-    forEach(fs.readdirSync(this.srcPublicPath), file => {
-      const fullSrcFilePath = path.join(this.srcPublicPath, file);
-      const fullDestFilePath = path.join(this.destPublicPath, file);
-      fs.createReadStream(fullSrcFilePath).pipe(fs.createWriteStream(fullDestFilePath));
-    });
   }
 
   /**
