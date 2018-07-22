@@ -1,5 +1,12 @@
 import * as fs from 'fs';
-import * as _ from 'lodash';
+import {
+  concat,
+  forEach,
+  findIndex,
+  isEmpty,
+  reduce,
+  set,
+} from 'lodash';
 import * as path from 'path';
 import { BaseProcesser } from './BaseProcesser';
 
@@ -14,13 +21,17 @@ export class ConfigProcessor extends BaseProcesser {
   private vuepressExtraConfigPath = path.join(__dirname, '../md_out/.vuepress/extra.json');
   private srcConfigPath = path.join(__dirname, '../config.js');
   private destConfigPath = path.join(__dirname, '../md_out/.vuepress/config.js');
+  private srcPublicPath = path.join(__dirname, '../public');
+  private destPublicPath = path.join(__dirname, '../md_out/.vuepress/public');
+  private srcOverrideStylePath = path.join(__dirname, '../override.styl');
+  private destOverrideStylePath = path.join(__dirname, '../md_out/.vuepress/override.styl');
 
   /**
    * Runs the processor
    * @param {any} apiChildren
    */
   public run({ apiChildren }): void {
-    if (_.isEmpty(apiChildren)) {
+    if (isEmpty(apiChildren)) {
       throw Error('Cannot execute the processor because apiChildren is empty');
     }
     this.createDir();
@@ -34,6 +45,12 @@ export class ConfigProcessor extends BaseProcesser {
 
     // 3. config
     fs.createReadStream(this.srcConfigPath).pipe(fs.createWriteStream(this.destConfigPath));
+
+    // 4. public
+    this.syncPublicFiles();
+
+    // 5. Style
+    fs.createReadStream(this.srcOverrideStylePath).pipe(fs.createWriteStream(this.destOverrideStylePath));
   }
 
   /**
@@ -44,6 +61,21 @@ export class ConfigProcessor extends BaseProcesser {
     if (!fs.existsSync(this.vuepressConfigPath)) {
       fs.mkdirSync(this.vuepressConfigPath);
     }
+    // Create public dir if it doesn't exist
+    if (!fs.existsSync(this.destPublicPath)) {
+      fs.mkdirSync(this.destPublicPath);
+    }
+  }
+
+	/**
+   * Sync any public assets to md_out/.vuepress/public
+	 */
+	private syncPublicFiles(): void {
+    forEach(fs.readdirSync(this.srcPublicPath), file => {
+      const fullSrcFilePath = path.join(this.srcPublicPath, file);
+      const fullDestFilePath = path.join(this.destPublicPath, file);
+      fs.createReadStream(fullSrcFilePath).pipe(fs.createWriteStream(fullDestFilePath));
+    });
   }
 
   /**
@@ -53,11 +85,11 @@ export class ConfigProcessor extends BaseProcesser {
    * @returns {Array}
    */
   private buildSidebarJSON(apiChildren): SidebarDefinition[] {
-    return _.reduce(
+    return reduce(
       apiChildren,
       (sum, child) => {
         const [module, name] = child.name.split('.');
-        const existingGroupIndex = _.findIndex(sum, o => o.title === module);
+        const existingGroupIndex = findIndex(sum, o => o.title === module);
         if (existingGroupIndex === -1) {
           // If there's no existing module group according to the current child's name
           // create a new definition and append it to the sum
@@ -66,14 +98,14 @@ export class ConfigProcessor extends BaseProcesser {
             collapsable: false,
             title: module
           };
-          return _.concat(sum, [newDefinition]);
+          return concat(sum, [newDefinition]);
         } else {
           // If there's an existing module definition,
           // then append the current child's definition to the children list
           const existing = sum[existingGroupIndex];
-          const newChildren = _.concat(existing.children, [[`./${child.name}`, name]]);
-          const updated = _.set(existing, 'children', newChildren);
-          return _.set(sum, `[${existingGroupIndex}]`, updated);
+          const newChildren = concat(existing.children, [[`./${child.name}`, name]]);
+          const updated = set(existing, 'children', newChildren);
+          return set(sum, `[${existingGroupIndex}]`, updated);
         }
       },
       []
