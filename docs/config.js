@@ -22,7 +22,8 @@ module.exports = {
   themeConfig: {
     nav: [
       { text: 'Home', link: '/' },
-      { text: 'API', link: '/api/' }
+      { text: 'API', link: '/api/' },
+      { text: 'Github', link: 'https://github.com/jasonshin/kalimdorjs' }
     ],
     sidebar: {
       '/api/': extra.apiSidebar
