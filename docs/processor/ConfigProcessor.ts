@@ -1,12 +1,5 @@
 import * as fs from 'fs-extra';
-import {
-  concat,
-  forEach,
-  findIndex,
-  isEmpty,
-  reduce,
-  set,
-} from 'lodash';
+import { concat, findIndex, isEmpty, reduce, set } from 'lodash';
 import * as path from 'path';
 import { BaseProcesser } from './BaseProcesser';
 
