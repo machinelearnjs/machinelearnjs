@@ -5,9 +5,21 @@
   "main": "build/main/index.js",
   "typings": "build/main/index.d.ts",
   "module": "build/module/index.js",
-  "repository": "https://github.com/JasonShin/kalimdorjs",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/JasonShin/kalimdorjs"
+  },
   "license": "MIT",
-  "keywords": [],
+  "keywords": [
+    "Machine Learning",
+    "Typescript",
+    "RandomForest",
+    "ensemble",
+    "statistics",
+    "feature extration",
+    "datasets",
+    "preprocessing"
+  ],
   "scripts": {
     "info": "npm-scripts-info",
     "build": "run-s clean && run-p build:*",
@@ -81,6 +93,7 @@
     "ava": "^1.0.0-beta.3",
     "codecov": "^3.0.0",
     "cz-conventional-changelog": "^2.1.0",
+    "fs-extra": "^7.0.0",
     "gh-pages": "^1.0.0",
     "handlebars": "^4.0.11",
     "npm-run-all": "^4.1.2",

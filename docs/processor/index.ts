@@ -3,6 +3,7 @@ import * as Handlebars from 'handlebars';
 import * as _ from 'lodash';
 import * as path from 'path';
 import { APIProcessor } from './APIProcessor';
+import config from './config';
 import { ConfigProcessor } from './ConfigProcessor';
 import * as consts from './const';
 import { PagesProcessor } from './PagesProcessor';
@@ -287,7 +288,7 @@ Handlebars.registerHelper('newLine', renderNewLine);
 const apiProcessor = new APIProcessor();
 apiProcessor.run(Handlebars);
 
-const pagesProcessor = new PagesProcessor({ defaultREADME: true });
+const pagesProcessor = new PagesProcessor({ defaultREADME: config.defaultREADME });
 pagesProcessor.run();
 
 const configProcessor = new ConfigProcessor();

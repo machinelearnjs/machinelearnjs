@@ -22,8 +22,10 @@ export class PagesProcessor extends BaseProcesser {
    * Run the processor
    */
   public run(): void {
-    // 1. homepage
-    this.processHomePage();
+    if (this.defaultREADME) {
+      // 1. homepage using the project readme
+      this.processHomePage();
+    }
 
     // 2. all the other pages under docs/pages/
     this.syncOtherPages();
