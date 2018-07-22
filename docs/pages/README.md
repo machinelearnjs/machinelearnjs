@@ -19,7 +19,7 @@ footer: MIT Licensed | Copyright © 2018-present Jason Shin
   </div>
   <div class="feature">
     <h2>Performance</h2>
-    <p>We thrive to create the fastest Javascript based Machine Learning library. We will continue updating the
+    <p>We strive to create the fastest Javascript based Machine Learning library. We will continue updating the
     code to make this happen.</p>
   </div>
 </div>
