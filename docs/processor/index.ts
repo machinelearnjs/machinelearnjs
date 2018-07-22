@@ -241,7 +241,7 @@ function renderMethodBracket(parameters): string {
  */
 function renderSourceLink(sources): string {
   const defined = _.map(sources, src => {
-    return `[${src.fileName}:${src.line}](${pjson.repository}/blob/master/src/lib/${src.fileName}#L${src.line})`;
+    return `[${src.fileName}:${src.line}](${pjson.repository.url}/blob/master/src/lib/${src.fileName}#L${src.line})`;
   });
   return defined.join(',');
 }
