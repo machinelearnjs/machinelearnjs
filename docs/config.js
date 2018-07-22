@@ -1,6 +1,7 @@
 const extra = require('./extra.json');
 
 module.exports = {
+  title: 'Kalimdor.js',
   themeConfig: {
     nav: [
       { text: 'Home', link: '/' },

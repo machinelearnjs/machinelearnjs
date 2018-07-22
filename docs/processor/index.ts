@@ -5,6 +5,7 @@ import * as path from 'path';
 import { APIProcessor } from './APIProcessor';
 import { ConfigProcessor } from './ConfigProcessor';
 import * as consts from './const';
+import config from './config';
 import { PagesProcessor } from './PagesProcessor';
 const docsJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../docs.json'), 'utf8'));
 const pjson = JSON.parse(fs.readFileSync(path.join(__dirname, '../../package.json'), 'utf8'));
@@ -287,7 +288,7 @@ Handlebars.registerHelper('newLine', renderNewLine);
 const apiProcessor = new APIProcessor();
 apiProcessor.run(Handlebars);
 
-const pagesProcessor = new PagesProcessor({ defaultREADME: true });
+const pagesProcessor = new PagesProcessor({ defaultREADME: config.defaultREADME });
 pagesProcessor.run();
 
 const configProcessor = new ConfigProcessor();
