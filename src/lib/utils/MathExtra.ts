@@ -164,6 +164,7 @@ const subtract = (X, y) => {
  * @param y
  * @param yMean
  * @returns {number}
+ * @ignore
  */
 const covariance = (X, xMean, y, yMean) => {
   if (_.size(X) !== _.size(y)) {
@@ -182,6 +183,7 @@ const covariance = (X, xMean, y, yMean) => {
  * @param X
  * @param mean
  * @returns {number}
+ * @ignore
  */
 const variance = (X, mean) => {
   if (!Array.isArray(X)) {
