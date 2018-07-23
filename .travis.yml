@@ -1,4 +1,7 @@
-sudo: false
+sudo: required
+
+services:
+  - docker
 language: node_js
 node_js:
   - 6
@@ -19,4 +22,5 @@ script:
   - yarn test:unit
   - yarn test:lint
   - yarn test:nsp
+  - yarn test:integration
   - yarn doc

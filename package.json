@@ -29,6 +29,8 @@
     "test": "npx run-s build test:*",
     "test:lint": "npx tslint --force -t verbose 'test/**/*.ts' 'src/**/*.ts' 'docs/**/*.ts'",
     "test:unit": "npx jest",
+    "test:integration": "./scripts/test-integration.sh",
+    "test:require": "npx jest -t \"integration:require\"",
     "test:nsp": "nsp check",
     "watch": "./scripts/tmux-start.sh",
     "watch:build": "yarn build:main -- -w",
