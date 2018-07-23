@@ -2,8 +2,8 @@
   "name": "kalimdor",
   "version": "1.0.0",
   "description": "Machine Learning library for the web and Node",
-  "main": "build/main/index.js",
-  "typings": "build/main/index.d.ts",
+  "main": "index.js",
+  "typings": "index.d.ts",
   "module": "build/module/index.js",
   "repository": {
     "type": "git",
