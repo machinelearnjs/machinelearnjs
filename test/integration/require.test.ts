@@ -1,3 +1,5 @@
+/* tslint:disable */
+
 describe('integration:require', () => {
   it('should require all', () => {
     const kalimdor = require('kalimdor');

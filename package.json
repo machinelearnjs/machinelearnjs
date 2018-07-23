@@ -26,7 +26,7 @@
     "build:main": "tsc -p tsconfig.json",
     "build:module": "tsc -p tsconfig.module.json",
     "fix": "npx prettier \"src/**/*.ts\" \"test/**/*.ts\" \"docs/**/*.ts\" --config ./.prettierrc --write",
-    "test": "npx run-s build test:*",
+    "test": "yarn build && yarn test:lint && yarn test:unit && yarn test:integration && yarn test:nsp && yarn doc",
     "test:lint": "npx tslint --force -t verbose 'test/**/*.ts' 'src/**/*.ts' 'docs/**/*.ts'",
     "test:unit": "npx jest --testPathIgnorePatterns \"./test/integration/require.test.ts\"",
     "test:integration": "./scripts/test-integration.sh",
