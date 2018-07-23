@@ -1,4 +1,8 @@
 describe('integration:require', () => {
+  it('should require all', () => {
+    const kalimdor = require('kalimdor');
+    expect(!!kalimdor).toBe(true);
+  });
   it('should require cluster', () => {
     const { KMeans } = require('kalimdor/cluster');
     expect(!!KMeans).toBe(true);
