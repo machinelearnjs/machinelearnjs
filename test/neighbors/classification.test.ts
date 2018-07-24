@@ -41,7 +41,6 @@ describe('classification:KNeighborsClassifier', () => {
 
   it("should predict [ 'a', 'a', 'a' ] for [ [1, 2, 4], [0], [9, 5] ] against the sample 2", () => {
     const knn = new KNeighborsClassifier();
-    expect(1).toBe(2);
     knn.fit({ X: X2, y: y2 });
     const pred = knn.predict([[1, 2, 4], [0], [9, 5]]);
     const expected = ['a', 'a', 'a'];

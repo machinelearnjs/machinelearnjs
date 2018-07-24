@@ -31,14 +31,21 @@ export class KNeighborsClassifier {
    */
   constructor(
     {
+      // Each object param default value
       distance = DIST_EUC,
       k = 0,
       type = TYPE_KD
     }: {
+      // Param types
       distance: string;
       k: number;
       type: string;
-    } = null
+    } = {
+      // Default value on empty constructor
+      distance: DIST_EUC,
+      k: 0,
+      type: TYPE_KD
+    }
   ) {
     const options = {
       distance,
@@ -115,7 +122,7 @@ export class KNeighborsClassifier {
    * @param {Array} X - Prediction data.
    * @returns number
    */
-  public predict(X: number[] = []): any {
+  public predict(X: any = []): any {
     if (isArrayOf(X, 'number')) {
       return this.getSinglePred(X);
     } else if (isMatrixOf(X, 'number')) {
