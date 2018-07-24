@@ -45,14 +45,14 @@
     {{#filterProperty children}}
         {{newLine}}### Properties
         {{#each this}}
-            {{newLine}}* [{{this.name}}](#▸-{{this.name}})
+            {{newLine}}* [{{this.name}}](#▸-{{cleanHyperLink this.name}})
         {{/each}}
     {{/filterProperty}}
 
     {{#filterMethod children}}
         {{newLine}}### Methods
         {{#each this}}
-            {{newLine}}* [{{this.name}}](#λ-{{this.name}})
+            {{newLine}}* [{{this.name}}](#λ-{{cleanHyperLink this.name}})
         {{/each}}
     {{/filterMethod}}
 

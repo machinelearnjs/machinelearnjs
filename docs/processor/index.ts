@@ -280,6 +280,20 @@ function renderNewLine(): string {
   return '\n';
 }
 
+/**
+ * Clean the string for hyperlink usage
+ * @param {string} str
+ * @returns {string}
+ */
+function cleanHyperLink(str: string): string {
+  // 1. Cloning the original str
+  let newStr = _.clone(str);
+  // 2. Replacing the known strings
+  newStr = _.replace(newStr, '_', '-');
+  // 3. apply lowercase transformation
+  return newStr.toLowerCase();
+}
+
 Handlebars.registerHelper('ifEquals', (children, x, y, options) => ifEquals(children, x, y, options));
 
 Handlebars.registerHelper('isSignatureValid', (context, options) => isSignatureValid(context, options));
@@ -309,6 +323,8 @@ Handlebars.registerHelper('methodBracket', parameters => renderMethodBracket(par
 Handlebars.registerHelper('getSourceLink', sources => renderSourceLink(sources));
 
 Handlebars.registerHelper('newLine', renderNewLine);
+
+Handlebars.registerHelper('cleanHyperLink', (str) => cleanHyperLink(str));
 
 // Processors
 const apiProcessor = new APIProcessor();
