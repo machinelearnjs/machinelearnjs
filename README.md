@@ -6,6 +6,7 @@ and teaches users how Machine Learning algorithms work.
 [![Build Status](https://travis-ci.com/JasonShin/kalimdorjs.svg?token=fyXsjBhWmxzn9Pe4yfJp&branch=master)](https://travis-ci.com/JasonShin/kalimdorjs)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/5a46165744674962a6d9d15c03e50d22)](https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=JasonShin/kalimdorjs&amp;utm_campaign=Badge_Grade)
 [![DeepScan grade](https://deepscan.io/api/projects/2872/branches/21332/badge/grade.svg?token=a1fa0980263b30233c0ddf1e9c3ed778290db2ee)](https://deepscan.io/dashboard#view=project&pid=2872&bid=21332)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FJasonShin%2Fkalimdorjs.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FJasonShin%2Fkalimdorjs?ref=badge_shield)
 
 <img src="https://i.imgur.com/CpZA2U7.png">
 

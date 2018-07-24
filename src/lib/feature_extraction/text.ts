@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
-import { WordTokenizer } from 'natural';
 import * as sw from 'stopword';
+import { WordTokenizer } from '../utils/nlp';
 import { ENGLISH_STOP_WORDS } from './stop_words';
 
 /**
@@ -40,7 +40,7 @@ export class CountVectorizer {
    * @param {string[]} doc - An array of strings
    * @returns {number[][]}
    */
-  public fit_transform(doc: string[]): number[] {
+  public fit_transform(doc: string[]): number[][] {
     // Automatically assig
     const { internalVocabulary, pubVocabulary } = this.buildVocabulary(doc);
     this.vocabulary = pubVocabulary;
@@ -55,7 +55,7 @@ export class CountVectorizer {
    * @param {string[]} doc - An array of strings
    * @returns {number[][]}
    */
-  public transform(doc: string[]): number[] {
+  public transform(doc: string[]): number[][] {
     return this.countVocab(doc);
   }
 
@@ -118,7 +118,7 @@ export class CountVectorizer {
    * [1, 1, 0, 0]
    * @param doc
    */
-  private countVocab(doc: string[]): number[] {
+  private countVocab(doc: string[]): number[][] {
     const analyze = this.buildAnalyzer();
     // 1. Reducing the doc
     return _.reduce(

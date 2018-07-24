@@ -262,4 +262,22 @@ Summary Statistics:
 
 9. Class Distribution: 33.3% for each of 3 classes.`;
   }
+
+  /**
+   *
+   * @returns {{targetNames: any[]; data: any[]; targets: any[]; description: string}}
+   */
+  public toJSON(): {
+    data: any[];
+    description: string;
+    targetNames: any[];
+    targets: any[];
+  } {
+    return {
+      data: this.data,
+      description: this.description,
+      targetNames: this.targetNames,
+      targets: this.targets
+    };
+  }
 }
