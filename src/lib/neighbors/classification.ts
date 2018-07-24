@@ -1,8 +1,8 @@
 import { map, uniqBy } from 'lodash';
 import math from '../utils/MathExtra';
 import KDTree from './KDTree';
+import { checkArray } from "../utils/validation";
 const { euclideanDistance, manhattanDistance, isMatrixOf, isArrayOf } = math.contrib;
-
 const DIST_EUC = 'euclidean';
 const DIST_MAN = 'manhattan';
 const TYPE_KD = 'kdtree';
@@ -64,6 +64,14 @@ export class KNeighborsClassifier {
    * @param {any} y
    */
   public fit({ X, y }): void {
+    const xCheck = checkArray(X);
+    if (!xCheck.isArray || !xCheck.multiclass) {
+      throw new Error('X must be a multiclass array!');
+    }
+    const yCheck = checkArray(y);
+    if (!yCheck.isArray || yCheck.multiclass) {
+      throw new Error('y must be a single dimensional array!');
+    }
     // Getting the classes from y
     const classes = uniqBy(y, c => c);
 
