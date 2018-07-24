@@ -202,7 +202,6 @@ function constructParamTable(parameters): string {
         _.forEach(param.type.declaration.children, namedParam => {
           sum.push([
             `options.${namedParam.name}`,
-            // namedParam.type.name,
             renderParamType(namedParam.type),
             namedParam.defaultValue,
             getText(namedParam)
