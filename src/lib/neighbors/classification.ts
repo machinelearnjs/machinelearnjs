@@ -1,7 +1,7 @@
-import { map, uniqBy, isEmpty } from 'lodash';
+import { isEmpty, map, uniqBy } from 'lodash';
 import math from '../utils/MathExtra';
+import { checkArray } from '../utils/validation';
 import KDTree from './KDTree';
-import { checkArray } from "../utils/validation";
 const { euclideanDistance, manhattanDistance, isMatrixOf, isArrayOf } = math.contrib;
 const DIST_EUC = 'euclidean';
 const DIST_MAN = 'manhattan';
@@ -63,9 +63,7 @@ export class KNeighborsClassifier {
    * @param {any} X
    * @param {any} y
    */
-  public fit(
-    { X = [], y = [] }: { X: number[][], y: number[] }
-  ): void {
+  public fit({ X = [], y = [] }: { X: number[][]; y: number[] }): void {
     const xCheck = checkArray(X);
     if (!xCheck.isArray || !xCheck.multiclass || isEmpty(X)) {
       throw new Error('X must be a matrix array!');

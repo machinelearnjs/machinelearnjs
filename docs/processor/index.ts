@@ -152,23 +152,11 @@ function constructParamTable(parameters): string {
     return _.trim(blacklistCleaned);
   };
 
-	/**
-   * Transforms param type that may look something like
-   * ```
-   * "type": "array",
-	 * "elementType": {
-	 *   "type": "array",
-	 *	 "elementType": {
-	 *	   "type": "intrinsic",
-	 *			"name": "number"
-	 *	  }
-	 * }
-   * ```
-   * into
-   * number[][]
-	 * @param obj
-	 */
-  const renderParamType = (obj) => {
+  /**
+   * Transforms param types, for example number[] or number[][]
+   * @param obj
+   */
+  const renderParamType = obj => {
     if (obj.type === consts.paramTypeArray) {
       // Handling arrays
       const traverseArrayDefinition = (arrayTree, result = '') => {
@@ -176,18 +164,19 @@ function constructParamTable(parameters): string {
         const element = arrayTree.elementType;
         const elementName = element.name;
         const elementType = element.type;
+        // tslint:disable-next-line
         result = result + '[]';
         if (consts.paramTypeArray === elementType) {
           return traverseArrayDefinition(element, result);
         }
         return `${elementName}${result}`;
-      }
+      };
       return traverseArrayDefinition(obj);
     } else {
       // Handling anything other than arrays
       return obj.type.name;
     }
-  }
+  };
 
   // Going through the method level params
   // e.g. test(a: {}, b: number, c: string)

@@ -60,6 +60,7 @@ describe('classification:KNeighborsClassifier', () => {
     const expected = 'X must be a matrix array!';
     const knn = new KNeighborsClassifier();
     expect(() => {
+      // tslint:disable-next-line
       knn.fit({ X: [1], y: [2] });
     }).toThrow(expected);
   });
@@ -68,8 +69,8 @@ describe('classification:KNeighborsClassifier', () => {
     const expected = 'y must be a vector array!';
     const knn = new KNeighborsClassifier();
     expect(() => {
+      // tslint:disable-next-line
       knn.fit({ X: [[1], [2]], y: 123 });
     }).toThrow(expected);
   });
-
 });
