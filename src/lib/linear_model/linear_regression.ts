@@ -37,7 +37,7 @@ export class LinearRegression {
    * @param {any} X - training values
    * @param {any} y - target values
    */
-  public fit({ X, y }: { X: number[]; y: number[] }): void {
+  public fit({ X = [], y = [] }: { X: number[]; y: number[] }): void {
     if (!Array.isArray(X) || !Array.isArray(y)) {
       throw new Error('X and y must be arrays');
     }
@@ -51,10 +51,10 @@ export class LinearRegression {
 
   /**
    * Predict using the linear model
-   * @param {number} X
+   * @param {number} X - Values to predict.
    * @returns {number}
    */
-  public predict(X: number[]): number[] {
+  public predict(X: number[] = []): number[] {
     const preds = [];
     for (let i = 0; i < size(X); i++) {
       preds.push(this.b0 + this.b1 * X[i]);
