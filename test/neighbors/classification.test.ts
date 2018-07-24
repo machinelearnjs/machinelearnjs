@@ -55,4 +55,21 @@ describe('classification:KNeighborsClassifier', () => {
       knn.predict([[1, 'a', 4], [0], [9, 5]]);
     }).toThrow(expected);
   });
+
+  it('should throw an error if X is not a matrix', () => {
+    const expected = 'X must be a matrix array!';
+    const knn = new KNeighborsClassifier();
+    expect(() => {
+      knn.fit({ X: [1], y: [2] });
+    }).toThrow(expected);
+  });
+
+  it('should throw an error if y is not a vector', () => {
+    const expected = 'y must be a vector array!';
+    const knn = new KNeighborsClassifier();
+    expect(() => {
+      knn.fit({ X: [[1], [2]], y: 123 });
+    }).toThrow(expected);
+  });
+
 });

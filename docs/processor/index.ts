@@ -152,6 +152,43 @@ function constructParamTable(parameters): string {
     return _.trim(blacklistCleaned);
   };
 
+	/**
+   * Transforms param type that may look something like
+   * ```
+   * "type": "array",
+	 * "elementType": {
+	 *   "type": "array",
+	 *	 "elementType": {
+	 *	   "type": "intrinsic",
+	 *			"name": "number"
+	 *	  }
+	 * }
+   * ```
+   * into
+   * number[][]
+	 * @param obj
+	 */
+  const renderParamType = (obj) => {
+    if (obj.type === consts.paramTypeArray) {
+      // Handling arrays
+      const traverseArrayDefinition = (arrayTree, result = '') => {
+        // const type = arrayTree.type;
+        const element = arrayTree.elementType;
+        const elementName = element.name;
+        const elementType = element.type;
+        result = result + '[]';
+        if (consts.paramTypeArray === elementType) {
+          return traverseArrayDefinition(element, result);
+        }
+        return `${elementName}${result}`;
+      }
+      return traverseArrayDefinition(obj);
+    } else {
+      // Handling anything other than arrays
+      return obj.type.name;
+    }
+  }
+
   // Going through the method level params
   // e.g. test(a: {}, b: number, c: string)
   // a -> b -> c
@@ -164,8 +201,9 @@ function constructParamTable(parameters): string {
         // e.g. x: { test1, test2 }
         _.forEach(param.type.declaration.children, namedParam => {
           sum.push([
-            `${param.name}.${namedParam.name}`,
-            namedParam.type.name,
+            `options.${namedParam.name}`,
+            // namedParam.type.name,
+            renderParamType(namedParam.type),
             namedParam.defaultValue,
             getText(namedParam)
           ]);
