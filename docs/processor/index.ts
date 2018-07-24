@@ -174,7 +174,7 @@ function constructParamTable(parameters): string {
       return traverseArrayDefinition(obj);
     } else {
       // Handling anything other than arrays
-      return obj.type.name;
+      return obj.name;
     }
   };
 
@@ -199,17 +199,17 @@ function constructParamTable(parameters): string {
       } else if (consts.paramTypeIntrinsic === paramType) {
         //  2. Handle any intrintic params
         // e.g. x: number
-        sum.push([param.name, param.type.name, param.defaultValue, getText(param)]);
+        sum.push([param.name, renderParamType(param.type), param.defaultValue, getText(param)]);
       } else if (consts.paramTypeArray === paramType) {
         // 3. Handle any array params
         // e.g. string[]
-        sum.push([param.name, param.type.name, param.defaultValue, getText(param)]);
+        sum.push([param.name, renderParamType(param.type), param.defaultValue, getText(param)]);
       } else if (consts.paramTypeReference === paramType) {
         // 4. Handle any Interface params
         // e.g. x: Options
         const foundRef = searchInterface(docsJson, param.type.id);
         _.forEach(foundRef.children, prop => {
-          sum.push([`${param.name}.${prop.name}`, prop.type.name, prop.defaultValue, getText(prop)]);
+          sum.push([`${param.name}.${prop.name}`, renderParamType(prop.type), prop.defaultValue, getText(prop)]);
         });
       }
       return sum;

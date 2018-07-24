@@ -7,21 +7,6 @@ const DIST_EUC = 'euclidean';
 const DIST_MAN = 'manhattan';
 const TYPE_KD = 'kdtree';
 
-export interface KNNClassifierOptions {
-  /**
-   * Choice of distance function, should choose between euclidean | manhattan
-   */
-  distance: string;
-  /**
-   * Number of neighbors to classify
-   */
-  k: number;
-  /**
-   * Type of algorithm to use, choose between kdtree(default) | balltree | simple
-   */
-  type: string;
-}
-
 /**
  * Classifier implementing the k-nearest neighbors vote.
  *
@@ -39,13 +24,27 @@ export class KNeighborsClassifier {
   private classes = null;
   private distance = null;
 
+  /**
+   * @param {string} distance - Choice of distance function, should choose between euclidean | manhattan
+   * @param {number} k - Number of neighbors to classify
+   * @param {string} type - Type of algorithm to use, choose between kdtree(default) | balltree | simple
+   */
   constructor(
-    options: KNNClassifierOptions = {
-      distance: DIST_EUC,
-      k: 0,
-      type: TYPE_KD
-    }
+    {
+      distance = DIST_EUC,
+      k = 0,
+      type = TYPE_KD
+    }: {
+      distance: string;
+      k: number;
+      type: string;
+    } = null
   ) {
+    const options = {
+      distance,
+      k,
+      type
+    };
     // Handling distance
     if (options.distance === DIST_EUC) {
       this.distance = euclideanDistance;
@@ -60,8 +59,8 @@ export class KNeighborsClassifier {
 
   /**
    * Train the classifier with input and output data
-   * @param {any} X
-   * @param {any} y
+   * @param {any} X - Training data.
+   * @param {any} y - Target data.
    */
   public fit({ X = [], y = [] }: { X: number[][]; y: number[] }): void {
     const xCheck = checkArray(X);
@@ -113,10 +112,10 @@ export class KNeighborsClassifier {
 
   /**
    * Predict single value from a list of data
-   * @param {Array} X
+   * @param {Array} X - Prediction data.
    * @returns number
    */
-  public predict(X): any {
+  public predict(X: number[] = []): any {
     if (isArrayOf(X, 'number')) {
       return this.getSinglePred(X);
     } else if (isMatrixOf(X, 'number')) {
