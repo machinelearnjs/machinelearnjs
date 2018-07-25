@@ -1,10 +1,10 @@
 {
   "name": "kalimdor",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "description": "Machine Learning library for the web and Node",
   "main": "index.js",
   "typings": "index.d.ts",
-  "module": "build/module/index.js",
+  "module": "build/lib/module/index.js",
   "repository": {
     "type": "git",
     "url": "https://github.com/JasonShin/kalimdorjs"
@@ -12,105 +12,88 @@
   "license": "MIT",
   "keywords": [
     "Machine Learning",
+    "Javascript",
     "Typescript",
     "RandomForest",
     "ensemble",
     "statistics",
     "feature extration",
     "datasets",
-    "preprocessing"
+    "preprocessing",
+    "Decision Tree",
+    "SVM",
+    "KMeans",
+    "KNearestNeighbor",
+    "decomposition",
+    "PCA",
+    "accuracy score",
+    "confusion matrix",
+    "train test split",
+    "KFold",
+    "Imputation",
+    "Binarizer",
+    "OneHotEncoding"
   ],
   "scripts": {
-    "info": "npm-scripts-info",
-    "build": "run-s clean && run-p build:*",
-    "build:main": "tsc -p tsconfig.json",
-    "build:module": "tsc -p tsconfig.module.json",
+    "build": "yarn clean && yarn build:main && yarn build:module && yarn build:web",
+    "build:main": "npx tsc -p tsconfig.json && npx copy package.json ./build/lib && npx copy README.md ./build/lib && npx copy .npmignore ./build/lib",
+    "build:module": "npx tsc -p tsconfig.module.json",
+    "build:web": "npx tsc -p tsconfig.json --module amd --out build/lib/kalimdor.web.js",
     "fix": "npx prettier \"src/**/*.ts\" \"test/**/*.ts\" \"docs/**/*.ts\" --config ./.prettierrc --write",
     "test": "yarn build && yarn test:lint && yarn test:unit && yarn test:integration && yarn test:nsp && yarn doc",
     "test:lint": "npx tslint --force -t verbose 'test/**/*.ts' 'src/**/*.ts' 'docs/**/*.ts'",
     "test:unit": "npx jest --testPathIgnorePatterns \"./test/integration/require.test.ts\"",
     "test:integration": "./scripts/test-integration.sh",
-    "test:require": "npx jest -t \"integration:require\"",
     "test:nsp": "nsp check",
     "watch": "./scripts/tmux-start.sh",
     "watch:build": "yarn build:main -- -w",
     "watch:unit": "yarn test:unit --watch",
     "watch:lint": "watch \" npx tslint --force -t verbose 'test/**/*.ts' 'src/**/*.ts'\" src",
-    "cov": "run-s build test:unit cov:html && opn coverage/index.html",
-    "cov:html": "nyc report --reporter=html",
-    "cov:send": "nyc report --reporter=lcov > coverage.lcov && codecov",
-    "cov:check": "nyc report && nyc check-coverage --lines 100 --functions 100 --branches 100",
-    "doc": "rm -rf docs/md_out && yarn doc:json && tsc ./docs/processor/index.ts && node ./docs/processor",
+    "doc": "rm -rf docs/md_out && yarn doc:json && npx tsc ./docs/processor/index.ts && node ./docs/processor",
     "doc:build": "yarn doc && cd docs/md_out && npx vuepress build",
     "doc:md": "rm -rf docs/md_out && tsc ./docs/processor/index.ts && node ./docs/processor",
     "doc:json": "npx typedoc --json docs/docs.json --tsconfig tdconfig.json --excludePrivate",
-    "doc:publish": "gh-pages -m \"[ci skip] Updates\" -d build/docs",
-    "version": "standard-version",
-    "reset": "git clean -dfx && git reset --hard && npm i",
-    "clean": "trash build",
-    "all": "run-s reset test cov:check doc:html",
-    "prepare-release": "run-s all version doc:publish"
-  },
-  "//": {
-    "doc:md": "rm -rf docs/md_base && npx typedoc --out docs/md_base --theme markdown --tsconfig tdconfig.json --excludePrivate",
-    "preinstall": "node -e \"if(process.env.npm_execpath.indexOf('yarn') === -1) throw new Warning('It is recommended to install Kalimdorjs with Yarn: https://yarnpkg.com/')\""
-  },
-  "scripts-info": {
-    "info": "Display information about the package scripts",
-    "build": "Clean and rebuild the project",
-    "fix": "Try to automatically fix any linting problems",
-    "test": "Lint and unit test the project",
-    "watch": "Watch and rebuild the project on save, then rerun relevant tests",
-    "cov": "Rebuild, run tests, then create and open the coverage report",
-    "doc": "Generate HTML API documentation and open it in a browser",
-    "doc:json": "Generate API documentation in typedoc JSON format",
-    "version": "Bump package.json version, update CHANGELOG.md, tag release",
-    "reset": "Delete all untracked files and reset the repo to the last commit",
-    "prepare-release": "One-step: clean, build, test, publish docs, and prep a release"
+    "clean": "rm -rf build",
+    "release:major": "./scripts/releases/release-it.sh -v major",
+    "release:minor": "./scripts/releases/release-it.sh -v minor",
+    "release:patch": "./scripts/releases/release-it.sh -v patch"
   },
   "engines": {
-    "node": ">=8.9"
+    "node": ">=6"
   },
   "dependencies": {
+    "libsvm-js": "^0.2.0",
+    "lodash": "^4.17.10",
+    "mathjs": "^4.2.1",
+    "numeric": "^1.2.6",
+    "random-js": "^1.0.8",
+    "stopword": "^0.1.10"
+  },
+  "devDependencies": {
     "@types/es6-promise": "^3.3.0",
     "@types/jest": "^22.2.3",
     "@types/lodash": "^4.14.108",
     "@types/mathjs": "^3.20.0",
     "@types/node": "8.9.4",
     "@types/random-js": "^1.0.30",
-    "jest": "^22.4.3",
-    "libsvm-js": "^0.2.0",
-    "lodash": "^4.17.10",
-    "mathjs": "^4.2.1",
-    "numeric": "^1.2.6",
-    "random-js": "^1.0.8",
-    "sha.js": "^2.4.10",
-    "stopword": "^0.1.10",
-    "ts-jest": "^22.4.5",
-    "vuepress": "^0.12.0",
-    "watch": "^1.0.2"
-  },
-  "devDependencies": {
-    "ava": "^1.0.0-beta.3",
-    "codecov": "^3.0.0",
-    "cz-conventional-changelog": "^2.1.0",
+    "copy": "^0.3.2",
     "fs-extra": "^7.0.0",
-    "gh-pages": "^1.0.0",
     "handlebars": "^4.0.11",
+    "jest": "^22.4.3",
     "npm-run-all": "^4.1.2",
-    "npm-scripts-info": "^0.3.6",
     "nsp": "^3.2.1",
-    "nyc": "^11.5.0",
-    "opn-cli": "^3.1.0",
     "prettier": "^1.10.2",
+    "release-it": "^7.4.8",
     "standard-version": "^4.0.0",
-    "trash-cli": "^1.4.0",
+    "ts-jest": "^22.4.5",
     "tslint": "^5.4.3",
     "tslint-config-prettier": "^1.8.0",
     "tslint-immutable": "^4.5.1",
     "typedoc": "^0.11.1",
     "typedoc-plugin-markdown": "^1.1.13",
-    "typescript": "^2.4.1"
+    "typescript": "^2.4.1",
+    "vuepress": "^0.12.0",
+    "watch": "^1.0.2"
   },
   "jest": {
     "moduleFileExtensions": [
@@ -125,20 +108,6 @@
     "verbose": true,
     "testEnvironment": "node"
   },
-  "ava": {
-    "failFast": true,
-    "files": [
-      "build/main/**/*.spec.js"
-    ],
-    "sources": [
-      "build/main/**/*.js"
-    ]
-  },
-  "config": {
-    "commitizen": {
-      "path": "cz-conventional-changelog"
-    }
-  },
   "greenkeeper": {
     "ignore": [
       "@types/node"
@@ -146,10 +115,5 @@
   },
   "prettier": {
     "singleQuote": true
-  },
-  "nyc": {
-    "exclude": [
-      "**/*.spec.js"
-    ]
   }
 }

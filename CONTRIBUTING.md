@@ -26,6 +26,47 @@ Please refer to each project's style guidelines and guidelines for submitting pa
 
 NOTE: Be sure to merge the latest from "upstream" before making a pull request!
 
+Releasing
+---------
+
+Releases will be done using scripts allocated under `scripts/relesases`. To create a new release, you will need
+[docker](https://docs.docker.com/install/) available on your computer.
+
+#### Making a release
+
+1. Updating the changelog
+
+Changelog is designed to record all the major changes that are happening in the current
+patch/minor/major release. You must manually update the changelog before running the release script.
+
+2. Run the release-it.sh script
+
+```bash
+# For patch
+$ ./scripts/releases/release-it.sh -v patch
+
+# For minor
+$ ./scripts/releases/release-it.sh -v minor
+
+# For major
+$ ./scripts/releases/release-it.sh -v major
+```
+
+Running the script will result in following:
+- Incrementing the project version according to the specified `-v`
+- Creating a release commit to the `master` branch
+- Creating a Github Release
+- Publishing to NPM with a new version
+
+3. Update the changelog on the Github release, which can be found at [https://github.com/JasonShin/kalimdorjs/releases](https://github.com/JasonShin/kalimdorjs/releases)
+
+#### Disaster recovery
+
+1. Reversing an accidental release
+
+- Goto https://github.com/jasonshin/kalimdorjs and delete mistakenly created release
+- Unpublish the NPM module by running `npm unpublish kalimdor@<version>`
+
 Copyright and Licensing
 -----------------------
 

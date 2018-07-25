@@ -1,0 +1,87 @@
+{
+  "non-interactive": true,
+  "dry-run": false,
+  "verbose": true,
+  "force": false,
+  "pkgFiles": ["package.json"],
+  "preReleaseId": null,
+  "buildCommand": "yarn build",
+  "safeBump": true,
+  "beforeChangelogCommand": false,
+  "changelogCommand": false,
+  "requireCleanWorkingDir": true,
+  "requireUpstream": true,
+  "src": {
+    "commit": true,
+    "commitMessage": "Release %s",
+    "commitArgs": "",
+    "tag": true,
+    "tagName": "%s",
+    "tagAnnotation": "Release %s",
+    "push": true,
+    "pushArgs": "",
+    "pushRepo": null,
+    "beforeStartCommand": false,
+    "afterReleaseCommand": false,
+    "addUntrackedFiles": false
+  },
+  "npm": {
+    "publish": true,
+    "publishPath": "./build/lib",
+    "tag": "latest",
+    "private": false,
+    "access": null
+  },
+  "github": {
+    "release": true,
+    "releaseName": "Release %s",
+    "preRelease": false,
+    "draft": false,
+    "tokenRef": "GITHUB_TOKEN",
+    "assets": null,
+	"host": null,
+	"timeout": 0
+  },
+  "dist": {
+    "repo": false,
+    "stageDir": ".stage",
+    "baseDir": "dist",
+    "files": ["**/*"],
+    "pkgFiles": null,
+    "commit": false,
+    "commitMessage": "Release %s",
+    "commitArgs": "",
+    "tag": false,
+    "tagName": "%s",
+    "tagAnnotation": "Release %s",
+    "push": false,
+    "pushArgs": "",
+    "beforeStageCommand": false,
+    "afterReleaseCommand": false,
+    "addUntrackedFiles": false,
+    "github": {
+      "release": false
+    },
+    "npm": {
+      "publish": false
+    }
+  },
+  "prompt": {
+    "src": {
+      "status": false,
+      "commit": true,
+      "tag": true,
+      "push": true,
+      "release": true,
+      "publish": true
+    },
+    "dist": {
+      "status": false,
+      "commit": true,
+      "tag": false,
+      "push": true,
+      "release": false,
+      "publish": false
+    }
+  }
+}

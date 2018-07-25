@@ -39,23 +39,15 @@ to assist new contributors to easily join the project.
 - You want to learn Machine Learning
 - You like Typescript :heart: Machine Learning
 
-# Learning
+# Simplicity
 
-Kalimdor.js enables the end users to fully understand how each Machine Learning
-algorithm work by providing comprehensible learning API and documentations
+Kalimdor.js provides a simple and consistent set of APIs to interact with the models and algorithms. 
+For example, all models have follow APIs:
 
-### What is Learning API?
-
-```typescript
-
-import { RandomForestClassifer } from 'kalimdor/RandomForestClassifer';
-
-// Prints logs to teach you how the algorithm work
-RandomForestClassifer.learn({
-  dataset: 'iris'
-})
-
-```
+- `fit` for training
+- `predict` for inferencing
+- `toJSON` for saving the model's state
+- `fromJSON` for loading the model from the checkpoint
 
 # Testing
 
@@ -65,6 +57,18 @@ Testing ensures you that you are currently using the most stable version of Kali
 $ npm run test
 ```
 
+# Supporting
+
+Simply give us a :star2: by clicking on <img width="45" src="https://i.imgur.com/JEOaKBk.png">
+
 # Contributing
 
 We simply follow "fork-and-pull" workflow of Github. Please read CONTRIBUTING.md for more detail.
+
+# Further notice
+
+Great references that helped building this project!
+
+- https://machinelearningmastery.com/
+- https://github.com/mljs/ml
+- http://scikit-learn.org/stable/documentation.html
