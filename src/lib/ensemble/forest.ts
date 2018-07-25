@@ -46,7 +46,7 @@ export class RandomForestClassifier {
    * @param {Array} y - array-like, shape = [n_samples] or [n_samples, n_outputs]
    * @returns void
    */
-  public fit({ X = [], y = [] }: { X: number[]; y: number[] }): void {
+  public fit({ X = [], y = [] }: { X: number[][]; y: number[] }): void {
     this.trees = _.reduce(
       _.range(0, this.nEstimator),
       sum => {
@@ -69,7 +69,7 @@ export class RandomForestClassifier {
    * @param {Array} X - array-like or sparse matrix of shape = [n_samples]
    * @returns {string[]}
    */
-  public predict(X: number[] = []): any[] {
+  public predict(X: number[] | number[][] = []): any[] {
     const predictions = _.map(this.trees, tree => {
       return tree.predict({ X });
     });

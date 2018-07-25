@@ -10,6 +10,7 @@ export const paramTypeReflection = 'reflection';
 export const paramTypeIntrinsic = 'intrinsic';
 export const paramTypeArray = 'array';
 export const paramTypeReference = 'reference';
+export const paramTypeUnion = 'union';
 
 // Return type
 export const returnTypeIntrinsic = 'intrinsic';

@@ -401,8 +401,8 @@ export class Binarizer {
       threshold = 0,
     }: {
       // Param types
-      copy: boolean;
-      threshold: number;
+      copy?: boolean;
+      threshold?: number;
     } = {
       // Default value on empty constructor
       copy: true,
