@@ -22,13 +22,13 @@ export class Imputer {
   private copy: boolean;
   private means: number[];
 
-	/**
+  /**
    *
-	 * @param {any} missingValues - Target missing value to impute
-	 * @param {any} strategy - Missing value replacement strategy
-	 * @param {any} axis - Direction to impute
-	 * @param {any} copy - To clone the input value
-	 */
+   * @param {any} missingValues - Target missing value to impute
+   * @param {any} strategy - Missing value replacement strategy
+   * @param {any} axis - Direction to impute
+   * @param {any} copy - To clone the input value
+   */
   constructor({
     missingValues = null,
     strategy = 'mean',

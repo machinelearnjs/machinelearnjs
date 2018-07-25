@@ -389,24 +389,24 @@ export class Binarizer {
   private threshold: number;
   private copy: boolean;
 
-	/**
+  /**
    *
-	 * @param {number} threshold - Feature values below or equal to this are replaced by 0, above it by 1.
-	 * @param {boolean} copy - Flag to clone the input value.
-	 */
+   * @param {number} threshold - Feature values below or equal to this are replaced by 0, above it by 1.
+   * @param {boolean} copy - Flag to clone the input value.
+   */
   constructor(
     {
       // Each object param default value
-      threshold = 0,
       copy = true,
+      threshold = 0,
     }: {
       // Param types
-      threshold: number,
-      copy: boolean
+      copy: boolean;
+      threshold: number;
     } = {
       // Default value on empty constructor
-      threshold: 0,
       copy: true,
+      threshold: 0,
     }
   ) {
     this.threshold = threshold;

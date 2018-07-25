@@ -108,6 +108,25 @@ function isSignatureValid(context, options): any {
 }
 
 /**
+ * Traverses a definition for an Array and returns a string representation
+ * @param arrayTree
+ * @param {string} result
+ * @returns {any}
+ */
+function traverseArrayDefinition(arrayTree, result = ''): string {
+  // const type = arrayTree.type;
+  const element = arrayTree.elementType;
+  const elementName = element.name;
+  const elementType = element.type;
+  // tslint:disable-next-line
+  result = result + '[]';
+  if (consts.paramTypeArray === elementType) {
+    return traverseArrayDefinition(element, result);
+  }
+  return `${elementName}${result}`;
+}
+
+/**
  * Constructs a parameter table that may look something like:
  * | Param | Type | Default | Description |
  * | ------ | ------ | ------ | ------ |
@@ -159,18 +178,6 @@ function constructParamTable(parameters): string {
   const renderParamType = obj => {
     if (obj.type === consts.paramTypeArray) {
       // Handling arrays
-      const traverseArrayDefinition = (arrayTree, result = '') => {
-        // const type = arrayTree.type;
-        const element = arrayTree.elementType;
-        const elementName = element.name;
-        const elementType = element.type;
-        // tslint:disable-next-line
-        result = result + '[]';
-        if (consts.paramTypeArray === elementType) {
-          return traverseArrayDefinition(element, result);
-        }
-        return `${elementName}${result}`;
-      };
       return traverseArrayDefinition(obj);
     } else {
       // Handling anything other than arrays
@@ -241,7 +248,7 @@ function renderMethodReturnType(type): string {
   if (type.type === consts.returnTypeIntrinsic) {
     return type.name;
   } else if (type.type === consts.returnTypeArray) {
-    return `${type.elementType.name}[]`;
+    return traverseArrayDefinition(type);
   }
 }
 
@@ -324,7 +331,7 @@ Handlebars.registerHelper('getSourceLink', sources => renderSourceLink(sources))
 
 Handlebars.registerHelper('newLine', renderNewLine);
 
-Handlebars.registerHelper('cleanHyperLink', (str) => cleanHyperLink(str));
+Handlebars.registerHelper('cleanHyperLink', str => cleanHyperLink(str));
 
 // Processors
 const apiProcessor = new APIProcessor();
