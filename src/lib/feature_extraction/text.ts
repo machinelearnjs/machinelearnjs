@@ -30,7 +30,7 @@ export class CountVectorizer {
    * @param {string[]} doc - An array of strings
    * @returns {CountVectorizer}
    */
-  public fit(doc: string[]): this {
+  public fit(doc: string[] = []): this {
     this.fit_transform(doc);
     return this;
   }
@@ -40,7 +40,7 @@ export class CountVectorizer {
    * @param {string[]} doc - An array of strings
    * @returns {number[][]}
    */
-  public fit_transform(doc: string[]): number[][] {
+  public fit_transform(doc: string[] = []): number[][] {
     // Automatically assig
     const { internalVocabulary, pubVocabulary } = this.buildVocabulary(doc);
     this.vocabulary = pubVocabulary;
@@ -55,7 +55,7 @@ export class CountVectorizer {
    * @param {string[]} doc - An array of strings
    * @returns {number[][]}
    */
-  public transform(doc: string[]): number[][] {
+  public transform(doc: string[] = []): number[][] {
     return this.countVocab(doc);
   }
 

@@ -23,18 +23,21 @@ export class RandomForestClassifier {
 
   /**
    *
-   * @param {{nEstimator: number}} props
+   * @param {number} nEstimator - Number of trees.
    */
   constructor(
-    props: {
-      /** test estimator type! */
+    {
+      // Each object param default value
+      nEstimator = 10
+    }: {
+      // Param types
       nEstimator: number;
     } = {
-      /** test estimator default! */
+      // Default value on empty constructor
       nEstimator: 10
     }
   ) {
-    this.nEstimator = props.nEstimator;
+    this.nEstimator = nEstimator;
   }
 
   /**
@@ -43,7 +46,7 @@ export class RandomForestClassifier {
    * @param {Array} y - array-like, shape = [n_samples] or [n_samples, n_outputs]
    * @returns void
    */
-  public fit({ X, y }): void {
+  public fit({ X = [], y = [] }: { X: number[][]; y: number[] }): void {
     this.trees = _.reduce(
       _.range(0, this.nEstimator),
       sum => {
@@ -66,7 +69,7 @@ export class RandomForestClassifier {
    * @param {Array} X - array-like or sparse matrix of shape = [n_samples]
    * @returns {string[]}
    */
-  public predict(X): any[] {
+  public predict(X: number[] | number[][] = []): any[] {
     const predictions = _.map(this.trees, tree => {
       return tree.predict({ X });
     });

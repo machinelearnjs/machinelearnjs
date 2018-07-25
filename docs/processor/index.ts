@@ -108,6 +108,25 @@ function isSignatureValid(context, options): any {
 }
 
 /**
+ * Traverses a definition for an Array and returns a string representation
+ * @param arrayTree
+ * @param {string} result
+ * @returns {any}
+ */
+function traverseArrayDefinition(arrayTree, result = ''): string {
+  // const type = arrayTree.type;
+  const element = arrayTree.elementType;
+  const elementName = element.name;
+  const elementType = element.type;
+  // tslint:disable-next-line
+  result = result + '[]';
+  if (consts.paramTypeArray === elementType) {
+    return traverseArrayDefinition(element, result);
+  }
+  return `${elementName}${result}`;
+}
+
+/**
  * Constructs a parameter table that may look something like:
  * | Param | Type | Default | Description |
  * | ------ | ------ | ------ | ------ |
@@ -152,6 +171,20 @@ function constructParamTable(parameters): string {
     return _.trim(blacklistCleaned);
   };
 
+  /**
+   * Transforms param types, for example number[] or number[][]
+   * @param obj
+   */
+  const renderParamType = obj => {
+    if (obj.type === consts.paramTypeArray) {
+      // Handling arrays
+      return traverseArrayDefinition(obj);
+    } else {
+      // Handling anything other than arrays
+      return obj.name;
+    }
+  };
+
   // Going through the method level params
   // e.g. test(a: {}, b: number, c: string)
   // a -> b -> c
@@ -164,8 +197,8 @@ function constructParamTable(parameters): string {
         // e.g. x: { test1, test2 }
         _.forEach(param.type.declaration.children, namedParam => {
           sum.push([
-            `${param.name}.${namedParam.name}`,
-            namedParam.type.name,
+            `options.${namedParam.name}`,
+            renderParamType(namedParam.type),
             namedParam.defaultValue,
             getText(namedParam)
           ]);
@@ -173,18 +206,27 @@ function constructParamTable(parameters): string {
       } else if (consts.paramTypeIntrinsic === paramType) {
         //  2. Handle any intrintic params
         // e.g. x: number
-        sum.push([param.name, param.type.name, param.defaultValue, getText(param)]);
+        sum.push([param.name, renderParamType(param.type), param.defaultValue, getText(param)]);
       } else if (consts.paramTypeArray === paramType) {
         // 3. Handle any array params
         // e.g. string[]
-        sum.push([param.name, param.type.name, param.defaultValue, getText(param)]);
+        sum.push([param.name, renderParamType(param.type), param.defaultValue, getText(param)]);
       } else if (consts.paramTypeReference === paramType) {
         // 4. Handle any Interface params
         // e.g. x: Options
         const foundRef = searchInterface(docsJson, param.type.id);
         _.forEach(foundRef.children, prop => {
-          sum.push([`${param.name}.${prop.name}`, prop.type.name, prop.defaultValue, getText(prop)]);
+          sum.push([`${param.name}.${prop.name}`, renderParamType(prop.type), prop.defaultValue, getText(prop)]);
         });
+      } else if (consts.paramTypeUnion === paramType) {
+      	// 5. Handles any union types.
+        // e.g. string[] | string[][]
+        const unionTypes = _.map(
+          param.type.types,
+          (singleType) => renderParamType(singleType)
+        );
+        const unionTypesStr = unionTypes.join(' or ');
+        sum.push([param.name, unionTypesStr, param.defaultValue, getText(param)]);
       }
       return sum;
     },
@@ -215,7 +257,7 @@ function renderMethodReturnType(type): string {
   if (type.type === consts.returnTypeIntrinsic) {
     return type.name;
   } else if (type.type === consts.returnTypeArray) {
-    return `${type.elementType.name}[]`;
+    return traverseArrayDefinition(type);
   }
 }
 
@@ -254,6 +296,20 @@ function renderNewLine(): string {
   return '\n';
 }
 
+/**
+ * Clean the string for hyperlink usage
+ * @param {string} str
+ * @returns {string}
+ */
+function cleanHyperLink(str: string): string {
+  // 1. Cloning the original str
+  let newStr = _.clone(str);
+  // 2. Replacing the known strings
+  newStr = _.replace(newStr, '_', '-');
+  // 3. apply lowercase transformation
+  return newStr.toLowerCase();
+}
+
 Handlebars.registerHelper('ifEquals', (children, x, y, options) => ifEquals(children, x, y, options));
 
 Handlebars.registerHelper('isSignatureValid', (context, options) => isSignatureValid(context, options));
@@ -283,6 +339,8 @@ Handlebars.registerHelper('methodBracket', parameters => renderMethodBracket(par
 Handlebars.registerHelper('getSourceLink', sources => renderSourceLink(sources));
 
 Handlebars.registerHelper('newLine', renderNewLine);
+
+Handlebars.registerHelper('cleanHyperLink', str => cleanHyperLink(str));
 
 // Processors
 const apiProcessor = new APIProcessor();

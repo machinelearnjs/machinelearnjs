@@ -22,6 +22,13 @@ export class Imputer {
   private copy: boolean;
   private means: number[];
 
+  /**
+   *
+   * @param {any} missingValues - Target missing value to impute
+   * @param {any} strategy - Missing value replacement strategy
+   * @param {any} axis - Direction to impute
+   * @param {any} copy - To clone the input value
+   */
   constructor({
     missingValues = null,
     strategy = 'mean',
@@ -41,7 +48,7 @@ export class Imputer {
    * Fit the imputer on X.
    * @param {any[]} X - Input data in array or sparse matrix format
    */
-  public fit(X): void {
+  public fit(X: any[] = []): void {
     const _X = this.copy ? _.clone(X) : X;
     const check = checkArray(_X);
     if (!check.isArray) {
@@ -69,7 +76,7 @@ export class Imputer {
    * @param {any[]} X - Input data in array or sparse matrix format
    * @returns {any[]}
    */
-  public fit_transform(X: any[]): any[] {
+  public fit_transform(X: any[] = []): any[] {
     const _X: any[] = _.clone(X);
     if (this.strategy === 'mean' && this.axis === 0) {
       // Mean column direction transform

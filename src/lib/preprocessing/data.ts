@@ -389,16 +389,35 @@ export class Binarizer {
   private threshold: number;
   private copy: boolean;
 
-  constructor({ threshold = 0, copy = true }) {
+  /**
+   *
+   * @param {number} threshold - Feature values below or equal to this are replaced by 0, above it by 1.
+   * @param {boolean} copy - Flag to clone the input value.
+   */
+  constructor(
+    {
+      // Each object param default value
+      copy = true,
+      threshold = 0,
+    }: {
+      // Param types
+      copy?: boolean;
+      threshold?: number;
+    } = {
+      // Default value on empty constructor
+      copy: true,
+      threshold: 0,
+    }
+  ) {
     this.threshold = threshold;
     this.copy = copy;
   }
 
   /**
    * Currently fit does nothing
-   * @param {any[]} X
+   * @param {any[]} X - Does nothing
    */
-  public fit(X: any[]): void {
+  public fit(X: any[] = []): void {
     if (_.isEmpty(X)) {
       throw new Error('X cannot be null');
     }
@@ -414,9 +433,9 @@ export class Binarizer {
    * array([[ 1.,  0.,  1.],
    *    [ 1.,  0.,  0.],
    *    [ 0.,  1.,  0.]])
-   * @param {any[]} X
+   * @param {any[]} X - The data to binarize.
    */
-  public transform(X: any[]): any[] {
+  public transform(X: any[] = []): any[] {
     let _X = null;
     if (this.copy) {
       _X = _.clone(X);

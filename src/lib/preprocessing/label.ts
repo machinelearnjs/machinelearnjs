@@ -18,7 +18,7 @@ export class LabelEncoder {
 
   /**
    * Fit label encoder
-   * @param {any[]} X
+   * @param {any[]} X - Input data in array or matrix
    */
   public fit(X: any[] = null): void {
     if (_.isEmpty(X)) {
@@ -35,9 +35,9 @@ export class LabelEncoder {
    * It transforms ["tokyo", "tokyo", "paris"]
    *
    * Into [2, 2, 1]
-   * @param X
+   * @param X - Input data to transform according to the fitted state
    */
-  public transform(X): any[] {
+  public transform(X: any[] = []): any[] {
     return _.map(X, item => {
       return _.findIndex(this.classes, cur => cur === item);
     });
