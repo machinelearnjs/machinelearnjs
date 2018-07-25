@@ -44,6 +44,6 @@ describe('Imputer', () => {
     // undefined
     expect(() => {
       new Imputer({ missingValues: null, axis: 0 }).fit(undefined);
-    }).toThrow('X is not an array!');
+    }).toThrow('Invalid input array of size 0!');
   });
 });
