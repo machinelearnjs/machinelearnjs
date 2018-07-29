@@ -125,6 +125,34 @@ export class BaseSVM {
   }
 
   /**
+   * Saves the current SVM as a JSON object
+   * @returns {{svm: any; type: Type; options: SVMOptions}}
+   */
+  public toJSON(): { svm: any; type: Type; options: SVMOptions } {
+    return {
+      svm: this.svm,
+      type: this.type,
+      options: this.options
+    };
+  }
+
+  /**
+   * Restores the model from a JSON checkpoint
+   * @param {any} svm
+   * @param {any} type
+   * @param {any} options
+   */
+  public fromJSON({ svm = null, type = null, options = null }): void {
+    if (!svm || !type || !options) {
+      throw new Error('You must provide svm, type and options to restore the model');
+    }
+
+    this.svm = svm;
+    this.type = type;
+    this.options = options;
+  }
+
+  /**
    * Load SVM object by resolving the default promise
    * @returns {Promise<any>}
    */

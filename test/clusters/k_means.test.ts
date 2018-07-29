@@ -53,4 +53,19 @@ describe('clusters:k_means', () => {
     const pred = kmean.predict({ X: predVector2 });
     expect(_.isEqual(expectedResult, pred)).toBe(true);
   });
+
+  it('should predict the same after reloading the model', () => {
+    const expectedResult = [0, 0];
+    const kmean = new KMeans({ k: 2 });
+    kmean.fit({ X: vector1 });
+    const pred1 = kmean.predict({ X: predVector2 });
+    expect(_.isEqual(expectedResult, pred1)).toBe(true);
+
+    const checkpoint = kmean.toJSON();
+
+    const kmean2 = new KMeans();
+    kmean2.fromJSON(checkpoint);
+    const pred2 = kmean.predict({ X: predVector2 });
+    expect(_.isEqual(expectedResult, pred2)).toBe(true);
+  });
 });

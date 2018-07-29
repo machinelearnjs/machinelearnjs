@@ -1,11 +1,5 @@
 import * as _ from 'lodash';
 
-export interface Options {
-  featureLabels?: null | any[];
-  verbose?: boolean;
-  randomise?: boolean;
-}
-
 /**
  * Question used by decision tree algorithm to determine whether to split branch or not
  * @ignore
@@ -117,16 +111,36 @@ export class DecisionNode {
  * decision.fit({ X, y });
  * decision2.predictOne({ row: [2, 2] }); // [ 1 ]
  */
+
+export interface Options {
+  featureLabels?: null | any[];
+  verbose?: boolean;
+  randomise?: boolean;
+}
 export class DecisionTreeClassifier {
   private featureLabels = null;
   private tree = null;
   private verbose = true;
   private randomise = false;
 
-  constructor(options: Options) {
-    this.featureLabels = _.get(options, 'featureLabels', null);
-    this.verbose = _.get(options, 'verbose', false);
-    this.randomise = _.get(options, 'randomise', false);
+  constructor(
+    {
+      featureLabels = null,
+      verbose = false,
+      randomise = false
+    }: {
+      featureLabels?: any[];
+      verbose?: boolean;
+      randomise?: boolean;
+    } = {
+      featureLabels: null,
+      verbose: false,
+      randomise: false
+    }
+  ) {
+    this.featureLabels = featureLabels;
+    this.verbose = verbose;
+    this.randomise = randomise;
   }
 
   /**
@@ -163,38 +177,51 @@ export class DecisionTreeClassifier {
     if (!_.isArray(X)) {
       throw Error('X need to be an array!');
     }
-    // TODO: Fix any return type
     return _.map(X, row => {
       return this._predict({ row, node: this.tree });
     });
-    // TODO: Return accuracies as well
   }
 
   /**
-   * Measure accuracy between actual row (X) vs predicted rows
-   * @param {any} actualRows
-   * @param {any} predRows
-   * @returns {number}
+   * Returns the model checkpoint
+   * @returns {{featureLabels: string[]; tree: any; verbose: boolean; randomise: boolean}}
    */
-  public accuracyMetrics({ actualRows, predRows }): number {
-    let correct = 0;
-    const actualRowsLen = _.size(actualRows);
-    const predRowsLen = _.size(predRows);
-    if (actualRowsLen !== predRowsLen) {
-      throw Error('Actual rows and predicted rows are different in length');
-    }
-    const predRowsRange = _.range(0, predRowsLen);
-    correct = _.reduce(
-      predRowsRange,
-      (sum, index) => {
-        if (_.isEqual(actualRows[index], predRows[index])) {
-          return sum + 1;
-        }
-        return sum;
-      },
-      correct
-    );
-    return correct / actualRowsLen * 100.0;
+  public toJSON(): {
+    featureLabels: string[];
+    tree: any;
+    verbose: boolean;
+    randomise: boolean;
+  } {
+    return {
+      featureLabels: this.featureLabels,
+      tree: this.tree,
+      verbose: this.verbose,
+      randomise: this.randomise
+    };
+  }
+
+  /**
+   * Restores the model from a checkpoint
+   * @param {string[]} featureLabels
+   * @param {any} tree
+   * @param {boolean} verbose
+   * @param {boolean} randomise
+   */
+  public fromJSON({
+    featureLabels = null,
+    tree = null,
+    verbose = false,
+    randomise = false
+  }: {
+    featureLabels: string[];
+    tree: any;
+    verbose: boolean;
+    randomise: boolean;
+  }): void {
+    this.featureLabels = featureLabels;
+    this.tree = tree;
+    this.verbose = verbose;
+    this.randomise = randomise;
   }
 
   /**

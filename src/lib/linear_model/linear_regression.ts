@@ -63,7 +63,7 @@ export class LinearRegression {
   }
 
   /**
-   * Returns the current LinearRegression model
+   * Get the model details in JSON format
    * @returns {LinearRegressionModel}
    */
   public toJSON(): LinearRegressionModel {
@@ -71,6 +71,19 @@ export class LinearRegression {
       b0: this.b0,
       b1: this.b1
     };
+  }
+
+  /**
+   * Restore the model from a checkpoint
+   * @param {number} b0
+   * @param {number} b1
+   */
+  public fromJSON({ b0 = null, b1 = null }: { b0: number; b1: number }): void {
+    if (!b0 || !b1) {
+      throw new Error('You must provide both b0 and b1 to restore Linear Regression');
+    }
+    this.b0 = b0;
+    this.b1 = b1;
   }
 
   /**

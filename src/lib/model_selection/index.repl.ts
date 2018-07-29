@@ -8,7 +8,9 @@ console.log('original X', X);
 console.log('original y', y);
 console.log('train test split');
 console.log(
-  train_test_split(X, y, {
+  train_test_split({
+    X,
+    y,
     test_size: 0.33,
     train_size: 0.67,
     random_state: 42

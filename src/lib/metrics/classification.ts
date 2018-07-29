@@ -56,9 +56,15 @@ export const validateInitialInputs = (y_true, y_pred, labels, options = {}) => {
   // Checking labels equal to both y_true and y_pred classes
   // Labels is optional
   if (labels) {
-    const yTrueCls = _.flowRight(x => _.sortBy(x, y => y), x => _.uniq(x))(y_true);
+    const yTrueCls = _.flowRight(
+      x => _.sortBy(x, y => y),
+      x => _.uniq(x)
+    )(y_true);
 
-    const yPredCls = _.flowRight(x => _.sortBy(x, y => y), x => _.uniq(x))(y_pred);
+    const yPredCls = _.flowRight(
+      x => _.sortBy(x, y => y),
+      x => _.uniq(x)
+    )(y_pred);
 
     const sortedLabels = _.sortBy(labels, x => x);
     if (!_.isEqual(sortedLabels, yTrueCls) || !_.isEqual(sortedLabels, yPredCls)) {
