@@ -398,7 +398,7 @@ export class Binarizer {
     {
       // Each object param default value
       copy = true,
-      threshold = 0,
+      threshold = 0
     }: {
       // Param types
       copy?: boolean;
@@ -406,7 +406,7 @@ export class Binarizer {
     } = {
       // Default value on empty constructor
       copy: true,
-      threshold: 0,
+      threshold: 0
     }
   ) {
     this.threshold = threshold;

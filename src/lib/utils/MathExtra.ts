@@ -15,7 +15,10 @@ const size = (X, axis = 0) => {
   if (axis === 0) {
     return rows;
   } else if (axis === 1) {
-    return _.flowRight(_.size, a => _.get(a, '[0]'))(X);
+    return _.flowRight(
+      _.size,
+      a => _.get(a, '[0]')
+    )(X);
   }
   throw new Error(`Invalid axis value ${axis} was given`);
 };

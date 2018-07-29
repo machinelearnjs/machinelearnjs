@@ -68,7 +68,10 @@ export class KFold {
         // Calculate binSizeRange according to k value. e.g. 0 -> [0,1]. 1 -> [2, 3].
         const binSizeRange = _.range(index * binSize, index * binSize + binSize);
         // X index range used for test set. It can either be shuffled e.g. [ 2, 0, 1 ] or raw value [ 0, 1, 2 ]
-        const testXRange = _.flowRight(x => (this.shuffle ? _.shuffle(x) : x), () => _.clone(xRange))();
+        const testXRange = _.flowRight(
+          x => (this.shuffle ? _.shuffle(x) : x),
+          () => _.clone(xRange)
+        )();
         // Getting testIndex according to binSizeRange from testXRange
         const testIndex = _.reduce(
           binSizeRange,
@@ -85,12 +88,6 @@ export class KFold {
   }
 }
 
-export interface TrainTestSplitOptions {
-  test_size: number;
-  train_size: number;
-  random_state: number;
-}
-
 /**
  * Split arrays or matrices into random train and test subsets
  *
@@ -100,7 +97,9 @@ export interface TrainTestSplitOptions {
  * const X = [[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]];
  * const y = [0, 1, 2, 3, 4];
  *
- * train_test_split(X, y, {
+ * train_test_split({
+ *   X,
+ *   y,
  *   test_size: 0.33,
  *   train_size: 0.67,
  *   random_state: 42
@@ -112,26 +111,46 @@ export interface TrainTestSplitOptions {
  * *  yTest: [ 0, 4 ],
  * *  yTrain: [ 2, 3, 1 ] }
  *
- * @param {Array} X
- * @param {Array} y
- * @param {TrainTestSplitOptions} options
+ * @param {any} X - input data
+ * @param {any} y - target data
+ * @param {number} test_size - size of the returning test set
+ * @param {number} train_size - size of the returning training set
+ * @param {number} random_state - state used to shuffle data
+ * @param {boolean} clone - to clone the original data
  * @returns {{xTest: any[]; xTrain: any[]; yTest: any[]; yTrain: any[]}}
  */
 export function train_test_split(
-  X = [],
-  y = [],
-  options: TrainTestSplitOptions = null
+  {
+    // Arguments and their default values
+    X = null,
+    y = null,
+    test_size = 0.25,
+    train_size = 0.75,
+    random_state = 0,
+    clone = true
+  }: {
+    // Param types
+    X: any[];
+    y: any[];
+    test_size?: number;
+    train_size?: number;
+    random_state?: number;
+    clone?: boolean;
+  } = {
+    // Default if nothing is given
+    X: null,
+    y: null,
+    test_size: 0.25,
+    train_size: 0.75,
+    random_state: 0,
+    clone: true
+  }
 ): {
   xTest: any[];
   xTrain: any[];
   yTest: any[];
   yTrain: any[];
 } {
-  const trainSize = _.get(options, 'train_size', 0.75);
-  const testSize = _.get(options, 'test_size', 0.25);
-  const randomState = _.get(options, 'random_state', 0);
-  const clone = _.get(options, 'clone', true);
-
   let _X = X;
   let _y = y;
   // Cloning ..
@@ -145,15 +164,15 @@ export function train_test_split(
     throw Error('X and y must be array');
   }
   // Training dataset size accoding to X
-  const trainSizeLength: number = _.round(trainSize * _X.length);
-  const testSizeLength: number = _.round(testSize * _X.length);
+  const trainSizeLength: number = _.round(train_size * _X.length);
+  const testSizeLength: number = _.round(test_size * _X.length);
 
-  if (_.round(testSize + trainSize) !== 1) {
+  if (_.round(test_size + train_size) !== 1) {
     throw Error('Sum of test_size and train_size does not equal 1');
   }
   // Initiate Random engine
   const randomEngine = Random.engines.mt19937();
-  randomEngine.seed(randomState);
+  randomEngine.seed(random_state);
 
   // split
   const xTrain = [];

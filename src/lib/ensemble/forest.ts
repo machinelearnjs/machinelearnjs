@@ -71,9 +71,34 @@ export class RandomForestClassifier {
    */
   public predict(X: number[] | number[][] = []): any[] {
     const predictions = _.map(this.trees, tree => {
+      // TODO: Check if it's a matrix or an array
       return tree.predict({ X });
     });
     return this.baggingPrediction(predictions);
+  }
+
+  /**
+   * Returning the current model's checkpoint
+   * @returns {{trees: any[]; nEstimator: number}}
+   */
+  public toJSON(): { trees: any[]; nEstimator: number } {
+    return {
+      nEstimator: this.nEstimator,
+      trees: this.trees
+    };
+  }
+
+  /**
+   * Restore the model from a checkpoint
+   * @param {any[]} trees
+   * @param {number} nEstimator
+   */
+  public fromJSON({ trees = null, nEstimator = null }: { trees: any[]; nEstimator: number }): void {
+    if (!trees || !nEstimator) {
+      throw new Error('You must provide both tree and nEstimator to restore the model');
+    }
+    this.trees = trees;
+    this.nEstimator = nEstimator;
   }
 
   /**

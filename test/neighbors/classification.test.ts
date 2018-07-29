@@ -39,6 +39,24 @@ describe('classification:KNeighborsClassifier', () => {
     expect(_.isEqual(pred, expected)).toBe(true);
   });
 
+  it('should reload the nearest neighbor and predict the same result', () => {
+    const knn = new KNeighborsClassifier();
+    knn.fit({ X: X1, y: y1 });
+
+    // Before saving
+    const pred = knn.predict([[1, 2, 4], [0], [9, 5]]);
+    const expected = [1, 0, 1];
+    expect(_.isEqual(pred, expected)).toBe(true);
+
+    // After reloading
+    const checkpoint = knn.toJSON();
+    const knn2 = new KNeighborsClassifier();
+    knn2.fromJSON(checkpoint);
+    const pred2 = knn2.predict([[1, 2, 4], [0], [9, 5]]);
+    const expected2 = [1, 0, 1];
+    expect(_.isEqual(pred2, expected2)).toBe(true);
+  });
+
   it("should predict [ 'a', 'a', 'a' ] for [ [1, 2, 4], [0], [9, 5] ] against the sample 2", () => {
     const knn = new KNeighborsClassifier();
     knn.fit({ X: X2, y: y2 });

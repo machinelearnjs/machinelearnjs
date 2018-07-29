@@ -28,6 +28,23 @@ describe('linear_model:LinearRegression', () => {
     expect(isEqual(result2, expected2)).toBe(true);
   });
 
+  it('should reload and predict the same result', () => {
+    const expected1 = [1.1999999999999995, 1.9999999999999996];
+    const lr = new LinearRegression();
+    lr.fit({ X: X1, y: y1 });
+
+    // Experimenting before saving the checkpoint
+    const result1 = lr.predict([1, 2]);
+    expect(isEqual(result1, expected1)).toBe(true);
+
+    // Experimenting after saving the checkpoint
+    const checkpoint = lr.toJSON();
+    const lr2 = new LinearRegression();
+    lr2.fromJSON(checkpoint);
+    const result2 = lr2.predict([1, 2]);
+    expect(isEqual(result2, expected1)).toBe(true);
+  });
+
   it('should test NaNs', () => {
     const lr = new LinearRegression();
     lr.fit({ X: X1, y: y1 });

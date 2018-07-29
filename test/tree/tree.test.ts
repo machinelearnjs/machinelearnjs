@@ -31,6 +31,24 @@ describe('tree:DecisionTreeClassifier', () => {
     expect(_.isEqual([1], predictResult)).toBe(true);
   });
 
+  it('Should reload and predict the same result', () => {
+    const expected = [1];
+    const feed = [2, 2];
+
+    // Before saving
+    const decision = new DecisionTreeClassifier();
+    decision.fit({ X: numberX, y: numberY });
+    const predictResult = decision.predictOne({ row: feed });
+    expect(_.isEqual(expected, predictResult)).toBe(true);
+
+    // After reloading
+    const checkpoint = decision.toJSON();
+    const decision2 = new DecisionTreeClassifier();
+    decision2.fromJSON(checkpoint);
+    const predictResult2 = decision2.predictOne({ row: feed });
+    expect(_.isEqual(expected, predictResult2)).toBe(true);
+  });
+
   it('Should predict number [-2, -1] as [0]', () => {
     const decision = new DecisionTreeClassifier();
     decision.fit({ X: numberX, y: numberY });

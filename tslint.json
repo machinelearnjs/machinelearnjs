@@ -28,6 +28,9 @@
     "prefer-conditional-expression": false,
     "no-console": [true, "log"],
 
+    // Object rules
+    "object-literal-sort-keys": false,
+
     // Functional style rules
     "no-invalid-this": true,
     "no-class": false,

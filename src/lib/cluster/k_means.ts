@@ -150,6 +150,29 @@ export class KMeans {
   }
 
   /**
+   * Restores the model from checkpoints
+   * @param {number} k
+   * @param {number[]} clusters
+   * @param {number[]} centroids
+   */
+  public fromJSON({
+    k = null,
+    clusters = null,
+    centroids = null
+  }: {
+    k: number;
+    clusters: number[];
+    centroids: number[];
+  }): void {
+    if (!k || !clusters || !centroids) {
+      throw new Error('You must provide all the parameters include k, clusters and centroids');
+    }
+    this.k = k;
+    this.clusters = clusters;
+    this.centroids = centroids;
+  }
+
+  /**
    * Get initial centroids from X of k
    * @param {number[]} X
    * @param {number} k

@@ -102,19 +102,42 @@ export class KNeighborsClassifier {
   }
 
   /**
-   * Return a JSON representation
+   * Return the model's state as a JSON object
    * @return {object} JSON KNN model.
    */
   public toJSON(): {
     classes: any[];
+    distance: any;
     k: number;
+    tree: any;
     type: string;
   } {
     return {
       classes: this.classes,
+      distance: this.distance,
       k: this.k,
+      tree: this.tree,
       type: this.type
     };
+  }
+
+  /**
+   * Restores the model from a JSON checkpoint
+   * @param {any} classes
+   * @param {any} distance
+   * @param {any} k
+   * @param {any} tree
+   * @param {any} type
+   */
+  public fromJSON({ classes = null, distance = null, k = null, tree = null, type = null }): void {
+    if (!classes || !distance || !k || !tree || !type) {
+      throw new Error('You must provide classes, distance, k, tree and type to restore the KNearestNeighbor');
+    }
+    this.classes = classes;
+    this.distance = distance;
+    this.k = k;
+    this.tree = tree;
+    this.type = type;
   }
 
   /**
