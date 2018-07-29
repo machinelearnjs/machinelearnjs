@@ -19,3 +19,6 @@ package-lock.json
 docs/md_base
 docs/md_out
 docs/docs.json
+
+#.ssh
+.ssh
