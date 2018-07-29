@@ -31,6 +31,9 @@ export class Node {
   }
 }
 
+/**
+ * @ignore
+ */
 export default class KDTree {
   public dimensions = null;
   public root = null;
