@@ -12,7 +12,7 @@ decision.fit({ X, y });
 decision.printTree();
 
 // predict
-const predictResult = decision.predictOne({ row: X[0] });
+const predictResult = decision.predict({ X: [['Green', 3]] });
 console.log('predict result', predictResult);
 
 const predictResults = decision.predict({ X });
@@ -24,5 +24,16 @@ const X2 = [[0, 0], [1, 1]];
 const Y2 = [0, 1];
 
 decision2.fit({ X: X2, y: Y2 });
-const predictResult2 = decision2.predictOne({ row: [2, 2] });
+const predictResult2 = decision2.predict({ X: [[0, 1]] });
 console.log('checking predict 2', predictResult2);
+
+import { Iris } from '../datasets';
+
+const data = new Iris();
+data.load();
+
+const decision3 = new DecisionTreeClassifier();
+decision3.fit({ X: data.data, y: data.targets });
+
+console.log('checking');
+console.log(decision3.predict({ X: [[5.9, 3, 5.1, 1.8]] }));

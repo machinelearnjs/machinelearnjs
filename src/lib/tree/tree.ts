@@ -1,4 +1,6 @@
-import * as _ from 'lodash';
+import { includes, isEmpty, map, random, range, uniqBy } from 'lodash';
+import math from '../utils/MathExtra';
+const { isMatrix } = math.contrib;
 
 /**
  * Question used by decision tree algorithm to determine whether to split branch or not
@@ -17,7 +19,7 @@ export class Question {
 
   public match(example): boolean {
     const val = example[this.column];
-    if (_.isNumber(val)) {
+    if (typeof val === 'number') {
       return val >= this.value;
     } else {
       return val === this.value;
@@ -28,45 +30,63 @@ export class Question {
     if (!this.features) {
       throw Error('You must provide feature labels in order to render toString!');
     }
-    const condition = _.isNumber(this.value) ? '>=' : '==';
+    const condition = typeof this.value === 'number' ? '>=' : '==';
     return `Is ${this.features[this.column]} ${condition} ${this.value}`;
   }
 }
 
 /**
  * According to the given targets array, count occurrences into an object.
- * Also it increment the value as they occur.
- * @param {any[]} targets - list of classes
+ * @param {any[]} targets - list of class: count
  * @returns {}
  * @ignore
  */
-export function classCounts(targets): {} {
-  // TODO: If targets is a multi-dimensional, automatically grab -1 index
-
-  return _.reduce(
-    targets,
-    (accum, target) => {
-      const count = _.get(accum, target);
-      if (_.isNumber(count) && count > 0) {
-        return _.set(accum, target, count + 1);
-      } else {
-        return _.set(accum, target, 1);
-      }
-    },
-    {}
-  );
+export function classCounts(targets: any[]): {} {
+  const result = {};
+  for (let i = 0; i < targets.length; i++) {
+    const target = targets[i];
+    const count = result[target]; // the current
+    if (typeof count === 'number' && count > 0) {
+      result[target] = {
+        value: target,
+        count: count + 1
+      };
+    } else {
+      result[target] = {
+        value: target,
+        count: 1
+      };
+    }
+  }
+  return result;
 }
 
 /**
- * A leaf node classifies data.
- * It holds an object of data Class (e.g. Apple) -> count
+ * A leaf node that classifies data.
  * @ignore
  */
 export class Leaf {
-  public predictions = [];
+  public prediction = null;
+
   constructor(y) {
-    // this.predictions = classCounts(y);
-    this.predictions = y;
+    const counts = classCounts(y);
+    const keys = Object.keys(counts); // Retrieving the keys for looping
+
+    // Variable holders
+    let maxCount = 0;
+    let maxValue = null;
+
+    // Finding the max count key(actual prediction value)
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i];
+      const count = counts[key].count;
+      const value = counts[key].value;
+      if (count > maxCount) {
+        maxValue = value;
+        maxCount = count;
+      }
+    }
+    this.prediction = maxValue;
   }
 }
 
@@ -99,7 +119,7 @@ export class DecisionNode {
  * decision.fit({ X, y });
  * decision.printTree(); // try it out yourself! =)
  *
- * decision.predictOne({ row: X[0] }); // [ 'Apple' ]
+ * decision.predict({ X: [['Green', 3]] }); // [ 'Apple' ]
  * decision.predict({ X }); // [ [ 'Apple' ], [ 'Apple', 'Lemon' ], [ 'Grape', 'Grape' ], [ 'Grape', 'Grape' ], [ 'Apple', 'Lemon' ] ]
  *
  * @example
@@ -109,7 +129,7 @@ export class DecisionNode {
  * const X = [[0, 0], [1, 1]];
  * const Y = [0, 1];
  * decision.fit({ X, y });
- * decision2.predictOne({ row: [2, 2] }); // [ 1 ]
+ * decision2.predict({ row: [[2, 2]] }); // [ 1 ]
  */
 
 export interface Options {
@@ -151,21 +171,10 @@ export class DecisionTreeClassifier {
    */
   public fit({ X, y }: { X: any[]; y: any[] }): void {
     // this.y = y;
-    if (!X || !y || !_.isArray(X) || !_.isArray(y) || _.isEmpty(X) || _.isEmpty(y)) {
+    if (!X || !y || !Array.isArray(X) || !Array.isArray(y) || isEmpty(X) || isEmpty(y)) {
       throw Error('Cannot accept non Array values for X and y');
     }
     this.tree = this.buildTree({ X, y });
-  }
-
-  /**
-   * Predict one row
-   * @param {any} row
-   * @returns any[any[]]}
-   */
-  public predictOne({ row }: { row: any }): any {
-    // TODO: Fix any return type
-
-    return this._predict({ row, node: this.tree });
   }
 
   /**
@@ -173,13 +182,16 @@ export class DecisionTreeClassifier {
    * @param {any[]} X
    * @returns {any[]}
    */
-  public predict({ X }: { X: any[] }): any {
-    if (!_.isArray(X)) {
-      throw Error('X need to be an array!');
+  public predict({ X }: { X: any[][] }): any {
+    if (!isMatrix(X)) {
+      throw Error('X needs to be a matrix!');
     }
-    return _.map(X, row => {
-      return this._predict({ row, node: this.tree });
-    });
+    const result = [];
+    for (let i = 0; i < X.length; i++) {
+      const row = X[i];
+      result.push(this._predict({ row, node: this.tree }));
+    }
+    return result;
   }
 
   /**
@@ -256,17 +268,16 @@ export class DecisionTreeClassifier {
     const trueY = [];
     const falseX = [];
     const falseY = [];
-    const xLen = _.size(X);
-    _.forEach(_.range(0, xLen), xIndex => {
-      const row = X[xIndex];
+    for (let i = 0; i < X.length; i++) {
+      const row = X[i];
       if (question.match(row)) {
-        trueX.push(X[xIndex]);
-        trueY.push(y[xIndex]);
+        trueX.push(X[i]);
+        trueY.push(y[i]);
       } else {
-        falseX.push(X[xIndex]);
-        falseY.push(y[xIndex]);
+        falseX.push(X[i]);
+        falseY.push(y[i]);
       }
-    });
+    }
 
     return { trueX, trueY, falseX, falseY };
   }
@@ -280,17 +291,17 @@ export class DecisionTreeClassifier {
   private gini(targets): number {
     const counts = classCounts(targets);
     let impurity = 1;
-    const keys = _.keys(counts);
-    _.forEach(keys, key => {
-      const count = _.get(counts, key);
-
-      if (_.isNull(count)) {
+    const keys = Object.keys(counts);
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i];
+      const count = counts[key].count;
+      if (count === null || count === undefined) {
         throw Error('Invalid class count detected!');
       }
 
-      const probOfClass = count / _.size(targets);
+      const probOfClass = count / targets.length;
       impurity -= Math.pow(probOfClass, 2);
-    });
+    }
     return impurity;
   }
 
@@ -305,7 +316,7 @@ export class DecisionTreeClassifier {
    * @returns {number}
    */
   private infoGain(left, right, uncertainty): number {
-    const p = _.size(left) / (_.size(left) + _.size(right));
+    const p = left.length / (left.length + right.length);
     return uncertainty - p * this.gini(left) - (1 - p) * this.gini(right);
   }
 
@@ -318,35 +329,37 @@ export class DecisionTreeClassifier {
    */
   private findBestSplit(X, y): { bestGain: number; bestQuestion: Question } {
     const uncertainty = this.gini(y);
-    const nFeatures = _.size(X[0]);
+    const nFeatures = X[0].length;
     let bestGain = 0;
     let bestQuestion = null;
 
-    let features = [];
+    let featureIndex = [];
     if (this.randomise) {
       // a list of features is created by randomly selecting feature indices and adding them to a list
-      while (features.length < nFeatures) {
-        const index = _.random(nFeatures);
-        if (!_.includes(features, index)) {
-          features.push(index);
+      while (featureIndex.length < nFeatures) {
+        const index = random(nFeatures);
+        if (!includes(featureIndex, index)) {
+          featureIndex.push(index);
         }
       }
     } else {
-      features = _.range(0, _.size(X[0]));
+      featureIndex = range(0, X[0].length);
     }
-    _.forEach(features, col => {
-      const uniqFeatureValues = _.uniqBy(_.map(X, row => row[col]), x => x);
-      _.forEach(uniqFeatureValues, feature => {
+    for (let i = 0; i < featureIndex.length; i++) {
+      const col = featureIndex[i];
+      const uniqFeatureValues = uniqBy(map(X, row => row[col]), x => x);
+      for (let j = 0; j < uniqFeatureValues.length; j++) {
+        const feature = uniqFeatureValues[j];
+        // featureLabels is for the model interpretability
         const question = new Question(this.featureLabels, col, feature);
 
         // Try splitting the dataset
         const { trueY, falseY } = this.partition(X, y, question);
 
         // Skip this dataset if it does not divide
-        if (_.size(trueY) === 0 || _.size(falseY) === 0) {
-          return;
+        if (trueY.length === 0 || falseY.length === 0) {
+          continue;
         }
-
         // Calculate information gained from this split
         const gain = this.infoGain(trueY, falseY, uncertainty);
         if (this.verbose) {
@@ -356,8 +369,8 @@ export class DecisionTreeClassifier {
           bestGain = gain;
           bestQuestion = question;
         }
-      });
-    });
+      }
+    }
     return { bestGain, bestQuestion };
   }
 
@@ -386,7 +399,7 @@ export class DecisionTreeClassifier {
   }
 
   /**
-   * Predict a row value according to the fitted tree
+   * Internal predict method separated out for recursion purpose
    * @param {any} row
    * @param {any} node
    * @returns {any}
@@ -394,7 +407,8 @@ export class DecisionTreeClassifier {
    */
   private _predict({ row, node }): any[] {
     if (node instanceof Leaf) {
-      return node.predictions;
+      // Just return the highest voted
+      return node.prediction;
     }
 
     if (node.question.match(row)) {
@@ -411,7 +425,7 @@ export class DecisionTreeClassifier {
    */
   private _printTree({ node, spacing = '' }): void {
     if (node instanceof Leaf) {
-      console.info(spacing + '' + JSON.stringify(node.predictions));
+      console.info(spacing + '' + node.prediction);
       return;
     }
 

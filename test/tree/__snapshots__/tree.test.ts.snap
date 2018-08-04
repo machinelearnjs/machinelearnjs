@@ -1,0 +1,20 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`tree:DecisionTreeClassifier should return a correct class counts for fruitY 1`] = `
+Object {
+  "Apple": Object {
+    "count": 1,
+    "value": "Apple",
+  },
+  "Grape": Object {
+    "count": 1,
+    "value": "Grape",
+  },
+  "Lemon": Object {
+    "count": 1,
+    "value": "Lemon",
+  },
+}
+`;
+
+exports[`tree:DecisionTreeClassifier should use fruitX and print a correct tree 1`] = `""`;
