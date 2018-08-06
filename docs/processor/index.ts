@@ -219,12 +219,9 @@ function constructParamTable(parameters): string {
           sum.push([`${param.name}.${prop.name}`, renderParamType(prop.type), prop.defaultValue, getText(prop)]);
         });
       } else if (consts.paramTypeUnion === paramType) {
-      	// 5. Handles any union types.
+        // 5. Handles any union types.
         // e.g. string[] | string[][]
-        const unionTypes = _.map(
-          param.type.types,
-          (singleType) => renderParamType(singleType)
-        );
+        const unionTypes = _.map(param.type.types, singleType => renderParamType(singleType));
         const unionTypesStr = unionTypes.join(' or ');
         sum.push([param.name, unionTypesStr, param.defaultValue, getText(param)]);
       }
