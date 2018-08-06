@@ -75,4 +75,9 @@ describe('integration:require', () => {
     const { DecisionTreeClassifier } = require('kalimdor/tree');
     expect(!!DecisionTreeClassifier).toBe(true);
   });
+
+  it('should require naive_bayes', () => {
+    const { GaussianNB } = require('kalimdor/naive_bayes');
+    expect(!!GaussianNB).toBe(true);
+  });
 });
