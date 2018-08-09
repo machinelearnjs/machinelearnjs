@@ -1,4 +1,4 @@
-import { GaussianNB } from "../../src/lib/naive_bayes";
+import { GaussianNB } from '../../src/lib/naive_bayes';
 
 describe('naive_bayes:GaussianNB', () => {
   const X1 = [[1, 20], [2, 21], [3, 22], [4, 22]];
@@ -48,7 +48,7 @@ describe('naive_bayes:GaussianNB', () => {
   it('Should fit only accept X and y if number of attributes is same', () => {
     const nb = new GaussianNB();
     const sizeNotEqual = 'X and y must be same in length';
-    expect(() => nb.fit({ X: X1, y: [ 1, 2, 3 ] })).toThrow(sizeNotEqual);
+    expect(() => nb.fit({ X: X1, y: [1, 2, 3] })).toThrow(sizeNotEqual);
     expect(() => nb.fit({ X: [[1, 20], [2, 21], [3, 22]], y: y1 })).toThrow(sizeNotEqual);
   });
   it('should predict only accept X as matrix', () => {
