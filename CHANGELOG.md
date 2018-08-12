@@ -2,7 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
-<a name="2.0.1"></a>
+## [1.1.0]
+:raised_hands: Minor release to deliver a couple improvements :raised_hands: 
+
+In this minor release, it focuses on the first enhancement of existing APIs and delivers new features. As the release contains a feature, GaussianNB, and an enhancement of DecisionTree, we thought a minor release is suitable for it. 
+
+*Updates:*
+- **feature:** GaussianNB (Gaussian Naive Bayes Classifier)
+-- What is Naive Bayes? Please check out https://machinelearningmastery.com/naive-bayes-for-machine-learning/
+- **enhancement:** DecisionTree
+-- Fixed the way that the DecisionTree returns the prediction results
+-- Instead of returning all the possible Leafs, it will return the most occurred target Leaf according to a voting process 
+
 ## [1.0.0]
 
 :baby_chick: hooray! initial release :baby_chick:
