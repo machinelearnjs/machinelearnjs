@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0]
+
+Updates:
+* **enhance:** ensemble/RandomForest
+
 ## [1.1.0]
 :raised_hands: Minor release to deliver a couple improvements :raised_hands: 
 
