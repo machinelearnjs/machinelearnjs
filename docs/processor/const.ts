@@ -15,6 +15,11 @@ export const paramTypeUnion = 'union';
 // Return type
 export const returnTypeIntrinsic = 'intrinsic';
 export const returnTypeArray = 'array';
+export const returnTypeReference = 'reference';
+export const returnTypeReflection = 'reflection';
+
+// Return name
+export const returnNamePromise = 'Promise';
 
 // Tags
 export const tagTypeExample = 'example';

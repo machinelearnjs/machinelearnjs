@@ -1,7 +1,12 @@
+import fakeFetch from 'jest-fetch-mock';
 import { Iris } from '../../src/lib/datasets/Iris';
 import { RandomForestClassifier } from '../../src/lib/ensemble/forest';
 import { accuracyScore } from '../../src/lib/metrics';
 import { train_test_split } from '../../src/lib/model_selection';
+import { IRIS_FAKE_DATA, IRIS_FAKE_DESC } from '../datasets/fake_data/iris';
+
+// Mock fetch
+global.fetch = fakeFetch;
 
 describe('ensemble:forest', () => {
   const X1 = [[0, 0], [1, 1], [2, 1], [1, 5], [3, 2]];
@@ -23,11 +28,17 @@ describe('ensemble:forest', () => {
       expect(result).toEqual(expected);
     });
 
-    it('should train test split and predict correct test #1', () => {
+    it('should train test split and predict correct test #1', async () => {
+      fetch.resetMocks();
+      // data mock
+      fetch.mockResponseOnce(IRIS_FAKE_DATA);
+      // desc mock
+      fetch.mockResponseOnce(IRIS_FAKE_DESC);
+
+      const iris = new Iris();
+      const { data, targets } = await iris.load();
       const randomForest = new RandomForestClassifier();
-      const dataset = new Iris();
-      dataset.load();
-      const { xTest, xTrain, yTest, yTrain } = train_test_split({ X: dataset.data, y: dataset.targets });
+      const { xTest, xTrain, yTest, yTrain } = train_test_split({ X: data, y: targets });
       randomForest.fit({ X: xTrain, y: yTrain });
       const yPred = randomForest.predict(xTest);
       const shouldBeGreater = 0.7;

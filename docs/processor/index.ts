@@ -97,9 +97,10 @@ function isSignatureValid(context, options): any {
     return options.inverse(context);
   }
 
-  const firstSignature = _.first(signatures);
-  const firstSignatureParams = _.get(firstSignature, 'parameters');
-  if (_.isEmpty(firstSignatureParams) || !firstSignatureParams) {
+  const firstSignature: any = _.first(signatures);
+  // Flag to make sure parameters or type exist
+  const signatureOrType = firstSignature.parameters || firstSignature.type;
+  if (_.isEmpty(signatureOrType) || !signatureOrType) {
     return options.inverse(context);
   }
 
@@ -127,11 +128,26 @@ function traverseArrayDefinition(arrayTree, result = ''): string {
 }
 
 /**
+ * Prioritise getting text instead of shortText description
+ * @param param
+ */
+function getText(param): string | undefined {
+  const text = _.get(param, 'comment.text');
+  const shortText = _.get(param, 'comment.shortText');
+  if (text) {
+    return text;
+  } else if (shortText) {
+    return shortText;
+  }
+  return undefined;
+}
+
+/**
  * Constructs a parameter table that may look something like:
  * | Param | Type | Default | Description |
  * | ------ | ------ | ------ | ------ |
- * | _namedParameters.X | any |  | array-like or sparse matrix of shape &#x3D; [nsamples, n_features]
- * | _namedParameters.y | any |  | array-like, shape &#x3D; [nsamples] or [n_samples, n_outputs]
+ * | object.X | any |  | array-like or sparse matrix of shape &#x3D; [nsamples, n_features]
+ * | object.y | any |  | array-like, shape &#x3D; [nsamples] or [n_samples, n_outputs]
  *
  * @param parameters
  * @returns {string}
@@ -139,21 +155,6 @@ function traverseArrayDefinition(arrayTree, result = ''): string {
 function constructParamTable(parameters): string {
   // Param table characters blacklist
   const paramTableCharsBlackList = [/\n/g, /\r\n/g, '_'];
-
-  /**
-   * Prioritise getting text instead of shortText description
-   * @param param
-   */
-  const getText = param => {
-    const text = _.get(param, 'comment.text');
-    const shortText = _.get(param, 'comment.shortText');
-    if (text) {
-      return text;
-    } else if (shortText) {
-      return shortText;
-    }
-    return undefined;
-  };
 
   /**
    * Generic clean function before displaying it on the table parameters
@@ -246,15 +247,65 @@ function constructParamTable(parameters): string {
 }
 
 /**
+ * Construct a return table that may look something like:
+ * | Param | Type | Description |
+ * | ------ | ------ | ------ |
+ * | X | any | array-like or sparse matrix of shape &#x3D; [nsamples, n_features]
+ * | y | any | array-like, shape &#x3D; [nsamples] or [n_samples, n_outputs]
+ *
+ * @param typeArgument - example of typeArgument looks like:
+ * typeArguments": { "type": "reflection", "declaration": {... children}
+ */
+function constructReturnTable(typeArgument): string {
+  const children = typeArgument.declaration.children;
+  let table = '| Param | Type | Description |\n';
+  table += '| ------ | ------ | ------ |\n';
+  for (let i = 0; i < children.length; i++) {
+    const child = children[i];
+    const type = child.type.type;
+    if (type === consts.returnTypeIntrinsic) {
+      // If it's a simple type, such as string, number and etc
+      table += `| ${child.name} | ${child.type.name} | ${getText(child)}\n`;
+    } else if (type === consts.returnTypeArray) {
+      table += `| ${child.name} | ${traverseArrayDefinition(child.type)} | ${getText(child)}\n`;
+    }
+  }
+  return table;
+}
+
+/**
  * Renders method return type
+ * This is slightly different to parameter renderer as it will simply return
+ * type.name if it's a simple return type
  * @param type
  * @returns {string}
  */
-function renderMethodReturnType(type): string {
+function renderMethodReturnType(type): any {
   if (type.type === consts.returnTypeIntrinsic) {
+    // Handles a simple promise return type
     return type.name;
   } else if (type.type === consts.returnTypeArray) {
+    // Handles an Array promise return type
     return traverseArrayDefinition(type);
+  } else if (type.type === consts.returnTypeReflection) {
+    // Handles object return type
+    return constructReturnTable(type);
+  } else if (type.type === consts.returnTypeReference && type.name === consts.returnNamePromise) {
+    // Handles return type that returns a complex object
+    const returnTypes = type.typeArguments.map(typeArg => {
+      let result;
+      if (typeArg.type === consts.returnTypeIntrinsic) {
+        // Simply return name if it's an intrinsic type
+        result = ':metal: Promise';
+        result += `<${typeArg.name}>`;
+      } else if (typeArg.type === consts.returnTypeReflection) {
+        // If it's a reflection type, an object, then render a table
+        result = ':metal: Promise\n';
+        result += constructReturnTable(typeArg);
+      }
+      return result;
+    });
+    return returnTypes.join('<br>');
   }
 }
 

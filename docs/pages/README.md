@@ -41,4 +41,4 @@ $ yarn add kalimdor
 
 ### You can use it like this
 
-<img src="https://i.imgur.com/jQPDY8X.png">
+<img src="https://i.imgur.com/I6KUOi8.png">
