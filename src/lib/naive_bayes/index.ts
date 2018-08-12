@@ -1,5 +1,3 @@
-import { GaussianNB } from "./gaussian";
+import { GaussianNB } from './gaussian';
 
-export {
-  GaussianNB
-}
+export { GaussianNB };

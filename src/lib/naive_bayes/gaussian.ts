@@ -33,33 +33,35 @@ export class GaussianNB {
   /**
    * @param clone - To clone the input values during fit and predict
    */
-  constructor({
-    clone = true,
-  }: {
-    clone: boolean;
-  } = {
-    clone: true,
-  }) {
+  constructor(
+    {
+      clone = true
+    }: {
+      clone: boolean;
+    } = {
+      clone: true
+    }
+  ) {
     this.clone = clone;
   }
-
 
   /**
    * Fit date to build Gaussian Distribution summary
    * @param {any} X - training values
    * @param {any} y - target values
    */
-  public fit({
-    X = null,
-    y = null,
-  }: {
-    X: any[][],
-    y: any[],
-  } = {
-    X: null,
-    y: null,
-  }): void {
-
+  public fit(
+    {
+      X = null,
+      y = null
+    }: {
+      X: any[][];
+      y: any[];
+    } = {
+      X: null,
+      y: null
+    }
+  ): void {
     if (!isMatrix(X)) {
       throw new Error('X must be a matrix');
     }
@@ -83,13 +85,15 @@ export class GaussianNB {
    * @param {any[]} X - values to predict in Matrix format
    * @returns {number[]}
    */
-  public predict({
-    X = null
-  }: {
-    X: any[][]
-  } = {
-    X: null
-  }): number[] {
+  public predict(
+    {
+      X = null
+    }: {
+      X: any[][];
+    } = {
+      X: null
+    }
+  ): number[] {
     if (!isMatrix(X)) {
       throw new Error('X must be a matrix');
     }
@@ -109,13 +113,15 @@ export class GaussianNB {
    * Restores GaussianNB model from a checkpoint
    * @param summaries - Gaussian Distribution summaries
    */
-  public fromJSON({
-    summaries = null,
-  }: {
-    summaries: {}
-  } = {
-    summaries: null
-  }): void {
+  public fromJSON(
+    {
+      summaries = null
+    }: {
+      summaries: {};
+    } = {
+      summaries: null
+    }
+  ): void {
     this.summaries = summaries;
   }
 
@@ -123,11 +129,11 @@ export class GaussianNB {
    * Returns a model checkpoint
    */
   public toJSON(): {
-    summaries: {}
+    summaries: {};
   } {
     return {
       summaries: this.summaries
-    }
+    };
   }
 
   /**
@@ -182,11 +188,7 @@ export class GaussianNB {
    * @param meanval
    * @param stdev
    */
-  private calculateProbability({
-    x, meanval, stdev
-  }: {
-    x: number; meanval: number; stdev: number
-  }): number {
+  private calculateProbability({ x, meanval, stdev }: { x: number; meanval: number; stdev: number }): number {
     const stdevPow: any = pow(stdev, 2);
     const meanValPow: any = -pow(x - meanval, 2);
     const exponent = exp(meanValPow / (2 * stdevPow));

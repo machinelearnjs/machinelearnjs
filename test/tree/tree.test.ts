@@ -1,8 +1,4 @@
-import {
-  classCounts,
-  DecisionTreeClassifier,
-  Leaf,
-} from '../../src/lib/tree/tree';
+import { classCounts, DecisionTreeClassifier, Leaf } from '../../src/lib/tree/tree';
 
 import { Iris } from '../../src/lib/datasets';
 
@@ -97,7 +93,7 @@ describe('tree:DecisionTreeClassifier', () => {
 
   it('should use fruitX and print a correct tree', () => {
     let outputData = '';
-    console['info'] = inputs => (outputData += inputs);
+    console.info = inputs => (outputData += inputs);
     const features = ['color', 'diameter', 'label'];
     const decision = new DecisionTreeClassifier({ featureLabels: features });
     decision.fit({ X: fruitX, y: fruitY });
@@ -115,7 +111,7 @@ describe('tree:DecisionTreeClassifier', () => {
     const decision = new DecisionTreeClassifier();
     decision.fit({ X: data.data, y: data.targets });
 
-    const example1 = [ 5.1,  3.5,  1.4,  0.2];
+    const example1 = [5.1, 3.5, 1.4, 0.2];
     const result = decision.predict({ X: [example1] });
     const expected = [0];
     expect(result).toEqual(expected);
@@ -127,7 +123,7 @@ describe('tree:DecisionTreeClassifier', () => {
     const decision = new DecisionTreeClassifier();
     decision.fit({ X: data.data, y: data.targets });
 
-    const example1 = [ 5.9,  3. ,  5.1,  1.8];
+    const example1 = [5.9, 3, 5.1, 1.8];
     const result = decision.predict({ X: [example1] });
     const expected = [2];
     expect(result).toEqual(expected);
