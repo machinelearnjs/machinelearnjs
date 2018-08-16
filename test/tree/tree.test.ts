@@ -1,10 +1,10 @@
-import {
-  classCounts,
-  DecisionTreeClassifier,
-  Leaf,
-} from '../../src/lib/tree/tree';
-
+import fakeFetch from 'jest-fetch-mock';
 import { Iris } from '../../src/lib/datasets';
+import { classCounts, DecisionTreeClassifier, Leaf } from '../../src/lib/tree/tree';
+import { IRIS_FAKE_DATA, IRIS_FAKE_DESC } from '../datasets/fake_data/iris';
+
+// Mock fetch
+global.fetch = fakeFetch;
 
 describe('tree:DecisionTreeClassifier', () => {
   const fruitX = [['Green', 3], ['Yellow', 3], ['Red', 1], ['Red', 1], ['Yellow', 3]];
@@ -12,6 +12,11 @@ describe('tree:DecisionTreeClassifier', () => {
 
   const numberX = [[0, 0], [1, 1]];
   const numberY = [0, 1];
+
+  // Fetch mock for Iris dataset
+  beforeEach(() => {
+    fetch.resetMocks();
+  });
 
   it('Should predict fruitX[0] as Apple', () => {
     const features = ['color', 'diameter', 'label'];
@@ -97,7 +102,7 @@ describe('tree:DecisionTreeClassifier', () => {
 
   it('should use fruitX and print a correct tree', () => {
     let outputData = '';
-    console['info'] = inputs => (outputData += inputs);
+    console.info = inputs => (outputData += inputs);
     const features = ['color', 'diameter', 'label'];
     const decision = new DecisionTreeClassifier({ featureLabels: features });
     decision.fit({ X: fruitX, y: fruitY });
@@ -109,25 +114,35 @@ describe('tree:DecisionTreeClassifier', () => {
     expect(leaf).toEqual({ prediction: 'Apple' });
   });
 
-  it('should correctly predict Iris data 1', () => {
-    const data = new Iris();
-    data.load();
-    const decision = new DecisionTreeClassifier();
-    decision.fit({ X: data.data, y: data.targets });
+  it('should correctly predict Iris data 1', async () => {
+    // Iris data mock
+    fetch.mockResponseOnce(IRIS_FAKE_DATA);
+    // Iris desc mock
+    fetch.mockResponseOnce(IRIS_FAKE_DESC);
 
-    const example1 = [ 5.1,  3.5,  1.4,  0.2];
+    const iris = new Iris();
+    const { data, targets } = await iris.load();
+    const decision = new DecisionTreeClassifier();
+    decision.fit({ X: data, y: targets });
+
+    const example1 = [5.1, 3.5, 1.4, 0.2];
     const result = decision.predict({ X: [example1] });
     const expected = [0];
     expect(result).toEqual(expected);
   });
 
-  it('should correctly predict Iris data 2', () => {
-    const data = new Iris();
-    data.load();
-    const decision = new DecisionTreeClassifier();
-    decision.fit({ X: data.data, y: data.targets });
+  it('should correctly predict Iris data 2', async () => {
+    // Iris data mock
+    fetch.mockResponseOnce(IRIS_FAKE_DATA);
+    // Iris desc mock
+    fetch.mockResponseOnce(IRIS_FAKE_DESC);
 
-    const example1 = [ 5.9,  3. ,  5.1,  1.8];
+    const iris = new Iris();
+    const { data, targets } = await iris.load();
+    const decision = new DecisionTreeClassifier();
+    decision.fit({ X: data, y: targets });
+
+    const example1 = [5.9, 3, 5.1, 1.8];
     const result = decision.predict({ X: [example1] });
     const expected = [2];
     expect(result).toEqual(expected);

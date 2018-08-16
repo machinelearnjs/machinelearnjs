@@ -5,17 +5,6 @@
 import { size } from 'lodash';
 import math from '../utils/MathExtra';
 
-export interface LinearRegressionModel {
-  /**
-   * Coefficients component: b0
-   */
-  b0: number;
-  /**
-   * Coefficients component: b1
-   */
-  b1: number;
-}
-
 /**
  * Ordinary least squares Linear Regression.
  *
@@ -64,9 +53,17 @@ export class LinearRegression {
 
   /**
    * Get the model details in JSON format
-   * @returns {LinearRegressionModel}
    */
-  public toJSON(): LinearRegressionModel {
+  public toJSON(): {
+    /**
+     * Coefficients component: b0
+     */
+    b0: number;
+    /**
+     * Coefficients component: b1
+     */
+    b1: number;
+  } {
     return {
       b0: this.b0,
       b1: this.b1
@@ -75,10 +72,16 @@ export class LinearRegression {
 
   /**
    * Restore the model from a checkpoint
-   * @param {number} b0
-   * @param {number} b1
+   * @param {number} b0 - Coefficients component: b0
+   * @param {number} b1 - Coefficients component: b1
    */
-  public fromJSON({ b0 = null, b1 = null }: { b0: number; b1: number }): void {
+  public fromJSON({
+    b0 = null,
+    b1 = null
+  }: {
+    b0: number;
+    b1: number;
+  }): void {
     if (!b0 || !b1) {
       throw new Error('You must provide both b0 and b1 to restore Linear Regression');
     }

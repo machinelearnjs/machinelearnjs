@@ -1,4 +1,5 @@
-import { includes, isEmpty, map, random, range, uniqBy } from 'lodash';
+import { isEmpty, isNumber, map, range, uniqBy } from 'lodash';
+import * as Random from 'random-js';
 import math from '../utils/MathExtra';
 const { isMatrix } = math.contrib;
 
@@ -142,25 +143,34 @@ export class DecisionTreeClassifier {
   private tree = null;
   private verbose = true;
   private randomise = false;
+  private randomEngine = null;
 
   constructor(
     {
       featureLabels = null,
       verbose = false,
-      randomise = false
+      randomise = false,
+      random_state = null
     }: {
       featureLabels?: any[];
       verbose?: boolean;
       randomise?: boolean;
+      random_state?: number;
     } = {
       featureLabels: null,
       verbose: false,
-      randomise: false
+      randomise: false,
+      random_state: null
     }
   ) {
     this.featureLabels = featureLabels;
     this.verbose = verbose;
     this.randomise = randomise;
+    if (!isNumber(random_state)) {
+      this.randomEngine = Random.engines.mt19937().autoSeed();
+    } else {
+      this.randomEngine = Random.engines.mt19937().seed(random_state);
+    }
   }
 
   /**
@@ -335,22 +345,21 @@ export class DecisionTreeClassifier {
 
     let featureIndex = [];
     if (this.randomise) {
-      // a list of features is created by randomly selecting feature indices and adding them to a list
-      while (featureIndex.length < nFeatures) {
-        const index = random(nFeatures);
-        if (!includes(featureIndex, index)) {
-          featureIndex.push(index);
-        }
+      // method 1: Randomly selecting features
+      while (featureIndex.length <= nFeatures) {
+        const index = Random.integer(0, nFeatures)(this.randomEngine);
+        featureIndex.push(index);
       }
     } else {
       featureIndex = range(0, X[0].length);
     }
+
     for (let i = 0; i < featureIndex.length; i++) {
       const col = featureIndex[i];
       const uniqFeatureValues = uniqBy(map(X, row => row[col]), x => x);
       for (let j = 0; j < uniqFeatureValues.length; j++) {
         const feature = uniqFeatureValues[j];
-        // featureLabels is for the model interpretability
+        // featureLabels is for the model interoperability
         const question = new Question(this.featureLabels, col, feature);
 
         // Try splitting the dataset
