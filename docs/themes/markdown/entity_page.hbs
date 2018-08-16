@@ -19,10 +19,15 @@
         {{/each}}
         {{newLine}}Defined in {{getSourceLink this.sources}}
 
-        {{newLine}}**Parameters:**
         {{#each this.signatures}}
-            {{newLine}}{{constructParamTable this.parameters}}
-            {{newLine}}**Returns:** {{renderMethodReturnType this.type}}
+            {{#if this.parameters}}
+                {{newLine}}**Parameters:**
+                {{newLine}}{{constructParamTable this.parameters}}
+            {{/if}}
+            {{#if this.type}}
+                {{newLine}}**Returns:**
+                {{newLine}}{{renderMethodReturnType this.type}}
+            {{/if}}
         {{/each}}
     {{/isSignatureValid}}
 
@@ -74,9 +79,10 @@
                 {{newLine}}Defined in {{getSourceLink this.sources}}
                 {{newLine}}{{this.comment.shortText}}
 
-                    {{newLine}}**Parameters:**
                     {{#each this.signatures}}
+                        {{newLine}}**Parameters:**
                         {{newLine}}{{constructParamTable this.parameters}}
+                        {{newLine}}
                         {{newLine}}**Returns:** {{ this.type.name }}
                     {{/each}}
             {{else}}
@@ -114,10 +120,15 @@
                 {{newLine}}Defined in {{getSourceLink this.sources}}
                 {{newLine}}{{this.comment.shortText}}
 
-                {{newLine}}**Parameters:**
                 {{#each this.signatures}}
-                    {{newLine}}{{constructParamTable this.parameters}}
-                    {{newLine}}**Returns:** {{renderMethodReturnType this.type}}
+                    {{#if this.parameters}}
+                        {{newLine}}**Parameters:**
+                        {{newLine}}{{constructParamTable this.parameters}}
+                    {{/if}}
+                    {{#if this.type}}
+                        {{newLine}}**Returns:**
+                        {{newLine}}{{renderMethodReturnType this.type}}
+                    {{/if}}
                 {{/each}}
             {{else}}
                 {{newLine}} Empty parameters required to invoke!

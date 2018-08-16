@@ -6,6 +6,8 @@ All notable changes to this project will be documented in this file.
 
 Updates:
 * **enhance:** ensemble/RandomForest
+* **docs:** Better rendering for object and promise type return values
+* **enhance:** Datasets APIs are now based on promise
 
 ## [1.1.0]
 :raised_hands: Minor release to deliver a couple improvements :raised_hands: 
