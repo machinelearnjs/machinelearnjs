@@ -1,6 +1,38 @@
 // tslint:disable:no-expression-statement
 import * as _ from 'lodash';
-import { Binarizer, MinMaxScaler, OneHotEncoder } from '../../src/lib/preprocessing/data';
+import { add_dummy_feature, Binarizer, MinMaxScaler, OneHotEncoder } from '../../src/lib/preprocessing/data';
+
+
+describe('data:add_dummy_feature', () => {
+  const X1 = [[0, 1], [1, 0]];
+  const X2 = [[0, 1, 2], [1, 0, 3]];
+
+  it('should return correct result for X1 with default value', () => {
+    const expectedResult = [ [ 1, 0, 1 ], [ 1, 1, 0 ] ];
+    const result = add_dummy_feature({ X: X1 });
+    expect(result).toEqual(expectedResult);
+  });
+
+  it('should return correct result for X2 with default value', () => {
+    const expectedResult = [ [ 1, 0, 1, 2 ], [ 1, 1, 0, 3 ] ];
+    const result = add_dummy_feature({ X: X2 });
+    expect(result).toEqual(expectedResult);
+  });
+
+  it('should return correct result for X1 with value 2', () => {
+    const expectedResult = [ [2, 0, 1], [2, 1, 0] ];
+    const result = add_dummy_feature({ X: X1, value: 2 });
+    expect(result).toEqual(expectedResult);
+  });
+
+  it('should throw error when invalid data is given', () => {
+    const expectedError = 'Input must be a matrix';
+    expect(() => add_dummy_feature({ X: true})).toThrow(expectedError);
+    expect(() => add_dummy_feature({ X: 1})).toThrow(expectedError);
+    expect(() => add_dummy_feature({ X: null})).toThrow(expectedError);
+    expect(() => add_dummy_feature({ X: undefined})).toThrow(expectedError);
+  });
+});
 
 describe('data:OneHotEncoder', () => {
   // Datasets for OneHotEncoding

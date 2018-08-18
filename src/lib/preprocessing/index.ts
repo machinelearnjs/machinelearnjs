@@ -1,5 +1,5 @@
-import { Binarizer, MinMaxScaler, OneHotEncoder } from './data';
+import { add_dummy_feature, Binarizer, MinMaxScaler, OneHotEncoder } from './data';
 
 import { Imputer } from './Imputer';
 
-export { Binarizer, MinMaxScaler, OneHotEncoder, Imputer };
+export { add_dummy_feature, Binarizer, MinMaxScaler, OneHotEncoder, Imputer };

@@ -199,9 +199,38 @@ const variance = (X, mean) => {
   return result;
 };
 
+/**
+ * Stack arrays in sequence horizontally (column wise).
+ * This is equivalent to concatenation along the second axis, except for 1-D
+ * arrays where it concatenates along the first axis. Rebuilds arrays divided by hsplit.
+ *
+ * @example
+ * hstack([[1], [1]], [[ 0, 1, 2 ], [ 1, 0, 3 ]])
+ * returns [ [ 1, 0, 1, 2 ], [ 1, 1, 0, 3 ] ]
+ * @param X
+ * @param y
+ */
+const hstack = (X, y) => {
+  let stack = [];
+  if (isMatrix(X) && isMatrix(y)) {
+    for (let i = 0; i < X.length; i++) {
+      const xEntity = X[i];
+      const yEntity = y[i];
+      stack.push(hstack(xEntity, yEntity));
+    }
+  } else if (Array.isArray(X) && Array.isArray(y)) {
+    stack = _.concat(X, y);
+    stack = _.flatten(stack);
+  } else {
+    throw Error('Input should be either matrix or Arrays');
+  }
+  return stack;
+};
+
 const contrib = {
   covariance,
   euclideanDistance,
+  hstack,
   isArrayOf,
   isMatrix,
   isMatrixOf,

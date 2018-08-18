@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import math from '../utils/MathExtra';
 
 interface StringOneHotDecoder {
   key: number;
@@ -32,6 +33,37 @@ interface NumberOneHotDecoder {
 interface NumberOneHot {
   encoded: any[];
   decode: NumberOneHotDecoder;
+}
+
+/**
+ * Augment dataset with an additional dummy feature.
+ * This is useful for fitting an intercept term with implementations which cannot otherwise fit it directly.
+ *
+ * @example
+ * import { add_dummy_feature } from 'kalimdor/preprocessing';
+ * const dummy = add_dummy_feature({ X: [[0, 1, 2], [1, 0, 3]] });
+ * console.log(dummy); // returns: [ [ 1, 0, 1, 2 ], [ 1, 1, 0, 3 ] ]
+ *
+ * @param X - A matrix of data
+ * @param value - Value to use for the dummy feature.
+ */
+export function add_dummy_feature({
+  X = null,
+  value = 1.0,
+}: {
+  X: number[][];
+  value?: number;
+} = {
+  X: null,
+  value: 1.0,
+}): number[][] {
+  if (!math.contrib.isMatrix(X)) {
+    throw Error('Input must be a matrix');
+  }
+  const [ nSamples ] = math.matrix(X).size();
+  const ones = JSON.parse(math.ones(nSamples, 1).toString());
+  const multipliedOnes = math.multiply(ones, value);
+  return math.contrib.hstack(multipliedOnes, X);
 }
 
 /**
