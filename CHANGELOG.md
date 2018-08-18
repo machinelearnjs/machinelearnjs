@@ -2,9 +2,17 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.1]
+
+:rocket: Introducing new features! :rocket:
+
+*Updates:*
+* **feature:** preprocessing/add_dummy_feature
+
+
 ## [1.1.1]
 
-Updates:
+*Updates:*
 * **enhance:** ensemble/RandomForest
 * **docs:** Better rendering for object and promise type return values
 * **enhance:** Datasets APIs are now based on promise

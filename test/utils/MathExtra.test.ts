@@ -177,3 +177,38 @@ describe('math.contrib.variance', () => {
     expect(expected).toBe(result);
   });
 });
+
+describe('math.contrib.hstack', () => {
+  const X1 = [[1], [2], [3]];
+  const y1 = [[2], [3], [4]];
+
+  const X2 = [1, 2, 3];
+  const y2 = [2, 3, 4];
+
+  const X3 = [['a'], ['b'], ['c']];
+  const y3 = [['b'], ['c'], ['d']];
+
+  it('should hstack a matrix of numbers', () => {
+    const result = math.contrib.hstack(X1, y1);
+    const expectedResult = [[1, 2], [2, 3], [3, 4]];
+    expect(result).toEqual(expectedResult);
+  });
+
+  it('should hstack a vector of numbers', () => {
+    const result = math.contrib.hstack(X2, y2);
+    const expectedResult = [1, 2, 3, 2, 3, 4];
+    expect(result).toEqual(expectedResult);
+  });
+
+  it('should hstack a matrix of numbers', () => {
+    const result = math.contrib.hstack(X3, y3);
+    const expectedResult = [['a', 'b'], ['b', 'c'], ['c', 'd']];
+    expect(result).toEqual(expectedResult);
+  });
+
+  it('should not hstack an invalid input', () => {
+    const expectedError = 'Input should be either matrix or Arrays';
+    expect(() => math.contrib.hstack(true, true)).toThrow(expectedError);
+    expect(() => math.contrib.hstack(1, 2)).toThrow(expectedError);
+  });
+});

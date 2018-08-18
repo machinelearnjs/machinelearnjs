@@ -75,13 +75,7 @@ export class LinearRegression {
    * @param {number} b0 - Coefficients component: b0
    * @param {number} b1 - Coefficients component: b1
    */
-  public fromJSON({
-    b0 = null,
-    b1 = null
-  }: {
-    b0: number;
-    b1: number;
-  }): void {
+  public fromJSON({ b0 = null, b1 = null }: { b0: number; b1: number }): void {
     if (!b0 || !b1) {
       throw new Error('You must provide both b0 and b1 to restore Linear Regression');
     }
