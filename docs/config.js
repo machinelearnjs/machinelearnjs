@@ -27,6 +27,11 @@ module.exports = {
     ],
     sidebar: {
       '/api/': extra.apiSidebar
+    },
+    algolia: {
+      appId: '<APP_ID>',
+      apiKey: '<API_KEY>',
+      indexName: 'kalimdor'
     }
   }
 }
