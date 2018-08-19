@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import math from '../utils/MathExtra';
 
 interface StringOneHotDecoder {
   key: number;
@@ -331,7 +332,8 @@ export class OneHotEncoder {
  * // [ 0, 0.5, 1 ]
  */
 export class MinMaxScaler {
-  private featureRange;
+  private featureRange: number[];
+  private clone: boolean;
   private dataMax: number;
   private dataMin: number;
   private featureMax: number;
@@ -340,17 +342,42 @@ export class MinMaxScaler {
   private scale: number;
   private baseMin: number;
 
-  constructor({ featureRange = [0, 1] }) {
+  /**
+   * @param featureRange - scaling range
+   * @param clone - to clone the input
+   */
+  constructor(
+    {
+      featureRange = [0, 1],
+      clone = true
+    }: {
+      featureRange?: number[];
+      clone?: boolean;
+    } = {
+      featureRange: [0, 1],
+      clone: true
+    }
+  ) {
     this.featureRange = featureRange;
+    this.clone = clone;
   }
 
   /**
    * Compute the minimum and maximum to be used for later scaling.
    * @param {number[]} X - Array or sparse-matrix data input
    */
-  public fit(X: number[]): void {
-    this.dataMax = _.max(X); // What if X is multi-dimensional?
-    this.dataMin = _.min(X);
+  public fit(X: number[] | number[][]): void {
+    const clonedX = this.clone ? _.cloneDeep(X) : X;
+    let rowMax: any = clonedX;
+    let rowMin: any = clonedX;
+
+    // If input is a Matrix...
+    if (math.contrib.isMatrix(X)) {
+      rowMax = math.max(X, 0);
+      rowMin = math.min(X, 0);
+    }
+    this.dataMax = _.max(rowMax);
+    this.dataMin = _.min(rowMin);
     this.featureMax = this.featureRange[1];
     this.featureMin = this.featureRange[0];
     this.dataRange = this.dataMax - this.dataMin;
@@ -361,11 +388,20 @@ export class MinMaxScaler {
 
   /**
    * Fit to data, then transform it.
-   * @param {number[]} X
-   * @returns {any[]}
+   * @param {number[]} X - Original input vector
    */
-  public fit_transform(X: number[]): any[] {
-    return X.map(x => x * this.scale).map(x => x + this.baseMin);
+  public fit_transform(X: number[]): number[] {
+    const X1 = X.map(x => x * this.scale);
+    return X1.map(x => x + this.baseMin);
+  }
+
+  /**
+   * Undo the scaling of X according to feature_range.
+   * @param {number[]} X - Scaled input vector
+   */
+  public inverse_transform(X: number[]): number[] {
+    const X1 = X.map(x => x - this.baseMin);
+    return X1.map(x => x / this.scale);
   }
 }
 

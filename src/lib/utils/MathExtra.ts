@@ -70,6 +70,9 @@ const isMatrixOf = (matrix, _type = 'number') => {
  * @ignore
  */
 const isMatrix = matrix => {
+  if (!Array.isArray(matrix)) {
+    return false;
+  }
   if (_.size(matrix) === 0) {
     return false;
   }
