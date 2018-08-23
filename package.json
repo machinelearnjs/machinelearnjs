@@ -67,7 +67,7 @@
     "isomorphic-fetch": "^2.2.1",
     "libsvm-js": "^0.2.0",
     "lodash": "^4.17.10",
-    "mathjs": "^4.2.1",
+    "mathjs": "5.1.0",
     "numeric": "^1.2.6",
     "random-js": "^1.0.8",
     "stopword": "^0.1.10"

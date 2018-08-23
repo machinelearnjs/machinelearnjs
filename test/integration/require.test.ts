@@ -54,11 +54,12 @@ describe('integration:require', () => {
   });
 
   it('should require preprocessing', () => {
-    const { Binarizer, MinMaxScaler, OneHotEncoder, Imputer } = require('kalimdor/preprocessing');
+    const { add_dummy_feature, Binarizer, MinMaxScaler, OneHotEncoder, Imputer } = require('kalimdor/preprocessing');
     expect(!!Binarizer).toBe(true);
     expect(!!MinMaxScaler).toBe(true);
     expect(!!OneHotEncoder).toBe(true);
     expect(!!Imputer).toBe(true);
+    expect(!!add_dummy_feature).toBe(true);
   });
 
   it('should require svm', () => {

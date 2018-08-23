@@ -1,6 +1,38 @@
 // tslint:disable:no-expression-statement
 import * as _ from 'lodash';
-import { Binarizer, MinMaxScaler, OneHotEncoder } from '../../src/lib/preprocessing/data';
+import { add_dummy_feature, Binarizer, MinMaxScaler, OneHotEncoder } from '../../src/lib/preprocessing/data';
+
+
+describe('data:add_dummy_feature', () => {
+  const X1 = [[0, 1], [1, 0]];
+  const X2 = [[0, 1, 2], [1, 0, 3]];
+
+  it('should return correct result for X1 with default value', () => {
+    const expectedResult = [ [ 1, 0, 1 ], [ 1, 1, 0 ] ];
+    const result = add_dummy_feature({ X: X1 });
+    expect(result).toEqual(expectedResult);
+  });
+
+  it('should return correct result for X2 with default value', () => {
+    const expectedResult = [ [ 1, 0, 1, 2 ], [ 1, 1, 0, 3 ] ];
+    const result = add_dummy_feature({ X: X2 });
+    expect(result).toEqual(expectedResult);
+  });
+
+  it('should return correct result for X1 with value 2', () => {
+    const expectedResult = [ [2, 0, 1], [2, 1, 0] ];
+    const result = add_dummy_feature({ X: X1, value: 2 });
+    expect(result).toEqual(expectedResult);
+  });
+
+  it('should throw error when invalid data is given', () => {
+    const expectedError = 'Input must be a matrix';
+    expect(() => add_dummy_feature({ X: true})).toThrow(expectedError);
+    expect(() => add_dummy_feature({ X: 1})).toThrow(expectedError);
+    expect(() => add_dummy_feature({ X: null})).toThrow(expectedError);
+    expect(() => add_dummy_feature({ X: undefined})).toThrow(expectedError);
+  });
+});
 
 describe('data:OneHotEncoder', () => {
   // Datasets for OneHotEncoding
@@ -76,6 +108,20 @@ describe('data:MinMaxScaler', () => {
     minmaxScaler.fit([4, 5, 6]);
     const result = minmaxScaler.fit_transform([4, 5, 6]);
     expect(_.isEqual(expectedResult, result)).toBe(true);
+  });
+  it('matrix dataset test1', () => {
+    const matrix1 = [
+      [7, 0.27, 0.36, 20.7, 0.045, 45, 170, 1.001, 3, 0.45, 8.8],
+      [6.3, 0.3, 0.34, 1.6, 0.049, 14, 132, 0.994, 3.3, 0.49, 9.5],
+      [8.1, 0.28, 0.4, 6.9, 0.05, 30, 97, 0.9951, 3.26, 0.44, 10.1],
+      [7.2, 0.23, 0.32, 8.5, 0.058, 47, 186, 0.9956, 3.19, 0.4, 9.9],
+      [7.2, 0.23, 0.32, 8.5, 0.058, 47, 186, 0.9956, 3.19, 0.4, 9.9]
+    ];
+    const expected = [0.005135651098384017, 0.010513296227581941, 0.015890941356779865];
+    const scaler = new MinMaxScaler({ featureRange: [0, 1] });
+    scaler.fit(matrix1);
+    const result = scaler.fit_transform([1, 2, 3]);
+    expect(result).toEqual(expected);
   });
 });
 
