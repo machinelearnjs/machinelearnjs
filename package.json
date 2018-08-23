@@ -1,6 +1,6 @@
 {
   "name": "kalimdor",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "description": "Machine Learning library for the web and Node",
   "main": "index.js",
   "typings": "index.d.ts",
