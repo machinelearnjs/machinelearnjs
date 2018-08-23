@@ -8,6 +8,8 @@ All notable changes to this project will be documented in this file.
 
 *Updates:*
 * **feature:** preprocessing/add_dummy_feature
+* **feature:** linear_model/SGDClassifier
+* **feature:** linear_model/SGDRegressor
 
 
 ## [1.1.1]
