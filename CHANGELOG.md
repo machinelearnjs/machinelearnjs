@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 
 ## [1.2.1]
+:bug: Fixing the documentation bug :bug:
+* **docs:** Updating the SGD documentations
+
+## [1.2.0]
 
 :rocket: Introducing new features! :rocket:
 
