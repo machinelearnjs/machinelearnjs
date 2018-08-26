@@ -2,8 +2,6 @@ import { cloneDeep, fill } from 'lodash';
 import { MinMaxScaler } from '../preprocessing';
 import math from '../utils/MathExtra';
 
-const PREPROCESS_MIXMAX = 'minmax';
-
 /**
  * Ordinary base class for SGD classier or regressor
  * @ignore
@@ -16,14 +14,14 @@ class BaseSGD {
   private coefficients = [];
   private clone = true;
   /**
-   * @param preprocess - preprocess methodology can be either minmax or null. Default is minmax
-   * @param learning_rate - Used to limit the amount each coefficient is corrected each time it is updated
-   * @param epochs - Number of iterations
-   * @param clone - To clone the passed in dataset
+   * @param preprocess - preprocess methodology can be either minmax or null. Default is minmax.
+   * @param learning_rate - Used to limit the amount each coefficient is corrected each time it is updated.
+   * @param epochs - Number of iterations.
+   * @param clone - To clone the passed in dataset.
    */
   constructor(
     {
-      preprocess = PREPROCESS_MIXMAX,
+      preprocess = 'minmax',
       learning_rate = 0.01,
       epochs = 50,
       clone = true
@@ -33,7 +31,7 @@ class BaseSGD {
       epochs?: number;
       clone?: boolean;
     } = {
-      preprocess: PREPROCESS_MIXMAX,
+      preprocess: 'minmax',
       learning_rate: 0.001,
       epochs: 50,
       clone: true
@@ -79,7 +77,7 @@ class BaseSGD {
     for (let i = 0; i < clonedX.length; i++) {
       dataset.push(clonedX[i].concat(clonedY[i]));
     }
-    if (this.preprocess === PREPROCESS_MIXMAX) {
+    if (this.preprocess === 'minmax') {
       // Applying MinMax scaling on X
       // todo: should we minmax scale including the target val?
       this.scaler = new MinMaxScaler({ featureRange: [0, 1] });
