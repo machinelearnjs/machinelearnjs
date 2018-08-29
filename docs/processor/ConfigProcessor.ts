@@ -34,6 +34,7 @@ export class ConfigProcessor extends BaseProcesser {
       apiSidebar: this.buildSidebarJSON(apiChildren)
     };
     // 2. Writing extraConfig object as .vuepress/extra.json
+    // TODO: Move this to api processor
     fs.writeFileSync(this.vuepressExtraConfigPath, JSON.stringify(extraConfig), 'utf-8');
 
     // 3. config
