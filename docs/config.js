@@ -23,6 +23,7 @@ module.exports = {
     nav: [
       { text: 'Home', link: '/' },
       { text: 'API', link: '/api/' },
+      { text: 'Examples', link: '/examples/' },
       { text: 'Github', link: 'https://github.com/jasonshin/kalimdorjs' }
     ],
     sidebar: {
