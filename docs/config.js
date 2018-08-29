@@ -27,7 +27,7 @@ module.exports = {
       { text: 'Github', link: 'https://github.com/jasonshin/kalimdorjs' }
     ],
     sidebar: {
-      '/api/': extra.apiSidebar
+      '/api/': extra.apiSidebar,
     }
   }
 }

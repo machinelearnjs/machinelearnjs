@@ -1,4 +1,5 @@
-import { DemoProcessor } from "./DemoProcessor";
+import * as Handlebars from 'handlebars';
+import { ExampleProcessor } from "./ExampleProcessor";
 
-const dp = new DemoProcessor();
-dp.run();
+const dp = new ExampleProcessor();
+dp.run(Handlebars);
