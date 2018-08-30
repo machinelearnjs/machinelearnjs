@@ -1,4 +1,4 @@
-const extra = require('./extra.json');
+const apiExtra = require('./apiExtra.json');
 
 module.exports = {
   title: 'Kalimdor.js',
@@ -27,7 +27,7 @@ module.exports = {
       { text: 'Github', link: 'https://github.com/jasonshin/kalimdorjs' }
     ],
     sidebar: {
-      '/api/': extra.apiSidebar,
+      '/api/': apiExtra.apiSidebar,
     }
   }
 }

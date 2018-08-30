@@ -1,8 +1,8 @@
 import * as fs from 'fs';
 import { forEach } from 'lodash';
-import { BaseProcesser } from "./BaseProcesser";
+import * as path from 'path';
+import { BaseProcesser } from './BaseProcesser';
 import exampleConfig from './exampleConfig';
-import * as path from "path";
 // import * as path from 'path';
 
 export class ExampleProcessor extends BaseProcesser {
@@ -57,7 +57,7 @@ export class ExampleProcessor extends BaseProcesser {
   private createExamplePage(hbs): void {
     const examplePageThemeContent = fs.readFileSync(this.srcExamplePageTheme, 'utf8');
     const template = hbs.compile(examplePageThemeContent);
-    forEach(exampleConfig, (category) => {
+    forEach(exampleConfig, category => {
       const categoryKey = category.key;
       const categoryDir = path.join(this.exampleOutputPath, categoryKey);
 
@@ -65,7 +65,7 @@ export class ExampleProcessor extends BaseProcesser {
       this.createDirByName(categoryDir);
 
       const categoryChildren = category.children;
-      forEach(categoryChildren, (child) => {
+      forEach(categoryChildren, child => {
         const childKey = child.key;
         const examplePageName = path.join(categoryDir, `${childKey}.md`);
         const compiledPage = template(child);

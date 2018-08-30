@@ -48,16 +48,18 @@ class BaseSGD {
    * @param X - Matrix of data
    * @param y - Matrix of targets
    */
-  public fit({
-    X = null,
-    y = null,
-  }: {
-    X: number[][],
-    y: number[],
-  } = {
-    X: null,
-    y: null,
-  }): void {
+  public fit(
+    {
+      X = null,
+      y = null
+    }: {
+      X: number[][];
+      y: number[];
+    } = {
+      X: null,
+      y: null
+    }
+  ): void {
     if (!math.contrib.isMatrix(X)) {
       throw Error('X must be a matrix');
     }
@@ -113,7 +115,7 @@ class BaseSGD {
     return {
       coefficients: this.coefficients,
       scaler: this.scaler
-    }
+    };
   }
 
   /**
@@ -121,16 +123,18 @@ class BaseSGD {
    * @param coefficients - coefficient values
    * @param scaler - scaler object such as MinMaxScaler
    */
-  public fromJSON({
-    coefficients = [],
-    scaler = null,
-  }: {
-    coefficients: number[];
-    scaler: {};
-  } = {
-    coefficients: [],
-    scaler: null,
-  }): void {
+  public fromJSON(
+    {
+      coefficients = [],
+      scaler = null
+    }: {
+      coefficients: number[];
+      scaler: {};
+    } = {
+      coefficients: [],
+      scaler: null
+    }
+  ): void {
     this.coefficients = coefficients;
     this.scaler = scaler;
   }
