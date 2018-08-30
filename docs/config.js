@@ -1,4 +1,5 @@
 const apiExtra = require('./apiExtra.json');
+const exampleExtra = require('./exampleExtra.json')
 
 module.exports = {
   title: 'Kalimdor.js',
@@ -28,6 +29,7 @@ module.exports = {
     ],
     sidebar: {
       '/api/': apiExtra.apiSidebar,
+      '/examples/': exampleExtra.exampleSidebar,
     }
   }
 }

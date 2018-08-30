@@ -54,8 +54,7 @@ export class APIProcessor extends BaseProcesser {
     const extraConfig = {
       apiSidebar: this.buildSidebarJSON(apiChildren)
     };
-    // Writing extraConfig object as .vuepress/extra.json
-    // TODO: Move this to api processor
+    // Writing extraConfig object as .vuepress/apiExtra.json
     fs.writeFileSync(this.vuepressExtraConfigPath, JSON.stringify(extraConfig), 'utf-8');
   }
 

@@ -6,6 +6,7 @@ import exampleConfig from './exampleConfig';
 // import * as path from 'path';
 
 export class ExampleProcessor extends BaseProcesser {
+  private vuepressExampleConfigPath = path.join(__dirname, '../md_out/.vuepress/exampleExtra.json');
   private themePath = path.join(__dirname, '../themes/markdown');
   private exampleOutputPath = path.join(__dirname, '../md_out/examples');
   private homePageFile = 'examples_readme.hbs';
@@ -22,6 +23,28 @@ export class ExampleProcessor extends BaseProcesser {
     this.createDir();
     this.createReadMe(hbs);
     this.createExamplePage(hbs);
+    this.createSidebar();
+  }
+
+  /**
+   * Writes the sidebar config for examples
+   */
+  private createSidebar(): void {
+    const config = exampleConfig.map(category => {
+      const categoryKey = category.key;
+      const categoryTitle = category.title;
+      const categoryChildren = category.children.map(child => [`./${categoryKey}/${child.key}.md`, child.title]);
+      return {
+        children: categoryChildren,
+        collapsable: false,
+        title: categoryTitle
+      };
+    });
+    const extraConfig = {
+      exampleSidebar: config,
+    };
+    // Writing extraConfig object as .vuepress/exampleExtra.json
+    fs.writeFileSync(this.vuepressExampleConfigPath, JSON.stringify(extraConfig), 'utf-8');
   }
 
   /**
