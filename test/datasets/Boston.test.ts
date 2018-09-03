@@ -9,4 +9,14 @@ describe('datasets:Boston', () => {
     const { data } = await boston.load();
     expect(data).toMatchSnapshot();
   });
+
+  it('should targets match the snapshot', async () => {
+    const { targets } = await boston.load();
+    expect(targets).toMatchSnapshot();
+  });
+
+  it('should labels match the snapshot', async () => {
+    const { labels } = await boston.load();
+    expect(labels).toMatchSnapshot();
+  });
 });

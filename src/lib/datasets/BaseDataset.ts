@@ -143,7 +143,6 @@ export class BaseDataset {
     } else if (targetType === 'float') {
       result[1] = result[1].map(parseFloat);
     }
-
     return {
       data: result[0],
       targets,
