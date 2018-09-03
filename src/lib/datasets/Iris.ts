@@ -23,7 +23,7 @@ import { BaseDataset } from './BaseDataset';
  *     labels,       // list of labels
  *     targetNames,  // list of short target labels
  *     description   // dataset description
- *   } = irisData.load(); // loads the data internally
+ *   } = await irisData.load(); // loads the data internally
  * })();
  *
  */

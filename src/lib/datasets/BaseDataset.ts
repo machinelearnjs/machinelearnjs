@@ -1,5 +1,7 @@
+import * as fs from 'fs-extra';
 import 'isomorphic-fetch';
 import { parseInt, uniqBy } from 'lodash';
+import * as path from 'path';
 import { LabelEncoder } from '../preprocessing/label';
 
 /**
@@ -55,6 +57,24 @@ export class BaseDataset {
       targets: null,
       labels: null
     };
+  }
+
+  /**
+   * Load data from the local data folder
+   */
+  protected async fsLoad(
+    type: string,
+    { delimiter = ',', lastIsTarget = true, trainType = 'float', targetType = 'float' } = {
+      // Default object if nothing is provided
+      delimiter: ',',
+      lastIsTarget: true,
+      trainType: 'float',
+      targetType: 'float'
+    }
+  ): Promise<{ data; targets; labels }> {
+    // Make sure the actual data is located under data/type
+    const data = fs.readFileSync(path.join(__dirname, `data/${type}/train.csv`), 'utf8');
+    return this.processCSV(data, delimiter, lastIsTarget, trainType, targetType);
   }
 
   /**
@@ -119,7 +139,6 @@ export class BaseDataset {
     } else if (targetType === 'float') {
       result[1] = result[1].map(parseFloat);
     }
-
     return {
       data: result[0],
       targets,

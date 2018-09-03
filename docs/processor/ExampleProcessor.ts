@@ -41,7 +41,7 @@ export class ExampleProcessor extends BaseProcesser {
       };
     });
     const extraConfig = {
-      exampleSidebar: config,
+      exampleSidebar: config
     };
     // Writing extraConfig object as .vuepress/exampleExtra.json
     fs.writeFileSync(this.vuepressExampleConfigPath, JSON.stringify(extraConfig), 'utf-8');
