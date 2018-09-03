@@ -76,7 +76,6 @@ export class KMeans {
     this.assignment = new Array(_.size(X));
     this.centroids = this.getInitialCentroids(X, this.k);
     this.clusters = new Array(this.k);
-    console.warn(this.maxIteration);
 
     // Flag to check the convergence
     let movement = true;
