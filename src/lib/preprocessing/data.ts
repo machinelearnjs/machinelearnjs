@@ -47,20 +47,22 @@ interface NumberOneHot {
  * @param X - A matrix of data
  * @param value - Value to use for the dummy feature.
  */
-export function add_dummy_feature({
-  X = null,
-  value = 1.0,
-}: {
-  X: number[][];
-  value?: number;
-} = {
-  X: null,
-  value: 1.0,
-}): number[][] {
+export function add_dummy_feature(
+  {
+    X = null,
+    value = 1.0
+  }: {
+    X: number[][];
+    value?: number;
+  } = {
+    X: null,
+    value: 1.0
+  }
+): number[][] {
   if (!math.contrib.isMatrix(X)) {
     throw Error('Input must be a matrix');
   }
-  const [ nSamples ] = math.matrix(X).size();
+  const [nSamples] = math.matrix(X).size();
   const ones = JSON.parse(math.ones(nSamples, 1).toString());
   const multipliedOnes = math.multiply(ones, value);
   return math.contrib.hstack(multipliedOnes, X);

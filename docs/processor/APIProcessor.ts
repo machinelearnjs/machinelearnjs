@@ -5,11 +5,18 @@ import { BaseProcesser } from './BaseProcesser';
 import * as consts from './const';
 const docsJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../docs.json'), 'utf8'));
 
+interface SidebarDefinition {
+  children: [string, string];
+  collapsable: boolean;
+  title: string;
+}
+
 /**
  * Processor used to process API docs located under lib/src/
  */
 export class APIProcessor extends BaseProcesser {
   public apiChildren = [];
+  private vuepressExtraConfigPath = path.join(__dirname, '../md_out/.vuepress/apiExtra.json');
   private themePath = path.join(__dirname, '../themes/markdown');
   private entityPageFile = 'entity_page.hbs';
   private homePageFile = 'api_readme.hbs';
@@ -30,11 +37,59 @@ export class APIProcessor extends BaseProcesser {
 
     // Order API children
     this.apiChildren = this.retrieveOrderedAPIs(docsJson);
-    // TODO: Process homepage to display all the APIs on the homepage
+    // Construct the sidebar configs
+    this.buildSidebar(this.apiChildren);
+    // Create the API homepage
     this.processHomePage(hbs, this.apiChildren);
 
     // Process API pages
     this.processAPIEntityPage(hbs, this.apiChildren);
+  }
+
+  /**
+   * Build the sidebar json for the API pages
+   * @param apiChildren
+   */
+  private buildSidebar(apiChildren): void {
+    const extraConfig = {
+      apiSidebar: this.buildSidebarJSON(apiChildren)
+    };
+    // Writing extraConfig object as .vuepress/apiExtra.json
+    fs.writeFileSync(this.vuepressExtraConfigPath, JSON.stringify(extraConfig), 'utf-8');
+  }
+
+  /**
+   * Build a sidebar JSON for nested navigations
+   * e.g. [{"title":"cluster","collapsable":false,"children":[["./cluster.KMeans","KMeans"]]}
+   * @param apiChildren
+   * @returns {Array}
+   */
+  private buildSidebarJSON(apiChildren): SidebarDefinition[] {
+    return _.reduce(
+      apiChildren,
+      (sum, child) => {
+        const [module, name] = child.name.split('.');
+        const existingGroupIndex = _.findIndex(sum, o => o.title === module);
+        if (existingGroupIndex === -1) {
+          // If there's no existing module group according to the current child's name
+          // create a new definition and append it to the sum
+          const newDefinition = {
+            children: [[`./${child.name}`, name]],
+            collapsable: false,
+            title: module
+          };
+          return _.concat(sum, [newDefinition]);
+        } else {
+          // If there's an existing module definition,
+          // then append the current child's definition to the children list
+          const existing = sum[existingGroupIndex];
+          const newChildren = _.concat(existing.children, [[`./${child.name}`, name]]);
+          const updated = _.set(existing, 'children', newChildren);
+          return _.set(sum, `[${existingGroupIndex}]`, updated);
+        }
+      },
+      []
+    );
   }
 
   /**

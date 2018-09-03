@@ -3,9 +3,9 @@ import * as Handlebars from 'handlebars';
 import * as _ from 'lodash';
 import * as path from 'path';
 import { APIProcessor } from './APIProcessor';
-import config from './config';
 import { ConfigProcessor } from './ConfigProcessor';
 import * as consts from './const';
+import { ExampleProcessor } from './ExampleProcessor';
 import { PagesProcessor } from './PagesProcessor';
 const docsJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../docs.json'), 'utf8'));
 const pjson = JSON.parse(fs.readFileSync(path.join(__dirname, '../../package.json'), 'utf8'));
@@ -394,8 +394,11 @@ Handlebars.registerHelper('cleanHyperLink', str => cleanHyperLink(str));
 const apiProcessor = new APIProcessor();
 apiProcessor.run(Handlebars);
 
-const pagesProcessor = new PagesProcessor({ defaultREADME: config.defaultREADME });
+const pagesProcessor = new PagesProcessor();
 pagesProcessor.run();
+
+const exampleProcessor = new ExampleProcessor();
+exampleProcessor.run(Handlebars);
 
 const configProcessor = new ConfigProcessor();
 configProcessor.run({ apiChildren: apiProcessor.apiChildren });

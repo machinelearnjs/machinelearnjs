@@ -51,7 +51,7 @@ const leResult = le.transform(transformX);
 console.log(leResult);
 
 // add_dummy_features
-import { add_dummy_feature } from "./data";
+import { add_dummy_feature } from './data';
 
 const dummy = add_dummy_feature({ X: [[0, 1, 2], [1, 0, 3]] });
 console.log(dummy);
