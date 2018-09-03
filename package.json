@@ -35,10 +35,11 @@
     "OneHotEncoding"
   ],
   "scripts": {
-    "build": "yarn clean && yarn build:main && yarn build:module && yarn build:web",
+    "build": "yarn clean && yarn build:main && yarn build:module && yarn build:web && yarn build:datasets",
     "build:main": "npx tsc -p tsconfig.json && npx copy package.json ./build/lib && npx copy README.md ./build/lib && npx copy .npmignore ./build/lib",
     "build:module": "npx tsc -p tsconfig.module.json",
     "build:web": "npx tsc -p tsconfig.json --module amd --out build/lib/kalimdor.web.js",
+    "build:datasets": "cp -r src/lib/datasets/data build/lib/datasets/data",
     "fix": "yarn fix:prettier && yarn fix:tslint",
     "fix:prettier": "npx prettier \"src/**/*.ts\" \"test/**/*.ts\" \"docs/**/*.ts\" --config ./.prettierrc --write",
     "fix:tslint": "npx tslint --fix --force -t verbose 'test/**/*.ts' 'src/**/*.ts' 'docs/**/*.ts'",
