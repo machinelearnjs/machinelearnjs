@@ -77,6 +77,7 @@ export class BaseDataset {
       targetType: 'float'
     }
   ): Promise<{ data; targets; labels }> {
+    // Make sure the actual data is located under data/type
     const data = fs.readFileSync(path.join(__dirname, `data/${type}/train.csv`), 'utf8');
     return this.processCSV(data, delimiter, lastIsTarget, trainType, targetType);
   }

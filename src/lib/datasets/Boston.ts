@@ -4,7 +4,6 @@
  * - https://www.cs.toronto.edu/~delve/data/boston/bostonDetail.html
  */
 
-import 'isomorphic-fetch';
 import { BaseDataset } from './BaseDataset';
 
 /**
