@@ -212,3 +212,80 @@ describe('math.contrib.hstack', () => {
     expect(() => math.contrib.hstack(1, 2)).toThrow(expectedError);
   });
 });
+
+describe('math.contrib.inner', () => {
+  it('should calculate inner when two pure numbers are given', () => {
+    const expected = 4;
+    const result = math.contrib.inner(2, 2);
+    expect(result).toEqual(expected);
+  });
+  it('should calculate inner when the left arg is a vector and the right arg is a pure number', () => {
+    const expected = [6, 6];
+    const a = [3, 3];
+    const b = 2;
+    const result = math.contrib.inner(a, b);
+    expect(result).toEqual(expected);
+  });
+  it('should calculate inner when the left arg is a pure number and the right arg is a vector', () => {
+    const expected = [6, 6];
+    const a = 2;
+    const b = [3, 3];
+    const result = math.contrib.inner(a, b);
+    expect(result).toEqual(expected);
+  });
+  it('should calculate inner when both inputs are vectors', () => {
+    const a = [1, 0, 1];
+    const b = [2, 2, 3];
+    const expected = 5;
+    const result = math.contrib.inner(a, b);
+    expect(result).toEqual(expected);
+  });
+  it('should throw an error if non number or vector is given for the left input', () => {
+    const a = null;
+    const b = [2, 2, 2];
+    const error = `Cannot process with the invalid inputs ${a} and ${b}`;
+    expect(() => math.contrib.inner(a, b)).toThrow(error);
+  });
+  it('should throw an error if non number or vector is given for the right input', () => {
+    const a = [2, 2, 2];
+    const b = null;
+    const error = `Cannot process with the invalid inputs ${a} and ${b}`;
+    expect(() => math.contrib.inner(a, b)).toThrow(error);
+  });
+  it('should throw an error if two vectors are not same in size', () => {
+    const a = [1, 2, 3];
+    const b = [1, 2];
+    const error = `Dimensions (${a.length},) and (${b.length},) are not aligned`;
+    expect(() => math.contrib.inner(a, b)).toThrow(error);
+  });
+});
+
+describe('math.contrib.prod', () => {
+  const X1 = [[1, 1], [3, 3], [5, 5]];
+  const X2 = [[true], [false], ['test']];
+
+  it('should prod without axis', () => {
+    const result = math.contrib.prod(X1);
+    const expected = 225;
+    expect(result).toBe(expected);
+  });
+  it('should prod with axis 1', () => {
+    const result = math.contrib.prod(X1, 0);
+    const expected = [15, 15];
+    expect(result).toEqual(expected);
+  });
+  it('should prod with axis 0', () => {
+    const result = math.contrib.prod(X1, 1);
+    const expected = [1, 9, 25];
+    expect(result).toEqual(expected);
+  });
+  it('should not prod when input is not a matrix of numbers', () => {
+    expect(() => math.contrib.prod(X2, 1)).toThrow('X has to be a matrix of numbers');
+  });
+  it('should not prod when axis is invalid', () => {
+    const expected = 'Cannot operate on an invalid axis parameter';
+    expect(() => math.contrib.prod(X1, 10)).toThrow(expected);
+    expect(() => math.contrib.prod(X1, true)).toThrow(expected);
+    expect(() => math.contrib.prod(X1, false)).toThrow(expected);
+  });
+});
