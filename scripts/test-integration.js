@@ -27,7 +27,7 @@ async function runIntegrationTests() {
 
         cmds.forEach(cmd => {
             console.log(cmd.comment)
-            cp.execSync(cmd.cmd)
+            cp.execSync(cmd.cmd, {stdio:[0,1,2]})
         })
     } else {
         console.warn("Docker does not seem to be properly installed. Skipping integration tests.")
