@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.2]
+:rocket: Adding Examples page, more linear models and more datasets :rocket:
+* **docs:** Examples page on the doc site - Titanic Datasets using RandomForest
+* **docs: ** Hiding utils functions from showing up in the doc
+* **feature:** Adding PolynomialFeature extraction
+* **docs: ** KMeans clustering demo
+* **bug: ** Incorrect import statement on KMeans clustering example
+
 ## [1.2.1]
 :bug: Fixing the documentation bug :bug:
 * **docs:** Updating the SGD documentations

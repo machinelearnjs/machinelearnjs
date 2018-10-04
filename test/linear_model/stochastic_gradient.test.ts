@@ -1,16 +1,16 @@
-import { SGDClassifier, SGDRegressor } from "../../src/lib/linear_model/stochastic_gradient";
+import { SGDClassifier, SGDRegressor } from '../../src/lib/linear_model/stochastic_gradient';
 
 const X1 = [[0, 0], [1, 1]];
 const y1 = [0, 1];
 
 describe('linear_model:SGDClassifier', () => {
-  const expected1 = [ 1 ]; // expected with less training
-  const expected2 = [ 2 ]; // expected with more training
+  const expected1 = [1]; // expected with less training
+  const expected2 = [2]; // expected with more training
   it('should solve xor with default (50) epochs', () => {
     const clf = new SGDClassifier();
     clf.fit({ X: X1, y: y1 });
     const result = clf.predict({ X: [[2, 2]] });
-    expect(result).toEqual([ 0 ]);
+    expect(result).toEqual([0]);
   });
   it('should solve xor with 30 epochs', () => {
     const clf = new SGDClassifier({ epochs: 30 });

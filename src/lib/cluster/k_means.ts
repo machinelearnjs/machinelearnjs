@@ -25,7 +25,7 @@ export interface KMeansOptions {
  * K-Means clustering
  *
  * @example
- * import { KMeans } from 'kalimdor/k_means';
+ * import { KMeans } from 'kalimdor/cluster';
  *
  * const kmean = new KMeans({ k: 2 });
  * const clusters = kmean.fit({ X: [[1, 2], [1, 4], [1, 0], [4, 2], [4, 4], [4, 0]] });
@@ -76,7 +76,6 @@ export class KMeans {
     this.assignment = new Array(_.size(X));
     this.centroids = this.getInitialCentroids(X, this.k);
     this.clusters = new Array(this.k);
-    console.warn(this.maxIteration);
 
     // Flag to check the convergence
     let movement = true;

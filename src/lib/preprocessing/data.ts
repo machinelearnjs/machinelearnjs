@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import math from '../utils/MathExtra';
+import { combinationsWithReplacement } from '../utils/permutations';
 
 interface StringOneHotDecoder {
   key: number;
@@ -47,20 +48,22 @@ interface NumberOneHot {
  * @param X - A matrix of data
  * @param value - Value to use for the dummy feature.
  */
-export function add_dummy_feature({
-  X = null,
-  value = 1.0,
-}: {
-  X: number[][];
-  value?: number;
-} = {
-  X: null,
-  value: 1.0,
-}): number[][] {
+export function add_dummy_feature(
+  {
+    X = null,
+    value = 1.0
+  }: {
+    X: number[][];
+    value?: number;
+  } = {
+    X: null,
+    value: 1.0
+  }
+): number[][] {
   if (!math.contrib.isMatrix(X)) {
     throw Error('Input must be a matrix');
   }
-  const [ nSamples ] = math.matrix(X).size();
+  const [nSamples] = math.matrix(X).size();
   const ones = JSON.parse(math.ones(nSamples, 1).toString());
   const multipliedOnes = math.multiply(ones, value);
   return math.contrib.hstack(multipliedOnes, X);
@@ -527,3 +530,102 @@ export class Binarizer {
     return _X;
   }
 }
+
+/**
+ * Generate polynomial and interaction features.
+ *
+ * Generate a new feature matrix consisting of all polynomial combinations of the features
+ * with degree less than or equal to the specified degree. For example, if an input sample
+ * is two dimensional and of the form [a, b], the degree-2 polynomial features are [1, a, b, a^2, ab, b^2].
+ *
+ * @example
+ * import { PolynomialFeatures } from 'kalimdor/preprocessing';
+ * const poly = new PolynomialFeatures();
+ * const X = [[0, 1], [2, 3], [4, 5]];
+ * poly.transform({ X });
+ * // Result:
+ * // [ [ 1, 0, 1, 0, 0, 1 ],
+ * // [ 1, 2, 3, 4, 6, 9 ],
+ * // [ 1, 4, 5, 16, 20, 25 ] ]
+ *
+ */
+export class PolynomialFeatures {
+  private degree;
+
+  /**
+   *
+   * @param degree - The degree of the polynomial features. Default = 2.
+   */
+  constructor(
+    {
+      degree = 2
+    }: {
+      degree: number;
+    } = {
+      degree: 2
+    }
+  ) {
+    // Constructor variables validation
+    if (!_.isNumber(degree)) {
+      throw new Error('Degree must be a number');
+    }
+    this.degree = degree;
+  }
+
+  /**
+   * Transforms the input data
+   * @param X - a matrix
+   */
+  public transform(
+    {
+      X = null
+    }: {
+      X: number[][];
+    } = {
+      X: null
+    }
+  ): number[][] {
+    if (!math.contrib.isMatrixOf(X, 'number')) {
+      throw new Error('Input must be a numeric matrix');
+    }
+    const matrix = math.matrix(X);
+    const [nSamples, nFeatures] = matrix.size();
+    const indexCombination = this.indexCombination(nFeatures, this.degree);
+    const nOutputFeatures = indexCombination.length;
+
+    // Polynomial feature extraction loop begins
+    let result: any = math.ones(nSamples, nOutputFeatures);
+    const rowRange = _.range(0, X.length);
+    for (let i = 0; i < indexCombination.length; i++) {
+      const c = indexCombination[i];
+      // Retrieves column values from X using the index of the indexCombination in the loop
+      const srcColValues: any = c !== null ? math.subset(X, math.index(rowRange, c)) : [];
+
+      // Subsets the placeholder values at [rowRange:i] using the prod value of srcColValues
+      let xc = null;
+      if (srcColValues.length === 0) {
+        xc = _.fill(rowRange.slice(), 1);
+      } else {
+        xc = math.contrib.prod(srcColValues, 1);
+      }
+      result = math.subset(result, math.index(rowRange, i), xc);
+    }
+    return result._data;
+  }
+
+  /**
+   * Creates a combination of index according to nFeautres and degree
+   * @param nFeatures
+   * @param degree
+   */
+  private indexCombination(nFeatures, degree): number[][] {
+    const range = _.range(0, degree + 1);
+    const combs = range.map(i => {
+      return combinationsWithReplacement(_.range(nFeatures), i);
+    });
+    return combs.reduce((sum, cur) => {
+      return sum.concat(cur);
+    }, []);
+  }
+}
+

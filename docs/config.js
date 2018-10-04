@@ -1,4 +1,5 @@
-const extra = require('./extra.json');
+const apiExtra = require('./apiExtra.json');
+const exampleExtra = require('./exampleExtra.json')
 
 module.exports = {
   title: 'Kalimdor.js',
@@ -23,10 +24,12 @@ module.exports = {
     nav: [
       { text: 'Home', link: '/' },
       { text: 'API', link: '/api/' },
+      { text: 'Examples', link: '/examples/' },
       { text: 'Github', link: 'https://github.com/jasonshin/kalimdorjs' }
     ],
     sidebar: {
-      '/api/': extra.apiSidebar
+      '/api/': apiExtra.apiSidebar,
+      '/examples/': exampleExtra.exampleSidebar,
     }
   }
 }
