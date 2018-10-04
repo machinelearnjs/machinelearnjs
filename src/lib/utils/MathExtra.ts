@@ -212,6 +212,7 @@ const variance = (X, mean) => {
  * returns [ [ 1, 0, 1, 2 ], [ 1, 1, 0, 3 ] ]
  * @param X
  * @param y
+ * @ignore
  */
 const hstack = (X, y) => {
   let stack = [];
@@ -230,14 +231,103 @@ const hstack = (X, y) => {
   return stack;
 };
 
+/**
+ * Validating the left input is an array, and the right input is a pure number.
+ * @param a
+ * @param b
+ * @ignore
+ */
+const isArrayNumPair = (a, b) => Array.isArray(a) && _.isNumber(b);
+
+/**
+ * Inner product of two arrays.
+ * Ordinary inner product of vectors for 1-D arrays (without complex conjugation),
+ * in higher dimensions a sum product over the last axes.
+ * @param a
+ * @param b
+ * @ignore
+ */
+const inner = (a, b) => {
+  /**
+   * Internal methods to process the inner product
+   * @param a - First vector
+   * @param b - Second vector or a number
+   */
+  // 1. If a and b are both pure numbers
+  if (_.isNumber(a) && _.isNumber(b)) {
+    return a * b;
+  }
+
+  // If a is a vector and b is a pure number
+  if (isArrayNumPair(a, b)) {
+    return a.map(x => x * b);
+  }
+
+  // If b is a vector and a is a pure number
+  if (isArrayNumPair(b, a)) {
+    return b.map(x => x * a);
+  }
+
+  // If a and b are both vectors with an identical size
+  if (Array.isArray(a) && Array.isArray(b) && a.length === b.length) {
+    let result = 0;
+    for (let i = 0; i < a.length; i++) {
+      result += a[i] * b[i];
+    }
+    return result;
+  } else if (Array.isArray(a) && Array.isArray(b) && a.length !== b.length) {
+    throw new Error(`Dimensions (${a.length},) and (${b.length},) are not aligned`);
+  }
+
+  throw new Error(`Cannot process with the invalid inputs ${a} and ${b}`);
+};
+
+/**
+ * Return the product of array elements over a given axis.
+ * @param X
+ * @param axis
+ * @ignore
+ */
+const prod = (X, axis = null) => {
+  if (!isMatrixOf(X, 'number')) {
+    throw new Error('X has to be a matrix of numbers');
+  }
+  if (axis === null) {
+    return math.prod(X);
+  } else if (axis === 0) {
+    // Prod by column
+    return X.reduce((sum, y) => {
+      for (let i = 0; i < y.length; i++) {
+        let entity = sum[i] ? sum[i] : 1;
+        entity *= y[i];
+        sum[i] = entity;
+      }
+      return sum;
+    }, []);
+  } else if (axis === 1) {
+    return X.reduce((sum, y) => {
+      let result = 1;
+      for (let i = 0; i < y.length; i++) {
+        result *= y[i];
+      }
+      return sum.concat(result);
+    }, []);
+  } else {
+    // If axis is invalid
+    throw new Error('Cannot operate on an invalid axis parameter');
+  }
+};
+
 const contrib = {
   covariance,
   euclideanDistance,
   hstack,
   isArrayOf,
+  inner,
   isMatrix,
   isMatrixOf,
   manhattanDistance,
+  prod,
   range,
   size,
   subtract,
