@@ -1,4 +1,4 @@
-FROM node:8.9.4
+FROM node:8.12.0
 MAINTAINER Jason Shin <visualbbasic@gmail.com>
 
 # System Deps
