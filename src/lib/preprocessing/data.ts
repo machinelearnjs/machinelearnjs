@@ -631,7 +631,7 @@ export class PolynomialFeatures {
 
 /**
  * Data normalization is a process of scaling dataset based on Vector Space Model, for example, L1 and L2.
- * By default, it will be using L1 normalization. At a higher level,
+ * By default, it will be using L2 normalization. At a higher level,
  * the chief difference between the L1 and the L2 terms is that the L2 term is proportional
  * to the square of the  β values, while the L1 norm is proportional the absolute value of the values in  β .
  *
