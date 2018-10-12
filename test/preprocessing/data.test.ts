@@ -6,6 +6,7 @@ import {
   MinMaxScaler,
   OneHotEncoder,
   PolynomialFeatures,
+  normalize,
 } from '../../src/lib/preprocessing/data';
 
 describe('data:add_dummy_feature', () => {
@@ -189,5 +190,43 @@ describe('data:PolynomialFeatures', () => {
     expect(() => new PolynomialFeatures({ degree: null })).toThrow(expected);
     expect(() => new PolynomialFeatures({ degree: 'string' })).toThrow(expected);
     expect(() => new PolynomialFeatures({ degree: [] })).toThrow(expected);
+  });
+});
+
+describe('data:normalize', () => {
+  const X1 = [[1, -1, 2], [2, 0, 0], [0, 1, -1]];
+  it('should normalize X1 with l2 norm', () => {
+    const expected = [
+      [0.4082482904638631, -0.4082482904638631, 0.8164965809277261],
+      [1, 0, 0],
+      [0, 0.7071067811865475, -0.7071067811865475]
+    ];
+    const result = normalize({
+      X: X1,
+      norm: 'l2',
+    });
+    expect(result).toEqual(expected);
+  });
+  it('should normalize X1 with l1 norm', () => {
+    const expected = [
+      [ 0.25, -0.25,  0.5 ],
+      [ 1.  ,  0.  ,  0.  ],
+      [ 0.  ,  0.5 , -0.5 ],
+    ];
+    const result = normalize({
+      X: X1,
+      norm: 'l1',
+    });
+    expect(result).toEqual(expected);
+  });
+  it('should throw an error if unrecognised norm is passed in', () => {
+    const expected = 'test is not a recognised normalization method';
+    expect(() => normalize({ X: X1, norm: 'test' })).toThrow(expected);
+  });
+  it('should throw an error if the input is invalid', () => {
+    const nullException = 'Cannot perform isMatrixOf number unless the data is matrix';
+    expect(() => normalize({ X: null, norm: 'l1' })).toThrow(nullException);
+    expect(() => normalize({ X: [], norm: 'l1' })).toThrow(nullException);
+    expect(() => normalize({ X: 'aisjd', norm: 'l1' })).toThrow(nullException);
   });
 });
