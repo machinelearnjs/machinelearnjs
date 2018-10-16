@@ -31,8 +31,14 @@ describe('integration:require', () => {
   });
 
   it('should require linear_model', () => {
-    const { LinearRegression } = require('kalimdor/linear_model');
+    const {
+      LinearRegression,
+      SGDClassifier,
+      SGDRegressor,
+    } = require('kalimdor/linear_model');
     expect(!!LinearRegression).toBe(true);
+    expect(!!SGDRegressor).toBe(true);
+    expect(!!SGDClassifier).toBe(true);
   });
 
   it('should require metrics', () => {
