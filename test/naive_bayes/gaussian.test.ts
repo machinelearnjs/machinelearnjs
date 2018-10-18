@@ -18,7 +18,7 @@ describe('naive_bayes:GaussianNB', () => {
     const nb = new GaussianNB();
     nb.fit({ X: X1, y: y1.map(String) });
     const result = nb.predict({ X: [[1, 20]] });
-    expect(result).toEqual([1]);
+    expect(result).toEqual(['1']);
   });
   it('Should fit X1 and y1 and reload then predict the same', () => {
     const expected = [1];
