@@ -3,10 +3,6 @@ import { GaussianNB } from '../../src/lib/naive_bayes';
 describe('naive_bayes:GaussianNB', () => {
   const X1 = [[1, 20], [2, 21], [3, 22], [4, 22]];
   const y1 = [1, 0, 1, 0];
-  it('Should fit number and string', () => {
-    const nb = new GaussianNB();
-    nb.fit({ X: X1, y: y1.map(String) });
-  });
   it('Should fit X1 and y1', () => {
     const nb = new GaussianNB();
     nb.fit({ X: X1, y: y1 });
@@ -17,6 +13,12 @@ describe('naive_bayes:GaussianNB', () => {
     nb.fit({ X: X1, y: y1 });
     const result = nb.predict({ X: [[1, 20]] });
     expect(result).toEqual(expected);
+  });
+  it('Should fit string and predict', () => {
+    const nb = new GaussianNB();
+    nb.fit({ X: X1, y: y1.map(String) });
+    const result = nb.predict({ X: [[1, 20]] });
+    expect(result).toEqual([1]);
   });
   it('Should fit X1 and y1 and reload then predict the same', () => {
     const expected = [1];
