@@ -18,6 +18,7 @@ $ yarn add kalimdor
 ```
 
 Using NPM
+
 ```bash
 $ npm install --save kalimdor
 ```
@@ -30,7 +31,7 @@ $ npm install --save kalimdor
 
 # Development
 
-We welcome new contributors of all level of experience. The development guide will be added 
+We welcome new contributors of all level of experience. The development guide will be added
 to assist new contributors to easily join the project.
 
 - You want to participate in a Machine Learning project, which will boost your Machine Learning skills and knowledge
@@ -40,7 +41,7 @@ to assist new contributors to easily join the project.
 
 # Simplicity
 
-Kalimdor.js provides a simple and consistent set of APIs to interact with the models and algorithms. 
+Kalimdor.js provides a simple and consistent set of APIs to interact with the models and algorithms.
 For example, all models have follow APIs:
 
 - `fit` for training
@@ -71,3 +72,16 @@ Great references that helped building this project!
 - https://machinelearningmastery.com/
 - https://github.com/mljs/ml
 - http://scikit-learn.org/stable/documentation.html
+
+## Contributors
+
+Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds/all-contributors#emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore -->
+| [<img src="https://avatars0.githubusercontent.com/u/2525002?v=4" width="100px;"/><br /><sub><b>Jason Shin</b></sub>](https://github.com/JasonShin)<br />[💬](#question-JasonShin "Answering Questions") [📝](#blog-JasonShin "Blogposts") [🐛](https://github.com/JasonShin/Kalimdor/issues?q=author%3AJasonShin "Bug reports") [💻](https://github.com/JasonShin/Kalimdor/commits?author=JasonShin "Code") [🎨](#design-JasonShin "Design") [📖](https://github.com/JasonShin/Kalimdor/commits?author=JasonShin "Documentation") [💡](#example-JasonShin "Examples") [🤔](#ideas-JasonShin "Ideas, Planning, & Feedback") [🚇](#infra-JasonShin "Infrastructure (Hosting, Build-Tools, etc)") [⚠️](https://github.com/JasonShin/Kalimdor/commits?author=JasonShin "Tests") [🔧](#tool-JasonShin "Tools") | [<img src="https://avatars2.githubusercontent.com/u/9072266?v=4" width="100px;"/><br /><sub><b>Oleg Stotsky</b></sub>](https://www.kaggle.com/ostotsky)<br />[💬](#question-OlegStotsky "Answering Questions") [💻](https://github.com/JasonShin/Kalimdor/commits?author=OlegStotsky "Code") [🤔](#ideas-OlegStotsky "Ideas, Planning, & Feedback") [⚠️](https://github.com/JasonShin/Kalimdor/commits?author=OlegStotsky "Tests") | [<img src="https://avatars0.githubusercontent.com/u/21098186?v=4" width="100px;"/><br /><sub><b>Jaivarsan</b></sub>](https://greed2411.github.io/)<br />[🤔](#ideas-greed2411 "Ideas, Planning, & Feedback") [📢](#talk-greed2411 "Talks") |
+| :---: | :---: | :---: |
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
+
+This project follows the [all-contributors](https://github.com/kentcdodds/all-contributors) specification. Contributions of any kind welcome!
