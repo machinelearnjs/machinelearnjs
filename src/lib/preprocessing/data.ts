@@ -105,7 +105,10 @@ export class OneHotEncoder {
    * @param options - dataKeys: independent variables, labelKeys: dependent variables; mandatory
    * @return {{data: Array, decoders: Array}} - see readme for full explanation
    */
-  public encode(data, options = { dataKeys: null, labelKeys: null }): { data: any[]; decoders: any[] } {
+  public encode(
+    data,
+    options = { dataKeys: null, labelKeys: null }
+  ): { data: any[]; decoders: any[] } {
     const labelKeys = options.labelKeys;
     const decoders = [];
 
@@ -216,7 +219,10 @@ export class OneHotEncoder {
    * @param data: the entire dataset
    * @returns {any}
    */
-  private standardizeField(key, data): StringOneHot | BooleanOneHot | NumberOneHot | any[] {
+  private standardizeField(
+    key,
+    data
+  ): StringOneHot | BooleanOneHot | NumberOneHot | any[] {
     const type = typeof data[0][key];
     const values = _.map(data, key);
     switch (type) {
@@ -327,7 +333,9 @@ export class OneHotEncoder {
       return value;
     });
 
-    const encoded = _.map(values, (value: string) => _.range(0, i).map(pos => (_.get(lookup, value) === pos ? 1 : 0)));
+    const encoded = _.map(values, (value: string) =>
+      _.range(0, i).map(pos => (_.get(lookup, value) === pos ? 1 : 0))
+    );
 
     return {
       decode: {
@@ -599,7 +607,8 @@ export class PolynomialFeatures {
     for (let i = 0; i < indexCombination.length; i++) {
       const c = indexCombination[i];
       // Retrieves column values from X using the index of the indexCombination in the loop
-      const srcColValues: any = c !== null ? math.subset(X, math.index(rowRange, c)) : [];
+      const srcColValues: any =
+        c !== null ? math.subset(X, math.index(rowRange, c)) : [];
 
       // Subsets the placeholder values at [rowRange:i] using the prod value of srcColValues
       let xc = null;
@@ -653,17 +662,18 @@ export class PolynomialFeatures {
  * @param norm - The norm to use to normalize each non zero sample; can be either 'l1' or 'l2'
  * @return number[][]
  */
-export function normalize({
-  X = null,
-  norm = 'l2',
-}: {
-  X: number[][],
-  norm?: string,
-} = {
-  X: null,
-  norm: 'l2',
-}): number[][] {
-
+export function normalize(
+  {
+    X = null,
+    norm = 'l2'
+  }: {
+    X: number[][];
+    norm?: string;
+  } = {
+    X: null,
+    norm: 'l2'
+  }
+): number[][] {
   // Validation
   if (!math.contrib.isMatrixOf(X, 'number')) {
     throw new Error('The data input must be a matrix of numbers');
