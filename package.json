@@ -60,7 +60,7 @@
     "release:major": "./scripts/releases/release-it.sh -v major",
     "release:minor": "./scripts/releases/release-it.sh -v minor",
     "release:patch": "./scripts/releases/release-it.sh -v patch",
-    "precommit": "pretty-quick --staged && yarn run fix:tslint && yarn run build"
+    "precommit": "pretty-quick --staged && yarn run lint && yarn run build"
   },
   "engines": {
     "node": ">=6"
