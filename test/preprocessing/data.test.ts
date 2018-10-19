@@ -4,9 +4,9 @@ import {
   add_dummy_feature,
   Binarizer,
   MinMaxScaler,
-  OneHotEncoder,
-  PolynomialFeatures,
   normalize,
+  OneHotEncoder,
+  PolynomialFeatures
 } from '../../src/lib/preprocessing/data';
 
 describe('data:add_dummy_feature', () => {
@@ -123,7 +123,11 @@ describe('data:MinMaxScaler', () => {
       [7.2, 0.23, 0.32, 8.5, 0.058, 47, 186, 0.9956, 3.19, 0.4, 9.9],
       [7.2, 0.23, 0.32, 8.5, 0.058, 47, 186, 0.9956, 3.19, 0.4, 9.9]
     ];
-    const expected = [0.005135651098384017, 0.010513296227581941, 0.015890941356779865];
+    const expected = [
+      0.005135651098384017,
+      0.010513296227581941,
+      0.015890941356779865
+    ];
     const scaler = new MinMaxScaler({ featureRange: [0, 1] });
     scaler.fit(matrix1);
     const result = scaler.fit_transform([1, 2, 3]);
@@ -150,9 +154,9 @@ describe('data:PolynomialFeatures', () => {
     const poly = new PolynomialFeatures();
     const result = poly.transform({ X: X1 });
     const expected = [
-      [ 1, 0, 1, 0, 0, 1 ],
-      [ 1, 2, 3, 4, 6, 9 ],
-      [ 1, 4, 5, 16, 20, 25 ]
+      [1, 0, 1, 0, 0, 1],
+      [1, 2, 3, 4, 6, 9],
+      [1, 4, 5, 16, 20, 25]
     ];
     expect(result).toEqual(expected);
   });
@@ -160,9 +164,9 @@ describe('data:PolynomialFeatures', () => {
     const poly = new PolynomialFeatures({ degree: 3 });
     const result = poly.transform({ X: X1 });
     const expected = [
-      [ 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1 ],
-      [ 1, 2, 3, 4, 6, 9, 8, 12, 12, 18, 18, 27 ],
-      [ 1, 4, 5, 16, 20, 25, 64, 80, 80, 100, 100, 125 ]
+      [1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1],
+      [1, 2, 3, 4, 6, 9, 8, 12, 12, 18, 18, 27],
+      [1, 4, 5, 16, 20, 25, 64, 80, 80, 100, 100, 125]
     ];
     expect(result).toEqual(expected);
   });
@@ -170,7 +174,8 @@ describe('data:PolynomialFeatures', () => {
   // Exceptions
   it('should not transform when invalid values are given', () => {
     const poly = new PolynomialFeatures();
-    const expected = 'Cannot perform isMatrixOf number unless the data is matrix';
+    const expected =
+      'Cannot perform isMatrixOf number unless the data is matrix';
     expect(() => poly.transform({ X: null })).toThrow(expected);
     expect(() => poly.transform({ X: [] })).toThrow(expected);
     expect(() => poly.transform({ X: 1 })).toThrow(expected);
@@ -178,17 +183,17 @@ describe('data:PolynomialFeatures', () => {
   });
   it('should not transform when matrix with non numberic value is given', () => {
     const poly = new PolynomialFeatures();
-    const X = [
-      [1, 2, true],
-      [2, 1, 'string'],
-      [null, null, null],
-    ];
-    expect(() => poly.transform({ X })).toThrow('Input must be a numeric matrix');
+    const X = [[1, 2, true], [2, 1, 'string'], [null, null, null]];
+    expect(() => poly.transform({ X })).toThrow(
+      'Input must be a numeric matrix'
+    );
   });
   it('should not initiate the class if an invalid degree value is given', () => {
     const expected = 'Degree must be a number';
     expect(() => new PolynomialFeatures({ degree: null })).toThrow(expected);
-    expect(() => new PolynomialFeatures({ degree: 'string' })).toThrow(expected);
+    expect(() => new PolynomialFeatures({ degree: 'string' })).toThrow(
+      expected
+    );
     expect(() => new PolynomialFeatures({ degree: [] })).toThrow(expected);
   });
 });
@@ -203,19 +208,15 @@ describe('data:normalize', () => {
     ];
     const result = normalize({
       X: X1,
-      norm: 'l2',
+      norm: 'l2'
     });
     expect(result).toEqual(expected);
   });
   it('should normalize X1 with l1 norm', () => {
-    const expected = [
-      [ 0.25, -0.25,  0.5 ],
-      [ 1.  ,  0.  ,  0.  ],
-      [ 0.  ,  0.5 , -0.5 ],
-    ];
+    const expected = [[0.25, -0.25, 0.5], [1, 0, 0], [0, 0.5, -0.5]];
     const result = normalize({
       X: X1,
-      norm: 'l1',
+      norm: 'l1'
     });
     expect(result).toEqual(expected);
   });
@@ -224,7 +225,8 @@ describe('data:normalize', () => {
     expect(() => normalize({ X: X1, norm: 'test' })).toThrow(expected);
   });
   it('should throw an error if the input is invalid', () => {
-    const nullException = 'Cannot perform isMatrixOf number unless the data is matrix';
+    const nullException =
+      'Cannot perform isMatrixOf number unless the data is matrix';
     expect(() => normalize({ X: null, norm: 'l1' })).toThrow(nullException);
     expect(() => normalize({ X: [], norm: 'l1' })).toThrow(nullException);
     expect(() => normalize({ X: 'aisjd', norm: 'l1' })).toThrow(nullException);
