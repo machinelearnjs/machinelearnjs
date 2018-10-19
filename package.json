@@ -44,7 +44,7 @@
     "fix": "yarn fix:prettier && yarn fix:tslint",
     "fix:prettier": "npx prettier \"src/**/*.ts\" \"test/**/*.ts\" \"docs/**/*.ts\" --config ./.prettierrc --write",
     "fix:tslint": "npx tslint --fix --force -t verbose 'test/**/*.ts' 'src/**/*.ts' 'docs/**/*.ts'",
-    "test": "yarn build && yarn test:lint && yarn test:unit && yarn test:integration && yarn test:nsp && yarn doc",
+    "test": "yarn build && yarn lint && yarn test:unit && yarn test:integration && yarn test:nsp && yarn doc",
     "test:unit": "npx jest --testPathIgnorePatterns \"./test/integration/require.test.ts\"",
     "test:integration": "node ./scripts/test-integration.js",
     "test:nsp": "nsp check",
