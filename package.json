@@ -59,10 +59,8 @@
     "clean": "rm -rf build",
     "release:major": "./scripts/releases/release-it.sh -v major",
     "release:minor": "./scripts/releases/release-it.sh -v minor",
-    "release:patch": "./scripts/releases/release-it.sh -v patch"
-  },
-  "husky": {
-    "pre-commit": "pretty-quick --staged && yarn run fix:tslint && yarn run build"
+    "release:patch": "./scripts/releases/release-it.sh -v patch",
+    "precommit": "pretty-quick --staged && yarn run fix:tslint && yarn run build"
   },
   "engines": {
     "node": ">=6"
@@ -73,6 +71,7 @@
     "lodash": "^4.17.10",
     "mathjs": "5.1.0",
     "numeric": "^1.2.6",
+    "pretty-quick": "^1.8.0",
     "random-js": "^1.0.8",
     "stopword": "^0.1.10"
   },
