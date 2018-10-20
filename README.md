@@ -4,7 +4,6 @@ Kalimdor.js is a Machine Learning library written in Typescript. It solves Machi
 and teaches users how Machine Learning algorithms work.
 
 [![Build Status](https://travis-ci.com/JasonShin/kalimdorjs.svg?token=fyXsjBhWmxzn9Pe4yfJp&branch=master)](https://travis-ci.com/JasonShin/kalimdorjs)
-[![DeepScan grade](https://deepscan.io/api/projects/2872/branches/21332/badge/grade.svg?token=a1fa0980263b30233c0ddf1e9c3ed778290db2ee)](https://deepscan.io/dashboard#view=project&pid=2872&bid=21332)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FJasonShin%2Fkalimdorjs.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FJasonShin%2Fkalimdorjs?ref=badge_shield)
 
 <img src="https://i.imgur.com/CpZA2U7.png">
@@ -18,6 +17,7 @@ $ yarn add kalimdor
 ```
 
 Using NPM
+
 ```bash
 $ npm install --save kalimdor
 ```
@@ -30,7 +30,7 @@ $ npm install --save kalimdor
 
 # Development
 
-We welcome new contributors of all level of experience. The development guide will be added 
+We welcome new contributors of all level of experience. The development guide will be added
 to assist new contributors to easily join the project.
 
 - You want to participate in a Machine Learning project, which will boost your Machine Learning skills and knowledge
@@ -40,7 +40,7 @@ to assist new contributors to easily join the project.
 
 # Simplicity
 
-Kalimdor.js provides a simple and consistent set of APIs to interact with the models and algorithms. 
+Kalimdor.js provides a simple and consistent set of APIs to interact with the models and algorithms.
 For example, all models have follow APIs:
 
 - `fit` for training
