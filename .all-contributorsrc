@@ -44,6 +44,29 @@
         "doc",
         "test"
       ]
+    },
+    {
+      "login": "benjaminmcdonald",
+      "name": "Ben",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/687794?v=4",
+      "profile": "https://github.com/benjaminmcdonald",
+      "contributions": [
+        "question",
+        "design",
+        "talk"
+      ]
+    },
+    {
+      "login": "LSBOSS",
+      "name": "Christoph Reinbothe",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/7292257?v=4",
+      "profile": "https://github.com/LSBOSS",
+      "contributions": [
+        "code",
+        "ideas",
+        "infra",
+        "review"
+      ]
     }
   ]
 }
