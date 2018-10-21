@@ -71,3 +71,14 @@ Great references that helped building this project!
 - https://machinelearningmastery.com/
 - https://github.com/mljs/ml
 - http://scikit-learn.org/stable/documentation.html
+
+## Contributors
+
+Thanks goes to these wonderful people ([emoji key](https://github.com/kentcdodds/all-contributors#emoji-key)):
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore -->
+| [<img src="https://avatars0.githubusercontent.com/u/2525002?v=4" width="100px;"/><br /><sub><b>Jason Shin</b></sub>](https://github.com/JasonShin)<br />[📝](#blog-JasonShin "Blogposts") [🐛](https://github.com/JasonShin/Kalimdor/issues?q=author%3AJasonShin "Bug reports") [💻](https://github.com/JasonShin/Kalimdor/commits?author=JasonShin "Code") [📖](https://github.com/JasonShin/Kalimdor/commits?author=JasonShin "Documentation") [⚠️](https://github.com/JasonShin/Kalimdor/commits?author=JasonShin "Tests") | [<img src="https://avatars0.githubusercontent.com/u/21098186?v=4" width="100px;"/><br /><sub><b>Jaivarsan</b></sub>](https://github.com/greed2411)<br />[💬](#question-greed2411 "Answering Questions") [🤔](#ideas-greed2411 "Ideas, Planning, & Feedback") [📢](#talk-greed2411 "Talks") | [<img src="https://avatars2.githubusercontent.com/u/9072266?v=4" width="100px;"/><br /><sub><b>Oleg Stotsky</b></sub>](https://github.com/OlegStotsky)<br />[🐛](https://github.com/JasonShin/Kalimdor/issues?q=author%3AOlegStotsky "Bug reports") [💻](https://github.com/JasonShin/Kalimdor/commits?author=OlegStotsky "Code") [📖](https://github.com/JasonShin/Kalimdor/commits?author=OlegStotsky "Documentation") [⚠️](https://github.com/JasonShin/Kalimdor/commits?author=OlegStotsky "Tests") | [<img src="https://avatars3.githubusercontent.com/u/687794?v=4" width="100px;"/><br /><sub><b>Ben</b></sub>](https://github.com/benjaminmcdonald)<br />[💬](#question-benjaminmcdonald "Answering Questions") [🎨](#design-benjaminmcdonald "Design") [📢](#talk-benjaminmcdonald "Talks") [🐛](https://github.com/JasonShin/Kalimdor/issues?q=author%3Abenjaminmcdonald "Bug reports") [💻](https://github.com/JasonShin/Kalimdor/commits?author=benjaminmcdonald "Code") | [<img src="https://avatars1.githubusercontent.com/u/7292257?v=4" width="100px;"/><br /><sub><b>Christoph Reinbothe</b></sub>](https://github.com/LSBOSS)<br />[💻](https://github.com/JasonShin/Kalimdor/commits?author=LSBOSS "Code") [🤔](#ideas-LSBOSS "Ideas, Planning, & Feedback") [🚇](#infra-LSBOSS "Infrastructure (Hosting, Build-Tools, etc)") [👀](#review-LSBOSS "Reviewed Pull Requests") |
+| :---: | :---: | :---: | :---: | :---: |
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
