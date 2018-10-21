@@ -53,7 +53,9 @@
       "contributions": [
         "question",
         "design",
-        "talk"
+        "talk",
+        "bug",
+        "code"
       ]
     },
     {
