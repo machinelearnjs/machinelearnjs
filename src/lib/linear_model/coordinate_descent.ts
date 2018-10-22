@@ -1,5 +1,9 @@
-/*import * as _ from 'lodash';
+/* import { normalize, PolynomialFeatures } from '../preprocessing';
 
-class Lasso {
-
-}*/
+export class Lasso {
+  public fit(X): void {
+    const poly = new PolynomialFeatures();
+    const _X = normalize({ X: poly.transform({ X }) });
+  }
+}
+*/
