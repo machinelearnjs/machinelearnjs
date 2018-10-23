@@ -4,10 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## [1.2.3]
 
+:rocket: bug fixes :rocket:
+
 - **docs: ** all-contributors module for contribution recognisation
 - **devops: ** Husky precommit hooks to ensure all commits satisfy the linters. Thanks @OlegStotsky !!
 - **docs: ** Removed the codacy badge and its integration
 - **devops: ** Development environment now supports Windows environment. Thanks @LSBOSS !
+- **bug: ** PolynomialFeatures and normalize export in preprocessing/index.ts
 
 ## [1.2.2]
 
