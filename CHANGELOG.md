@@ -6,21 +6,21 @@ All notable changes to this project will be documented in this file.
 
 :rocket: bug fixes :rocket:
 
-- **docs: ** all-contributors module for contribution recognisation
-- **devops: ** Husky precommit hooks to ensure all commits satisfy the linters. Thanks @OlegStotsky !!
-- **docs: ** Removed the codacy badge and its integration
-- **devops: ** Development environment now supports Windows environment. Thanks @LSBOSS !
-- **bug: ** PolynomialFeatures and normalize export in preprocessing/index.ts
+- **docs:** all-contributors module for contribution recognisation
+- **devops:** Husky precommit hooks to ensure all commits satisfy the linters. Thanks @OlegStotsky !!
+- **docs:** Removed the codacy badge and its integration
+- **devops:** Development environment now supports Windows environment. Thanks @LSBOSS !
+- **bug:** PolynomialFeatures and normalize export in preprocessing/index.ts
 
 ## [1.2.2]
 
 :rocket: Adding Examples page, more linear models and more datasets :rocket:
 
 - **docs:** Examples page on the doc site - Titanic Datasets using RandomForest
-- **docs: ** Hiding utils functions from showing up in the doc
+- **docs:** Hiding utils functions from showing up in the doc
 - **feature:** Adding PolynomialFeature extraction
-- **docs: ** KMeans clustering demo
-- **bug: ** Incorrect import statement on KMeans clustering example
+- **docs:** KMeans clustering demo
+- **bug:** Incorrect import statement on KMeans clustering example
 
 ## [1.2.1]
 
