@@ -26,6 +26,15 @@ Please refer to each project's style guidelines and guidelines for submitting pa
 
 NOTE: Be sure to merge the latest from "upstream" before making a pull request!
 
+Development Environments
+------------------------
+
+
+| type   | version                |
+|--------|------------------------|
+| nodejs | Greater than 6         |
+| OS     | Linux, Windows and Mac |
+
 Releasing
 ---------
 
@@ -39,7 +48,9 @@ Releases will be done using scripts allocated under `scripts/relesases`. To crea
 Changelog is designed to record all the major changes that are happening in the current
 patch/minor/major release. You must manually update the changelog before running the release script.
 
-2. Run the release-it.sh script
+2. Merge `develop` to `master`
+
+3. Run the release-it.sh script
 
 ```bash
 # For patch
@@ -58,7 +69,7 @@ Running the script will result in following:
 - Creating a Github Release
 - Publishing to NPM with a new version
 
-3. Update the changelog on the Github release, which can be found at [https://github.com/JasonShin/kalimdorjs/releases](https://github.com/JasonShin/kalimdorjs/releases)
+4. Update the changelog on the Github release, which can be found at [https://github.com/JasonShin/kalimdorjs/releases](https://github.com/JasonShin/kalimdorjs/releases)
 
 #### Disaster recovery
 

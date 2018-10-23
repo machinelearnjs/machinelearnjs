@@ -20,7 +20,7 @@ install:
 script:
   - yarn build
   - yarn test:unit
-  - yarn test:lint
+  - yarn lint
   - yarn test:nsp
   - yarn test:integration
   - yarn doc

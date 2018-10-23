@@ -31,12 +31,22 @@ describe('integration:require', () => {
   });
 
   it('should require linear_model', () => {
-    const { LinearRegression } = require('kalimdor/linear_model');
+    const {
+      LinearRegression,
+      SGDClassifier,
+      SGDRegressor
+    } = require('kalimdor/linear_model');
     expect(!!LinearRegression).toBe(true);
+    expect(!!SGDRegressor).toBe(true);
+    expect(!!SGDClassifier).toBe(true);
   });
 
   it('should require metrics', () => {
-    const { accuracyScore, confusion_matrix, zeroOneLoss } = require('kalimdor/metrics');
+    const {
+      accuracyScore,
+      confusion_matrix,
+      zeroOneLoss
+    } = require('kalimdor/metrics');
     expect(!!accuracyScore).toBe(true);
     expect(!!confusion_matrix).toBe(true);
     expect(!!zeroOneLoss).toBe(true);
@@ -54,16 +64,33 @@ describe('integration:require', () => {
   });
 
   it('should require preprocessing', () => {
-    const { add_dummy_feature, Binarizer, MinMaxScaler, OneHotEncoder, Imputer } = require('kalimdor/preprocessing');
+    const {
+      add_dummy_feature,
+      Binarizer,
+      MinMaxScaler,
+      normalize,
+      OneHotEncoder,
+      PolynomialFeatures,
+      Imputer
+    } = require('kalimdor/preprocessing');
     expect(!!Binarizer).toBe(true);
     expect(!!MinMaxScaler).toBe(true);
+    expect(!!normalize).toBe(true);
     expect(!!OneHotEncoder).toBe(true);
+    expect(!!PolynomialFeatures).toBe(true);
     expect(!!Imputer).toBe(true);
     expect(!!add_dummy_feature).toBe(true);
   });
 
   it('should require svm', () => {
-    const { BaseSVM, NuSVC, NuSVR, OneClassSVM, SVC, SVR } = require('kalimdor/svm');
+    const {
+      BaseSVM,
+      NuSVC,
+      NuSVR,
+      OneClassSVM,
+      SVC,
+      SVR
+    } = require('kalimdor/svm');
     expect(!!BaseSVM).toBe(true);
     expect(!!NuSVC).toBe(true);
     expect(!!NuSVR).toBe(true);

@@ -105,7 +105,10 @@ export class OneHotEncoder {
    * @param options - dataKeys: independent variables, labelKeys: dependent variables; mandatory
    * @return {{data: Array, decoders: Array}} - see readme for full explanation
    */
-  public encode(data, options = { dataKeys: null, labelKeys: null }): { data: any[]; decoders: any[] } {
+  public encode(
+    data,
+    options = { dataKeys: null, labelKeys: null }
+  ): { data: any[]; decoders: any[] } {
     const labelKeys = options.labelKeys;
     const decoders = [];
 
@@ -216,7 +219,10 @@ export class OneHotEncoder {
    * @param data: the entire dataset
    * @returns {any}
    */
-  private standardizeField(key, data): StringOneHot | BooleanOneHot | NumberOneHot | any[] {
+  private standardizeField(
+    key,
+    data
+  ): StringOneHot | BooleanOneHot | NumberOneHot | any[] {
     const type = typeof data[0][key];
     const values = _.map(data, key);
     switch (type) {
@@ -327,7 +333,9 @@ export class OneHotEncoder {
       return value;
     });
 
-    const encoded = _.map(values, (value: string) => _.range(0, i).map(pos => (_.get(lookup, value) === pos ? 1 : 0)));
+    const encoded = _.map(values, (value: string) =>
+      _.range(0, i).map(pos => (_.get(lookup, value) === pos ? 1 : 0))
+    );
 
     return {
       decode: {
@@ -599,7 +607,8 @@ export class PolynomialFeatures {
     for (let i = 0; i < indexCombination.length; i++) {
       const c = indexCombination[i];
       // Retrieves column values from X using the index of the indexCombination in the loop
-      const srcColValues: any = c !== null ? math.subset(X, math.index(rowRange, c)) : [];
+      const srcColValues: any =
+        c !== null ? math.subset(X, math.index(rowRange, c)) : [];
 
       // Subsets the placeholder values at [rowRange:i] using the prod value of srcColValues
       let xc = null;
@@ -629,3 +638,72 @@ export class PolynomialFeatures {
   }
 }
 
+/**
+ * Data normalization is a process of scaling dataset based on Vector Space Model, and by default, it uses L2 normalization.
+ * At a higher level, the chief difference between the L1 and the L2 terms is that the L2 term is proportional
+ * to the square of the  β values, while the L1 norm is proportional the absolute value of the values in  β .
+ *
+ * @example
+ * import { normalize } from 'kalimdor/preprocess';
+ *
+ * const result = normalize({
+ *   X: [
+ *     [1, -1, 2],
+ *     [2, 0, 0],
+ *     [0, 1, -1],
+ *   ],
+ * });
+ * console.log(result);
+ * // [ [ 0.4082482904638631, -0.4082482904638631, 0.8164965809277261 ],
+ * // [ 1, 0, 0 ],
+ * // [ 0, 0.7071067811865475, -0.7071067811865475 ] ]
+ *
+ * @param X - The data to normalize
+ * @param norm - The norm to use to normalize each non zero sample; can be either 'l1' or 'l2'
+ * @return number[][]
+ */
+export function normalize(
+  {
+    X = null,
+    norm = 'l2'
+  }: {
+    X: number[][];
+    norm?: string;
+  } = {
+    X: null,
+    norm: 'l2'
+  }
+): number[][] {
+  // Validation
+  if (!math.contrib.isMatrixOf(X, 'number')) {
+    throw new Error('The data input must be a matrix of numbers');
+  }
+
+  const normalizedMatrix = [];
+  for (let i = 0; i < X.length; i++) {
+    const row = X[i];
+
+    // Adding a placeholder array
+    normalizedMatrix.push([]);
+
+    // Getting the row's square root
+    let proportion: any = 0; // note: any because math.pow return MathType
+
+    // Normalization proportion value
+    if (norm === 'l1') {
+      proportion = row.reduce((accum: any, r) => accum + Math.abs(r), 0);
+    } else if (norm === 'l2') {
+      proportion = row.reduce((accum: any, r) => accum + math.pow(r, 2), 0);
+      proportion = Math.sqrt(proportion);
+    } else {
+      throw new Error(`${norm} is not a recognised normalization method`);
+    }
+
+    // Finally applying a cubic root to the total value
+    for (let k = 0; k < row.length; k++) {
+      const value = row[k] / proportion;
+      normalizedMatrix[i].push(value);
+    }
+  }
+  return normalizedMatrix;
+}
