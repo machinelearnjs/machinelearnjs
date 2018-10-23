@@ -5,8 +5,9 @@ All notable changes to this project will be documented in this file.
 ## [1.2.3]
 
 - **docs: ** all-contributors module for contribution recognisation
-- **devops: ** Husky precommit hooks to ensure all commits satisfy the linters
+- **devops: ** Husky precommit hooks to ensure all commits satisfy the linters. Thanks @OlegStotsky !!
 - **docs: ** Removed the codacy badge and its integration
+- **devops: ** Development environment now supports Windows environment. Thanks @LSBOSS !
 
 ## [1.2.2]
 
