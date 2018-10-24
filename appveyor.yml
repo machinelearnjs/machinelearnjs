@@ -1,20 +1,23 @@
 # Test against the latest version of this Node.js version
 environment:
   matrix:
-    - nodejs_version: "6"
-    - nodejs_version: "7"
     - nodejs_version: "8"
-    - nodejs_version: "9"
+    - nodejs_version: "10"
+matrix:
+  fast_finish: true
 
 cache:
- - "%LOCALAPPDATA%\\Yarn"
+  - '%LOCALAPPDATA%\Yarn'
+  - '%APPDATA%\npm-cache'               # npm cache
+
+shallow_clone: true
 
 # Install scripts. (runs after repo cloning)
 install:
   # Get the latest stable version of Node.js or io.js
   - ps: Install-Product node $env:nodejs_version
   # install modules
-  - yarn install
+  - npm install
   - yarn build
 
 # Post-install test scripts.
@@ -32,4 +35,5 @@ test_script:
 
 # Don't actually build.
 build: off
+
 
