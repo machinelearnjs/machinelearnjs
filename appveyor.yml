@@ -2,13 +2,16 @@
 environment:
   nodejs_version: "8"
 
+cache:
+ - "%LOCALAPPDATA%\\Yarn"
+
 # Install scripts. (runs after repo cloning)
 install:
   # Get the latest stable version of Node.js or io.js
   - ps: Install-Product node $env:nodejs_version
   # install modules
-  - npm install -g yarn
-  - npm install
+  - yarn install
+  - yarn build
 
 # Post-install test scripts.
 test_script:
@@ -17,13 +20,12 @@ test_script:
   - node --version
   - npm --version
   # run tests
-
-
-# Don't actually build.
-build:
-  - yarn build
-  - yarn test:unit
   - yarn lint
+  - yarn test:unit
   - yarn test:nsp
   - yarn test:integration
   - yarn doc
+
+# Don't actually build.
+build: off
+
