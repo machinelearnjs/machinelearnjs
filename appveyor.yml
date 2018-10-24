@@ -18,5 +18,12 @@ test_script:
   - npm --version
   # run tests
 
+
 # Don't actually build.
-build: off
+build:
+  - yarn build
+  - yarn test:unit
+  - yarn lint
+  - yarn test:nsp
+  - yarn test:integration
+  - yarn doc
