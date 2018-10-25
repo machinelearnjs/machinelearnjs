@@ -5,6 +5,7 @@ and teaches users how Machine Learning algorithms work.
 
 [![Build Status](https://travis-ci.org/kalimdorjs/kalimdorjs.svg?branch=master)](https://travis-ci.org/kalimdorjs/kalimdorjs)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FJasonShin%2Fkalimdorjs.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FJasonShin%2Fkalimdorjs?ref=badge_shield)
+[![Slack](https://slack.bri.im/badge.svg)](https://slack.bri.im)
 
 <img src="https://i.imgur.com/CpZA2U7.png">
 
