@@ -7,7 +7,8 @@ environment:
     - nodejs_version: "8"
     - nodejs_version: "10"
 
-fast_finish: true
+matrix:
+  fast_finish: true
 
 for:
 -
