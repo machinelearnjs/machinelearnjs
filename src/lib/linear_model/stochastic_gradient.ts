@@ -1,6 +1,19 @@
-import { cloneDeep, fill } from 'lodash';
-import { MinMaxScaler } from '../preprocessing';
+import * as tf from '@tensorflow/tfjs';
+import { cloneDeep, range } from 'lodash';
+import * as Random from 'random-js';
 import math from '../utils/MathExtra';
+
+/**
+ * L1 grad method
+ * @param alpha
+ * @param w
+ */
+/*
+const l1Grad = (alpha: number, w: number[]) => {
+  const tAlpha = tf.tensor(alpha);
+  const tW = tf.tensor(w);
+  return tAlpha.mul(tW);
+}*/
 
 /**
  * Ordinary base class for SGD classier or regressor
@@ -8,11 +21,12 @@ import math from '../utils/MathExtra';
  */
 class BaseSGD {
   protected scaler = null;
-  private preprocess = null;
   private learningRate = null;
   private epochs = null;
   private coefficients = [];
   private clone = true;
+  private w = null;
+  private randomEngine = null;
   /**
    * @param preprocess - preprocess methodology can be either minmax or null. Default is minmax.
    * @param learning_rate - Used to limit the amount each coefficient is corrected each time it is updated.
@@ -21,26 +35,25 @@ class BaseSGD {
    */
   constructor(
     {
-      preprocess = 'minmax',
-      learning_rate = 0.01,
-      epochs = 50,
+      learning_rate = 0.0001,
+      epochs = 10000,
       clone = true
     }: {
-      preprocess?: string;
       learning_rate?: number;
       epochs?: number;
       clone?: boolean;
     } = {
-      preprocess: 'minmax',
-      learning_rate: 0.001,
-      epochs: 50,
+      learning_rate: 0.0001,
+      epochs: 10000,
       clone: true
     }
   ) {
-    this.preprocess = preprocess;
     this.learningRate = learning_rate;
     this.epochs = epochs;
     this.clone = clone;
+
+    // Random Engine
+    this.randomEngine = Random.engines.mt19937().autoSeed();
   }
 
   /**
@@ -71,32 +84,7 @@ class BaseSGD {
     // Clone according to the clone flag
     const clonedX = this.clone ? cloneDeep(X) : X;
     const clonedY = this.clone ? cloneDeep(y) : y;
-    const dataset = [];
-
-    // processed data
-    let processedX = [];
-    let processedY = [];
-    for (let i = 0; i < clonedX.length; i++) {
-      dataset.push(clonedX[i].concat(clonedY[i]));
-    }
-    if (this.preprocess === 'minmax') {
-      // Applying MinMax scaling on X
-      // todo: should we minmax scale including the target val?
-      this.scaler = new MinMaxScaler({ featureRange: [0, 1] });
-      this.scaler.fit(dataset);
-      for (let i = 0; i < clonedX.length; i++) {
-        const currentRow = dataset[i];
-        const scaledRow = this.scaler.fit_transform(currentRow);
-        const scaledTarget = scaledRow.pop();
-        processedX.push(scaledRow);
-        processedY.push(scaledTarget);
-      }
-    } else {
-      // rebinding the original value since "preprocess" was not specified
-      processedX = clonedX;
-      processedY = clonedY;
-    }
-    this.sgd({ X: processedX, y: processedY });
+    this.sgd({ X: clonedX, y: clonedY });
   }
 
   /**
@@ -147,30 +135,47 @@ class BaseSGD {
     if (!Array.isArray(X)) {
       throw Error('X must be a vector');
     }
-
-    const predictions = [];
-    const clonedX = this.clone ? cloneDeep(X) : X;
-    const scaledX = clonedX.map(z => this.scaler.fit_transform(z));
-    for (let i = 0; i < scaledX.length; i++) {
-      const row = scaledX[i];
-      predictions.push(this.predictOne({ row }));
-    }
-    // Resulting classes with min max inverse transformed
-    return predictions;
+    // Adding bias
+    const biasX: number[][] = this.addBias(X);
+    const tensorX = tf.tensor(biasX);
+    const yPred = tensorX.dot(this.w);
+    return [...yPred.dataSync()];
   }
 
   /**
-   * Calculate yhat of a row in the dataset
-   * @param row
-   * @param coefficients
+   * Initialize weights based on the number of features
+   *
+   * @example
+   * initializeWeights(3);
+   * // this.w = [-0.213981293, 0.12938219, 0.34875439]
+   *
+   * @param nFeatures
    */
-  private predictOne({ row }): number {
-    let yhat = this.coefficients[0];
-    for (let i = 0; i < row.length; i++) {
-      yhat += this.coefficients[i + 1] * row[i];
-    }
-    return yhat;
+  private initializeWeights(nFeatures: number): void {
+    const limit = 1 / Math.sqrt(nFeatures);
+    const distribution = Random.real(-limit, limit);
+    const getRand = () => distribution(this.randomEngine);
+    this.w = tf.tensor1d(range(0, nFeatures).map(() => getRand()));
   }
+
+  /**
+   * Adding bias to a given array
+   *
+   * @example
+   * addBias([[1, 2], [3, 4]], 1);
+   * // [[1, 1, 2], [1, 3, 4]]
+   *
+   * @param X
+   * @param bias
+   */
+  private addBias(X, bias = 1): number[][] {
+    // TODO: Is there a TF way to achieve it?
+    return X.reduce((sum, cur) => {
+      sum.push([bias].concat(cur));
+      return sum;
+    }, []);
+  }
+
   /**
    * SGD based on linear model to calculate coefficient
    * @param X - training data
@@ -191,20 +196,21 @@ class BaseSGD {
     if (!math.contrib.isMatrix(X) || !Array.isArray(y)) {
       throw Error('X must be a matrix');
     }
-    const numFeatures = X[0].length;
-    this.coefficients = fill(Array(numFeatures + 1), 0.0);
+
+    const tensorX = tf.tensor2d(this.addBias(X));
+
+    this.initializeWeights(tensorX.shape[1]);
+    // const tensorX = tf.tensor2d(X);
+    const tensorY = tf.tensor1d(y);
+    const tensorLR = tf.tensor(this.learningRate);
     for (let e = 0; e < this.epochs; e++) {
-      for (let rowIndex = 0; rowIndex < X.length; rowIndex++) {
-        const row = X[rowIndex];
-        const yhat = this.predictOne({ row });
-        const error = yhat - y[rowIndex];
-        // Minimising the error
-        // b = b - learning_rate * error * x
-        this.coefficients[0] = this.coefficients[0] - this.learningRate * error;
-        for (let j = 0; j < numFeatures; j++) {
-          this.coefficients[j + 1] = this.coefficients[j + 1] - this.learningRate * error * row[j];
-        }
-      }
+      const yPred = tensorX.dot(this.w);
+      const gradW = tensorY
+        .sub(yPred)
+        .neg()
+        .dot(tensorX)
+        .add(tf.regularizers.l2().apply(this.w));
+      this.w = this.w.sub(tensorLR.mul(gradW));
     }
   }
 }
