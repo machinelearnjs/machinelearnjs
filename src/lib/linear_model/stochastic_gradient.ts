@@ -20,7 +20,6 @@ const l1Grad = (alpha: number, w: number[]) => {
  * @ignore
  */
 class BaseSGD {
-  protected scaler = null;
   private learningRate = null;
   private epochs = null;
   private coefficients = [];
@@ -95,14 +94,9 @@ class BaseSGD {
      * coefficient values
      */
     coefficients: number[];
-    /**
-     * scaler object such as MinMaxScaler
-     */
-    scaler: {};
   } {
     return {
-      coefficients: this.coefficients,
-      scaler: this.scaler
+      coefficients: this.coefficients
     };
   }
 
@@ -113,18 +107,14 @@ class BaseSGD {
    */
   public fromJSON(
     {
-      coefficients = [],
-      scaler = null
+      coefficients = []
     }: {
       coefficients: number[];
-      scaler: {};
     } = {
-      coefficients: [],
-      scaler: null
+      coefficients: []
     }
   ): void {
     this.coefficients = coefficients;
-    this.scaler = scaler;
   }
 
   /**
@@ -251,11 +241,7 @@ export class SGDClassifier extends BaseSGD {
     }
   ): number[] {
     const results: number[] = super.predict({ X });
-    let processedResult = results;
-    if (this.scaler) {
-      processedResult = this.scaler.inverse_transform(results);
-    }
-    return processedResult.map(x => Math.round(x));
+    return results.map(x => Math.round(x));
   }
 }
 
