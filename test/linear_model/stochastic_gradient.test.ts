@@ -1,8 +1,5 @@
-import { Iris } from '../../src/lib/datasets/Iris';
-import {
-  SGDClassifier,
-  SGDRegressor
-} from '../../src/lib/linear_model/stochastic_gradient';
+import { Iris } from '../../src/lib/datasets';
+import { SGDClassifier, SGDRegressor } from '../../src/lib/linear_model';
 import { accuracyScore } from '../../src/lib/metrics';
 import { train_test_split } from '../../src/lib/model_selection';
 import { assertArrayAlmostEqual } from '../../src/lib/utils/testing';
