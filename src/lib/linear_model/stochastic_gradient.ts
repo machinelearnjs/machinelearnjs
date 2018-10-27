@@ -1,6 +1,7 @@
 import * as tf from '@tensorflow/tfjs';
 import { cloneDeep, range } from 'lodash';
 import * as Random from 'random-js';
+import { TypeMatrix, TypeVector } from '../../types/model_interfaces';
 import math from '../utils/MathExtra';
 
 /**
@@ -20,12 +21,11 @@ const l1Grad = (alpha: number, w: number[]) => {
  * @ignore
  */
 class BaseSGD {
-  private learningRate = null;
-  private epochs = null;
-  private coefficients = [];
-  private clone = true;
-  private w = null;
-  private randomEngine = null;
+  private learningRate: number;
+  private epochs: number;
+  private clone: boolean = true;
+  private weights: tf.Tensor<tf.Rank.R1> = null;
+  private randomEngine: Random.MT19937; // Random engine used to
   /**
    * @param preprocess - preprocess methodology can be either minmax or null. Default is minmax.
    * @param learning_rate - Used to limit the amount each coefficient is corrected each time it is updated.
@@ -60,18 +60,7 @@ class BaseSGD {
    * @param X - Matrix of data
    * @param y - Matrix of targets
    */
-  public fit(
-    {
-      X = null,
-      y = null
-    }: {
-      X: number[][];
-      y: number[];
-    } = {
-      X: null,
-      y: null
-    }
-  ): void {
+  public fit(X: TypeMatrix<number>, y: TypeVector<number>): void {
     if (!math.contrib.isMatrix(X)) {
       throw Error('X must be a matrix');
     }
@@ -83,7 +72,7 @@ class BaseSGD {
     // Clone according to the clone flag
     const clonedX = this.clone ? cloneDeep(X) : X;
     const clonedY = this.clone ? cloneDeep(y) : y;
-    this.sgd({ X: clonedX, y: clonedY });
+    this.sgd(clonedX, clonedY);
   }
 
   /**
@@ -91,44 +80,43 @@ class BaseSGD {
    */
   public toJSON(): {
     /**
-     * coefficient values
+     * Model training weights
      */
-    coefficients: number[];
+    weights: number[];
   } {
     return {
-      coefficients: this.coefficients
+      weights: [...this.weights.dataSync()]
     };
   }
 
   /**
    * Restore the model from a checkpoint
-   * @param coefficients - coefficient values
-   * @param scaler - scaler object such as MinMaxScaler
+   * @param weights - Model's training state
    */
   public fromJSON(
     {
-      coefficients = []
+      weights = []
     }: {
-      coefficients: number[];
+      weights: number[];
     } = {
-      coefficients: []
+      weights: []
     }
   ): void {
-    this.coefficients = coefficients;
+    this.weights = tf.tensor(weights);
   }
 
   /**
    * Predictions according to the passed in test set
    * @param X - Matrix of data
    */
-  protected predict({ X }): number[] {
+  protected predict(X: TypeMatrix<number>): number[] {
     if (!Array.isArray(X)) {
       throw Error('X must be a vector');
     }
     // Adding bias
     const biasX: number[][] = this.addBias(X);
     const tensorX = tf.tensor(biasX);
-    const yPred = tensorX.dot(this.w);
+    const yPred = tensorX.dot(this.weights);
     return [...yPred.dataSync()];
   }
 
@@ -145,7 +133,7 @@ class BaseSGD {
     const limit = 1 / Math.sqrt(nFeatures);
     const distribution = Random.real(-limit, limit);
     const getRand = () => distribution(this.randomEngine);
-    this.w = tf.tensor1d(range(0, nFeatures).map(() => getRand()));
+    this.weights = tf.tensor1d(range(0, nFeatures).map(() => getRand()));
   }
 
   /**
@@ -171,18 +159,7 @@ class BaseSGD {
    * @param X - training data
    * @param y - target data
    */
-  private sgd(
-    {
-      X = null,
-      y = null
-    }: {
-      X: any[][];
-      y: any[];
-    } = {
-      X: null,
-      y: null
-    }
-  ): void {
+  private sgd(X: TypeMatrix<number>, y: TypeVector<number>): void {
     if (!math.contrib.isMatrix(X) || !Array.isArray(y)) {
       throw Error('X must be a matrix');
     }
@@ -194,13 +171,13 @@ class BaseSGD {
     const tensorY = tf.tensor1d(y);
     const tensorLR = tf.tensor(this.learningRate);
     for (let e = 0; e < this.epochs; e++) {
-      const yPred = tensorX.dot(this.w);
+      const yPred = tensorX.dot(this.weights);
       const gradW = tensorY
         .sub(yPred)
         .neg()
         .dot(tensorX)
-        .add(tf.regularizers.l2().apply(this.w));
-      this.w = this.w.sub(tensorLR.mul(gradW));
+        .add(tf.regularizers.l2().apply(this.weights));
+      this.weights = this.weights.sub(tensorLR.mul(gradW));
     }
   }
 }
@@ -231,16 +208,8 @@ export class SGDClassifier extends BaseSGD {
    * Predicted values with Math.round applied
    * @param X - Matrix of data
    */
-  public predict(
-    {
-      X = []
-    }: {
-      X: number[][];
-    } = {
-      X: []
-    }
-  ): number[] {
-    const results: number[] = super.predict({ X });
+  public predict(X: TypeMatrix<number>): number[] {
+    const results: number[] = super.predict(X);
     return results.map(x => Math.round(x));
   }
 }
@@ -265,15 +234,7 @@ export class SGDRegressor extends BaseSGD {
    * Predicted values
    * @param X - Matrix of data
    */
-  public predict(
-    {
-      X = []
-    }: {
-      X: number[][];
-    } = {
-      X: []
-    }
-  ): number[] {
-    return super.predict({ X });
+  public predict(X: TypeMatrix<number>): number[] {
+    return super.predict(X);
   }
 }
