@@ -14,6 +14,7 @@ class BaseSGD {
   private clone: boolean = true;
   private weights: tf.Tensor<tf.Rank.R1> = null;
   private randomEngine: Random.MT19937; // Random engine used to
+  private randomState: number;
   /**
    * @param preprocess - preprocess methodology can be either minmax or null. Default is minmax.
    * @param learning_rate - Used to limit the amount each coefficient is corrected each time it is updated.
@@ -41,10 +42,10 @@ class BaseSGD {
     this.learningRate = learning_rate;
     this.epochs = epochs;
     this.clone = clone;
-
+    this.randomState = random_state;
     // Random Engine
     if (random_state !== null && random_state !== undefined) {
-      this.randomEngine = Random.engines.mt19937().seed(random_state);
+      this.randomEngine = Random.engines.mt19937().seed(this.randomState);
     } else {
       this.randomEngine = Random.engines.mt19937().autoSeed();
     }
@@ -86,11 +87,16 @@ class BaseSGD {
      * Model training weights
      */
     weights: number[];
+    /**
+     * Number used to set a static random state
+     */
+    random_state: number;
   } {
     return {
       learning_rate: this.learningRate,
       epochs: this.epochs,
-      weights: [...this.weights.dataSync()]
+      weights: [...this.weights.dataSync()],
+      random_state: this.randomState
     };
   }
 
@@ -99,25 +105,30 @@ class BaseSGD {
    * @param learning_rate - Training learning rate
    * @param epochs - Number of model's training epochs
    * @param weights - Model's training state
+   * @param random_state - Static random state for the model initialization
    */
   public fromJSON(
     {
       learning_rate = 0.0001,
       epochs = 10000,
-      weights = []
+      weights = [],
+      random_state = null
     }: {
       learning_rate: number;
       epochs: number;
       weights: number[];
+      random_state: number;
     } = {
       learning_rate: 0.0001,
       epochs: 10000,
-      weights: []
+      weights: [],
+      random_state: null
     }
   ): void {
     this.learningRate = learning_rate;
     this.epochs = epochs;
     this.weights = tf.tensor(weights);
+    this.randomState = random_state;
   }
 
   /**
