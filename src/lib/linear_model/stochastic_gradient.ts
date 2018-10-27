@@ -68,28 +68,48 @@ class BaseSGD {
    */
   public toJSON(): {
     /**
+     * model learning rate
+     */
+    learning_rate: number;
+    /**
+     * model training epochs
+     */
+    epochs: number;
+    /**
      * Model training weights
      */
     weights: number[];
   } {
     return {
+      learning_rate: this.learningRate,
+      epochs: this.epochs,
       weights: [...this.weights.dataSync()]
     };
   }
 
   /**
    * Restore the model from a checkpoint
+   * @param learning_rate - Training learning rate
+   * @param epochs - Number of model's training epochs
    * @param weights - Model's training state
    */
   public fromJSON(
     {
+      learning_rate = 0.0001,
+      epochs = 10000,
       weights = []
     }: {
+      learning_rate: number;
+      epochs: number;
       weights: number[];
     } = {
+      learning_rate: 0.0001,
+      epochs: 10000,
       weights: []
     }
   ): void {
+    this.learningRate = learning_rate;
+    this.epochs = epochs;
     this.weights = tf.tensor(weights);
   }
 

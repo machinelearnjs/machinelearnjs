@@ -7,6 +7,27 @@ import { assertArrayAlmostEqual } from '../../src/lib/utils/testing';
 const X1 = [[0, 0], [1, 1]];
 const y1 = [0, 1];
 
+/**
+ * Retrieves Iris dummy data for testing
+ */
+async function getIris(): Promise<{
+  xTest: number[][];
+  xTrain: number[][];
+  yTest: number[];
+  yTrain: number[];
+}> {
+  const iris = new Iris();
+  const { data, targets } = await iris.load();
+  const { xTest, xTrain, yTest, yTrain } = train_test_split({
+    X: data,
+    y: targets,
+    test_size: 0.33,
+    train_size: 0.67,
+    random_state: 42
+  });
+  return { xTest, xTrain, yTest, yTrain };
+}
+
 describe('linear_model:SGDClassifier', () => {
   const expected1 = [2]; // expected with more training
   const accuracyExpected1 = 0.7;
@@ -17,15 +38,7 @@ describe('linear_model:SGDClassifier', () => {
     expect(result).toEqual(expected1);
   });
   it('should solve iris with 10000 epochs and have greater than 70 accuracy', async () => {
-    const iris = new Iris();
-    const { data, targets } = await iris.load();
-    const { xTest, xTrain, yTest, yTrain } = train_test_split({
-      X: data,
-      y: targets,
-      test_size: 0.33,
-      train_size: 0.67,
-      random_state: 42
-    });
+    const { xTest, xTrain, yTest, yTrain } = await getIris();
 
     const clf = new SGDClassifier({
       epochs: 10000,
@@ -39,6 +52,43 @@ describe('linear_model:SGDClassifier', () => {
     });
     expect(accuracy).toBeGreaterThanOrEqual(accuracyExpected1);
   });
+
+  it('should reload the model and predict the same', async () => {
+    // Doubling the test timeout
+    jest.setTimeout(10000);
+
+    // Initial prediction
+    const { xTest, xTrain, yTest, yTrain } = await getIris();
+
+    const clf = new SGDClassifier({
+      epochs: 10000,
+      learning_rate: 0.000001
+    });
+    clf.fit(xTrain, yTrain);
+    const result = clf.predict(xTest);
+    const accuracy = accuracyScore({
+      y_pred: result,
+      y_true: yTest
+    });
+    expect(accuracy).toBeGreaterThanOrEqual(accuracyExpected1);
+
+    // Model reloading
+    const saveState = clf.toJSON();
+
+    expect(saveState).not.toBeNull();
+    expect(saveState).not.toBeUndefined();
+
+    const clf2 = new SGDClassifier();
+    clf2.fromJSON(saveState);
+
+    const result2 = clf2.predict(xTest);
+    const accuracy2 = accuracyScore({
+      y_pred: result2,
+      y_true: yTest
+    });
+    expect(accuracy2).toBeGreaterThanOrEqual(accuracyExpected1);
+  });
+
   it('Should throw exceptions on fit with invalid inputs', () => {
     const clf = new SGDClassifier();
     // X
@@ -114,21 +164,35 @@ describe('linear_model:SGDRegressor', () => {
     -0.07763924449682236,
     1.150630235671997
   ];
+
   it('should solve xor with default (50) epochs', async () => {
-    const iris = new Iris();
-    const { data, targets } = await iris.load();
-    const { xTest, xTrain, yTrain } = train_test_split({
-      X: data,
-      y: targets,
-      test_size: 0.33,
-      train_size: 0.67,
-      random_state: 42
-    });
+    const { xTest, xTrain, yTrain } = await getIris();
     const reg = new SGDRegressor();
     reg.fit(xTrain, yTrain);
     const result = reg.predict(xTest);
     const similarity = assertArrayAlmostEqual(expected1, result, 1);
     expect(similarity).toBeGreaterThan(70);
+  });
+  it('should reload the model and predict the same', async () => {
+    // Doubling the test timeout
+    jest.setTimeout(10000);
+    const { xTest, xTrain, yTrain } = await getIris();
+
+    // Initial prediction
+    const reg = new SGDRegressor();
+    reg.fit(xTrain, yTrain);
+    const result = reg.predict(xTest);
+    const similarity = assertArrayAlmostEqual(expected1, result, 1);
+    expect(similarity).toBeGreaterThan(70);
+
+    const saveState = reg.toJSON();
+
+    // Model reloading
+    const reg2 = new SGDRegressor();
+    reg2.fromJSON(saveState);
+    const result2 = reg.predict(xTest);
+    const similarity2 = assertArrayAlmostEqual(expected1, result2, 1);
+    expect(similarity2).toBeGreaterThan(70);
   });
   it('Should throw exceptions on fit with invalid inputs', () => {
     const clf = new SGDRegressor();
