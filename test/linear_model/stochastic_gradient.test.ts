@@ -89,6 +89,27 @@ describe('linear_model:SGDClassifier', () => {
     expect(accuracy2).toBeGreaterThanOrEqual(accuracyExpected1);
   });
 
+  it('Should accept a static random state and pass the accuracy test', async () => {
+    // Doubling the test timeout
+    jest.setTimeout(10000);
+    // Initial prediction
+    const { xTest, xTrain, yTest, yTrain } = await getIris();
+
+    const clf = new SGDClassifier({
+      epochs: 10000,
+      learning_rate: 0.000001,
+      random_state: 123
+    });
+
+    clf.fit(xTrain, yTrain);
+    const result = clf.predict(xTest);
+    const accuracy = accuracyScore({
+      y_pred: result,
+      y_true: yTest
+    });
+    expect(accuracy).toBeGreaterThanOrEqual(accuracyExpected1);
+  });
+
   it('Should throw exceptions on fit with invalid inputs', () => {
     const clf = new SGDClassifier();
     // X
