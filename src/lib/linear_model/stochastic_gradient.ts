@@ -24,15 +24,18 @@ class BaseSGD {
     {
       learning_rate = 0.0001,
       epochs = 10000,
-      clone = true
+      clone = true,
+      random_state = null
     }: {
       learning_rate?: number;
       epochs?: number;
       clone?: boolean;
+      random_state?: number;
     } = {
       learning_rate: 0.0001,
       epochs: 10000,
-      clone: true
+      clone: true,
+      random_state: null
     }
   ) {
     this.learningRate = learning_rate;
@@ -40,7 +43,11 @@ class BaseSGD {
     this.clone = clone;
 
     // Random Engine
-    this.randomEngine = Random.engines.mt19937().autoSeed();
+    if (random_state !== null && random_state !== undefined) {
+      this.randomEngine = Random.engines.mt19937().seed(random_state);
+    } else {
+      this.randomEngine = Random.engines.mt19937().autoSeed();
+    }
   }
 
   /**
