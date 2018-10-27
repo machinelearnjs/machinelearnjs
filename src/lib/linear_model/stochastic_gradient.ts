@@ -4,6 +4,12 @@ import * as Random from 'random-js';
 import { TypeMatrix, TypeVector } from '../types/model_interfaces';
 import math from '../utils/MathExtra';
 
+export enum TypeLoss {
+  L1 = 'L1',
+  L2 = 'L2',
+  L1L2 = 'L1L2'
+}
+
 /**
  * Ordinary base class for SGD classier or regressor
  * @ignore
@@ -15,6 +21,7 @@ class BaseSGD {
   private weights: tf.Tensor<tf.Rank.R1> = null;
   private randomEngine: Random.MT19937; // Random engine used to
   private randomState: number;
+  private loss;
   /**
    * @param preprocess - preprocess methodology can be either minmax or null. Default is minmax.
    * @param learning_rate - Used to limit the amount each coefficient is corrected each time it is updated.
@@ -26,23 +33,36 @@ class BaseSGD {
       learning_rate = 0.0001,
       epochs = 10000,
       clone = true,
-      random_state = null
+      random_state = null,
+      loss = TypeLoss.L2
     }: {
       learning_rate?: number;
       epochs?: number;
       clone?: boolean;
       random_state?: number;
+      loss?: TypeLoss;
     } = {
       learning_rate: 0.0001,
       epochs: 10000,
       clone: true,
-      random_state: null
+      random_state: null,
+      loss: TypeLoss.L2
     }
   ) {
     this.learningRate = learning_rate;
     this.epochs = epochs;
     this.clone = clone;
     this.randomState = random_state;
+
+    // Setting a loss function according to the input option
+    if (loss === TypeLoss.L1) {
+      this.loss = tf.regularizers.l1();
+    } else if (loss === TypeLoss.L1L2) {
+      this.loss = tf.regularizers.l1l2();
+    } else {
+      this.loss = tf.regularizers.l2();
+    }
+
     // Random Engine
     if (random_state !== null && random_state !== undefined) {
       this.randomEngine = Random.engines.mt19937().seed(this.randomState);
@@ -193,7 +213,6 @@ class BaseSGD {
     const tensorX = tf.tensor2d(this.addBias(X));
 
     this.initializeWeights(tensorX.shape[1]);
-    // const tensorX = tf.tensor2d(X);
     const tensorY = tf.tensor1d(y);
     const tensorLR = tf.tensor(this.learningRate);
     for (let e = 0; e < this.epochs; e++) {
@@ -202,7 +221,7 @@ class BaseSGD {
         .sub(yPred)
         .neg()
         .dot(tensorX)
-        .add(tf.regularizers.l2().apply(this.weights));
+        .add(this.loss.apply(this.weights));
       this.weights = this.weights.sub(tensorLR.mul(gradW));
     }
   }
