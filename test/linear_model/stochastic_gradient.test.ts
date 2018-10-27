@@ -215,6 +215,20 @@ describe('linear_model:SGDRegressor', () => {
     const similarity2 = assertArrayAlmostEqual(expected1, result2, 1);
     expect(similarity2).toBeGreaterThan(70);
   });
+
+  it('Should accept a static random state and pass the accuracy test', async () => {
+    jest.setTimeout(10000);
+    const { xTest, xTrain, yTrain } = await getIris();
+
+    const reg = new SGDRegressor({
+      random_state: 123
+    });
+    reg.fit(xTrain, yTrain);
+    const result = reg.predict(xTest);
+    const similarity = assertArrayAlmostEqual(expected1, result, 1);
+    expect(similarity).toBeGreaterThan(70);
+  });
+
   it('Should throw exceptions on fit with invalid inputs', () => {
     const clf = new SGDRegressor();
 
