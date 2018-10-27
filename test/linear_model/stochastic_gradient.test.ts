@@ -7,9 +7,10 @@ import { accuracyScore } from '../../src/lib/metrics';
 import { train_test_split } from '../../src/lib/model_selection';
 import { assertArrayAlmostEqual } from '../../src/lib/utils/testing';
 
+const X1 = [[0, 0], [1, 1]];
+const y1 = [0, 1];
+
 describe('linear_model:SGDClassifier', () => {
-  const X1 = [[0, 0], [1, 1]];
-  const y1 = [0, 1];
   const expected1 = [2]; // expected with more training
   const accuracyExpected1 = 0.7;
   it('should solve xor with 100000 epochs', () => {
