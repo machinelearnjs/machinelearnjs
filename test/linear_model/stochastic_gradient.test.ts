@@ -16,7 +16,7 @@ describe('linear_model:SGDClassifier', () => {
   it('should solve xor with 100000 epochs', () => {
     const clf = new SGDClassifier({ epochs: 100000 });
     clf.fit(X1, y1);
-    const result = clf.predict({ X: [[2, 2]] });
+    const result = clf.predict([[2, 2]]);
     expect(result).toEqual(expected1);
   });
   it('should solve iris with 10000 epochs and have greater than 70 accuracy', async () => {
@@ -35,7 +35,7 @@ describe('linear_model:SGDClassifier', () => {
       learning_rate: 0.000001
     });
     clf.fit(xTrain, yTrain);
-    const result = clf.predict({ X: xTest });
+    const result = clf.predict(xTest);
     const accuracy = accuracyScore({
       y_pred: result,
       y_true: yTest
@@ -137,21 +137,21 @@ describe('linear_model:SGDRegressor', () => {
     const clf = new SGDRegressor();
 
     // X
-    expect(() => clf.fit({ X: null, y: y1 })).toThrow('X must be a matrix');
-    expect(() => clf.fit({ X: 1, y: y1 })).toThrow('X must be a matrix');
-    expect(() => clf.fit({ X: 'test', y: y1 })).toThrow('X must be a matrix');
+    expect(() => clf.fit(null, y1)).toThrow('X must be a matrix');
+    expect(() => clf.fit(1, y1)).toThrow('X must be a matrix');
+    expect(() => clf.fit('test', y1)).toThrow('X must be a matrix');
 
     // y
-    expect(() => clf.fit({ X: X1, y: null })).toThrow('y must be a vector');
-    expect(() => clf.fit({ X: X1, y: 1 })).toThrow('y must be a vector');
-    expect(() => clf.fit({ X: X1, y: 'test' })).toThrow('y must be a vector');
+    expect(() => clf.fit(X1, null)).toThrow('y must be a vector');
+    expect(() => clf.fit(X1, 1)).toThrow('y must be a vector');
+    expect(() => clf.fit(X1, 'test')).toThrow('y must be a vector');
   });
 
   it('Should throw exceptions on predict with invalid inputs', () => {
     const clf = new SGDRegressor();
     // X
-    expect(() => clf.predict({ X: null })).toThrow('X must be a vector');
-    expect(() => clf.predict({ X: 1 })).toThrow('X must be a vector');
-    expect(() => clf.predict({ X: {} })).toThrow('X must be a vector');
+    expect(() => clf.predict(null)).toThrow('X must be a vector');
+    expect(() => clf.predict(1)).toThrow('X must be a vector');
+    expect(() => clf.predict({})).toThrow('X must be a vector');
   });
 });

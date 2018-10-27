@@ -1,20 +1,8 @@
 import * as tf from '@tensorflow/tfjs';
 import { cloneDeep, range } from 'lodash';
 import * as Random from 'random-js';
-import { TypeMatrix, TypeVector } from '../../types/model_interfaces';
+import { TypeMatrix, TypeVector } from '../types/model_interfaces';
 import math from '../utils/MathExtra';
-
-/**
- * L1 grad method
- * @param alpha
- * @param w
- */
-/*
-const l1Grad = (alpha: number, w: number[]) => {
-  const tAlpha = tf.tensor(alpha);
-  const tW = tf.tensor(w);
-  return tAlpha.mul(tW);
-}*/
 
 /**
  * Ordinary base class for SGD classier or regressor
