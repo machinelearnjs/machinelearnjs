@@ -1,15 +1,17 @@
 image:
-  - Visual Studio 2017
   - Ubuntu
-# Test against the latest version of this Node.js version
+  - Visual Studio 2015
+
 environment:
   matrix:
     - nodejs_version: "8"
     - nodejs_version: "10"
 
+# Fail on first error
 matrix:
   fast_finish: true
 
+# Specify cache for yarn in cross platform way
 for:
 -
   matrix:
@@ -22,15 +24,19 @@ for:
     only:
       - image: Ubuntu
   cache:
-    - "~/.cache/yarn"
+    - "$HOME/.cache/yarn"
 
 shallow_clone: true
 
-# Install scripts. (runs after repo cloning)
 install:
-  # Get the latest stable version of Node.js or io.js
-  - ps: Install-Product node $env:nodejs_version
-  # install modules
+  # Install specified version of Node.JS (cross platform capable way)
+  - cmd: powershell Install-Product node $env:nodejs_version
+  - sh: nvm install $nodejs_version
+
+  # Set execution flag on script that runs inside docker
+  - sh: chmod +x ./scripts/build-prod.sh
+
+  # install dependencies
   - yarn install
   - yarn build
 
@@ -40,7 +46,7 @@ test_script:
   - yarn --version
   - node --version
   - npm --version
-  # run tests
+  # Run all tests
   - yarn lint
   - yarn test:unit
   - yarn test:nsp
@@ -49,5 +55,3 @@ test_script:
 
 # Don't actually build.
 build: off
-
-
