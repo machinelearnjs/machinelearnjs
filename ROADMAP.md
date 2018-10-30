@@ -28,3 +28,17 @@ is a full list of major updates and new APIs that will be in 2.0:
 - Multinomial Bayesian Classifier
 - Gradient Boosting algorithms
 - Regression Metrics
+- More blog articles on different use-cases of Kalimdor
+- Replacing the primary CI to Appveyor from TravisCI
+
+#### What's after V2?
+
+Nothing has been discussed on what will happen after stabilising v2.
+
+#### Releases
+
+We will use pre-release approach to make `v2` usable as soon as possible. In the meantime, `v1` will
+still be considered the `latest` and `stable` while `v2` will remain `beta`.
+
+Stabilised version of `v2` will be out as soon as it is clear that most of the codebase is rewritten
+into Tensorflow.js.
