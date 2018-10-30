@@ -4,6 +4,7 @@ Kalimdor.js is a Machine Learning library written in Typescript. It solves Machi
 and teaches users how Machine Learning algorithms work.
 
 [![Build Status](https://travis-ci.org/kalimdorjs/kalimdorjs.svg?branch=master)](https://travis-ci.org/kalimdorjs/kalimdorjs)
+[![Build status](https://ci.appveyor.com/api/projects/status/0e70aia5vi2h35hs/branch/master?svg=true)](https://ci.appveyor.com/project/JasonShin/kalimdorjs/branch/master)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FJasonShin%2Fkalimdorjs.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FJasonShin%2Fkalimdorjs?ref=badge_shield)
 [![Slack](https://slack.bri.im/badge.svg)](https://slack.bri.im)
 
