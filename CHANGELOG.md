@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.4]
+
+:rocket: bug fixes :rocket:
+
+- **docs:** Removing an extra text from the site footer
+- **bug:** Boston Dataset is not correctly exported from index.ts
+
 ## [1.2.3]
 
 :rocket: bug fixes :rocket:

@@ -11,8 +11,9 @@ describe('integration:require', () => {
   });
 
   it('should require datasets', () => {
-    const { Iris } = require('kalimdor/datasets');
+    const { Iris, Boston } = require('kalimdor/datasets');
     expect(!!Iris).toBe(true);
+    expect(!!Boston).toBe(true);
   });
 
   it('should require decomposition', () => {
