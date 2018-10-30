@@ -1,0 +1,74 @@
+{
+  "projectName": "Kalimdor",
+  "projectOwner": "JasonShin",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "JasonShin",
+      "name": "Jason Shin",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/2525002?v=4",
+      "profile": "https://github.com/JasonShin",
+      "contributions": [
+        "blog",
+        "bug",
+        "code",
+        "doc",
+        "test"
+      ]
+    },
+    {
+      "login": "greed2411",
+      "name": "Jaivarsan",
+      "avatar_url": "https://avatars0.githubusercontent.com/u/21098186?v=4",
+      "profile": "https://github.com/greed2411",
+      "contributions": [
+        "question",
+        "ideas",
+        "talk"
+      ]
+    },
+    {
+      "login": "OlegStotsky",
+      "name": "Oleg Stotsky",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/9072266?v=4",
+      "profile": "https://github.com/OlegStotsky",
+      "contributions": [
+        "bug",
+        "code",
+        "doc",
+        "test"
+      ]
+    },
+    {
+      "login": "benjaminmcdonald",
+      "name": "Ben",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/687794?v=4",
+      "profile": "https://github.com/benjaminmcdonald",
+      "contributions": [
+        "question",
+        "design",
+        "talk",
+        "bug",
+        "code"
+      ]
+    },
+    {
+      "login": "LSBOSS",
+      "name": "Christoph Reinbothe",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/7292257?v=4",
+      "profile": "https://github.com/LSBOSS",
+      "contributions": [
+        "code",
+        "ideas",
+        "infra",
+        "review"
+      ]
+    }
+  ]
+}

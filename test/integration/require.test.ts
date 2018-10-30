@@ -11,8 +11,9 @@ describe('integration:require', () => {
   });
 
   it('should require datasets', () => {
-    const { Iris } = require('kalimdor/datasets');
+    const { Iris, Boston } = require('kalimdor/datasets');
     expect(!!Iris).toBe(true);
+    expect(!!Boston).toBe(true);
   });
 
   it('should require decomposition', () => {
@@ -68,12 +69,16 @@ describe('integration:require', () => {
       add_dummy_feature,
       Binarizer,
       MinMaxScaler,
+      normalize,
       OneHotEncoder,
+      PolynomialFeatures,
       Imputer
     } = require('kalimdor/preprocessing');
     expect(!!Binarizer).toBe(true);
     expect(!!MinMaxScaler).toBe(true);
+    expect(!!normalize).toBe(true);
     expect(!!OneHotEncoder).toBe(true);
+    expect(!!PolynomialFeatures).toBe(true);
     expect(!!Imputer).toBe(true);
     expect(!!add_dummy_feature).toBe(true);
   });

@@ -1,0 +1,57 @@
+image:
+  - Ubuntu
+  - Visual Studio 2015
+
+environment:
+  matrix:
+    - nodejs_version: "8"
+    - nodejs_version: "10"
+
+# Fail on first error
+matrix:
+  fast_finish: true
+
+# Specify cache for yarn in cross platform way
+for:
+-
+  matrix:
+    except:
+      - image: Ubuntu
+  cache:
+    - "%LOCALAPPDATA%\\Yarn"
+-
+  matrix:
+    only:
+      - image: Ubuntu
+  cache:
+    - "$HOME/.cache/yarn"
+
+shallow_clone: true
+
+install:
+  # Install specified version of Node.JS (cross platform capable way)
+  - cmd: powershell Install-Product node $env:nodejs_version
+  - sh: nvm install $nodejs_version
+
+  # Set execution flag on script that runs inside docker
+  - sh: chmod +x ./scripts/build-prod.sh
+
+  # install dependencies
+  - yarn install
+  - yarn build
+
+# Post-install test scripts.
+test_script:
+  # Output useful info for debugging.
+  - yarn --version
+  - node --version
+  - npm --version
+  # Run all tests
+  - yarn lint
+  - yarn test:unit
+  - yarn test:nsp
+  - yarn test:integration
+  - yarn doc
+
+# Don't actually build.
+build: off

@@ -13,8 +13,8 @@ export {
   add_dummy_feature,
   Binarizer,
   MinMaxScaler,
+  normalize,
   OneHotEncoder,
-  Imputer,
   PolynomialFeatures,
-  normalize
+  Imputer
 };
