@@ -1,4 +1,4 @@
-import { Type2DMatrix } from './matrix.types';
+import { Type2DMatrix, Type3DMatrix, Type4DMatrix } from './matrix.types';
 import { IMlModel, TypeModelState } from './model.types';
 
-export { TypeModelState, Type2DMatrix, IMlModel };
+export { TypeModelState, Type2DMatrix, Type3DMatrix, Type4DMatrix, IMlModel };
