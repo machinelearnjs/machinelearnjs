@@ -30,6 +30,7 @@ is a full list of major updates and new APIs that will be in 2.0:
 - Regression Metrics
 - More blog articles on different use-cases of Kalimdor
 - Replacing the primary CI to Appveyor from TravisCI
+- Consistent and simpler APIs; no more `.fit({X: ..., y: ...})`
 
 #### What's after V2?
 
