@@ -139,6 +139,40 @@ function traverseArrayDefinition(arrayTree, result = ''): string {
 }
 
 /**
+ * Construct a list of string representations of Matrix
+ *
+ * @example
+ * constructMatrixType('Type2DMatrix', [{ type: 'intrinsic', name: 'string' }])
+ * // 'string[][]'
+ *
+ * @param dim
+ * @param types
+ */
+function constructMatrixType(
+  dim: string,
+  types: [{ type: string; name: string }]
+): string {
+  const buffer = [];
+  let brackets;
+  if (dim === consts.type1DMatrix) {
+    brackets = '[]';
+  } else if (dim === consts.type2DMatrix) {
+    brackets = '[][]';
+  } else if (dim === consts.type3DMatrix) {
+    brackets = '[][][]';
+  } else if (dim === consts.type4DMatrix) {
+    brackets = '[][][][]';
+  }
+
+  types.forEach(type => {
+    buffer.push(`${type.name}${brackets}`);
+  });
+
+  // Joining everything and returns a string
+  return buffer.join(' or ');
+}
+
+/**
  * Prioritise getting text instead of shortText description
  * @param param
  */
@@ -249,12 +283,29 @@ function constructParamTable(parameters): string {
             ]);
           });
         } else if (foundRef.kindString === consts.refKindTypeAlias) {
+          // Handling a custom `type` such as Type2DMatrix or Type3DMatrix
           const { type } = foundRef.type;
           if (type === consts.returnTypeArray) {
-            // console.log('type alias array param', param);
+            // For each TypeXMatrix render its array representation as a string
+            // example: number[][][] | string[][][]
+            const { typeArguments } = param.type;
+            // const refType = foundRef.type.type;
+            const refName = foundRef.name;
+            const typeList = [];
+            for (let i = 0; i < typeArguments.length; i++) {
+              const typeArg = typeArguments[i];
+              if (typeArg.type === consts.refTypeArgTypeUnion) {
+                const types = typeArg.types;
+                typeList.push(constructMatrixType(refName, types));
+              } else if (typeArg.type === consts.refTypeArgTypeIntrinsic) {
+                typeList.push(typeArg.name);
+              } else {
+                typeList.push('unknown');
+              }
+            }
             sum.push([
               param.name,
-              param.type.name,
+              typeList.join(' or '),
               param.defaultValue,
               getText(param)
             ]);

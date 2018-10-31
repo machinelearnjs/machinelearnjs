@@ -16,6 +16,7 @@ export interface TypeModelState {
 
 /**
  * Base type definition for all the models
+ * @ignore
  */
 export abstract class IMlModel<T> {
   /**
