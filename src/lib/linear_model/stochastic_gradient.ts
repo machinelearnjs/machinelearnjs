@@ -64,7 +64,7 @@ class BaseSGD {
     }
 
     // Random Engine
-    if (random_state !== null && random_state !== undefined) {
+    if (Number.isInteger(this.randomState)) {
       this.randomEngine = Random.engines.mt19937().seed(this.randomState);
     } else {
       this.randomEngine = Random.engines.mt19937().autoSeed();
