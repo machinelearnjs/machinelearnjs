@@ -1,4 +1,4 @@
 import { LinearRegression } from './linear_regression';
-import { SGDClassifier, SGDRegressor } from './stochastic_gradient';
+import { SGDClassifier, SGDRegressor, TypeLoss } from './stochastic_gradient';
 
-export { LinearRegression, SGDClassifier, SGDRegressor };
+export { LinearRegression, SGDClassifier, SGDRegressor, TypeLoss };

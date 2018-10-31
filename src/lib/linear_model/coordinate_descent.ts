@@ -1,5 +1,3 @@
-/*import * as _ from 'lodash';
-
-class Lasso {
-
-}*/
+/*
+Reminder: implement Lasso, Ridge and ElasticNet here
+*/

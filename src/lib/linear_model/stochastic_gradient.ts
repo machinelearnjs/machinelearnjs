@@ -1,18 +1,27 @@
-import { cloneDeep, fill } from 'lodash';
-import { MinMaxScaler } from '../preprocessing';
+import * as tf from '@tensorflow/tfjs';
+import { cloneDeep, range } from 'lodash';
+import * as Random from 'random-js';
+import { TypeMatrix, TypeVector } from '../types/model_interfaces';
 import math from '../utils/MathExtra';
+
+export enum TypeLoss {
+  L1 = 'L1',
+  L2 = 'L2',
+  L1L2 = 'L1L2'
+}
 
 /**
  * Ordinary base class for SGD classier or regressor
  * @ignore
  */
 class BaseSGD {
-  protected scaler = null;
-  private preprocess = null;
-  private learningRate = null;
-  private epochs = null;
-  private coefficients = [];
-  private clone = true;
+  private learningRate: number;
+  private epochs: number;
+  private clone: boolean = true;
+  private weights: tf.Tensor<tf.Rank.R1> = null;
+  private randomEngine: Random.MT19937; // Random engine used to
+  private randomState: number;
+  private loss;
   /**
    * @param preprocess - preprocess methodology can be either minmax or null. Default is minmax.
    * @param learning_rate - Used to limit the amount each coefficient is corrected each time it is updated.
@@ -21,26 +30,45 @@ class BaseSGD {
    */
   constructor(
     {
-      preprocess = 'minmax',
-      learning_rate = 0.01,
-      epochs = 50,
-      clone = true
+      learning_rate = 0.0001,
+      epochs = 10000,
+      clone = true,
+      random_state = null,
+      loss = TypeLoss.L2
     }: {
-      preprocess?: string;
       learning_rate?: number;
       epochs?: number;
       clone?: boolean;
+      random_state?: number;
+      loss?: TypeLoss;
     } = {
-      preprocess: 'minmax',
-      learning_rate: 0.001,
-      epochs: 50,
-      clone: true
+      learning_rate: 0.0001,
+      epochs: 10000,
+      clone: true,
+      random_state: null,
+      loss: TypeLoss.L2
     }
   ) {
-    this.preprocess = preprocess;
     this.learningRate = learning_rate;
     this.epochs = epochs;
     this.clone = clone;
+    this.randomState = random_state;
+
+    // Setting a loss function according to the input option
+    if (loss === TypeLoss.L1) {
+      this.loss = tf.regularizers.l1();
+    } else if (loss === TypeLoss.L1L2) {
+      this.loss = tf.regularizers.l1l2();
+    } else {
+      this.loss = tf.regularizers.l2();
+    }
+
+    // Random Engine
+    if (Number.isInteger(this.randomState)) {
+      this.randomEngine = Random.engines.mt19937().seed(this.randomState);
+    } else {
+      this.randomEngine = Random.engines.mt19937().autoSeed();
+    }
   }
 
   /**
@@ -48,18 +76,7 @@ class BaseSGD {
    * @param X - Matrix of data
    * @param y - Matrix of targets
    */
-  public fit(
-    {
-      X = null,
-      y = null
-    }: {
-      X: number[][];
-      y: number[];
-    } = {
-      X: null,
-      y: null
-    }
-  ): void {
+  public fit(X: TypeMatrix<number>, y: TypeVector<number>): void {
     if (!math.contrib.isMatrix(X)) {
       throw Error('X must be a matrix');
     }
@@ -71,32 +88,7 @@ class BaseSGD {
     // Clone according to the clone flag
     const clonedX = this.clone ? cloneDeep(X) : X;
     const clonedY = this.clone ? cloneDeep(y) : y;
-    const dataset = [];
-
-    // processed data
-    let processedX = [];
-    let processedY = [];
-    for (let i = 0; i < clonedX.length; i++) {
-      dataset.push(clonedX[i].concat(clonedY[i]));
-    }
-    if (this.preprocess === 'minmax') {
-      // Applying MinMax scaling on X
-      // todo: should we minmax scale including the target val?
-      this.scaler = new MinMaxScaler({ featureRange: [0, 1] });
-      this.scaler.fit(dataset);
-      for (let i = 0; i < clonedX.length; i++) {
-        const currentRow = dataset[i];
-        const scaledRow = this.scaler.fit_transform(currentRow);
-        const scaledTarget = scaledRow.pop();
-        processedX.push(scaledRow);
-        processedY.push(scaledTarget);
-      }
-    } else {
-      // rebinding the original value since "preprocess" was not specified
-      processedX = clonedX;
-      processedY = clonedY;
-    }
-    this.sgd({ X: processedX, y: processedY });
+    this.sgd(clonedX, clonedY);
   }
 
   /**
@@ -104,107 +96,133 @@ class BaseSGD {
    */
   public toJSON(): {
     /**
-     * coefficient values
+     * model learning rate
      */
-    coefficients: number[];
+    learning_rate: number;
     /**
-     * scaler object such as MinMaxScaler
+     * model training epochs
      */
-    scaler: {};
+    epochs: number;
+    /**
+     * Model training weights
+     */
+    weights: number[];
+    /**
+     * Number used to set a static random state
+     */
+    random_state: number;
   } {
     return {
-      coefficients: this.coefficients,
-      scaler: this.scaler
+      learning_rate: this.learningRate,
+      epochs: this.epochs,
+      weights: [...this.weights.dataSync()],
+      random_state: this.randomState
     };
   }
 
   /**
    * Restore the model from a checkpoint
-   * @param coefficients - coefficient values
-   * @param scaler - scaler object such as MinMaxScaler
+   * @param learning_rate - Training learning rate
+   * @param epochs - Number of model's training epochs
+   * @param weights - Model's training state
+   * @param random_state - Static random state for the model initialization
    */
   public fromJSON(
     {
-      coefficients = [],
-      scaler = null
+      learning_rate = 0.0001,
+      epochs = 10000,
+      weights = [],
+      random_state = null
     }: {
-      coefficients: number[];
-      scaler: {};
+      learning_rate: number;
+      epochs: number;
+      weights: number[];
+      random_state: number;
     } = {
-      coefficients: [],
-      scaler: null
+      learning_rate: 0.0001,
+      epochs: 10000,
+      weights: [],
+      random_state: null
     }
   ): void {
-    this.coefficients = coefficients;
-    this.scaler = scaler;
+    this.learningRate = learning_rate;
+    this.epochs = epochs;
+    this.weights = tf.tensor(weights);
+    this.randomState = random_state;
   }
 
   /**
    * Predictions according to the passed in test set
    * @param X - Matrix of data
    */
-  protected predict({ X }): number[] {
+  protected predict(X: TypeMatrix<number>): number[] {
     if (!Array.isArray(X)) {
       throw Error('X must be a vector');
     }
-
-    const predictions = [];
-    const clonedX = this.clone ? cloneDeep(X) : X;
-    const scaledX = clonedX.map(z => this.scaler.fit_transform(z));
-    for (let i = 0; i < scaledX.length; i++) {
-      const row = scaledX[i];
-      predictions.push(this.predictOne({ row }));
-    }
-    // Resulting classes with min max inverse transformed
-    return predictions;
+    // Adding bias
+    const biasX: number[][] = this.addBias(X);
+    const tensorX = tf.tensor(biasX);
+    const yPred = tensorX.dot(this.weights);
+    return [...yPred.dataSync()];
   }
 
   /**
-   * Calculate yhat of a row in the dataset
-   * @param row
-   * @param coefficients
+   * Initialize weights based on the number of features
+   *
+   * @example
+   * initializeWeights(3);
+   * // this.w = [-0.213981293, 0.12938219, 0.34875439]
+   *
+   * @param nFeatures
    */
-  private predictOne({ row }): number {
-    let yhat = this.coefficients[0];
-    for (let i = 0; i < row.length; i++) {
-      yhat += this.coefficients[i + 1] * row[i];
-    }
-    return yhat;
+  private initializeWeights(nFeatures: number): void {
+    const limit = 1 / Math.sqrt(nFeatures);
+    const distribution = Random.real(-limit, limit);
+    const getRand = () => distribution(this.randomEngine);
+    this.weights = tf.tensor1d(range(0, nFeatures).map(() => getRand()));
   }
+
+  /**
+   * Adding bias to a given array
+   *
+   * @example
+   * addBias([[1, 2], [3, 4]], 1);
+   * // [[1, 1, 2], [1, 3, 4]]
+   *
+   * @param X
+   * @param bias
+   */
+  private addBias(X, bias = 1): number[][] {
+    // TODO: Is there a TF way to achieve it?
+    return X.reduce((sum, cur) => {
+      sum.push([bias].concat(cur));
+      return sum;
+    }, []);
+  }
+
   /**
    * SGD based on linear model to calculate coefficient
    * @param X - training data
    * @param y - target data
    */
-  private sgd(
-    {
-      X = null,
-      y = null
-    }: {
-      X: any[][];
-      y: any[];
-    } = {
-      X: null,
-      y: null
-    }
-  ): void {
+  private sgd(X: TypeMatrix<number>, y: TypeVector<number>): void {
     if (!math.contrib.isMatrix(X) || !Array.isArray(y)) {
       throw Error('X must be a matrix');
     }
-    const numFeatures = X[0].length;
-    this.coefficients = fill(Array(numFeatures + 1), 0.0);
+
+    const tensorX = tf.tensor2d(this.addBias(X));
+
+    this.initializeWeights(tensorX.shape[1]);
+    const tensorY = tf.tensor1d(y);
+    const tensorLR = tf.tensor(this.learningRate);
     for (let e = 0; e < this.epochs; e++) {
-      for (let rowIndex = 0; rowIndex < X.length; rowIndex++) {
-        const row = X[rowIndex];
-        const yhat = this.predictOne({ row });
-        const error = yhat - y[rowIndex];
-        // Minimising the error
-        // b = b - learning_rate * error * x
-        this.coefficients[0] = this.coefficients[0] - this.learningRate * error;
-        for (let j = 0; j < numFeatures; j++) {
-          this.coefficients[j + 1] = this.coefficients[j + 1] - this.learningRate * error * row[j];
-        }
-      }
+      const yPred = tensorX.dot(this.weights);
+      const gradW = tensorY
+        .sub(yPred)
+        .neg()
+        .dot(tensorX)
+        .add(this.loss.apply(this.weights));
+      this.weights = this.weights.sub(tensorLR.mul(gradW));
     }
   }
 }
@@ -235,21 +253,9 @@ export class SGDClassifier extends BaseSGD {
    * Predicted values with Math.round applied
    * @param X - Matrix of data
    */
-  public predict(
-    {
-      X = []
-    }: {
-      X: number[][];
-    } = {
-      X: []
-    }
-  ): number[] {
-    const results: number[] = super.predict({ X });
-    let processedResult = results;
-    if (this.scaler) {
-      processedResult = this.scaler.inverse_transform(results);
-    }
-    return processedResult.map(x => Math.round(x));
+  public predict(X: TypeMatrix<number>): number[] {
+    const results: number[] = super.predict(X);
+    return results.map(x => Math.round(x));
   }
 }
 
@@ -273,15 +279,7 @@ export class SGDRegressor extends BaseSGD {
    * Predicted values
    * @param X - Matrix of data
    */
-  public predict(
-    {
-      X = []
-    }: {
-      X: number[][];
-    } = {
-      X: []
-    }
-  ): number[] {
-    return super.predict({ X });
+  public predict(X: TypeMatrix<number>): number[] {
+    return super.predict(X);
   }
 }
