@@ -10,12 +10,12 @@ import { Iris } from '../datasets/Iris';
   const y = [0, 1, 2, 3, 7];
 
   const randomForest = new RandomForestClassifier();
-  randomForest.fit({ X, y });
+  randomForest.fit(X, y);
 
   console.log(randomForest.predict([[0, 3], [2, 1]]));
 
   const rf2 = new RandomForestClassifier();
-  rf2.fit({ X: data, y: targets });
+  rf2.fit(data, targets);
 
   console.log('pred', rf2.predict([[6.7, 3, 5.2, 2.3]]));
 })();

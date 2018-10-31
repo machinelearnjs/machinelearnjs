@@ -24,3 +24,7 @@ export const returnNamePromise = 'Promise';
 // Tags
 export const tagTypeExample = 'example';
 export const tagTypeIgnore = 'ignore';
+
+// Reference Kinds
+export const refKindInterface = 'Interface';
+export const refKindTypeAlias = 'Type alias';

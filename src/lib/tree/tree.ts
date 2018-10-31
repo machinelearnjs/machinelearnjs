@@ -1,5 +1,6 @@
 import { isEmpty, isNumber, map, range, uniqBy } from 'lodash';
 import * as Random from 'random-js';
+import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
 const { isMatrix } = math.contrib;
 
@@ -29,7 +30,9 @@ export class Question {
 
   public toString(): string {
     if (!this.features) {
-      throw Error('You must provide feature labels in order to render toString!');
+      throw Error(
+        'You must provide feature labels in order to render toString!'
+      );
     }
     const condition = typeof this.value === 'number' ? '>=' : '==';
     return `Is ${this.features[this.column]} ${condition} ${this.value}`;
@@ -138,7 +141,7 @@ export interface Options {
   verbose?: boolean;
   randomise?: boolean;
 }
-export class DecisionTreeClassifier {
+export class DecisionTreeClassifier implements IMlModel<number> {
   private featureLabels = null;
   private tree = null;
   private verbose = true;
@@ -175,13 +178,23 @@ export class DecisionTreeClassifier {
 
   /**
    * Fit date, which builds a tree
-   * @param {any} X
-   * @param {any} y
+   * @param {any} X - 2D Matrix of training
+   * @param {any} y - 1D Vector of target
    * @returns {Leaf | DecisionNode}
    */
-  public fit({ X, y }: { X: any[]; y: any[] }): void {
+  public fit(
+    X: Type2DMatrix<string | number | boolean> = null,
+    y: Type1DMatrix<string | number | boolean> = null
+  ): void {
     // this.y = y;
-    if (!X || !y || !Array.isArray(X) || !Array.isArray(y) || isEmpty(X) || isEmpty(y)) {
+    if (
+      !X ||
+      !y ||
+      !Array.isArray(X) ||
+      !Array.isArray(y) ||
+      isEmpty(X) ||
+      isEmpty(y)
+    ) {
       throw Error('Cannot accept non Array values for X and y');
     }
     this.tree = this.buildTree({ X, y });
@@ -189,10 +202,11 @@ export class DecisionTreeClassifier {
 
   /**
    * Predict multiple rows
-   * @param {any[]} X
-   * @returns {any[]}
+   *
+   * @param X - 2D Matrix of testing data
    */
-  public predict({ X }: { X: any[][] }): any {
+  public predict(X: Type2DMatrix<string | boolean | number>): any[] {
+    // fix the typing error
     if (!isMatrix(X)) {
       throw Error('X needs to be a matrix!');
     }
@@ -210,7 +224,7 @@ export class DecisionTreeClassifier {
    */
   public toJSON(): {
     featureLabels: string[];
-    tree: any;
+    tree: any; // TODO: fix this type
     verbose: boolean;
     randomise: boolean;
   } {
