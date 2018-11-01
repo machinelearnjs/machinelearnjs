@@ -151,7 +151,7 @@ export class DecisionTreeClassifier implements IMlModel<number> {
    *
    * @param featureLabels - Literal names for each feature to be used while printing the tree out as a string
    * @param verbose - Logs the progress of the tree construction as console.info
-   * @param random_state - Seed value for the random engine
+   * @param random_state - A seed value for the random engine
    */
   constructor(
     {
@@ -225,14 +225,28 @@ export class DecisionTreeClassifier implements IMlModel<number> {
    * @returns {{featureLabels: string[]; tree: any; verbose: boolean}}
    */
   public toJSON(): {
+    /**
+     * Literal names for each feature to be used while printing the tree out as a string
+     */
     featureLabels: string[];
+    /**
+     * The model's state
+     */
     tree: any; // TODO: fix this type
+    /**
+     * Logs the progress of the tree construction as console.info
+     */
     verbose: boolean;
+    /**
+     * A seed value for the random engine
+     */
+    random_state: number;
   } {
     return {
       featureLabels: this.featureLabels,
       tree: this.tree,
-      verbose: this.verbose
+      verbose: this.verbose,
+      random_state: this.randomState
     };
   }
 
@@ -241,19 +255,23 @@ export class DecisionTreeClassifier implements IMlModel<number> {
    * @param {string[]} featureLabels - Literal names for each feature to be used while printing the tree out as a string
    * @param {any} tree - The model's state
    * @param {boolean} verbose - Logs the progress of the tree construction as console.info
+   * @param {number} random_state - A seed value for the random engine
    */
   public fromJSON({
     featureLabels = null,
     tree = null,
-    verbose = false
+    verbose = false,
+    random_state = null
   }: {
     featureLabels: string[];
     tree: any;
     verbose: boolean;
+    random_state: number;
   }): void {
     this.featureLabels = featureLabels;
     this.tree = tree;
     this.verbose = verbose;
+    this.randomState = random_state;
   }
 
   /**
