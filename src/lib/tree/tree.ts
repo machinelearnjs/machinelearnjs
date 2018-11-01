@@ -238,9 +238,9 @@ export class DecisionTreeClassifier implements IMlModel<number> {
 
   /**
    * Restores the model from a checkpoint
-   * @param {string[]} featureLabels
-   * @param {any} tree
-   * @param {boolean} verbose
+   * @param {string[]} featureLabels - Literal names for each feature to be used while printing the tree out as a string
+   * @param {any} tree - The model's state
+   * @param {boolean} verbose - Logs the progress of the tree construction as console.info
    */
   public fromJSON({
     featureLabels = null,
