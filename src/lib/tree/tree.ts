@@ -1,4 +1,4 @@
-import { isEmpty, isNumber, map, range, uniqBy } from 'lodash';
+import { isEmpty, map, range, uniqBy } from 'lodash';
 import * as Random from 'random-js';
 import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
@@ -139,37 +139,39 @@ export class DecisionNode {
 export interface Options {
   featureLabels?: null | any[];
   verbose?: boolean;
-  randomise?: boolean;
 }
 export class DecisionTreeClassifier implements IMlModel<number> {
   private featureLabels = null;
   private tree = null;
   private verbose = true;
-  private randomise = false;
+  private randomState = null;
   private randomEngine = null;
 
+  /**
+   *
+   * @param featureLabels - Literal names for each feature to be used while printing the tree out as a string
+   * @param verbose - Logs the progress of the tree construction as console.info
+   * @param random_state - Seed value for the random engine
+   */
   constructor(
     {
       featureLabels = null,
       verbose = false,
-      randomise = false,
       random_state = null
     }: {
       featureLabels?: any[];
       verbose?: boolean;
-      randomise?: boolean;
       random_state?: number;
     } = {
       featureLabels: null,
       verbose: false,
-      randomise: false,
       random_state: null
     }
   ) {
     this.featureLabels = featureLabels;
     this.verbose = verbose;
-    this.randomise = randomise;
-    if (!isNumber(random_state)) {
+    this.randomState = random_state;
+    if (!Number.isInteger(random_state)) {
       this.randomEngine = Random.engines.mt19937().autoSeed();
     } else {
       this.randomEngine = Random.engines.mt19937().seed(random_state);
@@ -205,7 +207,7 @@ export class DecisionTreeClassifier implements IMlModel<number> {
    *
    * @param X - 2D Matrix of testing data
    */
-  public predict(X: Type2DMatrix<string | boolean | number>): any[] {
+  public predict(X: Type2DMatrix<string | boolean | number> = []): any[] {
     // fix the typing error
     if (!isMatrix(X)) {
       throw Error('X needs to be a matrix!');
@@ -220,19 +222,17 @@ export class DecisionTreeClassifier implements IMlModel<number> {
 
   /**
    * Returns the model checkpoint
-   * @returns {{featureLabels: string[]; tree: any; verbose: boolean; randomise: boolean}}
+   * @returns {{featureLabels: string[]; tree: any; verbose: boolean}}
    */
   public toJSON(): {
     featureLabels: string[];
     tree: any; // TODO: fix this type
     verbose: boolean;
-    randomise: boolean;
   } {
     return {
       featureLabels: this.featureLabels,
       tree: this.tree,
-      verbose: this.verbose,
-      randomise: this.randomise
+      verbose: this.verbose
     };
   }
 
@@ -241,23 +241,19 @@ export class DecisionTreeClassifier implements IMlModel<number> {
    * @param {string[]} featureLabels
    * @param {any} tree
    * @param {boolean} verbose
-   * @param {boolean} randomise
    */
   public fromJSON({
     featureLabels = null,
     tree = null,
-    verbose = false,
-    randomise = false
+    verbose = false
   }: {
     featureLabels: string[];
     tree: any;
     verbose: boolean;
-    randomise: boolean;
   }): void {
     this.featureLabels = featureLabels;
     this.tree = tree;
     this.verbose = verbose;
-    this.randomise = randomise;
   }
 
   /**
@@ -348,7 +344,6 @@ export class DecisionTreeClassifier implements IMlModel<number> {
    * Find the best split for the current X and y.
    * @param X
    * @param y
-   * @param {boolean} randomise
    * @returns {{bestGain: number; bestQuestion: any}}
    */
   private findBestSplit(X, y): { bestGain: number; bestQuestion: Question } {
@@ -358,7 +353,7 @@ export class DecisionTreeClassifier implements IMlModel<number> {
     let bestQuestion = null;
 
     let featureIndex = [];
-    if (this.randomise) {
+    if (Number.isInteger(this.randomState)) {
       // method 1: Randomly selecting features
       while (featureIndex.length <= nFeatures) {
         const index = Random.integer(0, nFeatures)(this.randomEngine);

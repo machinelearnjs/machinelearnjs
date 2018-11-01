@@ -59,7 +59,6 @@ export class BaseRandomForest implements IMlModel<number> {
       sum => {
         const tree = new DecisionTreeClassifier({
           featureLabels: null,
-          randomise: true,
           random_state: this.randomState
         });
         tree.fit(X, y);
