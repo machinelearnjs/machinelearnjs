@@ -1,7 +1,7 @@
 import * as tf from '@tensorflow/tfjs';
 import { cloneDeep, range } from 'lodash';
 import * as Random from 'random-js';
-import { TypeMatrix, TypeVector } from '../types/model_interfaces';
+import { Type1DMatrix, Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
 
 export enum TypeLoss {
@@ -76,7 +76,7 @@ class BaseSGD {
    * @param X - Matrix of data
    * @param y - Matrix of targets
    */
-  public fit(X: TypeMatrix<number>, y: TypeVector<number>): void {
+  public fit(X: Type2DMatrix<number>, y: Type1DMatrix<number>): void {
     if (!math.contrib.isMatrix(X)) {
       throw Error('X must be a matrix');
     }
@@ -155,7 +155,7 @@ class BaseSGD {
    * Predictions according to the passed in test set
    * @param X - Matrix of data
    */
-  protected predict(X: TypeMatrix<number>): number[] {
+  protected predict(X: Type2DMatrix<number>): number[] {
     if (!Array.isArray(X)) {
       throw Error('X must be a vector');
     }
@@ -205,7 +205,7 @@ class BaseSGD {
    * @param X - training data
    * @param y - target data
    */
-  private sgd(X: TypeMatrix<number>, y: TypeVector<number>): void {
+  private sgd(X: Type2DMatrix<number>, y: Type1DMatrix<number>): void {
     if (!math.contrib.isMatrix(X) || !Array.isArray(y)) {
       throw Error('X must be a matrix');
     }
@@ -253,7 +253,7 @@ export class SGDClassifier extends BaseSGD {
    * Predicted values with Math.round applied
    * @param X - Matrix of data
    */
-  public predict(X: TypeMatrix<number>): number[] {
+  public predict(X: Type2DMatrix<number>): number[] {
     const results: number[] = super.predict(X);
     return results.map(x => Math.round(x));
   }
@@ -279,7 +279,7 @@ export class SGDRegressor extends BaseSGD {
    * Predicted values
    * @param X - Matrix of data
    */
-  public predict(X: TypeMatrix<number>): number[] {
+  public predict(X: Type2DMatrix<number>): number[] {
     return super.predict(X);
   }
 }
