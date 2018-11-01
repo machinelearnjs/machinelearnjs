@@ -276,7 +276,7 @@ export class DecisionTreeClassifier implements IMlModel<number> {
 
   /**
    * Recursively print the tree into console
-   * @param {string} spacing
+   * @param {string} spacing - Spacing used when printing the tree into the terminal
    */
   public printTree(spacing: string = ''): void {
     if (!this.tree) {
