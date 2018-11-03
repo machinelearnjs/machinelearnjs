@@ -1,3 +1,4 @@
+import { Iris } from '../../src/lib/datasets';
 import { inferShape, validateFitInputs } from '../../src/lib/ops/tensor_ops';
 
 describe('ops:validateTrainInputs', () => {
@@ -10,10 +11,21 @@ describe('ops:validateTrainInputs', () => {
     validateFitInputs(X1, y1);
   });
 
-  it('should throw an error if the train input X1 is 3D', () => {
+  it('should throw an error if the train input X is 3D', () => {
     expect(() => validateFitInputs(X2, y2)).toThrow(
       'The matrix is not 2D shaped: [[[1,2],[3,4],[5,6]],[[1,2],[3,4],[5,6]]] of [2,3,2]'
     );
+  });
+
+  it('should throw an error if train input y is 2D', () => {
+    expect(() => validateFitInputs(X1, X1)).toThrow(
+      'The matrix is not 1D shaped: [[1,2],[3,4],[5,6]] of [3,2]'
+    );
+  });
+
+  it('should validate Iris dataset', async () => {
+    const { data, targets } = await new Iris().load();
+    validateFitInputs(data, targets);
   });
 });
 
