@@ -1,4 +1,16 @@
 /**
+ * Matrix Type covers up to 4D array
+ */
+export type TypeMatrix<T> =
+  | T[]
+  | T[][]
+  | T[][]
+  | T[][][]
+  | T[][][][]
+  | T[][][][][]
+  | T[][][][][][];
+
+/**
  * Typing for a 1D matrix
  */
 export type Type1DMatrix<T> = T[];
