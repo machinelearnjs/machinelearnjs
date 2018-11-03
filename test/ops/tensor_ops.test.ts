@@ -1,4 +1,21 @@
-import { inferShape } from '../../src/lib/ops/tensor_ops';
+import { inferShape, validateFitInputs } from '../../src/lib/ops/tensor_ops';
+
+describe('ops:validateTrainInputs', () => {
+  const X1 = [[1, 2], [3, 4], [5, 6]];
+  const y1 = [1, 2, 3];
+
+  const X2 = [[[1, 2], [3, 4], [5, 6]], [[1, 2], [3, 4], [5, 6]]];
+  const y2 = [1, 2, 3];
+  it('should validate train inputs against X1 and y1', () => {
+    validateFitInputs(X1, y1);
+  });
+
+  it('should throw an error if the train input X1 is 3D', () => {
+    expect(() => validateFitInputs(X2, y2)).toThrow(
+      'The matrix is not 2D shaped: [[[1,2],[3,4],[5,6]],[[1,2],[3,4],[5,6]]] of [2,3,2]'
+    );
+  });
+});
 
 describe('ops:inferShape', () => {
   it('should return 0 for an empty array', () => {

@@ -3,6 +3,8 @@ import { Type1DMatrix, Type2DMatrix, TypeMatrix } from '../types/matrix.types';
 
 /**
  * Infers shape of a tensor using TF
+ *
+ *
  * @param X
  */
 export function inferShape(X: TypeMatrix<any>): number[] {
@@ -14,11 +16,13 @@ export function inferShape(X: TypeMatrix<any>): number[] {
  *
  * @example
  * validateTrainInputs([ [1, 2], [3, 4] ], [ 1, 2 ]) // No errors
+ * validateTrainInputs([ [[1, 2], [3, 3]], [[1, 2], [3, 3]] ], [ 1, 2 ]) // Error: The matrix is not 1D shaped: [ [[1, 2], [3, 3]], [[1, 2], [3, 3]] ] of [2, 2, 2]
  *
  * @param X
  * @param y
+ * @ignore
  */
-export function validateTrainInputs(
+export function validateFitInputs(
   X: Type2DMatrix<any>,
   y: Type1DMatrix<any>
 ): void {
@@ -35,7 +39,11 @@ export function validateTrainInputs(
 export function validateMatrix1D(X: Type1DMatrix<any>): void {
   const shape = inferShape(X);
   if (shape.length !== 1) {
-    throw new TypeError(`The matrix is not 1D shaped: ${X} of ${shape}`);
+    throw new TypeError(
+      `The matrix is not 1D shaped: ${JSON.stringify(X)} of ${JSON.stringify(
+        shape
+      )}`
+    );
   }
 }
 
@@ -46,6 +54,10 @@ export function validateMatrix1D(X: Type1DMatrix<any>): void {
 export function validateMatrix2D(X: Type2DMatrix<any>): void {
   const shape = inferShape(X);
   if (shape.length !== 2) {
-    throw new TypeError(`The matrix is not 2D shaped: ${X} of ${shape}`);
+    throw new TypeError(
+      `The matrix is not 2D shaped: ${JSON.stringify(X)} of ${JSON.stringify(
+        shape
+      )}`
+    );
   }
 }
