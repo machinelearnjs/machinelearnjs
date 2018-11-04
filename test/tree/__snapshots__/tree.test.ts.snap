@@ -6,7 +6,7 @@ exports[`tree:DecisionTreeClassifier Should not fit if invalid data is given 2`]
 
 exports[`tree:DecisionTreeClassifier Should not fit if invalid data is given 3`] = `[TypeError: The matrix is not 2D shaped: true of []]`;
 
-exports[`tree:DecisionTreeClassifier Should not fit if invalid data is given 4`] = `[TypeError: The matrix is not 2D shaped: [] of [0]]`;
+exports[`tree:DecisionTreeClassifier Should not fit if invalid data is given 4`] = `[Error: Input cannot be an empty array]`;
 
 exports[`tree:DecisionTreeClassifier Should not fit if invalid data is given 5`] = `[TypeError: The matrix is not 2D shaped: -1 of []]`;
 

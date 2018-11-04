@@ -31,17 +31,30 @@ export function validateFitInputs(
   X: Type2DMatrix<any>,
   y: Type1DMatrix<any>
 ): void {
+  if (
+    (Array.isArray(X) && X.length === 0) ||
+    (Array.isArray(y) && y.length === 0)
+  ) {
+    throw new Error('Input cannot be an empty array');
+  }
   // Check X is always a matrix
-  validateMatrix2D(X);
+  const sampleShape = validateMatrix2D(X);
   // Check y is always a vector
-  validateMatrix1D(y);
+  const targetShape = validateMatrix1D(y);
+  if (sampleShape[0] !== targetShape[0]) {
+    throw new TypeError(
+      `Number of labels=${targetShape[0]} does not math number of samples=${
+        sampleShape[0]
+      }`
+    );
+  }
 }
 
 /**
  * Validate the matrix is 1D shaped by checking the shape's length is exactly  1
  * @param X
  */
-export function validateMatrix1D(X: Type1DMatrix<any>): void {
+export function validateMatrix1D(X: Type1DMatrix<any>): number[] {
   const shape = inferShape(X);
   if (shape.length !== 1) {
     throw new TypeError(
@@ -50,13 +63,14 @@ export function validateMatrix1D(X: Type1DMatrix<any>): void {
       )}`
     );
   }
+  return shape;
 }
 
 /**
  * Validate the matrix is 2D shaped by checking the shape's length is exactly 2
  * @param X - An input array
  */
-export function validateMatrix2D(X: Type2DMatrix<any>): void {
+export function validateMatrix2D(X: Type2DMatrix<any>): number[] {
   const shape = inferShape(X);
   if (shape.length !== 2) {
     throw new TypeError(
@@ -65,4 +79,5 @@ export function validateMatrix2D(X: Type2DMatrix<any>): void {
       )}`
     );
   }
+  return shape;
 }
