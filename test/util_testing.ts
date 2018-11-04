@@ -20,4 +20,15 @@ const assertArrayAlmostEqual = (
   return (numTrues / results.length) * 100;
 };
 
-export { assertArrayAlmostEqual };
+const matchExceptionWithSnapshot = (
+  method: (...x) => any,
+  args: any[]
+): void => {
+  try {
+    method(...args);
+  } catch (e) {
+    expect(e).toMatchSnapshot();
+  }
+};
+
+export { assertArrayAlmostEqual, matchExceptionWithSnapshot };

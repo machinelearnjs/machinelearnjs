@@ -6,7 +6,7 @@ import {
 } from '../../src/lib/linear_model';
 import { accuracyScore } from '../../src/lib/metrics';
 import { train_test_split } from '../../src/lib/model_selection';
-import { assertArrayAlmostEqual } from '../../src/lib/utils/testing';
+import { assertArrayAlmostEqual } from '../util_testing';
 import {
   reg_l12_snap,
   reg_l1_snap,

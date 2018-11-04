@@ -7,7 +7,7 @@ import {
   normalize,
   OneHotEncoder,
   PolynomialFeatures
-} from '../../src/lib/preprocessing/data';
+} from '../../src/lib/preprocessing';
 
 describe('data:add_dummy_feature', () => {
   const X1 = [[0, 1], [1, 0]];
