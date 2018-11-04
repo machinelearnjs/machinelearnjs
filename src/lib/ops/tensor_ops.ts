@@ -4,7 +4,6 @@ import { Type1DMatrix, Type2DMatrix, TypeMatrix } from '../types/matrix.types';
 /**
  * Infers shape of a tensor using TF
  *
- *
  * @param X
  */
 export function inferShape(X: TypeMatrix<any>): number[] {

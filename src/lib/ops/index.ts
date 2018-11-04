@@ -1,3 +1,8 @@
-import { inferShape } from './tensor_ops';
+import {
+  inferShape,
+  validateFitInputs,
+  validateMatrix1D,
+  validateMatrix2D
+} from './tensor_ops';
 
-export { inferShape };
+export { inferShape, validateFitInputs, validateMatrix1D, validateMatrix2D };
