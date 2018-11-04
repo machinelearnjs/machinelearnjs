@@ -1,5 +1,7 @@
 import * as _ from 'lodash';
 import * as Random from 'random-js';
+import { validateMatrix2D } from '../ops';
+import { Type1DMatrix, Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
 
 export interface KMeansOptions {
@@ -35,7 +37,7 @@ export interface KMeansOptions {
  */
 export class KMeans {
   private assignment: number[];
-  private centroids: number[];
+  private centroids: Type2DMatrix<number>;
   private clusters: number[];
   private distance;
   private k: number;
@@ -72,7 +74,8 @@ export class KMeans {
    * @param {any} X
    * @returns {{centroids: number[]; clusters: number[]}}
    */
-  public fit({ X }): void {
+  public fit(X: Type2DMatrix<number>): void {
+    validateMatrix2D(X);
     this.assignment = new Array(_.size(X));
     this.centroids = this.getInitialCentroids(X, this.k);
     this.clusters = new Array(this.k);
@@ -83,7 +86,11 @@ export class KMeans {
     for (let iter = 0; iter < this.maxIteration && movement; iter++) {
       // find the distance between the point and cluster; choose the nearest centroid
       _.forEach(X, (data, i) => {
-        this.assignment[i] = this.getClosestCentroids(data, this.centroids, this.distance);
+        this.assignment[i] = this.getClosestCentroids(
+          data,
+          this.centroids,
+          this.distance
+        );
       });
 
       // Flag set to false; giving opportunity to stop the loop upon the covergence
@@ -130,7 +137,7 @@ export class KMeans {
    * @param {any} X
    * @returns {number[]}
    */
-  public predict({ X }): number[] {
+  public predict(X: Type2DMatrix<number>): number[] {
     return _.map(X, data => {
       return this.getClosestCentroids(data, this.centroids, this.distance);
     });
@@ -140,7 +147,11 @@ export class KMeans {
    * Get the model details in JSON format
    * @returns {{k: number; clusters: number[]; centroids: number[]}}
    */
-  public toJSON(): { k: number; clusters: number[]; centroids: number[] } {
+  public toJSON(): {
+    k: number;
+    clusters: Type1DMatrix<number>;
+    centroids: Type2DMatrix<number>;
+  } {
     return {
       centroids: this.centroids,
       clusters: this.clusters,
@@ -160,11 +171,13 @@ export class KMeans {
     centroids = null
   }: {
     k: number;
-    clusters: number[];
-    centroids: number[];
+    clusters: Type1DMatrix<number>;
+    centroids: Type2DMatrix<number>;
   }): void {
     if (!k || !clusters || !centroids) {
-      throw new Error('You must provide all the parameters include k, clusters and centroids');
+      throw new Error(
+        'You must provide all the parameters include k, clusters and centroids'
+      );
     }
     this.k = k;
     this.clusters = clusters;
@@ -177,7 +190,7 @@ export class KMeans {
    * @param {number} k
    * @returns {number[]}
    */
-  private getInitialCentroids(X: number[], k: number): number[] {
+  private getInitialCentroids(X: Type2DMatrix<number>, k: number): number[][] {
     // Create an initial copy
     const centroids = _.clone(X);
     // Sort the centroid randomly if the randomState is greater than 0
@@ -199,7 +212,11 @@ export class KMeans {
    * @param distance
    * @returns {number}
    */
-  private getClosestCentroids(data: number[], centroids: number[], distance): number {
+  private getClosestCentroids(
+    data: Type1DMatrix<number>,
+    centroids: Type2DMatrix<number>,
+    distance
+  ): number {
     let min = Infinity;
     let index = 0;
     _.forEach(centroids, (centroid, i) => {
