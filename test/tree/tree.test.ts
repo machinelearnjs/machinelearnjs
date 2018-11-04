@@ -96,9 +96,13 @@ describe('tree:DecisionTreeClassifier', () => {
     matchExceptionWithSnapshot(decision.fit, [-1, -2]);
   });
 
-  it('predict should throw an error is array is given', () => {
+  it('should not predict if invalid data is given', () => {
     const decision = new DecisionTreeClassifier();
     matchExceptionWithSnapshot(decision.predict, [1]);
+    matchExceptionWithSnapshot(decision.predict, [1, 2]);
+    matchExceptionWithSnapshot(decision.predict, [true, true]);
+    matchExceptionWithSnapshot(decision.predict, [[], []]);
+    matchExceptionWithSnapshot(decision.predict, [-1, -2]);
   });
 
   it('should return a correct class counts for fruitY', () => {

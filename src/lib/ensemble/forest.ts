@@ -11,7 +11,8 @@ import {
   reduce,
   values
 } from 'lodash';
-import { DecisionTreeClassifier } from '../tree/tree';
+import { validateFitInputs, validateMatrix2D } from '../ops';
+import { DecisionTreeClassifier } from '../tree';
 import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
 
 /**
@@ -54,6 +55,7 @@ export class BaseRandomForest implements IMlModel<number> {
    * @returns void
    */
   public fit(X: Type2DMatrix<number>, y: Type1DMatrix<number>): void {
+    validateFitInputs(X, y);
     this.trees = reduce(
       range(0, this.nEstimator),
       sum => {
@@ -96,6 +98,7 @@ export class BaseRandomForest implements IMlModel<number> {
    * @private
    */
   public predict(X: Type2DMatrix<number>): number[][] {
+    validateMatrix2D(X);
     return map(this.trees, (tree: DecisionTreeClassifier) => {
       // TODO: Check if it's a matrix or an array
       return tree.predict(X);
