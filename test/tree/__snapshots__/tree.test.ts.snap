@@ -10,6 +10,8 @@ exports[`tree:DecisionTreeClassifier Should not fit if invalid data is given 4`]
 
 exports[`tree:DecisionTreeClassifier Should not fit if invalid data is given 5`] = `[TypeError: The matrix is not 2D shaped: -1 of []]`;
 
+exports[`tree:DecisionTreeClassifier predict should throw an error is array is given 1`] = `[TypeError: The matrix is not 2D shaped: 1 of []]`;
+
 exports[`tree:DecisionTreeClassifier should return a correct class counts for fruitY 1`] = `
 Object {
   "Apple": Object {

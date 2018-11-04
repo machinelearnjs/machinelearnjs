@@ -98,11 +98,7 @@ describe('tree:DecisionTreeClassifier', () => {
 
   it('predict should throw an error is array is given', () => {
     const decision = new DecisionTreeClassifier();
-    const expectedError = 'X needs to be a matrix!';
-    expect(() => {
-      decision.fit(numberX, numberY);
-      decision.predict(1);
-    }).toThrow(expectedError);
+    matchExceptionWithSnapshot(decision.predict, [1]);
   });
 
   it('should return a correct class counts for fruitY', () => {
