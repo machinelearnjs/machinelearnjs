@@ -18,11 +18,8 @@ describe('decomposition:pca', () => {
     ];
 
     pca.fit(sample1);
-
-    expect(_.isEqual(expectedComponents, pca.components)).toBe(true);
-    expect(_.isEqual(expectedExplainedVariance, pca.explained_variance)).toBe(
-      true
-    );
+    expect(expectedComponents).toEqual(pca.components);
+    expect(expectedExplainedVariance).toEqual(pca.explained_variance);
   });
 
   it('should fit sample2 and return correct results', () => {
@@ -30,10 +27,8 @@ describe('decomposition:pca', () => {
     pca.fit(sample2);
     const expectedComponents = [[1, 0], [0, 1]];
     const expectedExplainedVariance = [[1, 0], [0, 1]];
-    expect(_.isEqual(expectedComponents, pca.components)).toBe(true);
-    expect(_.isEqual(expectedExplainedVariance, pca.explained_variance)).toBe(
-      true
-    );
+    expect(expectedComponents).toEqual(pca.components);
+    expect(expectedExplainedVariance).toEqual(pca.explained_variance);
   });
 
   it('should throw an error when the given matrix is empty', () => {
