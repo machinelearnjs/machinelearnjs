@@ -1,5 +1,7 @@
 import svmResolver from 'libsvm-js';
 import * as _ from 'lodash';
+import { validateFitInputs, validateMatrix1D, validateMatrix2D } from '../ops';
+import { Type1DMatrix, Type2DMatrix } from '../types';
 
 export type Type = 'C_SVC' | 'NU_SVC' | 'ONE_CLASS' | 'EPSILON_SVR' | 'NU_SVR';
 
@@ -96,12 +98,21 @@ export class BaseSVM {
    * @param {any[]} y
    * @returns {Promise<void>}
    */
-  public async fit({ X = [], y = [] }: { X: any[]; y: any[] }): Promise<void> {
+  public async fit(
+    X: Type2DMatrix<number>,
+    y: Type1DMatrix<number>
+  ): Promise<void> {
+    validateFitInputs(X, y);
     if (!this.type) {
       throw new Error(`SVM type is unspecified ${this.type}`);
     }
     const SVM = await this.loadSVM();
-    const options = this.processOptions(SVM, this.options, this.type, this.options.kernel);
+    const options = this.processOptions(
+      SVM,
+      this.options,
+      this.type,
+      this.options.kernel
+    );
     this.svm = new SVM(options);
     this.svm.train(X, y);
   }
@@ -111,7 +122,8 @@ export class BaseSVM {
    * @param {number[]} X
    * @returns {number[]}
    */
-  public predict(X: number[]): number[] {
+  public predict(X: Type2DMatrix<number>): number[] {
+    validateMatrix2D(X);
     return this.svm.predict(X);
   }
 
@@ -120,7 +132,8 @@ export class BaseSVM {
    * @param {number[]} X
    * @returns {number[]}
    */
-  public predictOne(X: number[]): number[] {
+  public predictOne(X: Type1DMatrix<number>): number[] {
+    validateMatrix1D(X);
     return this.svm.predictOne(X);
   }
 
@@ -144,7 +157,9 @@ export class BaseSVM {
    */
   public fromJSON({ svm = null, type = null, options = null }): void {
     if (!svm || !type || !options) {
-      throw new Error('You must provide svm, type and options to restore the model');
+      throw new Error(
+        'You must provide svm, type and options to restore the model'
+      );
     }
 
     this.svm = svm;
@@ -188,7 +203,12 @@ export class BaseSVM {
    * @param {Kernel} kernel
    * @returns {Object}
    */
-  private processOptions(SVM, options: SVMOptions, type: Type, kernel: Kernel): object {
+  private processOptions(
+    SVM,
+    options: SVMOptions,
+    type: Type,
+    kernel: Kernel
+  ): object {
     return _.flowRight(
       opts => {
         const foundType = this.getType(SVM, type);
