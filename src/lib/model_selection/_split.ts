@@ -1,5 +1,7 @@
 import * as _ from 'lodash';
 import * as Random from 'random-js';
+import { inferShape } from '../ops';
+import { TypeMatrix } from '../types';
 
 /**
  * K-Folds cross-validator
@@ -50,13 +52,19 @@ export class KFold {
    * @param {any} y - The target variable for supervised learning problems.
    * @returns {any[]}
    */
-  public split({ X, y }): any[] {
-    if (_.size(X) !== _.size(y)) {
+  public split(X: TypeMatrix<any>, y: TypeMatrix<any>): any[] {
+    const xShape = inferShape(X);
+    const yShape = inferShape(y);
+    if (xShape.length > 0 && yShape.length > 0 && xShape[0] !== yShape[0]) {
       throw Error('X and y must have an identical size');
     }
 
-    if (this.k > _.size(X) || this.k > _.size(y)) {
-      throw Error(`Cannot have number of splits k=${this.k} greater than the number of samples: ${_.size(X)}`);
+    if (this.k > X.length || this.k > y.length) {
+      throw Error(
+        `Cannot have number of splits k=${
+          this.k
+        } greater than the number of samples: ${_.size(X)}`
+      );
     }
 
     const binSize = _.floor(_.size(X) / this.k);
@@ -66,7 +74,10 @@ export class KFold {
       splitRange,
       (sum, index) => {
         // Calculate binSizeRange according to k value. e.g. 0 -> [0,1]. 1 -> [2, 3].
-        const binSizeRange = _.range(index * binSize, index * binSize + binSize);
+        const binSizeRange = _.range(
+          index * binSize,
+          index * binSize + binSize
+        );
         // X index range used for test set. It can either be shuffled e.g. [ 2, 0, 1 ] or raw value [ 0, 1, 2 ]
         const testXRange = _.flowRight(
           x => (this.shuffle ? _.shuffle(x) : x),
@@ -205,7 +216,8 @@ export function train_test_split(
   }
 
   // Filter return results
-  const clean = (items: any[]) => _.filter(items, (item: any) => !_.isUndefined(item));
+  const clean = (items: any[]) =>
+    _.filter(items, (item: any) => !_.isUndefined(item));
   return {
     xTest: clean(xTest),
     xTrain: clean(xTrain),
