@@ -138,6 +138,7 @@ export class KMeans {
    * @returns {number[]}
    */
   public predict(X: Type2DMatrix<number>): number[] {
+    validateMatrix2D(X);
     return _.map(X, data => {
       return this.getClosestCentroids(data, this.centroids, this.distance);
     });

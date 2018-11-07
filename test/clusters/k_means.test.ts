@@ -68,4 +68,16 @@ describe('clusters:k_means', () => {
     const pred2 = kmean.predict(predVector2);
     expect(_.isEqual(expectedResult, pred2)).toBe(true);
   });
+
+  it('should not fit none 2D matrix', () => {
+    const kmean = new KMeans({ k: 2 });
+    expect(() => kmean.fit([1, 2])).toThrow(
+      'The matrix is not 2D shaped: [1,2] of [2]'
+    );
+    expect(() => kmean.fit(null)).toThrow(
+      'values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray'
+    );
+    // TODO: implement datatype check to the validation method
+    // expect(() => kmean.fit([["aa", "bb"]])).toThrow('The matrix is not 2D shaped: [1,2] of [2]');
+  });
 });
