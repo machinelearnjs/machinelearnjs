@@ -15,7 +15,7 @@ import math from '../utils/MathExtra';
  * const linearRegression = new LinearRegression();
  * const X = [1, 2, 4, 3, 5];
  * const y = [1, 3, 3, 2, 5];
- * linearRegression.fit({ X, y });
+ * linearRegression.fit(X, y);
  * console.log(lr.predict([1, 2]));
  * // [ 1.1999999999999995, 1.9999999999999996 ]
  */

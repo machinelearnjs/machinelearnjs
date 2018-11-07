@@ -30,9 +30,9 @@ export interface KMeansOptions {
  * import { KMeans } from 'kalimdor/cluster';
  *
  * const kmean = new KMeans({ k: 2 });
- * const clusters = kmean.fit({ X: [[1, 2], [1, 4], [1, 0], [4, 2], [4, 4], [4, 0]] });
+ * const clusters = kmean.fit([[1, 2], [1, 4], [1, 0], [4, 2], [4, 4], [4, 0]]);
  *
- * const result = kmean.predict({ X: [[0, 0], [4, 4]] });
+ * const result = kmean.predict([[0, 0], [4, 4]]);
  * // results in: [0, 1]
  */
 export class KMeans {
