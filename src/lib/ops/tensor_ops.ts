@@ -56,7 +56,7 @@ export function validateFitInputs(
  */
 export function validateMatrix1D(X: Type1DMatrix<any>): number[] {
   const shape = inferShape(X);
-  if (shape.length !== 1) {
+  if (shape.length !== 1 || shape[0] === 0) {
     throw new TypeError(
       `The matrix is not 1D shaped: ${JSON.stringify(X)} of ${JSON.stringify(
         shape
