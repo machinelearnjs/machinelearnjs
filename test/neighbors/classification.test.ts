@@ -32,47 +32,19 @@ describe('classification:KNeighborsClassifier', () => {
     expect(_.isEqual(pred, expected)).toBe(true);
   });
 
+  it('should fit X2 and predict y2', () => {
+    const knn = new KNeighborsClassifier();
+    knn.fit(X2, y2);
+    const pred = knn.predict([['a', 'b', 'c']]);
+    const expected = ['a'];
+    expect(pred).toEqual(expected);
+  });
+
   it('should predict [ 1, 0, 1 ] for [ [1, 2, 4], [0], [9, 5] ] against the sample 1', () => {
     const knn = new KNeighborsClassifier();
-    knn.fit(X1, y1);
-    const pred = knn.predict([[1, 2, 4], [0], [9, 5]]);
-    const expected = [1, 0, 1];
-    expect(_.isEqual(pred, expected)).toBe(true);
-  });
-
-  it('should reload the nearest neighbor and predict the same result', () => {
-    const knn = new KNeighborsClassifier();
-    knn.fit(X1, y1);
-
-    // Before saving
-    const pred = knn.predict([[1, 2, 4], [0], [9, 5]]);
-    const expected = [1, 0, 1];
-    expect(_.isEqual(pred, expected)).toBe(true);
-
-    // After reloading
-    const checkpoint = knn.toJSON();
-    const knn2 = new KNeighborsClassifier();
-    knn2.fromJSON(checkpoint);
-    const pred2 = knn2.predict([[1, 2, 4], [0], [9, 5]]);
-    const expected2 = [1, 0, 1];
-    expect(_.isEqual(pred2, expected2)).toBe(true);
-  });
-
-  it("should predict [ 'a', 'a', 'a' ] for [ [1, 2, 4], [0], [9, 5] ] against the sample 2", () => {
-    const knn = new KNeighborsClassifier();
-    knn.fit(X2, y2);
-    const pred = knn.predict([[1, 2, 4], [0], [9, 5]]);
-    const expected = ['a', 'a', 'a'];
-    expect(_.isEqual(pred, expected)).toBe(true);
-  });
-
-  it('should throw an error if string is the first array element', () => {
-    const expected = 'The dataset is neither an array or a matrix';
-    const knn = new KNeighborsClassifier();
-    knn.fit(X2, y2);
-    expect(() => {
-      knn.predict([[1, 'a', 4], [0], [9, 5]]);
-    }).toThrow(expected);
+    expect(() => knn.predict([[1, 2, 4], [0], [9, 5]])).toThrow(
+      'Element arr[1] should have 3 elements, but has 1 elements'
+    );
   });
 
   it('should throw an error if X is not a matrix', () => {
