@@ -14,8 +14,8 @@ import { Type1DMatrix, Type2DMatrix } from '../types';
  * const nb = new GaussianNB();
  * const X = [[1, 20], [2, 21], [3, 22], [4, 22]];
  * const y = [1, 0, 1, 0];
- * nb.fit({ X, y });
- * nb.predict({ X: [[1, 20]] }); // returns [ 1 ]
+ * nb.fit(X ,y);
+ * nb.predict([[1, 20]]); // returns [ 1 ]
  *
  */
 export class GaussianNB {
