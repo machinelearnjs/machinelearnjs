@@ -1,5 +1,6 @@
-import * as _ from 'lodash';
 import * as numeric from 'numeric';
+import { validateMatrix2D } from '../ops';
+import { Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
 
 /**
@@ -42,13 +43,8 @@ export class PCA {
    * so it will only calculate Singular value decomposition
    * @param {any} X
    */
-  public fit({ X }): void {
-    if (!X || _.isEmpty(X)) {
-      throw Error('Cannot compute PCA with an empty value!');
-    }
-    if (!math.contrib.isMatrixOf(X)) {
-      throw Error('X must be a matrix of numbers');
-    }
+  public fit(X: Type2DMatrix<number>): void {
+    validateMatrix2D(X);
     const nSamples = X.length;
     // Renaming X to A for readability
     const A = X;
