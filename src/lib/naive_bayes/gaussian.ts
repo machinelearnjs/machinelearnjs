@@ -68,7 +68,7 @@ export class GaussianNB {
    * @param {any[]} X - values to predict in Matrix format
    * @returns {number[]}
    */
-  public predict(X: Type2DMatrix<number | string | boolean> = []): number[] {
+  public predict(X: Type2DMatrix<number> = []): number[] {
     validateMatrix2D(X);
     let clonedX = X;
 
@@ -77,7 +77,7 @@ export class GaussianNB {
     }
     const result = [];
     for (let i = 0; i < clonedX.length; i++) {
-      result.push(this.singlePredict({ X: clonedX[i] }));
+      result.push(this.singlePredict(clonedX[i]));
     }
     return result;
   }
@@ -113,7 +113,7 @@ export class GaussianNB {
    * Make a prediction
    * @param X -
    */
-  private singlePredict({ X }): number {
+  private singlePredict(X: Type1DMatrix<number>): number {
     const summaryKeys = Object.keys(this.summaries);
     // Comparing input and summary shapes
     const summaryLength = this.summaries[summaryKeys[0]].dist.length;
