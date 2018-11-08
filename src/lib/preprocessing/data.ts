@@ -1,4 +1,6 @@
 import * as _ from 'lodash';
+import { inferShape, validateMatrix1D } from '../ops';
+import { Type1DMatrix, Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
 import { combinationsWithReplacement } from '../utils/permutations';
 
@@ -408,13 +410,13 @@ export class MinMaxScaler {
    * Compute the minimum and maximum to be used for later scaling.
    * @param {number[]} X - Array or sparse-matrix data input
    */
-  public fit(X: number[] | number[][]): void {
+  public fit(X: Type1DMatrix<number> | Type2DMatrix<number>): void {
     const clonedX = this.clone ? _.cloneDeep(X) : X;
     let rowMax: any = clonedX;
     let rowMin: any = clonedX;
-
+    const xShape = inferShape(X);
     // If input is a Matrix...
-    if (math.contrib.isMatrix(X)) {
+    if (xShape.length === 2) {
       rowMax = math.max(X, 0);
       rowMin = math.min(X, 0);
     }
@@ -432,7 +434,8 @@ export class MinMaxScaler {
    * Fit to data, then transform it.
    * @param {number[]} X - Original input vector
    */
-  public fit_transform(X: number[]): number[] {
+  public fit_transform(X: Type1DMatrix<number>): number[] {
+    validateMatrix1D(X);
     const X1 = X.map(x => x * this.scale);
     return X1.map(x => x + this.baseMin);
   }

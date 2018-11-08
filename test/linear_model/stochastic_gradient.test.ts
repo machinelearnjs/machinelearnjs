@@ -37,6 +37,10 @@ async function getIris(): Promise<{
   return { xTest, xTrain, yTest, yTrain };
 }
 
+// Constant error messages
+const tensorErr =
+  'values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray';
+
 describe('linear_model:SGDClassifier', () => {
   const accuracyExpected1 = 0.5;
   it('should solve iris with 10000 epochs and have greater than 70 accuracy', async () => {
@@ -144,22 +148,28 @@ describe('linear_model:SGDClassifier', () => {
   it('Should throw exceptions on fit with invalid inputs', () => {
     const clf = new SGDClassifier();
     // X
-    expect(() => clf.fit(null, y1)).toThrow('X must be a matrix');
-    expect(() => clf.fit(1, y1)).toThrow('X must be a matrix');
-    expect(() => clf.fit('test', y1)).toThrow('X must be a matrix');
+    expect(() => clf.fit(null, y1)).toThrow(tensorErr);
+    expect(() => clf.fit(1, y1)).toThrow(
+      'The matrix is not 2D shaped: 1 of []'
+    );
+    expect(() => clf.fit('test', y1)).toThrow(tensorErr);
 
     // y
-    expect(() => clf.fit(X1, null)).toThrow('y must be a vector');
-    expect(() => clf.fit(X1, 1)).toThrow('y must be a vector');
-    expect(() => clf.fit(X1, 'test')).toThrow('y must be a vector');
+    expect(() => clf.fit(X1, null)).toThrow(tensorErr);
+    expect(() => clf.fit(X1, 1)).toThrow(
+      'The matrix is not 1D shaped: 1 of []'
+    );
+    expect(() => clf.fit(X1, 'test')).toThrow(tensorErr);
   });
 
   it('Should throw exceptions on predict with invalid inputs', () => {
     const clf = new SGDClassifier();
     // X
-    expect(() => clf.predict(null)).toThrow('X must be a vector');
-    expect(() => clf.predict(1)).toThrow('X must be a vector');
-    expect(() => clf.predict({})).toThrow('X must be a vector');
+    expect(() => clf.predict(null)).toThrow(tensorErr);
+    expect(() => clf.predict(1)).toThrow(
+      'The matrix is not 2D shaped: 1 of []'
+    );
+    expect(() => clf.predict({})).toThrow(tensorErr);
   });
 });
 
@@ -234,21 +244,27 @@ describe('linear_model:SGDRegressor', () => {
     const clf = new SGDRegressor();
 
     // X
-    expect(() => clf.fit(null, y1)).toThrow('X must be a matrix');
-    expect(() => clf.fit(1, y1)).toThrow('X must be a matrix');
-    expect(() => clf.fit('test', y1)).toThrow('X must be a matrix');
+    expect(() => clf.fit(null, y1)).toThrow(tensorErr);
+    expect(() => clf.fit(1, y1)).toThrow(
+      'The matrix is not 2D shaped: 1 of []'
+    );
+    expect(() => clf.fit('test', y1)).toThrow(tensorErr);
 
     // y
-    expect(() => clf.fit(X1, null)).toThrow('y must be a vector');
-    expect(() => clf.fit(X1, 1)).toThrow('y must be a vector');
-    expect(() => clf.fit(X1, 'test')).toThrow('y must be a vector');
+    expect(() => clf.fit(X1, null)).toThrow(tensorErr);
+    expect(() => clf.fit(X1, 1)).toThrow(
+      'The matrix is not 1D shaped: 1 of []'
+    );
+    expect(() => clf.fit(X1, 'test')).toThrow(tensorErr);
   });
 
   it('Should throw exceptions on predict with invalid inputs', () => {
     const clf = new SGDRegressor();
     // X
-    expect(() => clf.predict(null)).toThrow('X must be a vector');
-    expect(() => clf.predict(1)).toThrow('X must be a vector');
-    expect(() => clf.predict({})).toThrow('X must be a vector');
+    expect(() => clf.predict(null)).toThrow(tensorErr);
+    expect(() => clf.predict(1)).toThrow(
+      'The matrix is not 2D shaped: 1 of []'
+    );
+    expect(() => clf.predict({})).toThrow(tensorErr);
   });
 });
