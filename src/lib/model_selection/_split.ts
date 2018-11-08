@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import * as Random from 'random-js';
-import { inferShape } from '../ops';
-import { TypeMatrix } from '../types';
+import { inferShape, validateFitInputs } from '../ops';
+import { Type1DMatrix, Type2DMatrix, TypeMatrix } from '../types';
 
 /**
  * K-Folds cross-validator
@@ -15,7 +15,7 @@ import { TypeMatrix } from '../types';
  *
  * const kFold = new KFold({ k: 5 });
  * const X1 = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
- * console.log(kFold.split({ X: X1, y: X1 }));
+ * console.log(kFold.split(X1, X1));
  *
  * /* [ { trainIndex: [ 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 ],
  * *  testIndex: [ 0, 1, 2, 3 ] },
@@ -108,9 +108,7 @@ export class KFold {
  * const X = [[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]];
  * const y = [0, 1, 2, 3, 4];
  *
- * train_test_split({
- *   X,
- *   y,
+ * train_test_split(X, y, {
  *   test_size: 0.33,
  *   train_size: 0.67,
  *   random_state: 42
@@ -131,26 +129,22 @@ export class KFold {
  * @returns {{xTest: any[]; xTrain: any[]; yTest: any[]; yTrain: any[]}}
  */
 export function train_test_split(
+  X: Type2DMatrix<any> = null,
+  y: Type1DMatrix<any> = null,
   {
     // Arguments and their default values
-    X = null,
-    y = null,
     test_size = 0.25,
     train_size = 0.75,
     random_state = 0,
     clone = true
   }: {
     // Param types
-    X: any[];
-    y: any[];
     test_size?: number;
     train_size?: number;
     random_state?: number;
     clone?: boolean;
   } = {
     // Default if nothing is given
-    X: null,
-    y: null,
     test_size: 0.25,
     train_size: 0.75,
     random_state: 0,
@@ -162,18 +156,14 @@ export function train_test_split(
   yTest: any[];
   yTrain: any[];
 } {
-  let _X = X;
-  let _y = y;
-  // Cloning ..
-  if (clone) {
-    _X = _.cloneDeep(X);
-    _y = _.cloneDeep(y);
+  const _X = clone ? _.cloneDeep(X) : X;
+  const _y = clone ? _.cloneDeep(y) : y;
+  // Checking if either of these params is not array
+  if (!_.isArray(_X) || !_.isArray(_y) || _X.length === 0 || _y.length === 0) {
+    throw Error('X and y must be array and cannot be empty');
   }
 
-  // Checking if either of these params is not array
-  if (!_.isArray(_X) || !_.isArray(_y)) {
-    throw Error('X and y must be array');
-  }
+  validateFitInputs(_X, _y);
   // Training dataset size accoding to X
   const trainSizeLength: number = _.round(train_size * _X.length);
   const testSizeLength: number = _.round(test_size * _X.length);

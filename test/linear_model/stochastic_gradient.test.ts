@@ -27,9 +27,7 @@ async function getIris(): Promise<{
 }> {
   const iris = new Iris();
   const { data, targets } = await iris.load();
-  const { xTest, xTrain, yTest, yTrain } = train_test_split({
-    X: data,
-    y: targets,
+  const { xTest, xTrain, yTest, yTrain } = train_test_split(data, targets, {
     test_size: 0.33,
     train_size: 0.67,
     random_state: 42

@@ -40,10 +40,7 @@ describe('ensemble:forest', () => {
       const iris = new Iris();
       const { data, targets } = await iris.load();
       const randomForest = new RandomForestClassifier();
-      const { xTest, xTrain, yTest, yTrain } = train_test_split({
-        X: data,
-        y: targets
-      });
+      const { xTest, xTrain, yTest, yTrain } = train_test_split(data, targets);
       randomForest.fit(xTrain, yTrain);
       const yPred = randomForest.predict(xTest);
       const accuracy = accuracyScore({ y_true: yTest, y_pred: yPred });

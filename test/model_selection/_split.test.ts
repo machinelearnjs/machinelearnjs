@@ -105,9 +105,7 @@ describe('_split:train_test_split', () => {
   const y2 = ['a', 'b', 'c', 'd', 'e'];
 
   it('Should split X1 y1 with random_state: 42 test_size: .33 and train_size: .67', () => {
-    const { xTrain, yTrain, xTest, yTest } = train_test_split({
-      X: X1,
-      y: y1,
+    const { xTrain, yTrain, xTest, yTest } = train_test_split(X1, y1, {
       random_state: 42,
       test_size: 0.33,
       train_size: 0.67
@@ -120,9 +118,7 @@ describe('_split:train_test_split', () => {
   });
 
   it('Should split X1, y1 with random_state 100 test_size: .50 train_size: .50', () => {
-    const { xTrain, yTrain, xTest, yTest } = train_test_split({
-      X: X1,
-      y: y1,
+    const { xTrain, yTrain, xTest, yTest } = train_test_split(X1, y1, {
       random_state: 100,
       test_size: 0.5,
       train_size: 0.5
@@ -135,7 +131,7 @@ describe('_split:train_test_split', () => {
   });
 
   it('Should use default test and train sizes', () => {
-    const { xTrain, yTrain, xTest, yTest } = train_test_split({ X: X1, y: y1 });
+    const { xTrain, yTrain, xTest, yTest } = train_test_split(X1, y1);
 
     expect(_.isEqual(xTrain, [[8, 9], [6, 7], [0, 1]])).toBe(true);
     expect(_.isEqual(yTrain, [4, 3, 0])).toBe(true);
@@ -145,9 +141,7 @@ describe('_split:train_test_split', () => {
 
   it('Should sum of test_size and train_size attempting to match the input size throw an error', () => {
     expect(() => {
-      train_test_split({
-        X: X1,
-        y: y1,
+      train_test_split(X1, y1, {
         random_state: 10,
         test_size: 0.11,
         train_size: 0.12
@@ -156,7 +150,7 @@ describe('_split:train_test_split', () => {
   });
 
   it('Should split X2 y2 with random_state: 42 test_size: .33 and train_size: .67', () => {
-    const { xTrain, yTrain, xTest, yTest } = train_test_split({ X: X2, y: y2 });
+    const { xTrain, yTrain, xTest, yTest } = train_test_split(X2, y2);
     expect(_.isEqual(xTrain, [['five'], ['four'], ['one']])).toBe(true);
     expect(_.isEqual(yTrain, ['e', 'd', 'a'])).toBe(true);
     expect(_.isEqual(xTest, [['three']])).toBe(true);
