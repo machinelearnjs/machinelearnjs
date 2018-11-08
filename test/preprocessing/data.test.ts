@@ -262,29 +262,21 @@ describe('data:normalize', () => {
       [1, 0, 0],
       [0, 0.7071067811865475, -0.7071067811865475]
     ];
-    const result = normalize({
-      X: X1,
-      norm: 'l2'
-    });
+    const result = normalize(X1, { norm: 'l2' });
     expect(result).toEqual(expected);
   });
   it('should normalize X1 with l1 norm', () => {
     const expected = [[0.25, -0.25, 0.5], [1, 0, 0], [0, 0.5, -0.5]];
-    const result = normalize({
-      X: X1,
-      norm: 'l1'
-    });
+    const result = normalize(X1, { norm: 'l1' });
     expect(result).toEqual(expected);
   });
   it('should throw an error if unrecognised norm is passed in', () => {
     const expected = 'test is not a recognised normalization method';
-    expect(() => normalize({ X: X1, norm: 'test' })).toThrow(expected);
+    expect(() => normalize(X1, { norm: 'test' })).toThrow(expected);
   });
   it('should throw an error if the input is invalid', () => {
-    const nullException =
-      'Cannot perform isMatrixOf number unless the data is matrix';
-    expect(() => normalize({ X: null, norm: 'l1' })).toThrow(nullException);
-    expect(() => normalize({ X: [], norm: 'l1' })).toThrow(nullException);
-    expect(() => normalize({ X: 'aisjd', norm: 'l1' })).toThrow(nullException);
+    expect(() => normalize(null, { norm: 'l1' })).toThrow(tensorErr);
+    expect(() => normalize([], { norm: 'l1' })).toThrow('X cannot be empty');
+    expect(() => normalize('aisjd', { norm: 'l1' })).toThrow(tensorErr);
   });
 });

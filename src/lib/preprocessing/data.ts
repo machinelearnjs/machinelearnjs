@@ -44,7 +44,7 @@ interface NumberOneHot {
  *
  * @example
  * import { add_dummy_feature } from 'kalimdor/preprocessing';
- * const dummy = add_dummy_feature({ X: [[0, 1, 2], [1, 0, 3]] });
+ * const dummy = add_dummy_feature([[0, 1, 2], [1, 0, 3]]);
  * console.log(dummy); // returns: [ [ 1, 0, 1, 2 ], [ 1, 1, 0, 3 ] ]
  *
  * @param X - A matrix of data
@@ -633,15 +633,13 @@ export class PolynomialFeatures {
  * to the square of the  β values, while the L1 norm is proportional the absolute value of the values in  β .
  *
  * @example
- * import { normalize } from 'kalimdor/preprocess';
+ * import { normalize } from 'kalimdor/preprocessing';
  *
- * const result = normalize({
- *   X: [
- *     [1, -1, 2],
- *     [2, 0, 0],
- *     [0, 1, -1],
- *   ],
- * });
+ * const result = normalize([
+ *   [1, -1, 2],
+ *   [2, 0, 0],
+ *   [0, 1, -1],
+ * ], { norm: 'l2' });
  * console.log(result);
  * // [ [ 0.4082482904638631, -0.4082482904638631, 0.8164965809277261 ],
  * // [ 1, 0, 0 ],
@@ -652,22 +650,19 @@ export class PolynomialFeatures {
  * @return number[][]
  */
 export function normalize(
+  X: Type2DMatrix<number> = null,
   {
-    X = null,
     norm = 'l2'
   }: {
-    X: number[][];
-    norm?: string;
+    norm: string;
   } = {
-    X: null,
     norm: 'l2'
   }
 ): number[][] {
-  // Validation
-  if (!math.contrib.isMatrixOf(X, 'number')) {
-    throw new Error('The data input must be a matrix of numbers');
+  if (Array.isArray(X) && X.length === 0) {
+    throw new TypeError('X cannot be empty');
   }
-
+  validateMatrix2D(X);
   const normalizedMatrix = [];
   for (let i = 0; i < X.length; i++) {
     const row = X[i];
