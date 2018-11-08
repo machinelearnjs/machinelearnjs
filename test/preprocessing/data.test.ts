@@ -9,6 +9,10 @@ import {
   PolynomialFeatures
 } from '../../src/lib/preprocessing';
 
+// Constant error messages
+const tensorErr =
+  'values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray';
+
 describe('data:add_dummy_feature', () => {
   const X1 = [[0, 1], [1, 0]];
   const X2 = [[0, 1, 2], [1, 0, 3]];
@@ -92,6 +96,13 @@ describe('data:OneHotEncoder', () => {
 });
 
 describe('data:MinMaxScaler', () => {
+  const matrix1 = [
+    [7, 0.27, 0.36, 20.7, 0.045, 45, 170, 1.001, 3, 0.45, 8.8],
+    [6.3, 0.3, 0.34, 1.6, 0.049, 14, 132, 0.994, 3.3, 0.49, 9.5],
+    [8.1, 0.28, 0.4, 6.9, 0.05, 30, 97, 0.9951, 3.26, 0.44, 10.1],
+    [7.2, 0.23, 0.32, 8.5, 0.058, 47, 186, 0.9956, 3.19, 0.4, 9.9],
+    [7.2, 0.23, 0.32, 8.5, 0.058, 47, 186, 0.9956, 3.19, 0.4, 9.9]
+  ];
   it('should feature range [0, 1] of [4, 5, 6] return [0, 0.5, 1]', () => {
     const expectedResult = [0, 0.5, 1];
     const minmaxScaler = new MinMaxScaler({ featureRange: [0, 1] });
@@ -116,13 +127,6 @@ describe('data:MinMaxScaler', () => {
     expect(_.isEqual(expectedResult, result)).toBe(true);
   });
   it('matrix dataset test1', () => {
-    const matrix1 = [
-      [7, 0.27, 0.36, 20.7, 0.045, 45, 170, 1.001, 3, 0.45, 8.8],
-      [6.3, 0.3, 0.34, 1.6, 0.049, 14, 132, 0.994, 3.3, 0.49, 9.5],
-      [8.1, 0.28, 0.4, 6.9, 0.05, 30, 97, 0.9951, 3.26, 0.44, 10.1],
-      [7.2, 0.23, 0.32, 8.5, 0.058, 47, 186, 0.9956, 3.19, 0.4, 9.9],
-      [7.2, 0.23, 0.32, 8.5, 0.058, 47, 186, 0.9956, 3.19, 0.4, 9.9]
-    ];
     const expected = [
       0.005135651098384017,
       0.010513296227581941,
@@ -132,6 +136,46 @@ describe('data:MinMaxScaler', () => {
     scaler.fit(matrix1);
     const result = scaler.fit_transform([1, 2, 3]);
     expect(result).toEqual(expected);
+  });
+  it('should transform matrix1 then successfully inverse tranform', () => {
+    const expected = [
+      0.005135651098384017,
+      0.010513296227581941,
+      0.015890941356779865
+    ];
+    const scaler = new MinMaxScaler({ featureRange: [0, 1] });
+    scaler.fit(matrix1);
+    const data = [1, 2, 3];
+    const transformed = scaler.fit_transform(data);
+    expect(transformed).toEqual(expected);
+    const result = scaler.inverse_transform(transformed);
+    expect(result).toEqual(data);
+  });
+  it('should not fit invalid inputs', () => {
+    const scaler = new MinMaxScaler({ featureRange: [0, 1] });
+    expect(() => scaler.fit('?')).toThrow(tensorErr);
+    expect(() => scaler.fit(1)).toThrow('Cannot fit with an empty value');
+    expect(() => scaler.fit([])).toThrow('Cannot fit with an empty value');
+  });
+  it('should not fit_transform invalid inputs', () => {
+    const scaler = new MinMaxScaler({ featureRange: [0, 1] });
+    expect(() => scaler.fit_transform('?')).toThrow(tensorErr);
+    expect(() => scaler.fit_transform(1)).toThrow(
+      'The matrix is not 1D shaped: 1 of []'
+    );
+    expect(() => scaler.fit_transform([])).toThrow(
+      'The matrix is not 1D shaped: [] of [0]'
+    );
+  });
+  it('should not inverse_transform invalid inputs', () => {
+    const scaler = new MinMaxScaler({ featureRange: [0, 1] });
+    expect(() => scaler.inverse_transform('?')).toThrow(tensorErr);
+    expect(() => scaler.inverse_transform(1)).toThrow(
+      'The matrix is not 1D shaped: 1 of []'
+    );
+    expect(() => scaler.inverse_transform([])).toThrow(
+      'The matrix is not 1D shaped: [] of [0]'
+    );
   });
 });
 
