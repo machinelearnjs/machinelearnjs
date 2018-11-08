@@ -644,7 +644,7 @@ export class PolynomialFeatures {
  * to the square of the  β values, while the L1 norm is proportional the absolute value of the values in  β .
  *
  * @example
- * import { normalize } from 'kalimdor/preprocess';
+ * import { normalize } from 'kalimdor/preprocessing';
  *
  * const result = normalize({
  *   X: [
