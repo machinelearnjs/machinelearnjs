@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { inferShape, validateMatrix1D } from '../ops';
+import { inferShape, validateMatrix1D, validateMatrix2D } from '../ops';
 import { Type1DMatrix, Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
 import { combinationsWithReplacement } from '../utils/permutations';
@@ -501,10 +501,11 @@ export class Binarizer {
    * Currently fit does nothing
    * @param {any[]} X - Does nothing
    */
-  public fit(X: any[] = []): void {
-    if (_.isEmpty(X)) {
-      throw new Error('X cannot be null');
+  public fit(X: Type2DMatrix<number>): void {
+    if (Array.isArray(X) && X.length === 0) {
+      throw new TypeError('X cannot be empty');
     }
+    validateMatrix2D(X);
     console.info("Currently Bianrizer's fit is designed to do nothing");
   }
 
@@ -519,16 +520,12 @@ export class Binarizer {
    *    [ 0.,  1.,  0.]])
    * @param {any[]} X - The data to binarize.
    */
-  public transform(X: any[] = []): any[] {
-    let _X = null;
-    if (this.copy) {
-      _X = _.clone(X);
-    } else {
-      _X = X;
+  public transform(X: Type2DMatrix<number>): any[] {
+    const _X = this.copy ? _.clone(X) : X;
+    if (Array.isArray(_X) && _X.length === 0) {
+      throw new TypeError('X cannot be empty');
     }
-    if (_.isEmpty(X)) {
-      throw new Error('X cannot be null');
-    }
+    validateMatrix2D(_X);
     for (let row = 0; row < _.size(X); row++) {
       const rowValue = _.get(X, `[${row}]`);
       for (let column = 0; column < _.size(rowValue); column++) {

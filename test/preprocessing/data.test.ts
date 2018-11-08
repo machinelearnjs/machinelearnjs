@@ -60,7 +60,7 @@ describe('data:OneHotEncoder', () => {
       dataKeys: ['value', 'isGasGiant'],
       labelKeys: ['planet']
     });
-    expect(_.isEqual(encodeInfo.data, expectedEncode)).toBe(true);
+    expect(encodeInfo.data).toEqual(expectedEncode);
   });
 
   it('should decode planet list correctly', () => {
@@ -71,7 +71,7 @@ describe('data:OneHotEncoder', () => {
       labelKeys: ['planet']
     });
     const decodedInfo = enc.decode(encodeInfo.data, encodeInfo.decoders);
-    expect(_.isEqual(planetList, decodedInfo)).toBe(true);
+    expect(planetList).toEqual(decodedInfo);
   });
 
   it("Invalid data key 'values' should throw an Error", () => {
@@ -187,7 +187,18 @@ describe('data:Binarizer', () => {
     const binResult = newBin.transform(binX);
     expect(_.isEqual(binResult, expected)).toBe(true);
   });
-  // TODO: Write exception test
+  it('should not fit invalid data', () => {
+    const newBin = new Binarizer({ threshold: 0 });
+    expect(() => newBin.fit([])).toThrow('X cannot be empty');
+    expect(() => newBin.fit('?')).toThrow(tensorErr);
+    expect(() => newBin.fit(null)).toThrow(tensorErr);
+  });
+  it('should not transform invalid data', () => {
+    const newBin = new Binarizer({ threshold: 0 });
+    expect(() => newBin.transform([])).toThrow('X cannot be empty');
+    expect(() => newBin.transform('?')).toThrow(tensorErr);
+    expect(() => newBin.transform(null)).toThrow(tensorErr);
+  });
 });
 
 describe('data:PolynomialFeatures', () => {
