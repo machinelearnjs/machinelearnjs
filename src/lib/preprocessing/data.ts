@@ -51,20 +51,13 @@ interface NumberOneHot {
  * @param value - Value to use for the dummy feature.
  */
 export function add_dummy_feature(
-  {
-    X = null,
-    value = 1.0
-  }: {
-    X: number[][];
-    value?: number;
-  } = {
-    X: null,
-    value: 1.0
-  }
+  X: Type2DMatrix<number> = null,
+  value: number = 1.0
 ): number[][] {
-  if (!math.contrib.isMatrix(X)) {
-    throw Error('Input must be a matrix');
+  if (Array.isArray(X) && X.length === 0) {
+    throw new TypeError('X cannot be empty');
   }
+  validateMatrix2D(X);
   const [nSamples] = math.matrix(X).size();
   const ones = JSON.parse(math.ones(nSamples, 1).toString());
   const multipliedOnes = math.multiply(ones, value);
@@ -501,7 +494,7 @@ export class Binarizer {
    * Currently fit does nothing
    * @param {any[]} X - Does nothing
    */
-  public fit(X: Type2DMatrix<number>): void {
+  public fit(X: Type2DMatrix<number> = null): void {
     if (Array.isArray(X) && X.length === 0) {
       throw new TypeError('X cannot be empty');
     }
@@ -520,7 +513,7 @@ export class Binarizer {
    *    [ 0.,  1.,  0.]])
    * @param {any[]} X - The data to binarize.
    */
-  public transform(X: Type2DMatrix<number>): any[] {
+  public transform(X: Type2DMatrix<number> = null): any[] {
     const _X = this.copy ? _.clone(X) : X;
     if (Array.isArray(_X) && _X.length === 0) {
       throw new TypeError('X cannot be empty');
@@ -553,7 +546,7 @@ export class Binarizer {
  * import { PolynomialFeatures } from 'kalimdor/preprocessing';
  * const poly = new PolynomialFeatures();
  * const X = [[0, 1], [2, 3], [4, 5]];
- * poly.transform({ X });
+ * poly.transform(X);
  * // Result:
  * // [ [ 1, 0, 1, 0, 0, 1 ],
  * // [ 1, 2, 3, 4, 6, 9 ],
@@ -577,7 +570,7 @@ export class PolynomialFeatures {
     }
   ) {
     // Constructor variables validation
-    if (!_.isNumber(degree)) {
+    if (!Number.isInteger(degree)) {
       throw new Error('Degree must be a number');
     }
     this.degree = degree;
@@ -587,18 +580,11 @@ export class PolynomialFeatures {
    * Transforms the input data
    * @param X - a matrix
    */
-  public transform(
-    {
-      X = null
-    }: {
-      X: number[][];
-    } = {
-      X: null
+  public transform(X: Type2DMatrix<number> = null): number[][] {
+    if (Array.isArray(X) && X.length === 0) {
+      throw new TypeError('X cannot be empty');
     }
-  ): number[][] {
-    if (!math.contrib.isMatrixOf(X, 'number')) {
-      throw new Error('Input must be a numeric matrix');
-    }
+    validateMatrix2D(X);
     const matrix = math.matrix(X);
     const [nSamples, nFeatures] = matrix.size();
     const indexCombination = this.indexCombination(nFeatures, this.degree);

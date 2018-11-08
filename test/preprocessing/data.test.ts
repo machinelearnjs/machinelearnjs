@@ -19,28 +19,31 @@ describe('data:add_dummy_feature', () => {
 
   it('should return correct result for X1 with default value', () => {
     const expectedResult = [[1, 0, 1], [1, 1, 0]];
-    const result = add_dummy_feature({ X: X1 });
+    const result = add_dummy_feature(X1);
     expect(result).toEqual(expectedResult);
   });
 
   it('should return correct result for X2 with default value', () => {
     const expectedResult = [[1, 0, 1, 2], [1, 1, 0, 3]];
-    const result = add_dummy_feature({ X: X2 });
+    const result = add_dummy_feature(X2);
     expect(result).toEqual(expectedResult);
   });
 
   it('should return correct result for X1 with value 2', () => {
     const expectedResult = [[2, 0, 1], [2, 1, 0]];
-    const result = add_dummy_feature({ X: X1, value: 2 });
+    const result = add_dummy_feature(X1, 2);
     expect(result).toEqual(expectedResult);
   });
 
   it('should throw error when invalid data is given', () => {
-    const expectedError = 'Input must be a matrix';
-    expect(() => add_dummy_feature({ X: true })).toThrow(expectedError);
-    expect(() => add_dummy_feature({ X: 1 })).toThrow(expectedError);
-    expect(() => add_dummy_feature({ X: null })).toThrow(expectedError);
-    expect(() => add_dummy_feature({ X: undefined })).toThrow(expectedError);
+    expect(() => add_dummy_feature(true)).toThrow(
+      'The matrix is not 2D shaped: true of []'
+    );
+    expect(() => add_dummy_feature(1)).toThrow(
+      'The matrix is not 2D shaped: 1 of []'
+    );
+    expect(() => add_dummy_feature(null)).toThrow(tensorErr);
+    expect(() => add_dummy_feature(undefined)).toThrow(tensorErr);
   });
 });
 
@@ -207,7 +210,7 @@ describe('data:PolynomialFeatures', () => {
   // Functionalities
   it('should transform X1 with default degree value', () => {
     const poly = new PolynomialFeatures();
-    const result = poly.transform({ X: X1 });
+    const result = poly.transform(X1);
     const expected = [
       [1, 0, 1, 0, 0, 1],
       [1, 2, 3, 4, 6, 9],
@@ -217,7 +220,7 @@ describe('data:PolynomialFeatures', () => {
   });
   it('should transform X1 with degree value 3', () => {
     const poly = new PolynomialFeatures({ degree: 3 });
-    const result = poly.transform({ X: X1 });
+    const result = poly.transform(X1);
     const expected = [
       [1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1],
       [1, 2, 3, 4, 6, 9, 8, 12, 12, 18, 18, 27],
@@ -229,19 +232,17 @@ describe('data:PolynomialFeatures', () => {
   // Exceptions
   it('should not transform when invalid values are given', () => {
     const poly = new PolynomialFeatures();
-    const expected =
-      'Cannot perform isMatrixOf number unless the data is matrix';
-    expect(() => poly.transform({ X: null })).toThrow(expected);
-    expect(() => poly.transform({ X: [] })).toThrow(expected);
-    expect(() => poly.transform({ X: 1 })).toThrow(expected);
-    expect(() => poly.transform({ X: 'string' })).toThrow(expected);
+    expect(() => poly.transform(null)).toThrow(tensorErr);
+    expect(() => poly.transform([])).toThrow('X cannot be empty');
+    expect(() => poly.transform(1)).toThrow(
+      'The matrix is not 2D shaped: 1 of []'
+    );
+    expect(() => poly.transform('string')).toThrow(tensorErr);
   });
   it('should not transform when matrix with non numberic value is given', () => {
     const poly = new PolynomialFeatures();
     const X = [[1, 2, true], [2, 1, 'string'], [null, null, null]];
-    expect(() => poly.transform({ X })).toThrow(
-      'Input must be a numeric matrix'
-    );
+    expect(() => poly.transform(X)).toThrow('X has to be a matrix of numbers');
   });
   it('should not initiate the class if an invalid degree value is given', () => {
     const expected = 'Degree must be a number';
