@@ -1,4 +1,9 @@
-import { Type1DMatrix, Type2DMatrix } from './matrix.types';
+import {
+  Type1DMatrix,
+  Type2DMatrix,
+  Type3DMatrix,
+  Type4DMatrix
+} from './matrix.types';
 
 /**
  * Base typing for ModelState. The typing ensures that model state can only have string, number, number[], string[]
@@ -10,8 +15,10 @@ export interface TypeModelState {
     | string
     | boolean
     | TypeModelState
-    | string[]
-    | number[];
+    | Type1DMatrix<any>
+    | Type2DMatrix<any>
+    | Type3DMatrix<any>
+    | Type4DMatrix<any>;
 }
 
 /**
@@ -22,7 +29,7 @@ export abstract class IMlModel<T> {
   /**
    * Fit data to build model
    */
-  public abstract fit(X: Type2DMatrix<T>, y: Type1DMatrix<T>): void;
+  public abstract fit(X: Type2DMatrix<T>, y?: Type1DMatrix<T>): void;
   /**
    * Predict multiple rows. Each row has a feature data for a prediction
    */

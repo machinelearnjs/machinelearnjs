@@ -2,7 +2,7 @@ import * as tf from '@tensorflow/tfjs';
 import { cloneDeep, range } from 'lodash';
 import * as Random from 'random-js';
 import { validateFitInputs, validateMatrix2D } from '../ops';
-import { Type1DMatrix, Type2DMatrix } from '../types';
+import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
 
 export enum TypeLoss {
   L1 = 'L1',
@@ -14,7 +14,7 @@ export enum TypeLoss {
  * Ordinary base class for SGD classier or regressor
  * @ignore
  */
-class BaseSGD {
+class BaseSGD implements IMlModel<number> {
   private learningRate: number;
   private epochs: number;
   private clone: boolean = true;
@@ -153,7 +153,7 @@ class BaseSGD {
    * Predictions according to the passed in test set
    * @param X - Matrix of data
    */
-  protected predict(X: Type2DMatrix<number> = null): number[] {
+  public predict(X: Type2DMatrix<number> = null): number[] {
     validateMatrix2D(X);
     // Adding bias
     const biasX: number[][] = this.addBias(X);

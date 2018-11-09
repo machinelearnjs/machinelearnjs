@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import * as Random from 'random-js';
 import { validateMatrix2D } from '../ops';
-import { Type1DMatrix, Type2DMatrix } from '../types';
+import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
 
 export interface KMeansOptions {
@@ -35,7 +35,7 @@ export interface KMeansOptions {
  * const result = kmean.predict([[0, 0], [4, 4]]);
  * // results in: [0, 1]
  */
-export class KMeans {
+export class KMeans implements IMlModel<number> {
   private assignment: number[];
   private centroids: Type2DMatrix<number>;
   private clusters: number[];

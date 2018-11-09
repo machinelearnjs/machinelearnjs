@@ -1,6 +1,6 @@
 import * as numeric from 'numeric';
 import { validateMatrix2D } from '../ops';
-import { Type2DMatrix } from '../types';
+import { IMlModel, Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
 
 /**
@@ -23,7 +23,7 @@ import math from '../utils/MathExtra';
  * console.log(pca.components); // result: [ [ 0.7071067811865476, 0.7071067811865474 ], [ 0.7071067811865474, -0.7071067811865476 ] ]
  * console.log(pca.explained_variance); // result: [ [ -0.3535533905932736, 0 ], [ 0, 0.5 ], [ 0.35355339059327373, 0 ] ]
  */
-export class PCA {
+export class PCA implements IMlModel<number> {
   /**
    * Principal axes in feature space, representing the directions of
    * maximum variance in the data. The components are sorted by explained_variance_.
@@ -54,5 +54,48 @@ export class PCA {
     const svd = numeric.svd(C);
     this.components = svd.V;
     this.explained_variance = numeric.div(numeric.pow(svd.U), nSamples - 1);
+  }
+
+  /**
+   * Predict does nothing in PCA
+   * @param X
+   */
+  public predict(X: Type2DMatrix<number>): number[][] {
+    console.info('Predict does nothing in PCA\n', X);
+    return null;
+  }
+
+  /**
+   * Saves the model's states
+   */
+  public toJSON(): {
+    components: Type2DMatrix<number>;
+    explained_variance: Type2DMatrix<number>;
+  } {
+    return {
+      components: this.components,
+      explained_variance: this.explained_variance
+    };
+  }
+
+  /**
+   * Restores the model from given states
+   * @param components
+   * @param explained_variance
+   */
+  public fromJSON(
+    {
+      components = null,
+      explained_variance = null
+    }: {
+      components: Type2DMatrix<number>;
+      explained_variance: Type2DMatrix<number>;
+    } = {
+      components: null,
+      explained_variance: null
+    }
+  ): void {
+    this.components = components;
+    this.explained_variance = explained_variance;
   }
 }

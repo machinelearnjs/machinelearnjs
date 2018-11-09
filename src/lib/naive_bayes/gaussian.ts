@@ -1,7 +1,7 @@
 import { cloneDeep, isNaN } from 'lodash';
 import { exp, mean, pi, pow, sqrt, std } from 'mathjs';
 import { validateFitInputs, validateMatrix2D } from '../ops';
-import { Type1DMatrix, Type2DMatrix } from '../types';
+import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
 
 /**
  * The Naive is an intuitive method that uses probabilistic of each attribute
@@ -18,7 +18,7 @@ import { Type1DMatrix, Type2DMatrix } from '../types';
  * nb.predict([[1, 20]]); // returns [ 1 ]
  *
  */
-export class GaussianNB {
+export class GaussianNB implements IMlModel<number> {
   /**
    * Naive Bayes summary according to classes
    */
