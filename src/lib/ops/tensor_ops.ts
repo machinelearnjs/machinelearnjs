@@ -1,5 +1,5 @@
 import * as tf from '@tensorflow/tfjs';
-import { Type1DMatrix, Type2DMatrix, TypeMatrix } from '../types/matrix.types';
+import { Type1DMatrix, Type2DMatrix, TypeMatrix } from '../types';
 
 /**
  * Infers shape of a tensor using TF
@@ -11,6 +11,7 @@ import { Type1DMatrix, Type2DMatrix, TypeMatrix } from '../types/matrix.types';
  * inferShape([[1, 2], [3, 4]]) // [2, 2]
  *
  * @param X
+ * @ignore
  */
 export function inferShape(X: TypeMatrix<any>): number[] {
   return tf.tensor(X).shape;
@@ -53,6 +54,7 @@ export function validateFitInputs(
 /**
  * Validate the matrix is 1D shaped by checking the shape's length is exactly  1
  * @param X
+ * @ignore
  */
 export function validateMatrix1D(X: Type1DMatrix<any>): number[] {
   const shape = inferShape(X);
@@ -69,6 +71,7 @@ export function validateMatrix1D(X: Type1DMatrix<any>): number[] {
 /**
  * Validate the matrix is 2D shaped by checking the shape's length is exactly 2
  * @param X - An input array
+ * @ignore
  */
 export function validateMatrix2D(X: Type2DMatrix<any>): number[] {
   const shape = inferShape(X);
