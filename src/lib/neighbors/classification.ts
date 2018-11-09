@@ -1,6 +1,6 @@
 import { map, uniqBy } from 'lodash';
 import { inferShape, validateFitInputs } from '../ops';
-import { Type1DMatrix, Type2DMatrix } from '../types';
+import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
 import KDTree from './KDTree';
 const { euclideanDistance, manhattanDistance } = math.contrib;
@@ -18,7 +18,8 @@ const TYPE_KD = 'kdtree';
  * knn.fit(X ,y);
  * console.log(knn.predict([1, 2])); // predicts 1
  */
-export class KNeighborsClassifier {
+export class KNeighborsClassifier<T extends number | string | boolean>
+  implements IMlModel<T> {
   private type = null;
   private tree = null;
   private k = null;
@@ -72,10 +73,7 @@ export class KNeighborsClassifier {
    * @param {any} X - Training data.
    * @param {any} y - Target data.
    */
-  public fit(
-    X: Type2DMatrix<number | string | boolean>,
-    y: Type1DMatrix<number | string | boolean>
-  ): void {
+  public fit(X: Type2DMatrix<T>, y: Type1DMatrix<T>): void {
     validateFitInputs(X, y);
     // Getting the classes from y
     const classes = uniqBy(y, c => c);
@@ -152,11 +150,7 @@ export class KNeighborsClassifier {
    * @param {Array} X - Prediction data.
    * @returns number
    */
-  public predict(
-    X:
-      | Type2DMatrix<number | string | boolean>
-      | Type1DMatrix<number | string | boolean>
-  ): any {
+  public predict(X: Type2DMatrix<T> | Type1DMatrix<T>): any {
     const shape = inferShape(X);
     if (shape.length === 1) {
       return this.getSinglePred(X);
