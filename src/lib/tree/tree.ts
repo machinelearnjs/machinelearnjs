@@ -109,6 +109,11 @@ export class DecisionNode {
   }
 }
 
+export interface Options {
+  featureLabels?: null | any[];
+  verbose?: boolean;
+}
+
 /**
  * A decision tree classifier.
  *
@@ -134,12 +139,8 @@ export class DecisionNode {
  * decision.fit({ X, y });
  * decision2.predict({ row: [[2, 2]] }); // [ 1 ]
  */
-
-export interface Options {
-  featureLabels?: null | any[];
-  verbose?: boolean;
-}
-export class DecisionTreeClassifier implements IMlModel<number> {
+export class DecisionTreeClassifier
+  implements IMlModel<string | boolean | number> {
   private featureLabels = null;
   private tree = null;
   private verbose = true;

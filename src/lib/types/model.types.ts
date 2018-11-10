@@ -1,24 +1,11 @@
-import {
-  Type1DMatrix,
-  Type2DMatrix,
-  Type3DMatrix,
-  Type4DMatrix
-} from './matrix.types';
+import { Type1DMatrix, Type2DMatrix } from './matrix.types';
 
 /**
  * Base typing for ModelState. The typing ensures that model state can only have string, number, number[], string[]
  * or ModelState itself for recursive object typing
  */
 export interface TypeModelState {
-  [key: string]:
-    | number
-    | string
-    | boolean
-    | TypeModelState
-    | Type1DMatrix<any>
-    | Type2DMatrix<any>
-    | Type3DMatrix<any>
-    | Type4DMatrix<any>;
+  [key: string]: any;
 }
 
 /**
@@ -33,7 +20,7 @@ export abstract class IMlModel<T> {
   /**
    * Predict multiple rows. Each row has a feature data for a prediction
    */
-  public abstract predict(X: Type2DMatrix<T>): T[] | T[][];
+  public abstract predict(X: Type2DMatrix<T> | Type1DMatrix<T>): T[] | T[][];
 
   /**
    * Restores model from a checkpoint

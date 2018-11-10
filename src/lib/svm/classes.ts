@@ -1,7 +1,7 @@
 import svmResolver from 'libsvm-js';
 import * as _ from 'lodash';
 import { validateFitInputs, validateMatrix1D, validateMatrix2D } from '../ops';
-import { Type1DMatrix, Type2DMatrix } from '../types';
+import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
 
 export type Type = 'C_SVC' | 'NU_SVC' | 'ONE_CLASS' | 'EPSILON_SVR' | 'NU_SVR';
 
@@ -69,7 +69,7 @@ export interface SVMOptions {
 /**
  * BaseSVM class used by all parent SVM classes that are based on libsvm
  */
-export class BaseSVM {
+export class BaseSVM implements IMlModel<number> {
   protected svm: any;
   protected type: Type;
   protected options: SVMOptions;
