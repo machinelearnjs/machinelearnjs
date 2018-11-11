@@ -58,9 +58,9 @@ export class PCA implements IMlModel<number> {
 
   /**
    * Predict does nothing in PCA
-   * @param X
+   * @param X - A 2D matrix
    */
-  public predict(X: Type2DMatrix<number>): number[][] {
+  public predict(X: Type2DMatrix<number> = null): number[][] {
     console.info('Predict does nothing in PCA\n', X);
     return null;
   }
@@ -69,8 +69,8 @@ export class PCA implements IMlModel<number> {
    * Saves the model's states
    */
   public toJSON(): {
-    components: Type2DMatrix<number>;
-    explained_variance: Type2DMatrix<number>;
+    components: number[][];
+    explained_variance: number[][];
   } {
     return {
       components: this.components,
@@ -80,8 +80,8 @@ export class PCA implements IMlModel<number> {
 
   /**
    * Restores the model from given states
-   * @param components
-   * @param explained_variance
+   * @param components - Principal axes in feature space, representing the directions of maximum variance in the data.
+   * @param explained_variance - The amount of variance explained by each of the selected components.
    */
   public fromJSON(
     {

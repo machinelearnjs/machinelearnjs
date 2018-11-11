@@ -71,10 +71,10 @@ export class KMeans implements IMlModel<number> {
 
   /**
    * Compute k-means clustering.
-   * @param {any} X
+   * @param {any} X - array-like or sparse matrix of shape = [n_samples, n_features]
    * @returns {{centroids: number[]; clusters: number[]}}
    */
-  public fit(X: Type2DMatrix<number>): void {
+  public fit(X: Type2DMatrix<number> = []): void {
     validateMatrix2D(X);
     this.assignment = new Array(_.size(X));
     this.centroids = this.getInitialCentroids(X, this.k);
