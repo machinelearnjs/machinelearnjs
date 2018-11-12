@@ -5,13 +5,7 @@ import { Type1DMatrix, Type2DMatrix } from './matrix.types';
  * or ModelState itself for recursive object typing
  */
 export interface TypeModelState {
-  [key: string]:
-    | number
-    | string
-    | boolean
-    | TypeModelState
-    | string[]
-    | number[];
+  [key: string]: any;
 }
 
 /**
@@ -22,11 +16,11 @@ export abstract class IMlModel<T> {
   /**
    * Fit data to build model
    */
-  public abstract fit(X: Type2DMatrix<T>, y: Type1DMatrix<T>): void;
+  public abstract fit(X: Type2DMatrix<T>, y?: Type1DMatrix<T>): void;
   /**
    * Predict multiple rows. Each row has a feature data for a prediction
    */
-  public abstract predict(X: Type2DMatrix<T>): T[] | T[][];
+  public abstract predict(X: Type2DMatrix<T> | Type1DMatrix<T>): T[] | T[][];
 
   /**
    * Restores model from a checkpoint

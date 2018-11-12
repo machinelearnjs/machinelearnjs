@@ -6,6 +6,7 @@ import {
   Leaf
 } from '../../src/lib/tree/tree';
 import { IRIS_FAKE_DATA, IRIS_FAKE_DESC } from '../datasets/fake_data/iris';
+import { matchExceptionWithSnapshot } from '../util_testing';
 
 // Mock fetch
 global.fetch = fakeFetch;
@@ -88,21 +89,20 @@ describe('tree:DecisionTreeClassifier', () => {
   // Exceptions
   it('Should not fit if invalid data is given', () => {
     const decision = new DecisionTreeClassifier();
-    const exepctedError = 'Cannot accept non Array values for X and y';
-    expect(() => decision.fit(null, null)).toThrow(exepctedError);
-    expect(() => decision.fit(1, 2)).toThrow(exepctedError);
-    expect(() => decision.fit(true, true)).toThrow(exepctedError);
-    expect(() => decision.fit([], [])).toThrow(exepctedError);
-    expect(() => decision.fit(-1, -2)).toThrow(exepctedError);
+    matchExceptionWithSnapshot(decision.fit, [null, null]);
+    matchExceptionWithSnapshot(decision.fit, [1, 2]);
+    matchExceptionWithSnapshot(decision.fit, [true, true]);
+    matchExceptionWithSnapshot(decision.fit, [[], []]);
+    matchExceptionWithSnapshot(decision.fit, [-1, -2]);
   });
 
-  it('predict should throw an error is array is given', () => {
+  it('should not predict if invalid data is given', () => {
     const decision = new DecisionTreeClassifier();
-    const expectedError = 'X needs to be a matrix!';
-    expect(() => {
-      decision.fit(numberX, numberY);
-      decision.predict(1);
-    }).toThrow(expectedError);
+    matchExceptionWithSnapshot(decision.predict, [1]);
+    matchExceptionWithSnapshot(decision.predict, [1, 2]);
+    matchExceptionWithSnapshot(decision.predict, [true, true]);
+    matchExceptionWithSnapshot(decision.predict, [[], []]);
+    matchExceptionWithSnapshot(decision.predict, [-1, -2]);
   });
 
   it('should return a correct class counts for fruitY', () => {

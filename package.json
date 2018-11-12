@@ -41,7 +41,7 @@
     "build:web": "npx tsc -p tsconfig.json --module amd --out build/lib/kalimdor.web.js",
     "lint": "npx tslint -t verbose 'test/**/*.ts' 'src/**/*.ts' 'docs/**/*.ts'",
     "build:datasets": "npx ncp src/lib/datasets/data build/lib/datasets/data",
-    "fix": "yarn fix:prettier && yarn fix:tslint",
+    "fix": "yarn fix:tslint",
     "fix:prettier": "npx prettier \"src/**/*.ts\" \"test/**/*.ts\" \"docs/**/*.ts\" --config ./.prettierrc --write",
     "fix:tslint": "npx tslint --fix --force -t verbose 'test/**/*.ts' 'src/**/*.ts' 'docs/**/*.ts'",
     "test": "yarn build && yarn lint && yarn test:unit && yarn test:integration && yarn test:nsp && yarn doc",

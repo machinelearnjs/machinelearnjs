@@ -1,8 +1,7 @@
 import { cloneDeep, isNaN } from 'lodash';
 import { exp, mean, pi, pow, sqrt, std } from 'mathjs';
-import math from '../utils/MathExtra';
-
-const { isMatrix } = math.contrib;
+import { validateFitInputs, validateMatrix2D } from '../ops';
+import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
 
 /**
  * The Naive is an intuitive method that uses probabilistic of each attribute
@@ -15,11 +14,11 @@ const { isMatrix } = math.contrib;
  * const nb = new GaussianNB();
  * const X = [[1, 20], [2, 21], [3, 22], [4, 22]];
  * const y = [1, 0, 1, 0];
- * nb.fit({ X, y });
- * nb.predict({ X: [[1, 20]] }); // returns [ 1 ]
+ * nb.fit(X ,y);
+ * nb.predict([[1, 20]]); // returns [ 1 ]
  *
  */
-export class GaussianNB {
+export class GaussianNB implements IMlModel<number> {
   /**
    * Naive Bayes summary according to classes
    */
@@ -47,30 +46,14 @@ export class GaussianNB {
 
   /**
    * Fit date to build Gaussian Distribution summary
-   * @param {any} X - training values
-   * @param {any} y - target values
+   * @param X - training values
+   * @param y - target values
    */
   public fit(
-    {
-      X = null,
-      y = null
-    }: {
-      X: any[][];
-      y: any[];
-    } = {
-      X: null,
-      y: null
-    }
+    X: Type2DMatrix<string | number | boolean> = [],
+    y: Type1DMatrix<string | number | boolean> = []
   ): void {
-    if (!isMatrix(X)) {
-      throw new Error('X must be a matrix');
-    }
-    if (!Array.isArray(y)) {
-      throw new Error('y must be a vector');
-    }
-    if (X.length !== y.length) {
-      throw new Error('X and y must be same in length');
-    }
+    validateFitInputs(X, y);
     let clonedX = X;
     let clonedY = y;
     if (this.clone) {
@@ -85,18 +68,8 @@ export class GaussianNB {
    * @param {any[]} X - values to predict in Matrix format
    * @returns {number[]}
    */
-  public predict(
-    {
-      X = null
-    }: {
-      X: any[][];
-    } = {
-      X: null
-    }
-  ): number[] {
-    if (!isMatrix(X)) {
-      throw new Error('X must be a matrix');
-    }
+  public predict(X: Type2DMatrix<number> = []): number[] {
+    validateMatrix2D(X);
     let clonedX = X;
 
     if (this.clone) {
@@ -104,7 +77,7 @@ export class GaussianNB {
     }
     const result = [];
     for (let i = 0; i < clonedX.length; i++) {
-      result.push(this.singlePredict({ X: clonedX[i] }));
+      result.push(this.singlePredict(clonedX[i]));
     }
     return result;
   }
@@ -140,13 +113,15 @@ export class GaussianNB {
    * Make a prediction
    * @param X -
    */
-  private singlePredict({ X }): number {
+  private singlePredict(X: Type1DMatrix<number>): number {
     const summaryKeys = Object.keys(this.summaries);
     // Comparing input and summary shapes
     const summaryLength = this.summaries[summaryKeys[0]].dist.length;
     const inputLength = X.length;
     if (inputLength > summaryLength) {
-      throw new Error('Prediction input X length must be equal or less than summary length');
+      throw new Error(
+        'Prediction input X length must be equal or less than summary length'
+      );
     }
 
     // Getting probability of each class
@@ -188,7 +163,15 @@ export class GaussianNB {
    * @param meanval
    * @param stdev
    */
-  private calculateProbability({ x, meanval, stdev }: { x: number; meanval: number; stdev: number }): number {
+  private calculateProbability({
+    x,
+    meanval,
+    stdev
+  }: {
+    x: number;
+    meanval: number;
+    stdev: number;
+  }): number {
     const stdevPow: any = pow(stdev, 2);
     const meanValPow: any = -pow(x - meanval, 2);
     const exponent = exp(meanValPow / (2 * stdevPow));

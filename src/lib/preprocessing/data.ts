@@ -1,4 +1,6 @@
 import * as _ from 'lodash';
+import { inferShape, validateMatrix1D, validateMatrix2D } from '../ops';
+import { Type1DMatrix, Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
 import { combinationsWithReplacement } from '../utils/permutations';
 
@@ -42,27 +44,20 @@ interface NumberOneHot {
  *
  * @example
  * import { add_dummy_feature } from 'kalimdor/preprocessing';
- * const dummy = add_dummy_feature({ X: [[0, 1, 2], [1, 0, 3]] });
+ * const dummy = add_dummy_feature([[0, 1, 2], [1, 0, 3]]);
  * console.log(dummy); // returns: [ [ 1, 0, 1, 2 ], [ 1, 1, 0, 3 ] ]
  *
  * @param X - A matrix of data
  * @param value - Value to use for the dummy feature.
  */
 export function add_dummy_feature(
-  {
-    X = null,
-    value = 1.0
-  }: {
-    X: number[][];
-    value?: number;
-  } = {
-    X: null,
-    value: 1.0
-  }
+  X: Type2DMatrix<number> = null,
+  value: number = 1.0
 ): number[][] {
-  if (!math.contrib.isMatrix(X)) {
-    throw Error('Input must be a matrix');
+  if (Array.isArray(X) && X.length === 0) {
+    throw new TypeError('X cannot be empty');
   }
+  validateMatrix2D(X);
   const [nSamples] = math.matrix(X).size();
   const ones = JSON.parse(math.ones(nSamples, 1).toString());
   const multipliedOnes = math.multiply(ones, value);
@@ -408,13 +403,15 @@ export class MinMaxScaler {
    * Compute the minimum and maximum to be used for later scaling.
    * @param {number[]} X - Array or sparse-matrix data input
    */
-  public fit(X: number[] | number[][]): void {
+  public fit(X: Type1DMatrix<number> | Type2DMatrix<number>): void {
     const clonedX = this.clone ? _.cloneDeep(X) : X;
     let rowMax: any = clonedX;
     let rowMin: any = clonedX;
-
+    const xShape = inferShape(X);
     // If input is a Matrix...
-    if (math.contrib.isMatrix(X)) {
+    if (xShape.length === 0 || xShape[0] === 0) {
+      throw new TypeError('Cannot fit with an empty value');
+    } else if (xShape.length === 2) {
       rowMax = math.max(X, 0);
       rowMin = math.min(X, 0);
     }
@@ -432,7 +429,8 @@ export class MinMaxScaler {
    * Fit to data, then transform it.
    * @param {number[]} X - Original input vector
    */
-  public fit_transform(X: number[]): number[] {
+  public fit_transform(X: Type1DMatrix<number> = null): number[] {
+    validateMatrix1D(X);
     const X1 = X.map(x => x * this.scale);
     return X1.map(x => x + this.baseMin);
   }
@@ -441,7 +439,8 @@ export class MinMaxScaler {
    * Undo the scaling of X according to feature_range.
    * @param {number[]} X - Scaled input vector
    */
-  public inverse_transform(X: number[]): number[] {
+  public inverse_transform(X: Type1DMatrix<number> = null): number[] {
+    validateMatrix1D(X);
     const X1 = X.map(x => x - this.baseMin);
     return X1.map(x => x / this.scale);
   }
@@ -495,10 +494,11 @@ export class Binarizer {
    * Currently fit does nothing
    * @param {any[]} X - Does nothing
    */
-  public fit(X: any[] = []): void {
-    if (_.isEmpty(X)) {
-      throw new Error('X cannot be null');
+  public fit(X: Type2DMatrix<number> = null): void {
+    if (Array.isArray(X) && X.length === 0) {
+      throw new TypeError('X cannot be empty');
     }
+    validateMatrix2D(X);
     console.info("Currently Bianrizer's fit is designed to do nothing");
   }
 
@@ -513,16 +513,12 @@ export class Binarizer {
    *    [ 0.,  1.,  0.]])
    * @param {any[]} X - The data to binarize.
    */
-  public transform(X: any[] = []): any[] {
-    let _X = null;
-    if (this.copy) {
-      _X = _.clone(X);
-    } else {
-      _X = X;
+  public transform(X: Type2DMatrix<number> = null): any[] {
+    const _X = this.copy ? _.clone(X) : X;
+    if (Array.isArray(_X) && _X.length === 0) {
+      throw new TypeError('X cannot be empty');
     }
-    if (_.isEmpty(X)) {
-      throw new Error('X cannot be null');
-    }
+    validateMatrix2D(_X);
     for (let row = 0; row < _.size(X); row++) {
       const rowValue = _.get(X, `[${row}]`);
       for (let column = 0; column < _.size(rowValue); column++) {
@@ -550,7 +546,7 @@ export class Binarizer {
  * import { PolynomialFeatures } from 'kalimdor/preprocessing';
  * const poly = new PolynomialFeatures();
  * const X = [[0, 1], [2, 3], [4, 5]];
- * poly.transform({ X });
+ * poly.transform(X);
  * // Result:
  * // [ [ 1, 0, 1, 0, 0, 1 ],
  * // [ 1, 2, 3, 4, 6, 9 ],
@@ -574,7 +570,7 @@ export class PolynomialFeatures {
     }
   ) {
     // Constructor variables validation
-    if (!_.isNumber(degree)) {
+    if (!Number.isInteger(degree)) {
       throw new Error('Degree must be a number');
     }
     this.degree = degree;
@@ -584,18 +580,11 @@ export class PolynomialFeatures {
    * Transforms the input data
    * @param X - a matrix
    */
-  public transform(
-    {
-      X = null
-    }: {
-      X: number[][];
-    } = {
-      X: null
+  public transform(X: Type2DMatrix<number> = null): number[][] {
+    if (Array.isArray(X) && X.length === 0) {
+      throw new TypeError('X cannot be empty');
     }
-  ): number[][] {
-    if (!math.contrib.isMatrixOf(X, 'number')) {
-      throw new Error('Input must be a numeric matrix');
-    }
+    validateMatrix2D(X);
     const matrix = math.matrix(X);
     const [nSamples, nFeatures] = matrix.size();
     const indexCombination = this.indexCombination(nFeatures, this.degree);
@@ -644,15 +633,13 @@ export class PolynomialFeatures {
  * to the square of the  β values, while the L1 norm is proportional the absolute value of the values in  β .
  *
  * @example
- * import { normalize } from 'kalimdor/preprocess';
+ * import { normalize } from 'kalimdor/preprocessing';
  *
- * const result = normalize({
- *   X: [
- *     [1, -1, 2],
- *     [2, 0, 0],
- *     [0, 1, -1],
- *   ],
- * });
+ * const result = normalize([
+ *   [1, -1, 2],
+ *   [2, 0, 0],
+ *   [0, 1, -1],
+ * ], { norm: 'l2' });
  * console.log(result);
  * // [ [ 0.4082482904638631, -0.4082482904638631, 0.8164965809277261 ],
  * // [ 1, 0, 0 ],
@@ -663,22 +650,19 @@ export class PolynomialFeatures {
  * @return number[][]
  */
 export function normalize(
+  X: Type2DMatrix<number> = null,
   {
-    X = null,
     norm = 'l2'
   }: {
-    X: number[][];
-    norm?: string;
+    norm: string;
   } = {
-    X: null,
     norm: 'l2'
   }
 ): number[][] {
-  // Validation
-  if (!math.contrib.isMatrixOf(X, 'number')) {
-    throw new Error('The data input must be a matrix of numbers');
+  if (Array.isArray(X) && X.length === 0) {
+    throw new TypeError('X cannot be empty');
   }
-
+  validateMatrix2D(X);
   const normalizedMatrix = [];
   for (let i = 0; i < X.length; i++) {
     const row = X[i];

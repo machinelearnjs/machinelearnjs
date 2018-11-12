@@ -53,5 +53,5 @@ console.log(leResult);
 // add_dummy_features
 import { add_dummy_feature } from './data';
 
-const dummy = add_dummy_feature({ X: [[0, 1, 2], [1, 0, 3]] });
+const dummy = add_dummy_feature([[0, 1, 2], [1, 0, 3]]);
 console.log(dummy);

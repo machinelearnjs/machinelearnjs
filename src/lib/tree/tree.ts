@@ -1,8 +1,7 @@
-import { isEmpty, map, range, uniqBy } from 'lodash';
+import { map, range, uniqBy } from 'lodash';
 import * as Random from 'random-js';
+import { validateFitInputs, validateMatrix2D } from '../ops';
 import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
-import math from '../utils/MathExtra';
-const { isMatrix } = math.contrib;
 
 /**
  * Question used by decision tree algorithm to determine whether to split branch or not
@@ -110,6 +109,11 @@ export class DecisionNode {
   }
 }
 
+export interface Options {
+  featureLabels?: null | any[];
+  verbose?: boolean;
+}
+
 /**
  * A decision tree classifier.
  *
@@ -135,12 +139,8 @@ export class DecisionNode {
  * decision.fit({ X, y });
  * decision2.predict({ row: [[2, 2]] }); // [ 1 ]
  */
-
-export interface Options {
-  featureLabels?: null | any[];
-  verbose?: boolean;
-}
-export class DecisionTreeClassifier implements IMlModel<number> {
+export class DecisionTreeClassifier
+  implements IMlModel<string | boolean | number> {
   private featureLabels = null;
   private tree = null;
   private verbose = true;
@@ -188,17 +188,7 @@ export class DecisionTreeClassifier implements IMlModel<number> {
     X: Type2DMatrix<string | number | boolean> = null,
     y: Type1DMatrix<string | number | boolean> = null
   ): void {
-    // this.y = y;
-    if (
-      !X ||
-      !y ||
-      !Array.isArray(X) ||
-      !Array.isArray(y) ||
-      isEmpty(X) ||
-      isEmpty(y)
-    ) {
-      throw Error('Cannot accept non Array values for X and y');
-    }
+    validateFitInputs(X, y);
     this.tree = this.buildTree({ X, y });
   }
 
@@ -208,10 +198,7 @@ export class DecisionTreeClassifier implements IMlModel<number> {
    * @param X - 2D Matrix of testing data
    */
   public predict(X: Type2DMatrix<string | boolean | number> = []): any[] {
-    // fix the typing error
-    if (!isMatrix(X)) {
-      throw Error('X needs to be a matrix!');
-    }
+    validateMatrix2D(X);
     const result = [];
     for (let i = 0; i < X.length; i++) {
       const row = X[i];

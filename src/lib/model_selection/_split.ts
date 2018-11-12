@@ -1,5 +1,7 @@
 import * as _ from 'lodash';
 import * as Random from 'random-js';
+import { inferShape, validateFitInputs } from '../ops';
+import { Type1DMatrix, Type2DMatrix, TypeMatrix } from '../types';
 
 /**
  * K-Folds cross-validator
@@ -13,7 +15,7 @@ import * as Random from 'random-js';
  *
  * const kFold = new KFold({ k: 5 });
  * const X1 = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
- * console.log(kFold.split({ X: X1, y: X1 }));
+ * console.log(kFold.split(X1, X1));
  *
  * /* [ { trainIndex: [ 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 ],
  * *  testIndex: [ 0, 1, 2, 3 ] },
@@ -50,13 +52,19 @@ export class KFold {
    * @param {any} y - The target variable for supervised learning problems.
    * @returns {any[]}
    */
-  public split({ X, y }): any[] {
-    if (_.size(X) !== _.size(y)) {
+  public split(X: TypeMatrix<any>, y: TypeMatrix<any>): any[] {
+    const xShape = inferShape(X);
+    const yShape = inferShape(y);
+    if (xShape.length > 0 && yShape.length > 0 && xShape[0] !== yShape[0]) {
       throw Error('X and y must have an identical size');
     }
 
-    if (this.k > _.size(X) || this.k > _.size(y)) {
-      throw Error(`Cannot have number of splits k=${this.k} greater than the number of samples: ${_.size(X)}`);
+    if (this.k > X.length || this.k > y.length) {
+      throw Error(
+        `Cannot have number of splits k=${
+          this.k
+        } greater than the number of samples: ${_.size(X)}`
+      );
     }
 
     const binSize = _.floor(_.size(X) / this.k);
@@ -66,7 +74,10 @@ export class KFold {
       splitRange,
       (sum, index) => {
         // Calculate binSizeRange according to k value. e.g. 0 -> [0,1]. 1 -> [2, 3].
-        const binSizeRange = _.range(index * binSize, index * binSize + binSize);
+        const binSizeRange = _.range(
+          index * binSize,
+          index * binSize + binSize
+        );
         // X index range used for test set. It can either be shuffled e.g. [ 2, 0, 1 ] or raw value [ 0, 1, 2 ]
         const testXRange = _.flowRight(
           x => (this.shuffle ? _.shuffle(x) : x),
@@ -97,9 +108,7 @@ export class KFold {
  * const X = [[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]];
  * const y = [0, 1, 2, 3, 4];
  *
- * train_test_split({
- *   X,
- *   y,
+ * train_test_split(X, y, {
  *   test_size: 0.33,
  *   train_size: 0.67,
  *   random_state: 42
@@ -120,26 +129,22 @@ export class KFold {
  * @returns {{xTest: any[]; xTrain: any[]; yTest: any[]; yTrain: any[]}}
  */
 export function train_test_split(
+  X: Type2DMatrix<any> = null,
+  y: Type1DMatrix<any> = null,
   {
     // Arguments and their default values
-    X = null,
-    y = null,
     test_size = 0.25,
     train_size = 0.75,
     random_state = 0,
     clone = true
   }: {
     // Param types
-    X: any[];
-    y: any[];
     test_size?: number;
     train_size?: number;
     random_state?: number;
     clone?: boolean;
   } = {
     // Default if nothing is given
-    X: null,
-    y: null,
     test_size: 0.25,
     train_size: 0.75,
     random_state: 0,
@@ -151,18 +156,14 @@ export function train_test_split(
   yTest: any[];
   yTrain: any[];
 } {
-  let _X = X;
-  let _y = y;
-  // Cloning ..
-  if (clone) {
-    _X = _.cloneDeep(X);
-    _y = _.cloneDeep(y);
+  const _X = clone ? _.cloneDeep(X) : X;
+  const _y = clone ? _.cloneDeep(y) : y;
+  // Checking if either of these params is not array
+  if (!_.isArray(_X) || !_.isArray(_y) || _X.length === 0 || _y.length === 0) {
+    throw Error('X and y must be array and cannot be empty');
   }
 
-  // Checking if either of these params is not array
-  if (!_.isArray(_X) || !_.isArray(_y)) {
-    throw Error('X and y must be array');
-  }
+  validateFitInputs(_X, _y);
   // Training dataset size accoding to X
   const trainSizeLength: number = _.round(train_size * _X.length);
   const testSizeLength: number = _.round(test_size * _X.length);
@@ -205,7 +206,8 @@ export function train_test_split(
   }
 
   // Filter return results
-  const clean = (items: any[]) => _.filter(items, (item: any) => !_.isUndefined(item));
+  const clean = (items: any[]) =>
+    _.filter(items, (item: any) => !_.isUndefined(item));
   return {
     xTest: clean(xTest),
     xTrain: clean(xTrain),

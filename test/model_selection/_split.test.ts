@@ -12,7 +12,7 @@ describe('_split:KFold', () => {
       { trainIndex: [5, 6, 7, 8, 9], testIndex: [0, 1, 2, 3, 4] },
       { trainIndex: [0, 1, 2, 3, 4], testIndex: [5, 6, 7, 8, 9] }
     ];
-    const splitResult = kf.split({ X: X1, y: y1 });
+    const splitResult = kf.split(X1, y1);
     expect(_.isEqual(expectedResult, splitResult)).toBe(true);
   });
 
@@ -25,7 +25,7 @@ describe('_split:KFold', () => {
       { trainIndex: [0, 1, 2, 3, 4, 5, 8, 9], testIndex: [6, 7] },
       { trainIndex: [0, 1, 2, 3, 4, 5, 6, 7], testIndex: [8, 9] }
     ];
-    const splitResult = kf.split({ X: X1, y: y1 });
+    const splitResult = kf.split(X1, y1);
     expect(_.isEqual(expectedResult, splitResult)).toBe(true);
   });
 
@@ -43,7 +43,7 @@ describe('_split:KFold', () => {
       { trainIndex: [0, 1, 2, 3, 4, 5, 6, 7, 9], testIndex: [8] },
       { trainIndex: [0, 1, 2, 3, 4, 5, 6, 7, 8], testIndex: [9] }
     ];
-    const splitResult = kf.split({ X: X1, y: y1 });
+    const splitResult = kf.split(X1, y1);
     expect(_.isEqual(expectedResult, splitResult)).toBe(true);
   });
 
@@ -61,36 +61,39 @@ describe('_split:KFold', () => {
       { trainIndex: [0, 1, 2, 3, 4, 5, 6, 7, 9], testIndex: [8] },
       { trainIndex: [0, 1, 2, 3, 4, 5, 6, 7, 8], testIndex: [9] }
     ];
-    const splitResult = kf.split({ X: X2, y: y2 });
+    const splitResult = kf.split(X2, y2);
     expect(_.isEqual(expectedResult, splitResult)).toBe(true);
   });
 
   it('should k=50 of sample type 2 throw an k=50- greater than number of sample=10 error', () => {
     const kf = new KFold({ k: 50 });
     expect(() => {
-      kf.split({ X: X2, y: y2 });
-    }).toThrow('Cannot have number of splits k=50 greater than the number of samples: 10');
+      kf.split(X2, y2);
+    }).toThrow(
+      'Cannot have number of splits k=50 greater than the number of samples: 10'
+    );
   });
 
   it('should k=50 of sample type 2 throw an k=50- greater than number of sample=10 error', () => {
     const kf = new KFold({ k: 50 });
     expect(() => {
-      kf.split({ X: X2, y: y2 });
-    }).toThrow('Cannot have number of splits k=50 greater than the number of samples: 10');
+      kf.split(X2, y2);
+    }).toThrow(
+      'Cannot have number of splits k=50 greater than the number of samples: 10'
+    );
   });
 
   it('X and y size mismatch', () => {
     const kf = new KFold({ k: 50 });
     expect(() => {
-      kf.split({
-        X: [1, 2, 3, 4, 5, 6, 7],
-        y: [1, 2, 3]
-      });
+      kf.split([1, 2, 3, 4, 5, 6, 7], [1, 2, 3]);
     }).toThrow('X and y must have an identical size');
   });
 
   it('Should throw an error if K is less than 2', () => {
-    expect(() => new KFold({ k: 1 })).toThrow('Number of folds cannot be less than 2');
+    expect(() => new KFold({ k: 1 })).toThrow(
+      'Number of folds cannot be less than 2'
+    );
   });
 });
 
@@ -102,9 +105,7 @@ describe('_split:train_test_split', () => {
   const y2 = ['a', 'b', 'c', 'd', 'e'];
 
   it('Should split X1 y1 with random_state: 42 test_size: .33 and train_size: .67', () => {
-    const { xTrain, yTrain, xTest, yTest } = train_test_split({
-      X: X1,
-      y: y1,
+    const { xTrain, yTrain, xTest, yTest } = train_test_split(X1, y1, {
       random_state: 42,
       test_size: 0.33,
       train_size: 0.67
@@ -117,9 +118,7 @@ describe('_split:train_test_split', () => {
   });
 
   it('Should split X1, y1 with random_state 100 test_size: .50 train_size: .50', () => {
-    const { xTrain, yTrain, xTest, yTest } = train_test_split({
-      X: X1,
-      y: y1,
+    const { xTrain, yTrain, xTest, yTest } = train_test_split(X1, y1, {
       random_state: 100,
       test_size: 0.5,
       train_size: 0.5
@@ -132,7 +131,7 @@ describe('_split:train_test_split', () => {
   });
 
   it('Should use default test and train sizes', () => {
-    const { xTrain, yTrain, xTest, yTest } = train_test_split({ X: X1, y: y1 });
+    const { xTrain, yTrain, xTest, yTest } = train_test_split(X1, y1);
 
     expect(_.isEqual(xTrain, [[8, 9], [6, 7], [0, 1]])).toBe(true);
     expect(_.isEqual(yTrain, [4, 3, 0])).toBe(true);
@@ -142,9 +141,7 @@ describe('_split:train_test_split', () => {
 
   it('Should sum of test_size and train_size attempting to match the input size throw an error', () => {
     expect(() => {
-      train_test_split({
-        X: X1,
-        y: y1,
+      train_test_split(X1, y1, {
         random_state: 10,
         test_size: 0.11,
         train_size: 0.12
@@ -153,7 +150,7 @@ describe('_split:train_test_split', () => {
   });
 
   it('Should split X2 y2 with random_state: 42 test_size: .33 and train_size: .67', () => {
-    const { xTrain, yTrain, xTest, yTest } = train_test_split({ X: X2, y: y2 });
+    const { xTrain, yTrain, xTest, yTest } = train_test_split(X2, y2);
     expect(_.isEqual(xTrain, [['five'], ['four'], ['one']])).toBe(true);
     expect(_.isEqual(yTrain, ['e', 'd', 'a'])).toBe(true);
     expect(_.isEqual(xTest, [['three']])).toBe(true);

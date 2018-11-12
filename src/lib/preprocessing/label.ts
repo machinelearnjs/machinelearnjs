@@ -1,4 +1,6 @@
-import * as _ from 'lodash';
+import { findIndex, map, uniq } from 'lodash';
+import { validateMatrix1D } from '../ops';
+import { Type1DMatrix } from '../types';
 
 /**
  * Encode labels with value between 0 and n_classes-1.
@@ -20,11 +22,9 @@ export class LabelEncoder {
    * Fit label encoder
    * @param {any[]} X - Input data in array or matrix
    */
-  public fit(X: any[] = null): void {
-    if (_.isEmpty(X)) {
-      throw new Error('X cannot be empty!');
-    }
-    this.classes = _.uniq(X);
+  public fit(X: Type1DMatrix<string> = null): void {
+    validateMatrix1D(X);
+    this.classes = uniq(X);
   }
 
   /**
@@ -37,9 +37,10 @@ export class LabelEncoder {
    * Into [2, 2, 1]
    * @param X - Input data to transform according to the fitted state
    */
-  public transform(X: any[] = []): any[] {
-    return _.map(X, item => {
-      return _.findIndex(this.classes, cur => cur === item);
+  public transform(X: Type1DMatrix<string> = null): any[] {
+    validateMatrix1D(X);
+    return map(X, item => {
+      return findIndex(this.classes, cur => cur === item);
     });
   }
 }

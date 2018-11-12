@@ -1,8 +1,8 @@
 import * as tf from '@tensorflow/tfjs';
 import { cloneDeep, range } from 'lodash';
 import * as Random from 'random-js';
-import { Type1DMatrix, Type2DMatrix } from '../types';
-import math from '../utils/MathExtra';
+import { validateFitInputs, validateMatrix2D } from '../ops';
+import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
 
 export enum TypeLoss {
   L1 = 'L1',
@@ -14,7 +14,7 @@ export enum TypeLoss {
  * Ordinary base class for SGD classier or regressor
  * @ignore
  */
-class BaseSGD {
+class BaseSGD implements IMlModel<number> {
   private learningRate: number;
   private epochs: number;
   private clone: boolean = true;
@@ -76,14 +76,12 @@ class BaseSGD {
    * @param X - Matrix of data
    * @param y - Matrix of targets
    */
-  public fit(X: Type2DMatrix<number>, y: Type1DMatrix<number>): void {
-    if (!math.contrib.isMatrix(X)) {
-      throw Error('X must be a matrix');
-    }
+  public fit(
+    X: Type2DMatrix<number> = null,
+    y: Type1DMatrix<number> = null
+  ): void {
+    validateFitInputs(X, y);
 
-    if (!Array.isArray(y)) {
-      throw Error('y must be a vector');
-    }
     // holds all the preprocessed X values
     // Clone according to the clone flag
     const clonedX = this.clone ? cloneDeep(X) : X;
@@ -155,10 +153,8 @@ class BaseSGD {
    * Predictions according to the passed in test set
    * @param X - Matrix of data
    */
-  protected predict(X: Type2DMatrix<number>): number[] {
-    if (!Array.isArray(X)) {
-      throw Error('X must be a vector');
-    }
+  public predict(X: Type2DMatrix<number> = null): number[] {
+    validateMatrix2D(X);
     // Adding bias
     const biasX: number[][] = this.addBias(X);
     const tensorX = tf.tensor(biasX);
@@ -206,10 +202,6 @@ class BaseSGD {
    * @param y - target data
    */
   private sgd(X: Type2DMatrix<number>, y: Type1DMatrix<number>): void {
-    if (!math.contrib.isMatrix(X) || !Array.isArray(y)) {
-      throw Error('X must be a matrix');
-    }
-
     const tensorX = tf.tensor2d(this.addBias(X));
 
     this.initializeWeights(tensorX.shape[1]);
@@ -244,8 +236,8 @@ class BaseSGD {
  * const clf = new SGDClassifier();
  * const X = [[0., 0.], [1., 1.]];
  * const y = [0, 1];
- * clf.fit({ X, y });
- * clf.predict({ X: [[2., 2.]] }); // result: [ 1 ]
+ * clf.fit(X ,y);
+ * clf.predict([[2., 2.]]); // result: [ 1 ]
  *
  */
 export class SGDClassifier extends BaseSGD {
@@ -253,7 +245,7 @@ export class SGDClassifier extends BaseSGD {
    * Predicted values with Math.round applied
    * @param X - Matrix of data
    */
-  public predict(X: Type2DMatrix<number>): number[] {
+  public predict(X: Type2DMatrix<number> = null): number[] {
     const results: number[] = super.predict(X);
     return results.map(x => Math.round(x));
   }
@@ -270,8 +262,8 @@ export class SGDClassifier extends BaseSGD {
  * const reg = new SGDRegressor();
  * const X = [[0., 0.], [1., 1.]];
  * const y = [0, 1];
- * reg.fit({ X, y });
- * reg.predict({ X: [[2., 2.]] }); // result: [ 1.281828588248001 ]
+ * reg.fit(X, y);
+ * reg.predict([[2., 2.]]); // result: [ 1.281828588248001 ]
  *
  */
 export class SGDRegressor extends BaseSGD {
@@ -279,7 +271,7 @@ export class SGDRegressor extends BaseSGD {
    * Predicted values
    * @param X - Matrix of data
    */
-  public predict(X: Type2DMatrix<number>): number[] {
+  public predict(X: Type2DMatrix<number> = null): number[] {
     return super.predict(X);
   }
 }

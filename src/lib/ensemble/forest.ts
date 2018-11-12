@@ -11,7 +11,8 @@ import {
   reduce,
   values
 } from 'lodash';
-import { DecisionTreeClassifier } from '../tree/tree';
+import { validateFitInputs, validateMatrix2D } from '../ops';
+import { DecisionTreeClassifier } from '../tree';
 import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
 
 /**
@@ -53,7 +54,11 @@ export class BaseRandomForest implements IMlModel<number> {
    * @param {Array} y - array-like, shape = [n_samples] or [n_samples, n_outputs]
    * @returns void
    */
-  public fit(X: Type2DMatrix<number>, y: Type1DMatrix<number>): void {
+  public fit(
+    X: Type2DMatrix<number> = null,
+    y: Type1DMatrix<number> = null
+  ): void {
+    validateFitInputs(X, y);
     this.trees = reduce(
       range(0, this.nEstimator),
       sum => {
@@ -70,11 +75,15 @@ export class BaseRandomForest implements IMlModel<number> {
 
   /**
    * Returning the current model's checkpoint
-   * @returns {{trees: any[]; nEstimator: number}}
+   * @returns {{trees: any[]}}
    */
-  public toJSON(): { trees: any[]; nEstimator: number } {
+  public toJSON(): {
+    /**
+     * Decision trees
+     */
+    trees: any[];
+  } {
     return {
-      nEstimator: this.nEstimator,
       trees: this.trees
     };
   }
@@ -95,7 +104,8 @@ export class BaseRandomForest implements IMlModel<number> {
    * @param X
    * @private
    */
-  public predict(X: Type2DMatrix<number>): number[][] {
+  public predict(X: Type2DMatrix<number> = null): number[][] {
+    validateMatrix2D(X);
     return map(this.trees, (tree: DecisionTreeClassifier) => {
       // TODO: Check if it's a matrix or an array
       return tree.predict(X);
@@ -114,7 +124,7 @@ export class BaseRandomForest implements IMlModel<number> {
  * const y = [0, 1, 2, 3, 7];
  *
  * const randomForest = new RandomForestClassifier();
- * randomForest.fit({ X, y });
+ * randomForest.fit(X, y);
  *
  * // Results in a value such as [ '0', '2' ].
  * // Predictions will change as we have not set a seed value.
@@ -128,7 +138,7 @@ export class RandomForestClassifier extends BaseRandomForest {
    * @param {Array} X - array-like or sparse matrix of shape = [n_samples]
    * @returns {string[]}
    */
-  public predict(X: Type2DMatrix<number>): any[] {
+  public predict(X: Type2DMatrix<number> = null): any[] {
     const predictions = super.predict(X);
     return this.votePredictions(predictions);
   }

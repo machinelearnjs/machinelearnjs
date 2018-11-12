@@ -67,7 +67,10 @@ export const validateInitialInputs = (y_true, y_pred, labels, options = {}) => {
     )(y_pred);
 
     const sortedLabels = _.sortBy(labels, x => x);
-    if (!_.isEqual(sortedLabels, yTrueCls) || !_.isEqual(sortedLabels, yPredCls)) {
+    if (
+      !_.isEqual(sortedLabels, yTrueCls) ||
+      !_.isEqual(sortedLabels, yPredCls)
+    ) {
       throw new Error('Labels must match the classes');
     }
   }
@@ -92,7 +95,6 @@ export const validateInitialInputs = (y_true, y_pred, labels, options = {}) => {
  * @param {any} y_true
  * @param {any} y_pred
  * @param {any} normalize
- * @param {any} sample_weight
  */
 export function accuracyScore({
   y_true,
@@ -228,7 +230,10 @@ export function confusion_matrix(options: ConfusionMatrixOptions): number[] {
           const trueVal = y_true[n];
           const predVal = y_pred[n];
 
-          if (_.isEqual(trueVal, yTargetTrueVal) && _.isEqual(predVal, yTargetPredVal)) {
+          if (
+            _.isEqual(trueVal, yTargetTrueVal) &&
+            _.isEqual(predVal, yTargetPredVal)
+          ) {
             return sum + 1;
           }
           return sum;
