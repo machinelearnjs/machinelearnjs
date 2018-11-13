@@ -11,12 +11,20 @@ export enum TypeLoss {
 }
 
 /**
+ * Type for L1L2 regularizer factors
+ */
+export interface TypeRegFactor {
+  l1?: number;
+  l2?: number;
+}
+
+/**
  * Ordinary base class for SGD classier or regressor
  * @ignore
  */
 class BaseSGD implements IMlModel<number> {
-  private learningRate: number;
-  private epochs: number;
+  protected learningRate: number;
+  protected epochs: number;
   private clone: boolean = true;
   private weights: tf.Tensor<tf.Rank.R1> = null;
   private randomEngine: Random.MT19937; // Random engine used to
@@ -34,19 +42,22 @@ class BaseSGD implements IMlModel<number> {
       epochs = 10000,
       clone = true,
       random_state = null,
-      loss = TypeLoss.L2
+      loss = TypeLoss.L2,
+      reg_factor = null
     }: {
       learning_rate?: number;
       epochs?: number;
       clone?: boolean;
       random_state?: number;
       loss?: TypeLoss;
+      reg_factor?: TypeRegFactor;
     } = {
       learning_rate: 0.0001,
       epochs: 10000,
       clone: true,
       random_state: null,
-      loss: TypeLoss.L2
+      loss: TypeLoss.L2,
+      reg_factor: null
     }
   ) {
     this.learningRate = learning_rate;
@@ -56,11 +67,18 @@ class BaseSGD implements IMlModel<number> {
 
     // Setting a loss function according to the input option
     if (loss === TypeLoss.L1) {
-      this.loss = tf.regularizers.l1();
+      this.loss = tf.regularizers.l1({
+        l1: reg_factor.l1
+      });
     } else if (loss === TypeLoss.L1L2) {
-      this.loss = tf.regularizers.l1l2();
+      this.loss = tf.regularizers.l1l2({
+        l1: reg_factor.l1,
+        l2: reg_factor.l2
+      });
     } else {
-      this.loss = tf.regularizers.l2();
+      this.loss = tf.regularizers.l2({
+        l2: reg_factor.l2
+      });
     }
 
     // Random Engine
