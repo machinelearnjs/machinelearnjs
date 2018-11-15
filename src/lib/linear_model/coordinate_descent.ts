@@ -137,7 +137,10 @@ export class Lasso extends SGDRegressor {
    * @param X - A matrix of samples
    * @param y - A vector of targets
    */
-  public fit(X: Type2DMatrix<number>, y: Type1DMatrix<number>): void {
+  public fit(
+    X: Type2DMatrix<number> = null,
+    y: Type1DMatrix<number> = null
+  ): void {
     const polynomial = new PolynomialFeatures({ degree: this.degree });
     const newX = normalize(polynomial.transform(X));
     super.fit(newX, y);
@@ -147,7 +150,7 @@ export class Lasso extends SGDRegressor {
    * Predict using the linear model
    * @param X - A matrix of test data
    */
-  public predict(X: Type2DMatrix<number>): number[] {
+  public predict(X: Type2DMatrix<number> = null): number[] {
     const polynomial = new PolynomialFeatures({ degree: this.degree });
     const newX = normalize(polynomial.transform(X));
     return super.predict(newX);
