@@ -1,26 +1,7 @@
-// Import base SGD instead
-import { SGDRegressor, TypeLoss } from './stochastic_gradient';
+// Import base SGD instead . TypeLoss
+import { BaseSGD, TypeLoss } from './stochastic_gradient';
 
-/*
-Reminder: implement Lasso, Ridge and ElasticNet here
-*/
-
-/*
-interface TypeRegFactorL1 {
-  l1: number;
-}
-
-interface TypeRegFactorL2 {
-  l2: number;
-}
-
-interface TypeRegFactorL1L2 {
-  l1: number;
-  l2: number;
-}
-*/
-
-export class RidgeRegression extends SGDRegressor {
+export class RidgeRegression extends BaseSGD {
   constructor(
     {
       l1,
@@ -36,10 +17,11 @@ export class RidgeRegression extends SGDRegressor {
       learning_rate: 0.001
     }
   ) {
-    super();
-    this.epochs = epochs;
-    this.learningRate = learning_rate;
-    this.regFactor = { l1 };
-    this.loss = TypeLoss.L1;
+    super({
+      reg_factor: { l1 },
+      learning_rate,
+      epochs,
+      loss: TypeLoss.L1.toString()
+    });
   }
 }

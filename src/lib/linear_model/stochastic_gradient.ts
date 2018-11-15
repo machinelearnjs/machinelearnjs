@@ -22,7 +22,7 @@ export interface TypeRegFactor {
  * Ordinary base class for SGD classier or regressor
  * @ignore
  */
-class BaseSGD implements IMlModel<number> {
+export class BaseSGD implements IMlModel<number> {
   protected learningRate: number;
   protected epochs: number;
   protected loss;
@@ -50,7 +50,7 @@ class BaseSGD implements IMlModel<number> {
       epochs?: number;
       clone?: boolean;
       random_state?: number;
-      loss?: TypeLoss;
+      loss?: string;
       reg_factor?: TypeRegFactor;
     } = {
       learning_rate: 0.0001,
@@ -67,6 +67,24 @@ class BaseSGD implements IMlModel<number> {
     this.randomState = random_state;
     this.loss = loss;
     this.regFactor = reg_factor;
+
+    // Setting a loss function according to the input option
+    if (this.loss === TypeLoss.L1 && this.regFactor) {
+      this.loss = tf.regularizers.l1({
+        l1: this.regFactor.l1
+      });
+    } else if (this.loss === TypeLoss.L1L2 && this.regFactor) {
+      this.loss = tf.regularizers.l1l2({
+        l1: this.regFactor.l1,
+        l2: this.regFactor.l2
+      });
+    } else if (this.loss === TypeLoss.L2 && this.regFactor) {
+      this.loss = tf.regularizers.l2({
+        l2: this.regFactor.l2
+      });
+    } else {
+      this.loss = tf.regularizers.l2();
+    }
 
     // Random Engine
     if (Number.isInteger(this.randomState)) {
@@ -86,22 +104,6 @@ class BaseSGD implements IMlModel<number> {
     y: Type1DMatrix<number> = null
   ): void {
     validateFitInputs(X, y);
-
-    // Setting a loss function according to the input option
-    if (this.loss === TypeLoss.L1) {
-      this.loss = tf.regularizers.l1({
-        l1: this.regFactor.l1
-      });
-    } else if (this.loss === TypeLoss.L1L2) {
-      this.loss = tf.regularizers.l1l2({
-        l1: this.regFactor.l1,
-        l2: this.regFactor.l2
-      });
-    } else {
-      this.loss = tf.regularizers.l2({
-        l2: this.regFactor.l2
-      });
-    }
 
     // holds all the preprocessed X values
     // Clone according to the clone flag
