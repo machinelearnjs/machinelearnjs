@@ -44,3 +44,18 @@ const X3 = [[0, 0], [1, 1]];
 const y3 = [0, 1];
 clf.fit(X3, y3);
 console.log(clf.predict([[2, 2]]));
+
+import { RidgeRegression } from './coordinate_descent';
+
+const rr = new RidgeRegression({
+  l1: 10
+});
+rr.fit(X1, y1);
+const result2 = rr.predict([
+  [7, 0.27, 0.36, 20.7, 0.045, 45, 170, 1.001, 3, 0.45, 8.8],
+  [8.1, 0.28, 0.4, 6.9, 0.05, 30, 97, 0.9951, 3.26, 0.44, 10.1],
+  [7.2, 0.23, 0.32, 8.5, 0.058, 47, 186, 0.9956, 3.19, 0.4, 9.9],
+  [7.2, 0.23, 0.32, 8.5, 0.058, 47, 186, 0.9956, 3.19, 0.4, 9.9]
+]);
+
+console.log('checking res', result2);

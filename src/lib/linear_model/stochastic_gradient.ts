@@ -25,11 +25,12 @@ export interface TypeRegFactor {
 class BaseSGD implements IMlModel<number> {
   protected learningRate: number;
   protected epochs: number;
+  protected loss;
+  protected regFactor: TypeRegFactor;
   private clone: boolean = true;
   private weights: tf.Tensor<tf.Rank.R1> = null;
   private randomEngine: Random.MT19937; // Random engine used to
   private randomState: number;
-  private loss;
   /**
    * @param preprocess - preprocess methodology can be either minmax or null. Default is minmax.
    * @param learning_rate - Used to limit the amount each coefficient is corrected each time it is updated.
@@ -64,22 +65,8 @@ class BaseSGD implements IMlModel<number> {
     this.epochs = epochs;
     this.clone = clone;
     this.randomState = random_state;
-
-    // Setting a loss function according to the input option
-    if (loss === TypeLoss.L1) {
-      this.loss = tf.regularizers.l1({
-        l1: reg_factor.l1
-      });
-    } else if (loss === TypeLoss.L1L2) {
-      this.loss = tf.regularizers.l1l2({
-        l1: reg_factor.l1,
-        l2: reg_factor.l2
-      });
-    } else {
-      this.loss = tf.regularizers.l2({
-        l2: reg_factor.l2
-      });
-    }
+    this.loss = loss;
+    this.regFactor = reg_factor;
 
     // Random Engine
     if (Number.isInteger(this.randomState)) {
@@ -99,6 +86,22 @@ class BaseSGD implements IMlModel<number> {
     y: Type1DMatrix<number> = null
   ): void {
     validateFitInputs(X, y);
+
+    // Setting a loss function according to the input option
+    if (this.loss === TypeLoss.L1) {
+      this.loss = tf.regularizers.l1({
+        l1: this.regFactor.l1
+      });
+    } else if (this.loss === TypeLoss.L1L2) {
+      this.loss = tf.regularizers.l1l2({
+        l1: this.regFactor.l1,
+        l2: this.regFactor.l2
+      });
+    } else {
+      this.loss = tf.regularizers.l2({
+        l2: this.regFactor.l2
+      });
+    }
 
     // holds all the preprocessed X values
     // Clone according to the clone flag
