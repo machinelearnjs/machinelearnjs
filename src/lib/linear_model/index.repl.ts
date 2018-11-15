@@ -48,7 +48,7 @@ console.log(clf.predict([[2, 2]]));
 import { Ridge } from './coordinate_descent';
 
 const rr = new Ridge({
-  l1: 10
+  l2: 10
 });
 rr.fit(X1, y1);
 const result2 = rr.predict([

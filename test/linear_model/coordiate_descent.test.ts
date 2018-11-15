@@ -7,7 +7,7 @@ describe('linear_model:Ridge', () => {
   it('should solve iris with 10000 epochs', async () => {
     const { xTest, xTrain, yTrain } = await getIris();
     const reg = new Ridge({
-      l1: 1,
+      l2: 1,
       epochs: 10000,
       learning_rate: 0.000001
     });
@@ -19,7 +19,7 @@ describe('linear_model:Ridge', () => {
   it('should solve iris with 5000 epochs', async () => {
     const { xTest, xTrain, yTrain } = await getIris();
     const reg = new Ridge({
-      l1: 1,
+      l2: 1,
       epochs: 5000,
       learning_rate: 0.000001
     });
@@ -29,8 +29,8 @@ describe('linear_model:Ridge', () => {
   });
 
   it('should throw an error if l1 is null', () => {
-    expect(() => new Ridge({ l1: null })).toThrow(
-      'Ridge cannot be initiated with null l1'
+    expect(() => new Ridge({ l2: null })).toThrow(
+      'Ridge cannot be initiated with null l2'
     );
   });
 });
