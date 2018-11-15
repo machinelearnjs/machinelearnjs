@@ -1,7 +1,7 @@
 // Import base SGD instead . TypeLoss
 import { BaseSGD, TypeLoss } from './stochastic_gradient';
 
-export class RidgeRegression extends BaseSGD {
+export class Ridge extends BaseSGD {
   constructor(
     {
       l1,

@@ -45,9 +45,9 @@ const y3 = [0, 1];
 clf.fit(X3, y3);
 console.log(clf.predict([[2, 2]]));
 
-import { RidgeRegression } from './coordinate_descent';
+import { Ridge } from './coordinate_descent';
 
-const rr = new RidgeRegression({
+const rr = new Ridge({
   l1: 10
 });
 rr.fit(X1, y1);
