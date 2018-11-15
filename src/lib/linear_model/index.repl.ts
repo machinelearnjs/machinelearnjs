@@ -1,4 +1,6 @@
 /* tslint:disable */
+
+/*
 import { LinearRegression } from './linear_regression';
 
 const lr = new LinearRegression();
@@ -44,7 +46,6 @@ const X3 = [[0, 0], [1, 1]];
 const y3 = [0, 1];
 clf.fit(X3, y3);
 console.log(clf.predict([[2, 2]]));
-
 import { Ridge } from './coordinate_descent';
 
 const rr = new Ridge({
@@ -59,3 +60,9 @@ const result2 = rr.predict([
 ]);
 
 console.log('checking res', result2);
+*/
+import { Lasso } from './coordinate_descent';
+
+const reg1 = new Lasso({ degree: 2, l1: 1 });
+reg1.fit([[0, 0], [1, 1]], [0, 1]);
+console.log('lasso', reg1.predict([[1, 1]]));
