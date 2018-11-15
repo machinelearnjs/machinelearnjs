@@ -52,7 +52,10 @@ export class Lasso extends SGDRegressor {
     }
   ) {
     if (l1 === null) {
-      throw TypeError('Ridge cannot be initiated with null l1');
+      throw TypeError('Lasso cannot be initiated with null l1');
+    }
+    if (degree === null) {
+      throw TypeError('Lasso cannot be initiated with null degree');
     }
     super({
       reg_factor: { l1 },
