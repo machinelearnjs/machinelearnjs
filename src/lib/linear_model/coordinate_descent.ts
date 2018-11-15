@@ -17,6 +17,10 @@ export class Ridge extends BaseSGD {
       learning_rate: 0.001
     }
   ) {
+    if (l1 === null) {
+      throw TypeError('Ridge cannot be initiated with null l1');
+    }
+
     super({
       reg_factor: { l1 },
       learning_rate,
