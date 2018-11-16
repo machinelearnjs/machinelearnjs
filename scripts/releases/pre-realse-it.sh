@@ -61,4 +61,4 @@ docker run --rm -it \
 -e SSH_PUB=${SSH_PUB} \
 -e SSH_PRIV=${SSH_PRIV} \
 kalimdor:latest \
-'./scripts/releases/docker_internal/release-in-docker.sh'
+'./scripts/releases/docker_internal/pre-release-in-docker.sh'
