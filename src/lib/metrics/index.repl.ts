@@ -42,3 +42,15 @@ const matrix3 = confusion_matrix({
 });
 
 console.log(matrix3);
+
+import { mean_squared_error } from './regression';
+
+const y_true = [3, -0.5, 2, 7];
+const y_pred = [2.5, 0.0, 2, 8];
+
+console.log(mean_squared_error(y_true, y_pred));
+
+const y_true1 = [[0.5, 1], [-1, 1], [7, -6]];
+const y_pred1 = [[0, 2], [-1, 2], [8, -5]];
+
+console.log(mean_squared_error(y_true1, y_pred1));
