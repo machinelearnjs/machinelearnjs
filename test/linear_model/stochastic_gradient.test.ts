@@ -1,11 +1,10 @@
-import { Iris } from '../../src/lib/datasets';
 import {
   SGDClassifier,
   SGDRegressor,
   TypeLoss
 } from '../../src/lib/linear_model';
 import { accuracyScore } from '../../src/lib/metrics';
-import { train_test_split } from '../../src/lib/model_selection';
+import { getIris } from '../data_testing';
 import { assertArrayAlmostEqual } from '../util_testing';
 import {
   reg_l12_snap,
@@ -16,32 +15,13 @@ import {
 const X1 = [[0, 0], [1, 1]];
 const y1 = [0, 1];
 
-/**
- * Retrieves Iris dummy data for testing
- */
-async function getIris(): Promise<{
-  xTest: number[][];
-  xTrain: number[][];
-  yTest: number[];
-  yTrain: number[];
-}> {
-  const iris = new Iris();
-  const { data, targets } = await iris.load();
-  const { xTest, xTrain, yTest, yTrain } = train_test_split(data, targets, {
-    test_size: 0.33,
-    train_size: 0.67,
-    random_state: 42
-  });
-  return { xTest, xTrain, yTest, yTrain };
-}
-
 // Constant error messages
 const tensorErr =
   'values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray';
 
 describe('linear_model:SGDClassifier', () => {
   const accuracyExpected1 = 0.5;
-  it('should solve iris with 10000 epochs and have greater than 70 accuracy', async () => {
+  it('should solve iris with 10000 epochs and have greater than 50 accuracy', async () => {
     const { xTest, xTrain, yTest, yTrain } = await getIris();
 
     const clf = new SGDClassifier({
@@ -57,7 +37,7 @@ describe('linear_model:SGDClassifier', () => {
     expect(accuracy).toBeGreaterThanOrEqual(accuracyExpected1);
   });
 
-  it('should still result in an accuracy greater than 70 wth l1 and l1l2', async () => {
+  it('should still result in an accuracy greater than 50 wth l1 and l1l2', async () => {
     const { xTest, xTrain, yTest, yTrain } = await getIris();
     const clf_l1 = new SGDClassifier({
       epochs: 10000,

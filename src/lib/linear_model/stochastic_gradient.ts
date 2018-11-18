@@ -11,17 +11,26 @@ export enum TypeLoss {
 }
 
 /**
+ * Type for L1L2 regularizer factors
+ */
+export interface TypeRegFactor {
+  l1?: number;
+  l2?: number;
+}
+
+/**
  * Ordinary base class for SGD classier or regressor
  * @ignore
  */
-class BaseSGD implements IMlModel<number> {
-  private learningRate: number;
-  private epochs: number;
+export class BaseSGD implements IMlModel<number> {
+  protected learningRate: number;
+  protected epochs: number;
+  protected loss;
+  protected regFactor: TypeRegFactor;
   private clone: boolean = true;
   private weights: tf.Tensor<tf.Rank.R1> = null;
   private randomEngine: Random.MT19937; // Random engine used to
   private randomState: number;
-  private loss;
   /**
    * @param preprocess - preprocess methodology can be either minmax or null. Default is minmax.
    * @param learning_rate - Used to limit the amount each coefficient is corrected each time it is updated.
@@ -34,31 +43,45 @@ class BaseSGD implements IMlModel<number> {
       epochs = 10000,
       clone = true,
       random_state = null,
-      loss = TypeLoss.L2
+      loss = TypeLoss.L2,
+      reg_factor = null
     }: {
       learning_rate?: number;
       epochs?: number;
       clone?: boolean;
       random_state?: number;
-      loss?: TypeLoss;
+      loss?: string;
+      reg_factor?: TypeRegFactor;
     } = {
       learning_rate: 0.0001,
       epochs: 10000,
       clone: true,
       random_state: null,
-      loss: TypeLoss.L2
+      loss: TypeLoss.L2,
+      reg_factor: null
     }
   ) {
     this.learningRate = learning_rate;
     this.epochs = epochs;
     this.clone = clone;
     this.randomState = random_state;
+    this.loss = loss;
+    this.regFactor = reg_factor;
 
     // Setting a loss function according to the input option
-    if (loss === TypeLoss.L1) {
-      this.loss = tf.regularizers.l1();
-    } else if (loss === TypeLoss.L1L2) {
-      this.loss = tf.regularizers.l1l2();
+    if (this.loss === TypeLoss.L1 && this.regFactor) {
+      this.loss = tf.regularizers.l1({
+        l1: this.regFactor.l1
+      });
+    } else if (this.loss === TypeLoss.L1L2 && this.regFactor) {
+      this.loss = tf.regularizers.l1l2({
+        l1: this.regFactor.l1,
+        l2: this.regFactor.l2
+      });
+    } else if (this.loss === TypeLoss.L2 && this.regFactor) {
+      this.loss = tf.regularizers.l2({
+        l2: this.regFactor.l2
+      });
     } else {
       this.loss = tf.regularizers.l2();
     }
