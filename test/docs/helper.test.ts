@@ -16,22 +16,22 @@ const optionsMock = {
 
 describe('docs:helper:ifEquals', () => {
   it('should return fn when the inputs are 1 and 1', () => {
-    const result = ifEquals({}, 1, 1, optionsMock);
+    const result = ifEquals({}, 1, 1, optionsMock).result;
     expect(result).toBe(true);
   });
 
   it('should return inverse when the inputs are 1 and 2', () => {
-    const result = ifEquals({}, 1, 2, optionsMock);
+    const result = ifEquals({}, 1, 2, optionsMock).result;
     expect(result).toBe(false);
   });
 
   it('should return fn when the two input objects are same', () => {
-    const result = ifEquals({}, { z: 1 }, { z: 1 }, optionsMock);
+    const result = ifEquals({}, { z: 1 }, { z: 1 }, optionsMock).result;
     expect(result).toBe(true);
   });
 
   it('should return inverse when the two input objects are not same', () => {
-    const result = ifEquals({}, { z: 1 }, { z: 2 }, optionsMock);
+    const result = ifEquals({}, { z: 1 }, { z: 2 }, optionsMock).result;
     expect(result).toBe(false);
   });
 });
@@ -174,8 +174,13 @@ describe('docs:helper:filterByTag', () => {
       text: 'yo'
     }
   ];
-  it('should find tag example', () => {
+  it('should find a tag example', () => {
     const result = filterByTag(fakePayload, optionsMock, 'example');
     expect(result).toMatchSnapshot();
+  });
+
+  it('should not find a tag zz', () => {
+    const result = filterByTag(fakePayload, optionsMock, 'zz');
+    expect(result.result).toBe(false);
   });
 });
