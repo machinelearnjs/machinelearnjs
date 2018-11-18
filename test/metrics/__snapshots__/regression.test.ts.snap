@@ -1,0 +1,9 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`metrics:mean_squared_error should throw an exception if inputs' shapes are different 1`] = `[TypeError: Shapes of y_true [3,2] and y_pred [2] should be equal]`;
+
+exports[`metrics:mean_squared_error should throw an exception if inputs' shapes are different 2`] = `[TypeError: Shapes of y_true [2] and y_pred [3,2] should be equal]`;
+
+exports[`metrics:mean_squared_error should throw an exception if inputs' shapes are different 3`] = `[TypeError: Shapes of y_true [4] and y_pred [3,2] should be equal]`;
+
+exports[`metrics:mean_squared_error should throw an exception if inputs' shapes are different 4`] = `[Error: values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray]`;
