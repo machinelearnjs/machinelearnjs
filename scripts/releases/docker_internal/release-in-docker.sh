@@ -77,4 +77,5 @@ echo "6. install packages"
 yarn
 
 echo "7. Run release-it patch with the given config"
+npm install -g release-it@7.3.0
 npx release-it ${VERSION} -n -c ./scripts/releases/configs/.release-it.json
