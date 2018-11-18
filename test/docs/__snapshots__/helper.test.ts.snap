@@ -1,0 +1,98 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`docs:helper:filterByKind should filter all constructor 1`] = `
+Object {
+  "payload": Array [
+    Object {
+      "comment": Object {
+        "shortText": "model training epochs",
+      },
+      "flags": Object {},
+      "id": 724,
+      "kind": 32,
+      "kindString": "Constructor",
+      "name": "zzzz",
+      "sources": Array [
+        Object {
+          "character": 10,
+          "fileName": "linear_model/stochastic_gradient.ts",
+          "line": 126,
+        },
+      ],
+      "type": Object {
+        "name": "number",
+        "type": "intrinsic",
+      },
+    },
+  ],
+  "result": true,
+}
+`;
+
+exports[`docs:helper:filterByKind should filter all public Variables 1`] = `
+Object {
+  "payload": Array [
+    Object {
+      "comment": Object {
+        "shortText": "Model training weights",
+      },
+      "flags": Object {
+        "isPublic": true,
+      },
+      "id": 725,
+      "kind": 32,
+      "kindString": "Variable",
+      "name": "weights",
+      "sources": Array [
+        Object {
+          "character": 11,
+          "fileName": "linear_model/stochastic_gradient.ts",
+          "line": 130,
+        },
+      ],
+      "type": Object {
+        "elementType": Object {
+          "name": "number",
+          "type": "intrinsic",
+        },
+        "type": "array",
+      },
+    },
+  ],
+  "result": true,
+}
+`;
+
+exports[`docs:helper:filterByKind should filter all public methods 1`] = `
+Object {
+  "payload": Array [
+    Object {
+      "comment": Object {
+        "shortText": "Model training weights",
+      },
+      "flags": Object {
+        "isPublic": true,
+      },
+      "id": 725,
+      "kind": 32,
+      "kindString": "Variable",
+      "name": "weights",
+      "sources": Array [
+        Object {
+          "character": 11,
+          "fileName": "linear_model/stochastic_gradient.ts",
+          "line": 130,
+        },
+      ],
+      "type": Object {
+        "elementType": Object {
+          "name": "number",
+          "type": "intrinsic",
+        },
+        "type": "array",
+      },
+    },
+  ],
+  "result": true,
+}
+`;

@@ -23,7 +23,7 @@ const pjson = JSON.parse(
  * @param options
  * @returns {any}
  */
-function ifEquals(children, x, y, options): any {
+export function ifEquals(children, x, y, options): any {
   return _.isEqual(x, y) ? options.fn(children) : options.inverse(children);
 }
 
@@ -34,7 +34,7 @@ function ifEquals(children, x, y, options): any {
  * @param kind
  * @returns {any}
  */
-function filterByKind(children, options, kind): any {
+export function filterByKind(children, options, kind): any {
   if (children) {
     const filtered = children.filter(child => {
       return child.kindString === kind;
