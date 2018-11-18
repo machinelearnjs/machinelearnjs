@@ -64,7 +64,7 @@ export function filterByKind(children, options, kind): any {
  * @param tag
  * @returns {any}
  */
-function filterByTag(children, options, tag): any {
+export function filterByTag(children, options, tag): any {
   if (children) {
     const filtered = children.filter(child => {
       return child.tag === tag;

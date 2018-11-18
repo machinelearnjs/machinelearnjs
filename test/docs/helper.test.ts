@@ -1,4 +1,4 @@
-import { filterByKind, ifEquals } from '../../docs/processor';
+import { filterByKind, filterByTag, ifEquals } from '../../docs/processor';
 
 /**
  * Mocking handlebar options
@@ -158,6 +158,24 @@ describe('docs:helper:filterByKind', () => {
 
   it('should filter all constructor', () => {
     const result = filterByKind(fakePayload, optionsMock, 'Constructor');
+    expect(result).toMatchSnapshot();
+  });
+});
+
+describe('docs:helper:filterByTag', () => {
+  const fakePayload = [
+    {
+      tag: 'example',
+      text:
+        "\nimport { SGDRegressor } from 'kalimdor/linear_model';\nconst reg = new SGDRegressor();\nconst X = [[0., 0.], [1., 1.]];\nconst y = [0, 1];\nreg.fit(X, y);\nreg.predict([[2., 2.]]); // result: [ 1.281828588248001 ]\n\n"
+    },
+    {
+      tag: 'test',
+      text: 'yo'
+    }
+  ];
+  it('should find tag example', () => {
+    const result = filterByTag(fakePayload, optionsMock, 'example');
     expect(result).toMatchSnapshot();
   });
 });

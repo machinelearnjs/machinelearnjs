@@ -96,3 +96,23 @@ Object {
   "result": true,
 }
 `;
+
+exports[`docs:helper:filterByTag should find example 1`] = `
+Object {
+  "payload": Array [
+    Object {
+      "tag": "example",
+      "text": "
+import { SGDRegressor } from 'kalimdor/linear_model';
+const reg = new SGDRegressor();
+const X = [[0., 0.], [1., 1.]];
+const y = [0, 1];
+reg.fit(X, y);
+reg.predict([[2., 2.]]); // result: [ 1.281828588248001 ]
+
+",
+    },
+  ],
+  "result": true,
+}
+`;
