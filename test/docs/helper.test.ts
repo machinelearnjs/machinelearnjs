@@ -1,5 +1,14 @@
-import { filterByKind, filterByTag, ifEquals } from '../../docs/processor';
-
+import * as fs from 'fs';
+import * as path from 'path';
+import {
+  filterByKind,
+  filterByTag,
+  ifEquals,
+  searchInterface
+} from '../../docs/processor';
+const docsJson = JSON.parse(
+  fs.readFileSync(path.join(__dirname, './docs.json'), 'utf8')
+);
 /**
  * Mocking handlebar options
  */
@@ -38,27 +47,6 @@ describe('docs:helper:ifEquals', () => {
 
 describe('docs:helper:filterByKind', () => {
   const fakePayload = [
-    {
-      id: 724,
-      name: 'epochs',
-      kind: 32,
-      kindString: 'Variable',
-      flags: {},
-      comment: {
-        shortText: 'model training epochs'
-      },
-      sources: [
-        {
-          fileName: 'linear_model/stochastic_gradient.ts',
-          line: 126,
-          character: 10
-        }
-      ],
-      type: {
-        type: 'intrinsic',
-        name: 'number'
-      }
-    },
     // Constructor
     {
       id: 724,
@@ -74,48 +62,6 @@ describe('docs:helper:filterByKind', () => {
           fileName: 'linear_model/stochastic_gradient.ts',
           line: 126,
           character: 10
-        }
-      ],
-      type: {
-        type: 'intrinsic',
-        name: 'number'
-      }
-    },
-    {
-      id: 723,
-      name: 'learning_rate',
-      kind: 32,
-      kindString: 'Variable',
-      flags: {},
-      comment: {
-        shortText: 'model learning rate'
-      },
-      sources: [
-        {
-          fileName: 'linear_model/stochastic_gradient.ts',
-          line: 122,
-          character: 17
-        }
-      ],
-      type: {
-        type: 'intrinsic',
-        name: 'number'
-      }
-    },
-    {
-      id: 726,
-      name: 'random_state',
-      kind: 32,
-      kindString: 'Variable',
-      flags: {},
-      comment: {
-        shortText: 'Number used to set a static random state'
-      },
-      sources: [
-        {
-          fileName: 'linear_model/stochastic_gradient.ts',
-          line: 134,
-          character: 16
         }
       ],
       type: {
@@ -182,5 +128,19 @@ describe('docs:helper:filterByTag', () => {
   it('should not find a tag zz', () => {
     const result = filterByTag(fakePayload, optionsMock, 'zz');
     expect(result.result).toBe(false);
+  });
+});
+
+describe('docs:helper:searchInterface', () => {
+  it('should find reference', () => {
+    const result = searchInterface(docsJson, 920);
+    const { id, name, kindString } = result;
+    expect(id).toBe(920);
+    expect(name).toBe('SVMOptions');
+    expect(kindString).toBe('Interface');
+  });
+  it('should invalid ID reference return null', () => {
+    const result = searchInterface(docsJson, 9999999);
+    expect(result).toBe(null);
   });
 });

@@ -78,12 +78,12 @@ export function filterByTag(children, options, tag): any {
 }
 
 /**
- * Search tree to find an entity with the ID
+ * Search the docs to find an entity with the ID
  * @param docs
  * @param id
  * @returns {any}
  */
-function searchInterface(docs, id): any {
+export function searchInterface(docs, id): any {
   let candidate = null;
   _.forEach(docs.children, module => {
     _.forEach(module.children, entity => {
