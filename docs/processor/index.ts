@@ -102,7 +102,7 @@ export function searchInterface(docs, id): any {
  * @param context - current context, typically this
  * @param options
  */
-function isSignatureValid(context, options): any {
+export function isSignatureValid(context, options): any {
   const signatures = context.signatures;
   if (_.isEmpty(signatures) || !signatures) {
     return options.inverse(context);

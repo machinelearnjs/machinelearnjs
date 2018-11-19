@@ -82,3 +82,55 @@ reg.predict([[2., 2.]]); // result: [ 1.281828588248001 ]
   "result": true,
 }
 `;
+
+exports[`docs:helper:isSignatureValid should return true for the 2nd child 1`] = `
+Object {
+  "flags": Object {
+    "isExported": true,
+  },
+  "id": 125,
+  "kind": 512,
+  "kindString": "Constructor",
+  "name": "constructor",
+  "signatures": Array [
+    Object {
+      "flags": Object {},
+      "id": 126,
+      "kind": 16384,
+      "kindString": "Constructor signature",
+      "name": "new KMeans",
+      "parameters": Array [
+        Object {
+          "defaultValue": " {
+      distance: 'euclidean',
+      k: 3,
+      maxIteration: 300
+    }",
+          "flags": Object {},
+          "id": 127,
+          "kind": 32768,
+          "kindString": "Parameter",
+          "name": "options",
+          "type": Object {
+            "id": 119,
+            "name": "KMeansOptions",
+            "type": "reference",
+          },
+        },
+      ],
+      "type": Object {
+        "id": 124,
+        "name": "KMeans",
+        "type": "reference",
+      },
+    },
+  ],
+  "sources": Array [
+    Object {
+      "character": 31,
+      "fileName": "cluster/k_means.ts",
+      "line": 45,
+    },
+  ],
+}
+`;

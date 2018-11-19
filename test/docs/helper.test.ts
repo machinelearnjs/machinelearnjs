@@ -4,6 +4,7 @@ import {
   filterByKind,
   filterByTag,
   ifEquals,
+  isSignatureValid,
   searchInterface
 } from '../../docs/processor';
 const docsJson = JSON.parse(
@@ -142,5 +143,26 @@ describe('docs:helper:searchInterface', () => {
   it('should invalid ID reference return null', () => {
     const result = searchInterface(docsJson, 9999999);
     expect(result).toBe(null);
+  });
+});
+
+describe('docs:helper:isSignatureValid', () => {
+  it('should return true for the 2nd child', () => {
+    const ele = docsJson.children[1].children[0].children[0];
+    const result = isSignatureValid(ele, optionsMock);
+    expect(result.result).toBe(true);
+    expect(result.payload).toMatchSnapshot();
+  });
+
+  it('should return false for the 1st child', () => {
+    const ele = docsJson.children[0];
+    const result = isSignatureValid(ele, optionsMock);
+    expect(result.result).toBe(false);
+  });
+
+  it('should return false for null input', () => {
+    expect(() => isSignatureValid(null, optionsMock)).toThrow(
+      "Cannot read property 'signatures' of null"
+    );
   });
 });
