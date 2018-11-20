@@ -184,7 +184,10 @@ export function constructMatrixType(
  * Prioritise getting text instead of shortText description
  * @param param
  */
-function getText(param): string | undefined {
+export function getText(param): string | undefined {
+  if (_.isEmpty(param)) {
+    throw new TypeError('Param should not be null or undefined');
+  }
   const text = _.get(param, 'comment.text');
   const shortText = _.get(param, 'comment.shortText');
   if (text) {

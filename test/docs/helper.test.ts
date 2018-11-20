@@ -4,6 +4,7 @@ import {
   constructMatrixType,
   filterByKind,
   filterByTag,
+  getText,
   ifEquals,
   isSignatureValid,
   searchInterface,
@@ -239,6 +240,39 @@ describe('docs:helper:constructMatrixType', () => {
     ).toThrow('dim should not be null or undefined');
     expect(() => constructMatrixType('Type1DMatrix', null)).toThrow(
       'types cannot be empty!'
+    );
+  });
+});
+
+describe('docs:helper:getText', () => {
+  const dummy1 = {
+    comment: {
+      text: 'dummy text',
+      shortText: 'dummy shortText'
+    }
+  };
+  const dummy2 = {
+    comment: {
+      text: null,
+      shortText: 'dummy shortText'
+    }
+  };
+  it('should dummy1 get text', () => {
+    const text = getText(dummy1);
+    expect(text).toBe('dummy text');
+  });
+
+  it('should dummy2 get shortText', () => {
+    const shortText = getText(dummy2);
+    expect(shortText).toBe('dummy shortText');
+  });
+
+  it('should throw an error for an invalid input', () => {
+    expect(() => getText(null)).toThrow(
+      'Param should not be null or undefined'
+    );
+    expect(() => getText(undefined)).toThrow(
+      'Param should not be null or undefined'
     );
   });
 });
