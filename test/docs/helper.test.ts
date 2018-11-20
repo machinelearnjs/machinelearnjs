@@ -5,7 +5,8 @@ import {
   filterByTag,
   ifEquals,
   isSignatureValid,
-  searchInterface
+  searchInterface,
+  traverseArrayDefinition
 } from '../../docs/processor';
 const docsJson = JSON.parse(
   fs.readFileSync(path.join(__dirname, './docs.json'), 'utf8')
@@ -164,5 +165,34 @@ describe('docs:helper:isSignatureValid', () => {
     expect(() => isSignatureValid(null, optionsMock)).toThrow(
       "Cannot read property 'signatures' of null"
     );
+  });
+});
+
+describe('docs:helper:traverseArrayDefinition', () => {
+  const dummy1 = {
+    type: 'array',
+    elementType: {
+      type: 'array',
+      elementType: {
+        type: 'intrinsic',
+        name: 'number'
+      }
+    }
+  };
+  const dummy2 = {
+    type: 'array',
+    elementType: {
+      type: 'intrinsic',
+      name: 'string'
+    }
+  };
+  it('should dummy1 return number[][]', () => {
+    const result = traverseArrayDefinition(dummy1);
+    expect(result).toBe('number[][]');
+  });
+
+  it('should dummy 2 return number[]', () => {
+    const result = traverseArrayDefinition(dummy2);
+    expect(result).toBe('string[]');
   });
 });

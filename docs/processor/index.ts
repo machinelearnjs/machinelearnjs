@@ -125,7 +125,7 @@ export function isSignatureValid(context, options): any {
  * @param {string} result
  * @returns {any}
  */
-function traverseArrayDefinition(arrayTree, result = ''): string {
+export function traverseArrayDefinition(arrayTree, result = ''): string {
   // const type = arrayTree.type;
   const element = arrayTree.elementType;
   const elementName = element.name;
