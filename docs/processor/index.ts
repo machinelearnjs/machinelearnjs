@@ -148,10 +148,18 @@ export function traverseArrayDefinition(arrayTree, result = ''): string {
  * @param dim
  * @param types
  */
-function constructMatrixType(
+export function constructMatrixType(
   dim: string,
   types: [{ type: string; name: string }]
 ): string {
+  if (dim === null || dim === undefined) {
+    throw new TypeError('dim should not be null or undefined');
+  }
+
+  if (_.isEmpty(types)) {
+    throw new TypeError('types cannot be empty!');
+  }
+
   const buffer = [];
   let brackets;
   if (dim === consts.type1DMatrix) {

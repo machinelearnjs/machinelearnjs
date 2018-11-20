@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import {
+  constructMatrixType,
   filterByKind,
   filterByTag,
   ifEquals,
@@ -172,6 +173,13 @@ describe('docs:helper:traverseArrayDefinition', () => {
   const dummy1 = {
     type: 'array',
     elementType: {
+      type: 'intrinsic',
+      name: 'string'
+    }
+  };
+  const dummy2 = {
+    type: 'array',
+    elementType: {
       type: 'array',
       elementType: {
         type: 'intrinsic',
@@ -179,20 +187,58 @@ describe('docs:helper:traverseArrayDefinition', () => {
       }
     }
   };
-  const dummy2 = {
-    type: 'array',
-    elementType: {
-      type: 'intrinsic',
-      name: 'string'
-    }
-  };
-  it('should dummy1 return number[][]', () => {
+
+  it('should dummy1 return number[]', () => {
     const result = traverseArrayDefinition(dummy1);
+    expect(result).toBe('string[]');
+  });
+
+  it('should dummy2 return number[][]', () => {
+    const result = traverseArrayDefinition(dummy2);
     expect(result).toBe('number[][]');
   });
 
-  it('should dummy 2 return number[]', () => {
-    const result = traverseArrayDefinition(dummy2);
-    expect(result).toBe('string[]');
+  it('should throw exceptions when invalid input is given', () => {
+    expect(() => traverseArrayDefinition(null)).toThrow(
+      "Cannot read property 'elementType' of null"
+    );
+    expect(() => traverseArrayDefinition(123)).toThrow(
+      "Cannot read property 'name' of undefined"
+    );
+  });
+});
+
+describe('docs:helper:constructMatrixType', () => {
+  it('should construct Type1DMatrix into number[]', () => {
+    const matrixType = constructMatrixType('Type1DMatrix', [
+      { name: 'number', type: 'number' }
+    ]);
+    expect(matrixType).toBe('number[]');
+  });
+  it('should construct Type2DMatrix into number[][]', () => {
+    const matrixType = constructMatrixType('Type2DMatrix', [
+      { name: 'number', type: 'number' }
+    ]);
+    expect(matrixType).toBe('number[][]');
+  });
+  it('should construct Type3DMatrix into number[][][]', () => {
+    const matrixType = constructMatrixType('Type3DMatrix', [
+      { name: 'number', type: 'number' }
+    ]);
+    expect(matrixType).toBe('number[][][]');
+  });
+  it('should construct Type4DMatrix into number[][][]', () => {
+    const matrixType = constructMatrixType('Type4DMatrix', [
+      { name: 'number', type: 'number' }
+    ]);
+    expect(matrixType).toBe('number[][][][]');
+  });
+  it('should throw an error on invalid inputs', () => {
+    expect(() =>
+      constructMatrixType(null, [{ name: 'number', type: 'number' }])
+    ).toThrow('dim should not be null or undefined');
+    expect(() => constructMatrixType('Type1DMatrix', null)).toThrow(
+      'types cannot be empty!'
+    );
   });
 });
