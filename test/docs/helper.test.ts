@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import {
   constructMatrixType,
+  constructParamTable,
   filterByKind,
   filterByTag,
   getText,
@@ -275,4 +276,17 @@ describe('docs:helper:getText', () => {
       'Param should not be null or undefined'
     );
   });
+});
+
+describe('docs:helper:constructParamTable', () => {
+  it('should build a table for param1', () => {
+    const params =
+      docsJson.children[3].children[0].children[1].signatures[0].parameters;
+    const result = constructParamTable(params);
+    expect(result).toMatchSnapshot();
+  });
+  // TODO: List test cases
+  /**
+   * 1.
+   */
 });

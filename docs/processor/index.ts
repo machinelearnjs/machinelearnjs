@@ -208,7 +208,7 @@ export function getText(param): string | undefined {
  * @param parameters
  * @returns {string}
  */
-function constructParamTable(parameters): string {
+export function constructParamTable(parameters): string {
   // Param table characters blacklist
   const paramTableCharsBlackList = [/\n/g, /\r\n/g, '_'];
 

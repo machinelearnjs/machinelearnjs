@@ -1,5 +1,16 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`docs:helper:constructParamTable should build a table for param1 1`] = `
+"| Param | Type | Default | Description |
+| ------ | ------ | ------ | ------ |
+| type | string |  | 
+| options.delimiter | string | \\",\\" | 
+| options.lastIsTarget | true | true | 
+| options.targetType | string | \\"float\\" | 
+| options.trainType | string | \\"float\\" | 
+"
+`;
+
 exports[`docs:helper:filterByKind should filter all constructor 1`] = `
 Object {
   "payload": Array [
