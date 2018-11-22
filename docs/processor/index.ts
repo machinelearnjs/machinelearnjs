@@ -309,7 +309,7 @@ export function constructParamTable(parameters): string {
                 const types = typeArg.types;
                 typeList.push(constructMatrixType(refName, types));
               } else if (typeArg.type === consts.refTypeArgTypeIntrinsic) {
-                typeList.push(typeArg.name);
+                typeList.push(constructMatrixType(refName, [typeArg]));
               } else {
                 typeList.push('unknown');
               }
