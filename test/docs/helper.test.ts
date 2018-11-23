@@ -285,8 +285,14 @@ describe('docs:helper:constructParamTable', () => {
     const result = constructParamTable(params);
     expect(result).toMatchSnapshot();
   });
-  // TODO: List test cases
-  /**
-   * 1.
-   */
+
+  it('should build a table for params with Type1DMatrix', () => {
+    // grabbing LinearRegression fit function
+    const params =
+      docsJson.children[16].children[0].children[0].signatures[0].parameters;
+    const result = constructParamTable(params);
+    expect(result).toMatchSnapshot();
+  });
+
+  it('should build table for params with Type2DMatrix');
 });
