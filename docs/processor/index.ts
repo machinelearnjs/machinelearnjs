@@ -444,7 +444,10 @@ export function renderMethodBracket(parameters): string {
  * @param sources
  * @returns {string}
  */
-function renderSourceLink(sources): string {
+export function renderSourceLink(sources): string {
+  if (_.isEmpty(sources)) {
+    throw new TypeError('Sources cannot be empty');
+  }
   const defined = _.map(sources, src => {
     return `[${src.fileName}:${src.line}](${
       pjson.repository.url

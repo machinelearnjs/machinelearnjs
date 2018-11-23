@@ -10,6 +10,7 @@ import {
   isSignatureValid,
   renderMethodBracket,
   renderMethodReturnType,
+  renderSourceLink,
   searchInterface,
   traverseArrayDefinition
 } from '../../docs/processor';
@@ -344,5 +345,41 @@ describe('docs:helper:methodBracket', () => {
       docsJson.children[8].children[1].children[0].signatures[0].parameters;
     const result = renderMethodBracket(parameters);
     expect(result).toEqual('(__namedParameters: *`object`*)');
+  });
+});
+
+describe('docs:helper:renderSourceLink', () => {
+  const source1 = [
+    {
+      fileName: 'ensemble/forest.ts',
+      line: 80,
+      character: 15
+    }
+  ];
+  const source2 = [
+    {
+      fileName: 'svm/classes.ts',
+      line: 254,
+      character: 34
+    }
+  ];
+  it('should render sources for source1', () => {
+    const result = renderSourceLink(source1);
+    expect(result).toEqual(
+      '[ensemble/forest.ts:80](https://github.com/kalimdorjs/kalimdorjs/blob/master/src/lib/ensemble/forest.ts#L80)'
+    );
+  });
+
+  it('should render sources for source2', () => {
+    const result = renderSourceLink(source2);
+    expect(result).toEqual(
+      '[svm/classes.ts:254](https://github.com/kalimdorjs/kalimdorjs/blob/master/src/lib/svm/classes.ts#L254)'
+    );
+  });
+
+  it('should not render sources for null', () => {
+    const error = 'Sources cannot be empty';
+    expect(() => renderSourceLink(null)).toThrow(error);
+    expect(() => renderSourceLink(123)).toThrow(error);
   });
 });
