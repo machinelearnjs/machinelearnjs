@@ -460,7 +460,7 @@ export function renderSourceLink(sources): string {
  * Renders a new line
  * @returns {string}
  */
-function renderNewLine(): string {
+export function renderNewLine(): string {
   return '\n';
 }
 
@@ -469,7 +469,10 @@ function renderNewLine(): string {
  * @param {string} str
  * @returns {string}
  */
-function cleanHyperLink(str: string): string {
+export function cleanHyperLink(str: string): string {
+  if (_.isEmpty(str)) {
+    throw new TypeError('Should not clean values other than strings');
+  }
   // 1. Cloning the original str
   let newStr = _.clone(str);
   // 2. Replacing the known strings

@@ -176,3 +176,8 @@ exports[`docs:helper:renderMethodReturnType should build a toJSON return type 1`
 | trees | any[] | Decision trees
 "
 `;
+
+exports[`docs:test:renderNewLine should render a new line upon calling the method 1`] = `
+"
+"
+`;

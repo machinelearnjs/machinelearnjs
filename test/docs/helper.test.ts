@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import {
+  cleanHyperLink,
   constructMatrixType,
   constructParamTable,
   filterByKind,
@@ -10,6 +11,7 @@ import {
   isSignatureValid,
   renderMethodBracket,
   renderMethodReturnType,
+  renderNewLine,
   renderSourceLink,
   searchInterface,
   traverseArrayDefinition
@@ -381,5 +383,37 @@ describe('docs:helper:renderSourceLink', () => {
     const error = 'Sources cannot be empty';
     expect(() => renderSourceLink(null)).toThrow(error);
     expect(() => renderSourceLink(123)).toThrow(error);
+  });
+});
+
+describe('docs:test:renderNewLine', () => {
+  it('should render a newline upon calling the method', () => {
+    const result = renderNewLine();
+    expect(result).toMatchSnapshot();
+  });
+});
+
+describe('docs:test:cleanHyperLink', () => {
+  it('should clean "explained_variance"', () => {
+    // toJSON
+    const result = cleanHyperLink('explained_variance');
+    expect(result).toEqual('explained-variance');
+  });
+
+  it('should clean "toJSON"', () => {
+    const result = cleanHyperLink('toJSON');
+    expect(result).toEqual('tojson');
+  });
+
+  it('should not clean invalid values', () => {
+    expect(() => cleanHyperLink(null)).toThrow(
+      'Should not clean values other than strings'
+    );
+    expect(() => cleanHyperLink(123)).toThrow(
+      'Should not clean values other than strings'
+    );
+    expect(() => cleanHyperLink(undefined)).toThrow(
+      'Should not clean values other than strings'
+    );
   });
 });
