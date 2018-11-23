@@ -8,6 +8,7 @@ import {
   getText,
   ifEquals,
   isSignatureValid,
+  renderMethodReturnType,
   searchInterface,
   traverseArrayDefinition
 } from '../../docs/processor';
@@ -303,9 +304,34 @@ describe('docs:helper:constructParamTable', () => {
   });
 
   it('should build table for params with Type2DMatrix of multiple types', () => {
+    // Testing GaussianNB's fit function
     const params =
       docsJson.children[22].children[0].children[1].signatures[0].parameters;
     const result = constructParamTable(params);
     expect(result).toMatchSnapshot();
+  });
+});
+
+describe('docs:helper:renderMethodReturnType', () => {
+  it('should build a return type for any[]', () => {
+    // Testing with random forest's predict
+    const type =
+      docsJson.children[8].children[1].children[6].signatures[0].type;
+    const returnType = renderMethodReturnType(type);
+    expect(returnType).toEqual('any[]');
+  });
+  it('should build a return type for void', () => {
+    // Testing with random forest's fit
+    const type =
+      docsJson.children[8].children[1].children[4].signatures[0].type;
+    const returnType = renderMethodReturnType(type);
+    expect(returnType).toEqual('void');
+  });
+
+  it('should build a toJSON return type', () => {
+    const type =
+      docsJson.children[8].children[1].children[7].signatures[0].type;
+    const returnType = renderMethodReturnType(type);
+    expect(returnType).toMatchSnapshot();
   });
 });

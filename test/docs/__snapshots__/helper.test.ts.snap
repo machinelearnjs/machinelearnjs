@@ -169,3 +169,10 @@ Object {
   ],
 }
 `;
+
+exports[`docs:helper:renderMethodReturnType should build a toJSON return type 1`] = `
+"| Param | Type | Description |
+| ------ | ------ | ------ |
+| trees | any[] | Decision trees
+"
+`;

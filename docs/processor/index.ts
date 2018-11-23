@@ -392,7 +392,7 @@ function constructReturnTable(typeArgument): string {
  * @param type
  * @returns {string}
  */
-function renderMethodReturnType(type): any {
+export function renderMethodReturnType(type): any {
   if (type.type === consts.returnTypeIntrinsic) {
     // Handles a simple promise return type
     return type.name;
