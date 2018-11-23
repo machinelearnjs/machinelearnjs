@@ -430,7 +430,7 @@ export function renderMethodReturnType(type): any {
  * @param parameters
  * @returns {string}
  */
-function renderMethodBracket(parameters): string {
+export function renderMethodBracket(parameters): string {
   const params = _.map(parameters, param => {
     const paramType = _.isString(param.type) ? param.type : 'object';
     return `${param.name}: *\`${paramType}\`*`;

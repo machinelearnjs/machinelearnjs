@@ -8,6 +8,7 @@ import {
   getText,
   ifEquals,
   isSignatureValid,
+  renderMethodBracket,
   renderMethodReturnType,
   searchInterface,
   traverseArrayDefinition
@@ -333,5 +334,15 @@ describe('docs:helper:renderMethodReturnType', () => {
       docsJson.children[8].children[1].children[7].signatures[0].type;
     const returnType = renderMethodReturnType(type);
     expect(returnType).toMatchSnapshot();
+  });
+});
+
+describe('docs:helper:methodBracket', () => {
+  // TODO: renderMethodBracket should decompose all the namedParameters
+  it('should print a constructor parameter table', () => {
+    const parameters =
+      docsJson.children[8].children[1].children[0].signatures[0].parameters;
+    const result = renderMethodBracket(parameters);
+    expect(result).toEqual('(__namedParameters: *`object`*)');
   });
 });
