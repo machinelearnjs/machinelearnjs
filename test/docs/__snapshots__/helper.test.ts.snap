@@ -19,6 +19,22 @@ exports[`docs:helper:constructParamTable should build a table for params with Ty
 "
 `;
 
+exports[`docs:helper:constructParamTable should build table for params with Type2DMatrix 1`] = `
+"| Param | Type | Default | Description |
+| ------ | ------ | ------ | ------ |
+| X | number[][] | null | Matrix of data
+| y | number[] | null | Matrix of targets
+"
+`;
+
+exports[`docs:helper:constructParamTable should build table for params with Type2DMatrix of multiple types 1`] = `
+"| Param | Type | Default | Description |
+| ------ | ------ | ------ | ------ |
+| X | string[][] or number[][] or boolean[][] | [] | training values
+| y | string[] or number[] or boolean[] | [] | target values
+"
+`;
+
 exports[`docs:helper:filterByKind should filter all constructor 1`] = `
 Object {
   "payload": Array [

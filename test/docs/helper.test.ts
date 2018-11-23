@@ -287,12 +287,25 @@ describe('docs:helper:constructParamTable', () => {
   });
 
   it('should build a table for params with Type1DMatrix', () => {
-    // grabbing LinearRegression fit function
+    // Testing LinearRegression's fit function
     const params =
       docsJson.children[16].children[0].children[0].signatures[0].parameters;
     const result = constructParamTable(params);
     expect(result).toMatchSnapshot();
   });
 
-  it('should build table for params with Type2DMatrix');
+  it('should build table for params with Type2DMatrix', () => {
+    // Testing SGDClassifier's fit function
+    const params =
+      docsJson.children[17].children[2].children[5].signatures[0].parameters;
+    const result = constructParamTable(params);
+    expect(result).toMatchSnapshot();
+  });
+
+  it('should build table for params with Type2DMatrix of multiple types', () => {
+    const params =
+      docsJson.children[22].children[0].children[1].signatures[0].parameters;
+    const result = constructParamTable(params);
+    expect(result).toMatchSnapshot();
+  });
 });
