@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`docs:helper:constructParamTable should build a table for param1 1`] = `
+exports[`docs:helper constructParamTable should build a table for param1 1`] = `
 "| Param | Type | Default | Description |
 | ------ | ------ | ------ | ------ |
 | type | string |  | 
@@ -11,7 +11,7 @@ exports[`docs:helper:constructParamTable should build a table for param1 1`] = `
 "
 `;
 
-exports[`docs:helper:constructParamTable should build a table for params with Type1DMatrix 1`] = `
+exports[`docs:helper constructParamTable should build a table for params with Type1DMatrix 1`] = `
 "| Param | Type | Default | Description |
 | ------ | ------ | ------ | ------ |
 | X | number[] |  | training values
@@ -19,7 +19,7 @@ exports[`docs:helper:constructParamTable should build a table for params with Ty
 "
 `;
 
-exports[`docs:helper:constructParamTable should build table for params with Type2DMatrix 1`] = `
+exports[`docs:helper constructParamTable should build table for params with Type2DMatrix 1`] = `
 "| Param | Type | Default | Description |
 | ------ | ------ | ------ | ------ |
 | X | number[][] | null | Matrix of data
@@ -27,7 +27,7 @@ exports[`docs:helper:constructParamTable should build table for params with Type
 "
 `;
 
-exports[`docs:helper:constructParamTable should build table for params with Type2DMatrix of multiple types 1`] = `
+exports[`docs:helper constructParamTable should build table for params with Type2DMatrix of multiple types 1`] = `
 "| Param | Type | Default | Description |
 | ------ | ------ | ------ | ------ |
 | X | string[][] or number[][] or boolean[][] | [] | training values
@@ -35,7 +35,12 @@ exports[`docs:helper:constructParamTable should build table for params with Type
 "
 `;
 
-exports[`docs:helper:filterByKind should filter all constructor 1`] = `
+exports[`docs:helper docs:test:renderNewLine should render a newline upon calling the method 1`] = `
+"
+"
+`;
+
+exports[`docs:helper filterByKind should filter all constructor 1`] = `
 Object {
   "payload": Array [
     Object {
@@ -64,7 +69,7 @@ Object {
 }
 `;
 
-exports[`docs:helper:filterByKind should filter all public Variables 1`] = `
+exports[`docs:helper filterByKind should filter all public Variables 1`] = `
 Object {
   "payload": Array [
     Object {
@@ -98,7 +103,7 @@ Object {
 }
 `;
 
-exports[`docs:helper:filterByTag should find a tag example 1`] = `
+exports[`docs:helper filterByTag should find a tag example 1`] = `
 Object {
   "payload": Array [
     Object {
@@ -118,7 +123,7 @@ reg.predict([[2., 2.]]); // result: [ 1.281828588248001 ]
 }
 `;
 
-exports[`docs:helper:isSignatureValid should return true for the 2nd child 1`] = `
+exports[`docs:helper isSignatureValid should return true for the 2nd child 1`] = `
 Object {
   "flags": Object {
     "isExported": true,
@@ -170,14 +175,9 @@ Object {
 }
 `;
 
-exports[`docs:helper:renderMethodReturnType should build a toJSON return type 1`] = `
+exports[`docs:helper renderMethodReturnType should build a toJSON return type 1`] = `
 "| Param | Type | Description |
 | ------ | ------ | ------ |
 | trees | any[] | Decision trees
-"
-`;
-
-exports[`docs:test:renderNewLine should render a new line upon calling the method 1`] = `
-"
 "
 `;
