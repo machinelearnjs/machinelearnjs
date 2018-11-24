@@ -47,7 +47,7 @@
     "test": "yarn build && yarn lint && yarn test:unit && yarn test:integration && yarn test:nsp && yarn doc",
     "test:unit": "npx jest --testPathIgnorePatterns \"./test/integration/require.test.ts\" && \"./test/docs/helper.test.ts\"",
     "test:integration": "node ./scripts/test-integration.js",
-    "test:doc": "yarn doc && npx jest -t \"docs:helper\"",
+    "test:doc": "node ./scripts/test-docs.js",
     "test:nsp": "nsp check",
     "watch": "./scripts/tmux-start.sh",
     "watch:build": "yarn build:main -- -w",
