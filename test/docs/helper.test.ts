@@ -17,7 +17,7 @@ import {
   traverseArrayDefinition
 } from '../../docs/processor';
 const docsJson = JSON.parse(
-  fs.readFileSync(path.join(__dirname, './docs.json'), 'utf8')
+  fs.readFileSync(path.join(__dirname, './dummy.json'), 'utf8')
 );
 /**
  * Mocking handlebar options
