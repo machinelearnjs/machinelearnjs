@@ -1,0 +1,183 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`docs:helper constructParamTable should build a table for param1 1`] = `
+"| Param | Type | Default | Description |
+| ------ | ------ | ------ | ------ |
+| type | string |  | 
+| options.delimiter | string | \\",\\" | 
+| options.lastIsTarget | true | true | 
+| options.targetType | string | \\"float\\" | 
+| options.trainType | string | \\"float\\" | 
+"
+`;
+
+exports[`docs:helper constructParamTable should build a table for params with Type1DMatrix 1`] = `
+"| Param | Type | Default | Description |
+| ------ | ------ | ------ | ------ |
+| X | number[] |  | training values
+| y | number[] |  | target values
+"
+`;
+
+exports[`docs:helper constructParamTable should build table for params with Type2DMatrix 1`] = `
+"| Param | Type | Default | Description |
+| ------ | ------ | ------ | ------ |
+| X | number[][] | null | Matrix of data
+| y | number[] | null | Matrix of targets
+"
+`;
+
+exports[`docs:helper constructParamTable should build table for params with Type2DMatrix of multiple types 1`] = `
+"| Param | Type | Default | Description |
+| ------ | ------ | ------ | ------ |
+| X | string[][] or number[][] or boolean[][] | [] | training values
+| y | string[] or number[] or boolean[] | [] | target values
+"
+`;
+
+exports[`docs:helper docs:test:renderNewLine should render a newline upon calling the method 1`] = `
+"
+"
+`;
+
+exports[`docs:helper filterByKind should filter all constructor 1`] = `
+Object {
+  "payload": Array [
+    Object {
+      "comment": Object {
+        "shortText": "model training epochs",
+      },
+      "flags": Object {},
+      "id": 724,
+      "kind": 32,
+      "kindString": "Constructor",
+      "name": "zzzz",
+      "sources": Array [
+        Object {
+          "character": 10,
+          "fileName": "linear_model/stochastic_gradient.ts",
+          "line": 126,
+        },
+      ],
+      "type": Object {
+        "name": "number",
+        "type": "intrinsic",
+      },
+    },
+  ],
+  "result": true,
+}
+`;
+
+exports[`docs:helper filterByKind should filter all public Variables 1`] = `
+Object {
+  "payload": Array [
+    Object {
+      "comment": Object {
+        "shortText": "Model training weights",
+      },
+      "flags": Object {
+        "isPublic": true,
+      },
+      "id": 725,
+      "kind": 32,
+      "kindString": "Variable",
+      "name": "weights",
+      "sources": Array [
+        Object {
+          "character": 11,
+          "fileName": "linear_model/stochastic_gradient.ts",
+          "line": 130,
+        },
+      ],
+      "type": Object {
+        "elementType": Object {
+          "name": "number",
+          "type": "intrinsic",
+        },
+        "type": "array",
+      },
+    },
+  ],
+  "result": true,
+}
+`;
+
+exports[`docs:helper filterByTag should find a tag example 1`] = `
+Object {
+  "payload": Array [
+    Object {
+      "tag": "example",
+      "text": "
+import { SGDRegressor } from 'kalimdor/linear_model';
+const reg = new SGDRegressor();
+const X = [[0., 0.], [1., 1.]];
+const y = [0, 1];
+reg.fit(X, y);
+reg.predict([[2., 2.]]); // result: [ 1.281828588248001 ]
+
+",
+    },
+  ],
+  "result": true,
+}
+`;
+
+exports[`docs:helper isSignatureValid should return true for the 2nd child 1`] = `
+Object {
+  "flags": Object {
+    "isExported": true,
+  },
+  "id": 125,
+  "kind": 512,
+  "kindString": "Constructor",
+  "name": "constructor",
+  "signatures": Array [
+    Object {
+      "flags": Object {},
+      "id": 126,
+      "kind": 16384,
+      "kindString": "Constructor signature",
+      "name": "new KMeans",
+      "parameters": Array [
+        Object {
+          "defaultValue": " {
+      distance: 'euclidean',
+      k: 3,
+      maxIteration: 300
+    }",
+          "flags": Object {},
+          "id": 127,
+          "kind": 32768,
+          "kindString": "Parameter",
+          "name": "options",
+          "type": Object {
+            "id": 119,
+            "name": "KMeansOptions",
+            "type": "reference",
+          },
+        },
+      ],
+      "type": Object {
+        "id": 124,
+        "name": "KMeans",
+        "type": "reference",
+      },
+    },
+  ],
+  "sources": Array [
+    Object {
+      "character": 31,
+      "fileName": "cluster/k_means.ts",
+      "line": 45,
+    },
+  ],
+}
+`;
+
+exports[`docs:helper renderMethodReturnType should build a toJSON return type 1`] = `
+"| Param | Type | Description |
+| ------ | ------ | ------ |
+| trees | any[] | Decision trees
+"
+`;

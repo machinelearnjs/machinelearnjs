@@ -23,7 +23,7 @@ const pjson = JSON.parse(
  * @param options
  * @returns {any}
  */
-function ifEquals(children, x, y, options): any {
+export function ifEquals(children, x, y, options): any {
   return _.isEqual(x, y) ? options.fn(children) : options.inverse(children);
 }
 
@@ -34,7 +34,7 @@ function ifEquals(children, x, y, options): any {
  * @param kind
  * @returns {any}
  */
-function filterByKind(children, options, kind): any {
+export function filterByKind(children, options, kind): any {
   if (children) {
     const filtered = children.filter(child => {
       return child.kindString === kind;
@@ -64,7 +64,7 @@ function filterByKind(children, options, kind): any {
  * @param tag
  * @returns {any}
  */
-function filterByTag(children, options, tag): any {
+export function filterByTag(children, options, tag): any {
   if (children) {
     const filtered = children.filter(child => {
       return child.tag === tag;
@@ -78,12 +78,12 @@ function filterByTag(children, options, tag): any {
 }
 
 /**
- * Search tree to find an entity with the ID
+ * Search the docs to find an entity with the ID
  * @param docs
  * @param id
  * @returns {any}
  */
-function searchInterface(docs, id): any {
+export function searchInterface(docs, id): any {
   let candidate = null;
   _.forEach(docs.children, module => {
     _.forEach(module.children, entity => {
@@ -102,7 +102,7 @@ function searchInterface(docs, id): any {
  * @param context - current context, typically this
  * @param options
  */
-function isSignatureValid(context, options): any {
+export function isSignatureValid(context, options): any {
   const signatures = context.signatures;
   if (_.isEmpty(signatures) || !signatures) {
     return options.inverse(context);
@@ -125,7 +125,7 @@ function isSignatureValid(context, options): any {
  * @param {string} result
  * @returns {any}
  */
-function traverseArrayDefinition(arrayTree, result = ''): string {
+export function traverseArrayDefinition(arrayTree, result = ''): string {
   // const type = arrayTree.type;
   const element = arrayTree.elementType;
   const elementName = element.name;
@@ -148,10 +148,18 @@ function traverseArrayDefinition(arrayTree, result = ''): string {
  * @param dim
  * @param types
  */
-function constructMatrixType(
+export function constructMatrixType(
   dim: string,
   types: [{ type: string; name: string }]
 ): string {
+  if (dim === null || dim === undefined) {
+    throw new TypeError('dim should not be null or undefined');
+  }
+
+  if (_.isEmpty(types)) {
+    throw new TypeError('types cannot be empty!');
+  }
+
   const buffer = [];
   let brackets;
   if (dim === consts.type1DMatrix) {
@@ -176,7 +184,10 @@ function constructMatrixType(
  * Prioritise getting text instead of shortText description
  * @param param
  */
-function getText(param): string | undefined {
+export function getText(param): string | undefined {
+  if (_.isEmpty(param)) {
+    throw new TypeError('Param should not be null or undefined');
+  }
   const text = _.get(param, 'comment.text');
   const shortText = _.get(param, 'comment.shortText');
   if (text) {
@@ -197,7 +208,7 @@ function getText(param): string | undefined {
  * @param parameters
  * @returns {string}
  */
-function constructParamTable(parameters): string {
+export function constructParamTable(parameters): string {
   // Param table characters blacklist
   const paramTableCharsBlackList = [/\n/g, /\r\n/g, '_'];
 
@@ -298,7 +309,7 @@ function constructParamTable(parameters): string {
                 const types = typeArg.types;
                 typeList.push(constructMatrixType(refName, types));
               } else if (typeArg.type === consts.refTypeArgTypeIntrinsic) {
-                typeList.push(typeArg.name);
+                typeList.push(constructMatrixType(refName, [typeArg]));
               } else {
                 typeList.push('unknown');
               }
@@ -381,7 +392,7 @@ function constructReturnTable(typeArgument): string {
  * @param type
  * @returns {string}
  */
-function renderMethodReturnType(type): any {
+export function renderMethodReturnType(type): any {
   if (type.type === consts.returnTypeIntrinsic) {
     // Handles a simple promise return type
     return type.name;
@@ -419,7 +430,7 @@ function renderMethodReturnType(type): any {
  * @param parameters
  * @returns {string}
  */
-function renderMethodBracket(parameters): string {
+export function renderMethodBracket(parameters): string {
   const params = _.map(parameters, param => {
     const paramType = _.isString(param.type) ? param.type : 'object';
     return `${param.name}: *\`${paramType}\`*`;
@@ -433,7 +444,10 @@ function renderMethodBracket(parameters): string {
  * @param sources
  * @returns {string}
  */
-function renderSourceLink(sources): string {
+export function renderSourceLink(sources): string {
+  if (_.isEmpty(sources)) {
+    throw new TypeError('Sources cannot be empty');
+  }
   const defined = _.map(sources, src => {
     return `[${src.fileName}:${src.line}](${
       pjson.repository.url
@@ -446,7 +460,7 @@ function renderSourceLink(sources): string {
  * Renders a new line
  * @returns {string}
  */
-function renderNewLine(): string {
+export function renderNewLine(): string {
   return '\n';
 }
 
@@ -455,7 +469,10 @@ function renderNewLine(): string {
  * @param {string} str
  * @returns {string}
  */
-function cleanHyperLink(str: string): string {
+export function cleanHyperLink(str: string): string {
+  if (_.isEmpty(str)) {
+    throw new TypeError('Should not clean values other than strings');
+  }
   // 1. Cloning the original str
   let newStr = _.clone(str);
   // 2. Replacing the known strings
