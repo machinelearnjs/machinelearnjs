@@ -16,11 +16,13 @@ export abstract class IMlModel<T> {
   /**
    * Fit data to build model
    */
-  public abstract fit(X: Type2DMatrix<T>, y?: Type1DMatrix<T>): void;
+  public abstract fit(X: Type2DMatrix<T | number>, y?: Type1DMatrix<T>): void;
   /**
    * Predict multiple rows. Each row has a feature data for a prediction
    */
-  public abstract predict(X: Type2DMatrix<T> | Type1DMatrix<T>): T[] | T[][];
+  public abstract predict(
+    X: Type2DMatrix<T | number> | Type1DMatrix<T>
+  ): T[] | T[][];
 
   /**
    * Restores model from a checkpoint
