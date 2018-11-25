@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import { PCA } from '../../src/lib/decomposition';
 
 describe('decomposition:pca', () => {
