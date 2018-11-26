@@ -92,11 +92,11 @@ export class BaseSVM {
 
   /**
    * Fit the model according to the given training data.
-   * @param {any[]} X
-   * @param {any[]} y
+   * @param {Array<number[]>} X
+   * @param {number[]} y
    * @returns {Promise<void>}
    */
-  public async fit({ X = [], y = [] }: { X: any[]; y: any[] }): Promise<void> {
+  public async fit({ X = [], y = [] }: { X: Array<number[]>; y: number[] }): Promise<void> {
     if (!this.type) {
       throw new Error(`SVM type is unspecified ${this.type}`);
     }
@@ -108,19 +108,19 @@ export class BaseSVM {
 
   /**
    * Predict using the linear model
-   * @param {number[]} X
+   * @param {Array<number[]>} X
    * @returns {number[]}
    */
-  public predict(X: number[]): number[] {
+  public predict(X: Array<number[]>): number[] {
     return this.svm.predict(X);
   }
 
   /**
    * Predict the label of one sample.
    * @param {number[]} X
-   * @returns {number[]}
+   * @returns {number}
    */
-  public predictOne(X: number[]): number[] {
+  public predictOne(X: number[]): number {
     return this.svm.predictOne(X);
   }
 
