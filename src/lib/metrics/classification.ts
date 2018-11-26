@@ -210,7 +210,7 @@ export function confusion_matrix(options: ConfusionMatrixOptions): number[] {
   const placeholder: any = math.zeros(_.size(yTrueCls), _.size(yTrueCls));
   tf.zeros([2, 3]).dataSync();
   tf.zeros([2, 3]).print();
-  console.log('yTruecls', _.size(yTrueCls), ' yprescls ', _.size(yPredCls), JSON.parse(placeholder));
+  // console.log('yTruecls', _.size(yTrueCls), ' yprescls ', _.size(yPredCls), JSON.parse(placeholder));
   // console.log(tf.zeros());
   // Mutable zeros to contain matrix values
   const zerosPlaceholder = JSON.parse(placeholder);
