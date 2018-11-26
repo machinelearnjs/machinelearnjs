@@ -1,3 +1,4 @@
+import * as tf from '@tensorflow/tfjs';
 import * as _ from 'lodash';
 import math from '../utils/MathExtra';
 import { checkArray } from '../utils/validation';
@@ -207,7 +208,10 @@ export function confusion_matrix(options: ConfusionMatrixOptions): number[] {
 
   // TODO: Issue was raisen to fix the typing: https://github.com/josdejong/mathjs/issues/1150
   const placeholder: any = math.zeros(_.size(yTrueCls), _.size(yTrueCls));
-
+  tf.zeros([2, 3]).dataSync();
+  tf.zeros([2, 3]).print();
+  console.log('yTruecls', _.size(yTrueCls), ' yprescls ', _.size(yPredCls), JSON.parse(placeholder));
+  // console.log(tf.zeros());
   // Mutable zeros to contain matrix values
   const zerosPlaceholder = JSON.parse(placeholder);
 
