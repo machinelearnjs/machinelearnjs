@@ -2,6 +2,10 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.5]
+
+:bug: removing a module for a security reason :bug:
+
 ## [1.2.4]
 
 :rocket: bug fixes :rocket:
