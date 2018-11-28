@@ -6,8 +6,9 @@ console.log('running xor example');
 async function svcTest() {
   console.log('inside svctest');
   const svc2 = new SVC();
-  const X = [[-1, -1], [-2, -1], [1, 1], [2, 1]];
-  const y = [-1, 1, 2, 2];
+  const X = [[0, 0], [1, 1], [1, 0], [0, 1]];
+  const y = [0, 0, 1, 1];
+
   const err = await svc2.fit({ X: X, y: y });
   console.log('result ', err);
   try {

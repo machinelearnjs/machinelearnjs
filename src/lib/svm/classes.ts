@@ -1,4 +1,3 @@
-import svmResolver from 'libsvm-js';
 import * as _ from 'lodash';
 
 export type Type = 'C_SVC' | 'NU_SVC' | 'ONE_CLASS' | 'EPSILON_SVR' | 'NU_SVR';
@@ -106,7 +105,8 @@ export class BaseSVM {
     if (!this.type) {
       throw new Error(`SVM type is unspecified ${this.type}`);
     }
-    const SVM = await this.loadSVM();
+
+    const SVM = await require('libsvm-js');
     const options = this.processOptions(
       SVM,
       this.options,
@@ -114,7 +114,7 @@ export class BaseSVM {
       this.options.kernel
     );
     this.svm = new SVM(options);
-    this.svm.train(X, y);
+    return this.svm.train(X, y);
   }
 
   /**
@@ -166,14 +166,6 @@ export class BaseSVM {
   }
 
   /**
-   * Load SVM object by resolving the default promise
-   * @returns {Promise<any>}
-   */
-  private async loadSVM(): Promise<any> {
-    return svmResolver;
-  }
-
-  /**
    * Get Kernel name type using string Kernel name
    * @param SVM
    * @param {string} name
@@ -213,8 +205,8 @@ export class BaseSVM {
         return _.set(opts, 'type', foundType);
       },
       opts => {
-        const foundKernal = this.getKernel(SVM, kernel);
-        return _.set(opts, 'kernel', foundKernal);
+        const foundKernel = this.getKernel(SVM, kernel);
+        return _.set(opts, 'kernel', foundKernel);
       }
     )(options);
   }
