@@ -69,6 +69,17 @@
         "infra",
         "review"
       ]
+    },
+    {
+      "login": "adamjking3",
+      "name": "Adam King",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/14098106?v=4",
+      "profile": "https://github.com/adamjking3",
+      "contributions": [
+        "code",
+        "test",
+        "doc"
+      ]
     }
   ]
 }
