@@ -6,12 +6,13 @@ console.log('running xor example');
 async function svcTest() {
   console.log('inside svctest');
   const svc2 = new SVC();
-  const X = [[-1, -1], [-2, -1], [1, 1], [2, 1]];
-  const y = [-1, 1, 2, 2];
+  const X = [[0, 0], [1, 1], [1, 0], [0, 1]];
+  const y = [0, 0, 1, 1];
+
   const err = await svc2.fit({ X: X, y: y });
   console.log('result ', err);
   try {
-    console.log('svc2 pred ', svc2.predict([-0.8, -1]));
+    console.log('svc2 pred ', svc2.predictOne([0.7, 0.8]));
   } catch (e) {
     console.log('err', e);
   }
@@ -34,7 +35,7 @@ async function xor2() {
   const features = [[0, 0], [2, 2]];
   const labels = [0.5, 2.5];
   await svr.fit({ X: features, y: labels });
-  console.log('SVR predict result', svr.predict([1, 1]));
+  console.log('SVR predict result', svr.predictOne([1, 1]));
 }
 
 xor2().then(() => console.log('finished SVR'));
