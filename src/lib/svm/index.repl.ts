@@ -11,7 +11,7 @@ async function svcTest() {
   const err = await svc2.fit({ X: X, y: y });
   console.log('result ', err);
   try {
-    console.log('svc2 pred ', svc2.predict([-0.8, -1]));
+    console.log('svc2 pred ', svc2.predict([[-0.8, -1]]));
   } catch (e) {
     console.log('err', e);
   }
@@ -34,7 +34,7 @@ async function xor2() {
   const features = [[0, 0], [2, 2]];
   const labels = [0.5, 2.5];
   await svr.fit({ X: features, y: labels });
-  console.log('SVR predict result', svr.predict([1, 1]));
+  console.log('SVR predict result', svr.predict([[1, 1]]));
 }
 
 xor2().then(() => console.log('finished SVR'));

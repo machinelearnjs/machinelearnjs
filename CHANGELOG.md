@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.6]
+
+:rocket: enhancing typing system for SVMs :rocket:
+
+- **bug:** Adding correct typings for SVMs. Thanks @adamjking3!
+
 ## [1.2.5]
 
 :bug: removing a module for a security reason :bug:
