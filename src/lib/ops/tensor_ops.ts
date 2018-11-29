@@ -92,8 +92,9 @@ export function validateMatrix2D(X: Type2DMatrix<any>): number[] {
  * The code was borrowed from math.js (https://github.com/josdejong/mathjs/blob/5750a1845442946d236822505c607a522be23474/src/utils/array.js#L258),
  * which enables us to use a specific method from Math.js instead of installing an entire library.
  *
- * Although we are using Tensorflow.js for linear algebra operations,
- * it has implemented an efficient way to return raw values from its Tensor implementation that always returns a flattened array.
+ * TF.js has implemented an efficient way to return raw values from its Tensor implementation that always returns a 1D array,
+ * which is not ideal in situations where we need a return value with correct shapes.
+ *
  * Please check out https://github.com/tensorflow/tfjs/issues/939 for more information
  *
  * @example
