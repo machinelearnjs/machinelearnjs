@@ -91,6 +91,10 @@ export function validateMatrix2D(X: Type2DMatrix<any>): number[] {
  * math.js, https://github.com/josdejong/mathjs/blob/5750a1845442946d236822505c607a522be23474/src/utils/array.js#L258
  * in order to use specific method from Math.js instead of install an entire library.
  *
+ * Although we are using Tensorflow.js for linear alg operations, it has implemented an efficient way to return raw values
+ * from its Tensor implementation that always return a flattened array. Please checkout https://github.com/tensorflow/tfjs/issues/939
+ * for more information
+ *
  * @example
  * reshape([1, 2, 3, 4, 5, 6], [2, 3]); // [[1, 2, 3], [4, 5, 6]]
  * reshape([1, 2, 3, 4, 5, 6], [2, 3, 1]); // [[[1], [2], [3]], [[4], [5], [6]]]
