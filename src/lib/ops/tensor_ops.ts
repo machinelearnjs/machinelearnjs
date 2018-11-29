@@ -93,6 +93,7 @@ export function validateMatrix2D(X: Type2DMatrix<any>): number[] {
  *
  * @example
  * reshape([1, 2, 3, 4, 5, 6], [2, 3]); // [[1, 2, 3], [4, 5, 6]]
+ * reshape([1, 2, 3, 4, 5, 6], [2, 3, 1]); // [[[1], [2], [3]], [[4], [5], [6]]]
  *
  * @param array - Target array
  * @param sizes - New array shape to resize into
