@@ -279,12 +279,19 @@ export function constructParamTable(parameters): string {
           getText(param)
         ]);
       } else if (consts.paramTypeReference === paramType) {
-        // 4. Handle any Interface params
+        // 4.1. Handle any TS native references -> determined by _.isEmpty(foundRef)
+        // e.g. x: IterableIterator
+        // 4.2. Handle any custom defined interfaces / references. Custom references should have an ID that references definition within the docs.json
         // e.g. x: Options
         const foundRef = searchInterface(docsJson, param.type.id);
-
-        // console.log('param type id for reference ', param.type.id, foundRef);
-        if (foundRef.kindString === consts.refKindInterface) {
+        if (_.isEmpty(foundRef)) {
+          // Handling the TS native references
+          _.forEach(param.type.typeArguments, prop => {
+            // Building a readable type arguments
+            const args = prop.typeArguments.map(renderParamType).join(' | ');
+            sum.push([`${param.name}`, args, prop.defaultValue, getText(prop)]);
+          });
+        } else if (foundRef.kindString === consts.refKindInterface) {
           _.forEach(foundRef.children, prop => {
             sum.push([
               `${param.name}.${prop.name}`,
