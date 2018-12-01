@@ -1,6 +1,6 @@
-// import * as tf from '@tensorflow/tfjs';
+import * as tf from '@tensorflow/tfjs';
 import * as numeric from 'numeric';
-import { validateMatrix2D } from '../ops';
+import { reshape, validateMatrix2D } from '../ops';
 import { IMlModel, Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
 
@@ -49,10 +49,10 @@ export class PCA implements IMlModel<number> {
     const nSamples = X.length;
     // Renaming X to A for readability
     const A = X;
-    // const AT1 = tf.transpose(A, [1, 0]).dataSync();
-    const AT = math.transpose(A);
-    // console.log('transpose tfjs', AT1);
-    // console.log('transpose mathjs', AT);
+
+    const transposed = tf.transpose(A, [1, 0]);
+    const transposedShape = transposed.shape;
+    const AT: any = reshape([...transposed.dataSync()], transposedShape);
 
     // const M1 = tf.mean(AT1);
     const M = math.mean(AT, 1);
