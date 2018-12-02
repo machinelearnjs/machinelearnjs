@@ -1,5 +1,5 @@
 import * as tf from '@tensorflow/tfjs';
-import { flattenDeep } from 'lodash';
+import { flattenDeep, isEqual, sortBy, uniq } from 'lodash';
 import { Type1DMatrix, Type2DMatrix, TypeMatrix } from '../types';
 
 /**
@@ -16,6 +16,37 @@ import { Type1DMatrix, Type2DMatrix, TypeMatrix } from '../types';
  */
 export function inferShape(X: TypeMatrix<any>): number[] {
   return tf.tensor(X).shape;
+}
+
+/**
+ * Validates the input matrix's types with the targetted types.
+ * Specified target types must be one of https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof#Description
+ *
+ * @example
+ * validateMatrixType([['z', 'z']],['string']); // no errors
+ * validateMatrixType([['z', 'z']],['test']); // error: Input matrix type of ["string"] does not match with the target types ["test"]
+ *
+ * @param X - The input matrix
+ * @param targetTypes - Target matrix types
+ * @ignore
+ */
+export function validateMatrixType(
+  X: TypeMatrix<any>,
+  targetTypes: string[]
+): void {
+  const flatX = flattenDeep(X);
+  const xTypes = uniq(flatX.map(x => typeof x));
+  const sortedXTypes = sortBy(xTypes, x => x);
+  const sortedTargetTypes = sortBy(targetTypes, x => x);
+  if (!isEqual(sortedXTypes, sortedTargetTypes)) {
+    throw new TypeError(
+      `Input matrix type of ${JSON.stringify(
+        sortedXTypes
+      )} does not match with the target types ${JSON.stringify(
+        sortedTargetTypes
+      )}`
+    );
+  }
 }
 
 /**

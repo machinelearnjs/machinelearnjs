@@ -2,7 +2,6 @@ import * as tf from '@tensorflow/tfjs';
 import * as numeric from 'numeric';
 import { reshape, validateMatrix2D } from '../ops';
 import { IMlModel, Type2DMatrix } from '../types';
-import math from '../utils/MathExtra';
 
 /**
  * Principal component analysis (PCA)
@@ -48,26 +47,14 @@ export class PCA implements IMlModel<number> {
     validateMatrix2D(X);
     const nSamples = X.length;
     // Renaming X to A for readability
-    const A = X;
+    const A = tf.tensor2d(X);
 
-    const transposed = tf.transpose(A, [1, 0]);
-    const transposedShape = transposed.shape;
-    const AT: any = reshape([...transposed.dataSync()], transposedShape);
+    // const transposed = tf.transpose(A, [1, 0]);
+    const AT = tf.transpose(A, [1, 0]);
 
-    // const M1 = tf.mean(AT1);
-    const M = math.mean(AT, 1);
-    /*
-    console.log(
-      'TFjs mean',
-      M1.dataSync(),
-      tf.mean([[1, 3, 5], [2, 4, 6]], [1, 0], true).dataSync()
-    );
-    console.log('mathjs mean', M);
-    */
-
-    // const C = tf.sub(X, M).dataSync();
-    const C = math.contrib.subtract(X, M);
-
+    const M = tf.mean(AT, 1);
+    const rawC = tf.sub(A, M);
+    const C: any = reshape([...rawC.dataSync()], rawC.shape);
     const svd = numeric.svd(C);
     this.components = svd.V;
     this.explained_variance = numeric.div(numeric.pow(svd.U), nSamples - 1);
