@@ -286,9 +286,21 @@ export function constructParamTable(parameters): string {
         const foundRef = searchInterface(docsJson, param.type.id);
         if (_.isEmpty(foundRef)) {
           // Handling the TS native references
+
+          console.dir(param.type.typeArguments);
           _.forEach(param.type.typeArguments, prop => {
             // Building a readable type arguments
-            const args = prop.typeArguments.map(renderParamType).join(' | ');
+            let args: string;
+            if (_.isArray(prop.typeArguments)) {
+              args = prop.typeArguments.map(renderParamType).join(' | ');
+            } else if (prop.constraint) {
+              args =
+                prop.constraint.type +
+                ' ' +
+                prop.constraint.types.map(renderParamType).join(' | ');
+            } else {
+              args = prop.type;
+            }
             sum.push([`${param.name}`, args, prop.defaultValue, getText(prop)]);
           });
         } else if (foundRef.kindString === consts.refKindInterface) {

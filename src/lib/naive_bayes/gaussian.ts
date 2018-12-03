@@ -45,10 +45,10 @@ export class GaussianNB<T extends number | string = number>
    */
   private _modelState: InterfaceFitModel<T>;
 
+
   /**
-   * Build a forest of trees from the training set (X, y).
-   * @param {number[][]} X - array-like or sparse matrix of shape = [n_samples, n_features]
-   * @param {T[]} y - array-like, shape = [n_samples] or [n_samples, n_outputs]
+   * @param  {Type2DMatrix<number>=null} X - array-like or sparse matrix of shape = [n_samples, n_features]
+   * @param  {Type1DMatrix<T>=null} y - array-like, shape = [n_samples] or [n_samples, n_outputs]
    * @returns void
    */
   public fit(X: Type2DMatrix<number> = null, y: Type1DMatrix<T> = null): void {
@@ -69,9 +69,8 @@ export class GaussianNB<T extends number | string = number>
   }
 
   /**
-   * Predict multiple rows
-   * @param {number[][]} X - values to predict in Matrix format
-   * @returns {T[]}
+   * @param  {Type2DMatrix<number>} X
+   * @returns T
    */
   public predict(X: Type2DMatrix<number>): T[] {
     try {
@@ -84,11 +83,18 @@ export class GaussianNB<T extends number | string = number>
       }
     }
   }
-
+  
+  /**
+   * @returns InterfaceFitModel
+   */
   public model(): InterfaceFitModel<T> {
     return this._modelState;
   }
-
+  
+  /**
+   * @param  {IterableIterator<IterableIterator<number>>} X
+   * @returns IterableIterator
+   */
   public *predictIterator(
     X: IterableIterator<IterableIterator<number>>
   ): IterableIterator<T> {
@@ -96,7 +102,11 @@ export class GaussianNB<T extends number | string = number>
       yield this.singlePredict([...x]);
     }
   }
-
+  
+  /**
+   * @param  {InterfaceFitModelAsArray<T>} modelState
+   * @returns void
+   */
   public fromJSON(modelState: InterfaceFitModelAsArray<T>): void {
     const len: number = modelState.mean.length;
     this._modelState = {
@@ -108,6 +118,8 @@ export class GaussianNB<T extends number | string = number>
 
   /**
    * Returns a model checkpoint
+   * 
+   * @returns InterfaceFitModelAsArray
    */
   public toJSON(): InterfaceFitModelAsArray<T> {
     return {
@@ -117,10 +129,12 @@ export class GaussianNB<T extends number | string = number>
     };
   }
 
+   
   /**
    * Make a prediction
-   * @param {number[]} X - values to predict in Matrix format
-   * @returns {T}
+   * 
+   * @param  {ReadonlyArray<number>} X- values to predict in Matrix format
+   * @returns T
    */
   private singlePredict(X: ReadonlyArray<number>): T {
     const matrixX: tfc.Tensor<tfc.Rank> = tfc.tensor1d(
@@ -168,6 +182,10 @@ export class GaussianNB<T extends number | string = number>
 
   /**
    * Summarise the dataset per class using "probability density function"
+   * 
+   * @param  {Type2DMatrix<number>} X
+   * @param  {ReadonlyArray<T>} y
+   * @returns InterfaceFitModel
    */
   private fitModel(
     X: Type2DMatrix<number>,
