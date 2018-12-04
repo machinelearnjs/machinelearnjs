@@ -28,6 +28,35 @@ export function mean_absolute_error(
     sample_weight: null
   }
 ): number {
+  const yTrueShape = inferShape(y_true);
+  const yPredShape = inferShape(y_pred);
+
+  // Validation 1: empty array check
+  if (yTrueShape[0] === 0 || yPredShape[0] === 0) {
+    throw new TypeError(
+      `y_true ${JSON.stringify(y_true)} and y_pred ${JSON.stringify(
+        y_pred
+      )} cannot be empty`
+    );
+  }
+
+  if (sample_weight !== null) {
+    const weightShape = inferShape(sample_weight);
+    if (!isEqual(yTrueShape, weightShape)) {
+      throw new TypeError(`The shape of ${JSON.stringify(weightShape)}
+       does not match with the sample size ${JSON.stringify(yTrueShape)}`);
+    }
+  }
+
+  // Validation 2: Same shape
+  if (!isEqual(yTrueShape, yPredShape)) {
+    throw new TypeError(
+      `The shapes of y_true ${JSON.stringify(
+        yTrueShape
+      )} and y_pred ${JSON.stringify(yPredShape)} should be equal`
+    );
+  }
+
   /**
    * Compute the weighted average along the specified axis.
    *
@@ -97,7 +126,6 @@ export function mean_squared_error(
     sample_weight: null
   }
 ): number {
-  // console.log(inferShape(y_true));
   const yTrueShape = inferShape(y_true);
   const yPredShape = inferShape(y_pred);
 
