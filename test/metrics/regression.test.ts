@@ -26,7 +26,17 @@ describe('metrics:mean_absolute_error', () => {
     });
     expect(error).toBe(0.550000011920929);
   });
-  // TODO: Add exception tests
+  it('should reject invalid inputs', () => {
+    matchExceptionWithSnapshot(mean_absolute_error, [null, null]);
+    matchExceptionWithSnapshot(mean_absolute_error, [1, 2]);
+    matchExceptionWithSnapshot(mean_absolute_error, ['test', 'zz']);
+    matchExceptionWithSnapshot(mean_absolute_error, [[1, 2, 3], [4, 5]]);
+    matchExceptionWithSnapshot(mean_absolute_error, [
+      [1, 2],
+      [3, 4],
+      { sample_weight: [1] }
+    ]);
+  });
 });
 
 describe('metrics:mean_squared_error', () => {
