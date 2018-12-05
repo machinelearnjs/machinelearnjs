@@ -1,7 +1,4 @@
-import {
-  mean_absolute_error,
-  nmean_squared_error
-} from '../../src/lib/metrics';
+import { mean_absolute_error, mean_squared_error } from '../../src/lib/metrics';
 import { matchExceptionWithSnapshot } from '../util_testing';
 
 describe('metrics:mean_absolute_error', () => {
