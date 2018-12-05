@@ -1,6 +1,6 @@
 import * as tf from '@tensorflow/tfjs';
 import * as numeric from 'numeric';
-import { reshape, validateMatrix2D } from '../ops';
+import { reshape, validateMatrix2D, validateMatrixType } from '../ops';
 import { IMlModel, Type2DMatrix } from '../types';
 
 /**
@@ -45,6 +45,7 @@ export class PCA implements IMlModel<number> {
    */
   public fit(X: Type2DMatrix<number>): void {
     validateMatrix2D(X);
+    validateMatrixType(X, ['number']);
     const nSamples = X.length;
     // Renaming X to A for readability
     const A = tf.tensor2d(X);

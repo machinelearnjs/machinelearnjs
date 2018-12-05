@@ -3,7 +3,8 @@ import {
   reshape,
   validateFitInputs,
   validateMatrix1D,
-  validateMatrix2D
+  validateMatrix2D,
+  validateMatrixType
 } from './tensor_ops';
 
 export {
@@ -11,5 +12,6 @@ export {
   validateFitInputs,
   validateMatrix1D,
   validateMatrix2D,
+  validateMatrixType,
   reshape
 };
