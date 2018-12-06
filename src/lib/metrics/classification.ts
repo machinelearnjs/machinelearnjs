@@ -1,5 +1,6 @@
+import * as tf from '@tensorflow/tfjs';
 import * as _ from 'lodash';
-import math from '../utils/MathExtra';
+import { reshape } from '../ops';
 import { checkArray } from '../utils/validation';
 
 /**
@@ -206,17 +207,17 @@ export function confusion_matrix(options: ConfusionMatrixOptions): number[] {
   const yPredCls = _.uniqBy(y_pred, x => x);
 
   // TODO: Issue was raisen to fix the typing: https://github.com/josdejong/mathjs/issues/1150
-  const placeholder: any = math.zeros(_.size(yTrueCls), _.size(yTrueCls));
-
-  // Mutable zeros to contain matrix values
-  const zerosPlaceholder = JSON.parse(placeholder);
+  const yTrueSize = _.size(yTrueCls);
+  // const placeholder: any = math.zeros(_.size(yTrueCls), _.size(yTrueCls));
+  const rawZeros = [...tf.zeros([yTrueSize, yTrueSize]).dataSync()];
+  const placeholder: any = reshape(rawZeros, [yTrueSize, yTrueSize]);
 
   // Calculating the confusion matrix
   // Looping the index for y_true
-  const rowRange = _.range(0, _.size(zerosPlaceholder));
+  const rowRange = _.range(0, _.size(placeholder));
   _.forEach(rowRange, rowIndex => {
     // Looping the index for y_pred
-    const colRange = _.range(0, _.size(zerosPlaceholder[rowIndex]));
+    const colRange = _.range(0, _.size(placeholder[rowIndex]));
     _.forEach(colRange, colIndex => {
       // Get current target y true and y pred
       const yTargetTrueVal = yTrueCls[rowIndex];
@@ -242,9 +243,9 @@ export function confusion_matrix(options: ConfusionMatrixOptions): number[] {
       );
 
       // Recording the score
-      zerosPlaceholder[rowIndex][colIndex] = score;
+      placeholder[rowIndex][colIndex] = score;
     });
   });
 
-  return zerosPlaceholder;
+  return placeholder;
 }
