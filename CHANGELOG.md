@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.0]
+
+:rocket: Version 2 release! :rocket:
+
+- **enhance:** PCA refactored to tfjs-core
+
 ## [1.2.5]
 
 :bug: removing a module for a security reason :bug:

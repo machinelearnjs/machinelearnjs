@@ -4,7 +4,8 @@ import {
   reshape,
   validateFitInputs,
   validateMatrix1D,
-  validateMatrix2D
+  validateMatrix2D,
+  validateMatrixType
 } from '../../src/lib/ops/tensor_ops';
 import { matchExceptionWithSnapshot } from '../util_testing';
 
@@ -69,6 +70,33 @@ describe('ops', () => {
     it('should throw an exception when 2D matrix is not given', () => {
       matchExceptionWithSnapshot(validateMatrix2D, [irisTargets]);
       matchExceptionWithSnapshot(validateMatrix2D, [y1]);
+    });
+  });
+
+  describe('ops:validateMatrixType', () => {
+    it('should validate', () => {
+      jest.setTimeout(10000);
+      // Number
+      validateMatrixType([1, 2, 3], ['number']);
+      validateMatrixType([[1, 2], [3, 4]], ['number']);
+      validateMatrixType([[[1, 2]], [[3, 4]]], ['number']);
+      // String
+      validateMatrixType(['1', '2', '3', '4'], ['string']);
+      validateMatrixType([['1', '2'], ['3', '4']], ['string']);
+      validateMatrixType([[['1', '2']], [['3', '4']]], ['string']);
+      // Complex type
+      validateMatrixType([[['1', 1]], [['3', 4]]], ['string', 'number']);
+      validateMatrixType(
+        [[['1', 1]], [['3', true]]],
+        ['string', 'number', 'boolean']
+      );
+    });
+    it('should not validate', () => {
+      matchExceptionWithSnapshot(validateMatrixType, [[1, 2, 3], ['string']]);
+      matchExceptionWithSnapshot(validateMatrixType, [
+        ['1', '2', '3', '4'],
+        ['boolean']
+      ]);
     });
   });
 

@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import { PCA } from '../../src/lib/decomposition';
 
 describe('decomposition:pca', () => {
@@ -38,6 +37,8 @@ describe('decomposition:pca', () => {
 
   it('should throw an error when the given matrix is not all numbers', () => {
     const pca = new PCA();
-    expect(() => pca.fit(sample3)).toThrow('Cannot convert "test" to a number');
+    expect(() => pca.fit(sample3)).toThrow(
+      'Input matrix type of ["string"] does not match with the target types ["number"]'
+    );
   });
 });
