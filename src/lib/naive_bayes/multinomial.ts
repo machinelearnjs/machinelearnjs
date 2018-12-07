@@ -1,4 +1,4 @@
-import * as tfc from '@tensorflow/tfjs';
+import * as tf from '@tensorflow/tfjs';
 import { countBy, zip } from 'lodash';
 import { IMlModel, Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
@@ -7,8 +7,8 @@ const { isMatrix } = math.contrib;
 
 interface InterfaceFitModel<T> {
   classCategories: ReadonlyArray<T>;
-  multinomialDist: tfc.Tensor<tfc.Rank>; // 2D matrix
-  priorProbability: tfc.Tensor<tfc.Rank.R1>;
+  multinomialDist: tf.Tensor<tf.Rank>; // 2D matrix
+  priorProbability: tf.Tensor<tf.Rank.R1>;
 }
 
 interface InterfaceFitModelAsArray<T> {
@@ -124,8 +124,8 @@ export class MultinomialNB<T extends number | string = number>
     const len: number = modelState.multinomialDist.length;
     this._modelState = {
       classCategories: modelState.classCategories,
-      priorProbability: tfc.tensor1d(modelState.priorProbability as number[]),
-      multinomialDist: tfc.tensor2d(modelState.multinomialDist as number[], [
+      priorProbability: tf.tensor1d(modelState.priorProbability as number[]),
+      multinomialDist: tf.tensor2d(modelState.multinomialDist as number[], [
         len / 2,
         2
       ])
@@ -139,7 +139,7 @@ export class MultinomialNB<T extends number | string = number>
    * @returns T
    */
   private singlePredict(predictRow: ReadonlyArray<number>): T {
-    const matrixX: tfc.Tensor<tfc.Rank> = tfc.tensor1d(
+    const matrixX: tf.Tensor<tf.Rank> = tf.tensor1d(
       predictRow as number[],
       'float32'
     );
@@ -190,14 +190,14 @@ export class MultinomialNB<T extends number | string = number>
     const numFeatures = X[0].length;
 
     const separatedByCategory: {
-      [id: string]: Array<tfc.Tensor<tfc.Rank.R2>>;
+      [id: string]: Array<tf.Tensor<tf.Rank.R2>>;
     } = zip<ReadonlyArray<number>, T>(X, y).reduce(
       (groups, [row, category]) => {
         if (!(category.toString() in groups)) {
           groups[category.toString()] = [];
         }
         groups[category.toString()].push(
-          tfc.tensor1d(row as number[], 'float32')
+          tf.tensor1d(row as number[], 'float32')
         );
 
         return groups;
@@ -206,10 +206,10 @@ export class MultinomialNB<T extends number | string = number>
     );
 
     const productReducedRow = [];
-    const frequencyCount: tfc.Tensor = tfc.stack(
+    const frequencyCount: tf.Tensor = tf.stack(
       classCategories.map(
-        (category: T): tfc.Tensor<tfc.Rank.R2> => {
-          const addedRows = tfc.addN(separatedByCategory[category.toString()]);
+        (category: T): tf.Tensor<tf.Rank.R2> => {
+          const addedRows = tf.addN(separatedByCategory[category.toString()]);
           const rowsArray = [...addedRows.dataSync()];
           productReducedRow.push(rowsArray.reduce((s, c) => s + c, 0));
           return addedRows;
@@ -219,7 +219,7 @@ export class MultinomialNB<T extends number | string = number>
 
     // A class's prior may be calculated by assuming equiprobable classes
     // (i.e., priors = (number of samples in the class) / (total number of samples))
-    const priorProbability: tfc.Tensor<tfc.Rank.R1> = tfc
+    const priorProbability: tf.Tensor<tf.Rank.R1> = tf
       .tensor1d(
         classCategories.map(c => classCounts[c.toString()] / y.length),
         'float32'
@@ -227,16 +227,16 @@ export class MultinomialNB<T extends number | string = number>
       .log();
 
     // log transform to use linear multinomial forumla
-    const multinomialDist: tfc.Tensor = frequencyCount
-      .add(tfc.scalar(this.alpha) as tfc.Tensor)
+    const multinomialDist: tf.Tensor = frequencyCount
+      .add(tf.scalar(this.alpha) as tf.Tensor)
       .div(
-        tfc
+        tf
           .tensor2d(
             productReducedRow as number[],
             [frequencyCount.shape[0], 1],
             'float32'
           )
-          .add(tfc.scalar(numFeatures * this.alpha))
+          .add(tf.scalar(numFeatures * this.alpha))
       )
       .log();
 
