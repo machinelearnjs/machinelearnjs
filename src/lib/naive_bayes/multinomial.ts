@@ -228,7 +228,7 @@ export class MultinomialNB<T extends number | string = number>
 
     // log transform to use linear multinomial forumla
     const multinomialDist: tfc.Tensor = frequencyCount
-      .add(tfc.scalar(this.alpha))
+      .add(tfc.scalar(this.alpha) as tfc.Tensor)
       .div(
         tfc
           .tensor2d(
