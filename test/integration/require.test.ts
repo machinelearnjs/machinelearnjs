@@ -46,10 +46,14 @@ describe('integration:require', () => {
     const {
       accuracyScore,
       confusion_matrix,
-      zeroOneLoss
+      zeroOneLoss,
+      mean_absolute_error,
+      mean_squared_error
     } = require('kalimdor/metrics');
     expect(!!accuracyScore).toBe(true);
     expect(!!confusion_matrix).toBe(true);
+    expect(!!mean_absolute_error).toBe(true);
+    expect(!!mean_squared_error).toBe(true);
     expect(!!zeroOneLoss).toBe(true);
   });
 
