@@ -1,27 +1,4 @@
 import { MultinomialNB } from '../../src/lib/naive_bayes/multinomial';
-/*
-X = np.array([[6, 9], [5, 5], [9, 5])
-import numpy as np
-X = np.array([[6, 9], [5, 5], [9, 5], [9, 6]])
-y = np.array(['1', '2', '3', '3'])
-from sklearn.naive_bayes import MultinomialNB
-clf = MultinomialNB()
-clf.fit(X, y)
-
-print(clf.predict(np.array([[6,9]])))
-print(clf.predict(np.array([[5,5]])))
-print(clf.predict(np.array([[9,5]])))
-print(clf.predict(np.array([[1,9]])))
-print(clf.predict(np.array([[9,9]])))
-print(clf.predict(np.array([[90,9]])))
-print(clf.predict(np.array([[1,90]])))
->>> clf.class_log_prior_
-array([-1.09861229, -1.09861229, -1.09861229])
->>> clf.feature_log_prob_
-array([[-0.8873032 , -0.53062825],
-       [-0.69314718, -0.69314718],
-       [-0.47000363, -0.98082925]])
-*/
 
 describe('naive_bayes:MultinomialNB', () => {
   const X1 = [[6, 9], [5, 5], [9, 5]];
@@ -35,16 +12,6 @@ describe('naive_bayes:MultinomialNB', () => {
     [[90, 9], '3'],
     [[1, 90], '1']
   ];
-  /*
-multinomial model
-[
-      0.40000012516975403,
-      0.5999998450279236,
-      0.5,
-      0.5,
-      0.6428568959236145,
-      0.3571430742740631 ]
-*/
   const X2 = [[6, 9], [5, 5], [9, 5], [9, 6]];
   const y2 = ['1', '2', '3', '3'];
   const expectedTests2: ReadonlyArray<[[number, number], string]> = [
