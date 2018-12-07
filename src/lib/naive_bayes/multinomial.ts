@@ -69,10 +69,6 @@ export class MultinomialNB<T extends number | string = number>
     }
   }
 
-  public get modelState(): InterfaceFitModel<T> {
-    return this._modelState;
-  }
-
   /**
    * Predict multiple rows
    *
@@ -160,8 +156,7 @@ export class MultinomialNB<T extends number | string = number>
     }
     const priorProbability = this._modelState.priorProbability.clone();
 
-    // log is imporant to use different multinomial forumla
-    // instead of the factorial formula
+    // log is important to use different multinomial formula instead of the factorial formula
     // The multinomial naive Bayes classifier becomes a linear
     // classifier when expressed in log-space
     // const priorProbability = Math.log(1 / classCount);
@@ -211,7 +206,7 @@ export class MultinomialNB<T extends number | string = number>
     );
 
     const productReducedRow = [];
-    const frequencyCount: tfc.Tensor<tfc.Rank> = tfc.stack(
+    const frequencyCount: tfc.Tensor = tfc.stack(
       classCategories.map(
         (category: T): tfc.Tensor<tfc.Rank.R2> => {
           const addedRows = tfc.addN(separatedByCategory[category.toString()]);
@@ -232,7 +227,7 @@ export class MultinomialNB<T extends number | string = number>
       .log();
 
     // log transform to use linear multinomial forumla
-    const multinomialDist: tfc.Tensor<tfc.Rank> = frequencyCount
+    const multinomialDist: tfc.Tensor = frequencyCount
       .add(tfc.scalar(this.alpha))
       .div(
         tfc
