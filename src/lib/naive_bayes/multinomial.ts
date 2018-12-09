@@ -1,10 +1,7 @@
 import * as tf from '@tensorflow/tfjs';
 import { countBy, zip } from 'lodash';
-import { reshape, validateMatrix2D } from '../ops';
+import { reshape, validateFitInputs, validateMatrix2D } from '../ops';
 import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
-import math from '../utils/MathExtra';
-
-const { isMatrix } = math.contrib;
 
 /**
  * Multinomial naive bayes machine learning algorithm
@@ -53,21 +50,13 @@ export class MultinomialNB<T extends number | string = number>
    * @returns void
    */
   public fit(X: Type2DMatrix<number>, y: Type1DMatrix<T>): void {
-    if (!isMatrix(X)) {
-      throw new Error('X must be a matrix');
-    }
-    if (!Array.isArray(y)) {
-      throw new Error('y must be a vector');
-    }
-    if (X.length !== y.length) {
-      throw new Error('X and y must be same in length');
-    }
+    validateFitInputs(X, y);
     const {
       classCategories,
       multinomialDist,
       priorProbability
     } = this.fitModel(X, y);
-    this.classCategories = classCategories;
+    this.classCategories = classCategories as T[];
     this.multinomialDist = multinomialDist;
     this.priorProbability = priorProbability;
   }
