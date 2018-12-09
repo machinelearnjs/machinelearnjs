@@ -1,26 +1,7 @@
-import * as tfc from '@tensorflow/tfjs';
+import * as tf from '@tensorflow/tfjs';
 import { zip } from 'lodash';
-import { validateFitInputs } from '../ops';
+import { reshape, validateFitInputs, validateMatrix2D } from '../ops';
 import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
-import math from '../utils/MathExtra';
-
-const { isMatrix } = math.contrib;
-
-interface StrNumDict {
-  [key: string]: ReadonlyArray<ReadonlyArray<number>>;
-}
-
-interface InterfaceFitModel<T> {
-  classCategories: ReadonlyArray<T>;
-  mean: tfc.Tensor<tfc.Rank>;
-  variance: tfc.Tensor<tfc.Rank>;
-}
-
-interface InterfaceFitModelAsArray<T> {
-  classCategories: ReadonlyArray<T>;
-  mean: ReadonlyArray<number>;
-  variance: ReadonlyArray<number>;
-}
 
 const SQRT_2PI = Math.sqrt(Math.PI * 2);
 
@@ -41,10 +22,9 @@ const SQRT_2PI = Math.sqrt(Math.PI * 2);
  */
 export class GaussianNB<T extends number | string = number>
   implements IMlModel<T> {
-  /**
-   * Naive Bayes summary according to classes
-   */
-  private _modelState: InterfaceFitModel<T>;
+  private classCategories: T[];
+  private mean: tf.Tensor2D;
+  private variance: tf.Tensor2D;
 
   /**
    * @param  {Type2DMatrix<number>=null} X - array-like or sparse matrix of shape = [n_samples, n_features]
@@ -53,7 +33,10 @@ export class GaussianNB<T extends number | string = number>
    */
   public fit(X: Type2DMatrix<number> = null, y: Type1DMatrix<T> = null): void {
     validateFitInputs(X, y);
-    this._modelState = this.fitModel(X, y);
+    const { classCategories, mean, variance } = this.fitModel(X, y);
+    this.classCategories = classCategories;
+    this.mean = mean;
+    this.variance = variance;
   }
 
   /**
@@ -61,22 +44,23 @@ export class GaussianNB<T extends number | string = number>
    * @returns T
    */
   public predict(X: Type2DMatrix<number>): T[] {
-    try {
-      return X.map((x): T => this.singlePredict(x));
-    } catch (e) {
-      if (!isMatrix(X)) {
-        throw new Error('X must be a matrix');
-      } else {
-        throw e;
-      }
-    }
+    validateMatrix2D(X);
+    return X.map((x): T => this.singlePredict(x));
   }
 
   /**
    * @returns InterfaceFitModel
    */
-  public model(): InterfaceFitModel<T> {
-    return this._modelState;
+  public model(): {
+    classCategories: T[];
+    mean: tf.Tensor2D;
+    variance: tf.Tensor2D;
+  } {
+    return {
+      classCategories: this.classCategories,
+      mean: this.mean,
+      variance: this.variance
+    };
   }
 
   /**
@@ -95,13 +79,14 @@ export class GaussianNB<T extends number | string = number>
    * @param  {InterfaceFitModelAsArray<T>} modelState
    * @returns void
    */
-  public fromJSON(modelState: InterfaceFitModelAsArray<T>): void {
-    const len: number = modelState.mean.length;
-    this._modelState = {
-      classCategories: modelState.classCategories,
-      mean: tfc.tensor2d(modelState.mean as number[], [len / 2, 2]),
-      variance: tfc.tensor2d(modelState.variance as number[], [len / 2, 2])
-    };
+  public fromJSON(modelState: {
+    classCategories: T[];
+    mean: Type2DMatrix<number>;
+    variance: Type2DMatrix<number>;
+  }): void {
+    this.classCategories = modelState.classCategories;
+    this.mean = tf.tensor2d(modelState.mean);
+    this.variance = tf.tensor2d(modelState.variance);
   }
 
   /**
@@ -109,11 +94,20 @@ export class GaussianNB<T extends number | string = number>
    *
    * @returns InterfaceFitModelAsArray
    */
-  public toJSON(): InterfaceFitModelAsArray<T> {
+  public toJSON(): {
+    classCategories: T[];
+    mean: Type2DMatrix<number>;
+    variance: Type2DMatrix<number>;
+  } {
     return {
-      classCategories: this._modelState.classCategories,
-      mean: [...this._modelState.mean.dataSync()],
-      variance: [...this._modelState.variance.dataSync()]
+      classCategories: this.classCategories,
+      mean: reshape([...this.mean.dataSync()], this.mean.shape) as Type2DMatrix<
+        number
+      >,
+      variance: reshape(
+        [...this.variance.dataSync()],
+        this.variance.shape
+      ) as Type2DMatrix<number>
     };
   }
 
@@ -124,14 +118,11 @@ export class GaussianNB<T extends number | string = number>
    * @returns T
    */
   private singlePredict(X: ReadonlyArray<number>): T {
-    const matrixX: tfc.Tensor<tfc.Rank> = tfc.tensor1d(
-      X as number[],
-      'float32'
-    );
+    const matrixX: tf.Tensor<tf.Rank> = tf.tensor1d(X as number[], 'float32');
     const numFeatures = matrixX.shape[0];
 
     // Comparing input and summary shapes
-    const summaryLength = this._modelState.mean.shape[1];
+    const summaryLength = this.mean.shape[1];
     if (numFeatures !== summaryLength) {
       throw new Error(
         `Prediction input ${
@@ -140,21 +131,21 @@ export class GaussianNB<T extends number | string = number>
       );
     }
 
-    const mean = this._modelState.mean.clone();
-    const variance = this._modelState.variance.clone();
+    const mean = this.mean.clone();
+    const variance = this.variance.clone();
 
-    const meanValPow: tfc.Tensor<tfc.Rank> = matrixX
+    const meanValPow: tf.Tensor<tf.Rank> = matrixX
       .sub(mean)
-      .pow(tfc.scalar(2))
-      .mul(tfc.scalar(-1));
+      .pow(tf.scalar(2))
+      .mul(tf.scalar(-1));
 
-    const exponent: tfc.Tensor<tfc.Rank> = meanValPow
-      .div(variance.mul(tfc.scalar(2)))
+    const exponent: tf.Tensor<tf.Rank> = meanValPow
+      .div(variance.mul(tf.scalar(2)))
       .exp();
-    const innerDiv: tfc.Tensor<tfc.Rank> = tfc
+    const innerDiv: tf.Tensor<tf.Rank> = tf
       .scalar(SQRT_2PI)
       .mul(variance.sqrt());
-    const probabilityArray: tfc.Tensor<tfc.Rank> = tfc
+    const probabilityArray: tf.Tensor<tf.Rank> = tf
       .scalar(1)
       .div(innerDiv)
       .mul(exponent);
@@ -164,7 +155,7 @@ export class GaussianNB<T extends number | string = number>
       .argMax()
       .dataSync()[0];
 
-    return this._modelState.classCategories[selectionIndex];
+    return this.classCategories[selectionIndex];
   }
 
   /**
@@ -177,35 +168,41 @@ export class GaussianNB<T extends number | string = number>
   private fitModel(
     X: Type2DMatrix<number>,
     y: Type1DMatrix<T>
-  ): InterfaceFitModel<T> {
-    const classCategories: ReadonlyArray<T> = [...new Set(y)].sort();
+  ): {
+    classCategories: T[];
+    mean: tf.Tensor2D;
+    variance: tf.Tensor2D;
+  } {
+    const classCategories = [...new Set(y)].sort() as T[];
 
     // Separates X by classes specified by y argument
-    const separatedByCategory: StrNumDict = zip<ReadonlyArray<number>, T>(
-      X,
-      y
-    ).reduce((groups, [row, category]) => {
-      groups[category.toString()] = groups[category.toString()] || [];
-      groups[category.toString()].push(row);
-
-      return groups;
-    }, {});
+    const separatedByCategory: {
+      [key: string]: Type2DMatrix<number>;
+    } = zip<ReadonlyArray<number>, T>(X, y).reduce(
+      (groups, [row, category]) => {
+        groups[category.toString()] = groups[category.toString()] || [];
+        groups[category.toString()].push(row);
+        return groups;
+      },
+      {}
+    );
 
     const momentStack = classCategories.map((category: T) => {
-      const classFeatures: tfc.Tensor<tfc.Rank.R2> = tfc.tensor2d(
+      const classFeatures: tf.Tensor = tf.tensor2d(
         separatedByCategory[category.toString()] as number[][],
         null,
         'float32'
-      );
-      const classMoments = tfc.moments(classFeatures, [0]);
-      return classMoments;
+      ) as tf.Tensor;
+      return tf.moments(classFeatures, [0]);
     });
 
     // For every class we have a mean and variance for each feature
-    const mean: tfc.Tensor<tfc.Rank> = tfc.stack(momentStack.map(m => m.mean));
-    const variance: tfc.Tensor<tfc.Rank> = tfc.stack(
+    const mean: tf.Tensor2D = tf.stack(
+      momentStack.map(m => m.mean)
+    ) as tf.Tensor2D;
+    const variance: tf.Tensor2D = tf.stack(
       momentStack.map(m => m.variance)
-    );
+    ) as tf.Tensor2D;
 
     // TODO check for NaN or 0 variance
     // setTimeout(() => {
