@@ -62,18 +62,14 @@ export class MultinomialNB<T extends number | string = number>
     if (X.length !== y.length) {
       throw new Error('X and y must be same in length');
     }
-    try {
-      const {
-        classCategories,
-        multinomialDist,
-        priorProbability
-      } = this.fitModel(X, y);
-      this.classCategories = classCategories;
-      this.multinomialDist = multinomialDist;
-      this.priorProbability = priorProbability;
-    } catch (e) {
-      throw e;
-    }
+    const {
+      classCategories,
+      multinomialDist,
+      priorProbability
+    } = this.fitModel(X, y);
+    this.classCategories = classCategories;
+    this.multinomialDist = multinomialDist;
+    this.priorProbability = priorProbability;
   }
 
   /**
