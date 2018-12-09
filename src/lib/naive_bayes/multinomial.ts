@@ -34,13 +34,9 @@ export class MultinomialNB<T extends number | string = number>
    */
   private multinomialDist: tf.Tensor2D;
   private priorProbability: tf.Tensor1D;
+  private alpha: number = 1;
 
-  /**
-   *  Setting alpha=1 is called Laplace smoothing, while alpha<1 is called Lidstone smoothing.
-   *
-   * @param  {number=1} alpha
-   */
-  constructor(private readonly alpha: number = 1) {}
+  // constructor(private readonly alpha: number = 1) {}
 
   /**
    * Fit date to build Gaussian Distribution summary
@@ -49,7 +45,7 @@ export class MultinomialNB<T extends number | string = number>
    * @param  {ReadonlyArray<T>} y - target values
    * @returns void
    */
-  public fit(X: Type2DMatrix<number>, y: Type1DMatrix<T>): void {
+  public fit(X: Type2DMatrix<number> = null, y: Type1DMatrix<T> = null): void {
     validateFitInputs(X, y);
     const {
       classCategories,
@@ -67,7 +63,7 @@ export class MultinomialNB<T extends number | string = number>
    * @param  {Type2DMatrix<number>} X - values to predict in Matrix format
    * @returns T
    */
-  public predict(X: Type2DMatrix<number>): T[] {
+  public predict(X: Type2DMatrix<number> = null): T[] {
     validateMatrix2D(X);
     if (
       isEmpty(this.classCategories) ||
@@ -87,8 +83,17 @@ export class MultinomialNB<T extends number | string = number>
    * @returns InterfaceFitModelAsArray
    */
   public toJSON(): {
-    classCategories: Type1DMatrix<T>;
+    /**
+     * List of class categories
+     */
+    classCategories: T[];
+    /**
+     * Multinomial distribution values over classes
+     */
     multinomialDist: Type2DMatrix<number>;
+    /**
+     * Learned prior class probabilities
+     */
     priorProbability: Type1DMatrix<number>;
   } {
     return {
@@ -100,19 +105,30 @@ export class MultinomialNB<T extends number | string = number>
       ) as Type2DMatrix<number>
     };
   }
-
   /**
-   * @param  {InterfaceFitModelAsArray<T>} modelState
-   * @returns void
+   * Restore the model from states
+   * @param multinomialDist - Multinomial distribution values over classes
+   * @param priorProbability - Learned prior class probabilities
+   * @param classCategories - List of unique class categories
    */
-  public fromJSON(modelState: {
-    multinomialDist: Type2DMatrix<number>;
-    priorProbability: Type1DMatrix<number>;
-    classCategories: Type1DMatrix<T>;
-  }): void {
-    this.classCategories = modelState.classCategories;
-    this.priorProbability = tf.tensor1d(modelState.priorProbability);
-    this.multinomialDist = tf.tensor2d(modelState.multinomialDist);
+  public fromJSON(
+    {
+      multinomialDist = null,
+      priorProbability = null,
+      classCategories = null
+    }: {
+      multinomialDist: Type2DMatrix<number>;
+      priorProbability: Type1DMatrix<number>;
+      classCategories: Type1DMatrix<T>;
+    } = {
+      multinomialDist: null,
+      priorProbability: null,
+      classCategories: null
+    }
+  ): void {
+    this.classCategories = classCategories;
+    this.priorProbability = tf.tensor1d(priorProbability);
+    this.multinomialDist = tf.tensor2d(multinomialDist);
   }
 
   /**
