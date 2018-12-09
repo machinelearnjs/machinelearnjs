@@ -125,10 +125,14 @@ export class MultinomialNB<T extends number | string = number>
    * @param  {InterfaceFitModelAsArray<T>} modelState
    * @returns void
    */
-  public fromJSON(modelState: IModelState<T>): void {
+  public fromJSON(modelState: {
+    multinomialDist: number[][];
+    priorProbability: number[];
+    classCategories: number[];
+  }): void {
     const len: number = modelState.multinomialDist.length;
-    this.classCategories = modelState.classCategories;
-    this.priorProbability = tf.tensor1d(modelState.priorProbability as number[])
+    this.classCategories = tf.tensor1d(modelState.classCategories);
+    this.priorProbability = tf.tensor1d(modelState.priorProbability)
     this.multinomialDist = tf.tensor2d(modelState.multinomialDist as number[], [
       len / 2,
       2
@@ -187,12 +191,10 @@ export class MultinomialNB<T extends number | string = number>
   ): {
 
   } {
-    const classCounts = countBy<number>(y);
+    const classCounts = countBy<T>(y);
     const classCategories = Array.from(new Set(y));
     const numFeatures = X[0].length;
-    const separatedByCategory: {
-      [id: string];
-    } = zip<ReadonlyArray<number>, T>(X, y).reduce(
+    const separatedByCategory = zip<ReadonlyArray<number>, T>(X, y).reduce(
       (groups, [row, category]) => {
         if (!(category.toString() in groups)) {
           groups[category.toString()] = [];
@@ -205,6 +207,7 @@ export class MultinomialNB<T extends number | string = number>
       },
       {}
     );
+    console.log('sep cls', separatedByCategory['1']);
     const frequencySumByClass = tf.stack(
       classCategories.map(
         (category: T) =>
@@ -236,7 +239,6 @@ export class MultinomialNB<T extends number | string = number>
           .add(tf.scalar(numFeatures * this.alpha))
       )
       .log();
-    console.log('multinomial', multinomialDist.dataSync());
     return {
       classCategories,
       multinomialDist,
