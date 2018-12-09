@@ -1,5 +1,6 @@
 import * as tfc from '@tensorflow/tfjs';
 import { zip } from 'lodash';
+import { validateFitInputs } from '../ops';
 import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
 
@@ -45,27 +46,14 @@ export class GaussianNB<T extends number | string = number>
    */
   private _modelState: InterfaceFitModel<T>;
 
-
   /**
    * @param  {Type2DMatrix<number>=null} X - array-like or sparse matrix of shape = [n_samples, n_features]
    * @param  {Type1DMatrix<T>=null} y - array-like, shape = [n_samples] or [n_samples, n_outputs]
    * @returns void
    */
   public fit(X: Type2DMatrix<number> = null, y: Type1DMatrix<T> = null): void {
-    if (!isMatrix(X)) {
-      throw new Error('X must be a matrix');
-    }
-    if (!Array.isArray(y)) {
-      throw new Error('y must be a vector');
-    }
-    if (X.length !== y.length) {
-      throw new Error('X and y must be same in length');
-    }
-    try {
-      this._modelState = this.fitModel(X, y);
-    } catch (e) {
-      throw e;
-    }
+    validateFitInputs(X, y);
+    this._modelState = this.fitModel(X, y);
   }
 
   /**
@@ -83,14 +71,14 @@ export class GaussianNB<T extends number | string = number>
       }
     }
   }
-  
+
   /**
    * @returns InterfaceFitModel
    */
   public model(): InterfaceFitModel<T> {
     return this._modelState;
   }
-  
+
   /**
    * @param  {IterableIterator<IterableIterator<number>>} X
    * @returns IterableIterator
@@ -102,7 +90,7 @@ export class GaussianNB<T extends number | string = number>
       yield this.singlePredict([...x]);
     }
   }
-  
+
   /**
    * @param  {InterfaceFitModelAsArray<T>} modelState
    * @returns void
@@ -118,7 +106,7 @@ export class GaussianNB<T extends number | string = number>
 
   /**
    * Returns a model checkpoint
-   * 
+   *
    * @returns InterfaceFitModelAsArray
    */
   public toJSON(): InterfaceFitModelAsArray<T> {
@@ -129,10 +117,9 @@ export class GaussianNB<T extends number | string = number>
     };
   }
 
-   
   /**
    * Make a prediction
-   * 
+   *
    * @param  {ReadonlyArray<number>} X- values to predict in Matrix format
    * @returns T
    */
@@ -182,14 +169,14 @@ export class GaussianNB<T extends number | string = number>
 
   /**
    * Summarise the dataset per class using "probability density function"
-   * 
+   *
    * @param  {Type2DMatrix<number>} X
    * @param  {ReadonlyArray<T>} y
    * @returns InterfaceFitModel
    */
   private fitModel(
     X: Type2DMatrix<number>,
-    y: ReadonlyArray<T>
+    y: Type1DMatrix<T>
   ): InterfaceFitModel<T> {
     const classCategories: ReadonlyArray<T> = [...new Set(y)].sort();
 
