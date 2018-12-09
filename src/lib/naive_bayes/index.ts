@@ -1,3 +1,4 @@
 import { GaussianNB } from './gaussian';
+import { MultinomialNB } from './multinomial';
 
-export { GaussianNB };
+export { GaussianNB, MultinomialNB };

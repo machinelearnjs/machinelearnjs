@@ -1,8 +1,8 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`naive_bayes:GaussianNB Should fit only accept X and y if number of attributes is same 1`] = `[TypeError: Number of labels=3 does not math number of samples=4]`;
+exports[`naive_bayes:GaussianNB Should fit only accept X and y if number of attributes is same 1`] = `[TypeError: Number of labels=3 does not math number of samples=7]`;
 
-exports[`naive_bayes:GaussianNB Should fit only accept X and y if number of attributes is same 2`] = `[TypeError: Number of labels=4 does not math number of samples=3]`;
+exports[`naive_bayes:GaussianNB Should fit only accept X and y if number of attributes is same 2`] = `[TypeError: Number of labels=7 does not math number of samples=3]`;
 
 exports[`naive_bayes:GaussianNB Should not fit non array for testing data 1`] = `[TypeError: The matrix is not 1D shaped: 123 of []]`;
 

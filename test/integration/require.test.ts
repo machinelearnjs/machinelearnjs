@@ -110,7 +110,8 @@ describe('integration:require', () => {
   });
 
   it('should require naive_bayes', () => {
-    const { GaussianNB } = require('kalimdor/naive_bayes');
+    const { GaussianNB, MultinomialNB } = require('kalimdor/naive_bayes');
     expect(!!GaussianNB).toBe(true);
+    expect(!!MultinomialNB).toBe(true);
   });
 });

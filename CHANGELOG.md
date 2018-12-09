@@ -7,6 +7,8 @@ All notable changes to this project will be documented in this file.
 :rocket: Version 2 release! :rocket:
 
 - **enhance:** PCA refactored to tfjs-core
+- **enhance:** GaussianNB is now refactored to tfjs-core @benjaminmcdonald thanks!!
+- **feature:** MultinomialNB written in tfjs-core @benjaminmcdonald thanks again!
 
 ## [1.2.5]
 
