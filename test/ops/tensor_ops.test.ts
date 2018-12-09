@@ -1,9 +1,11 @@
 import { Iris } from '../../src/lib/datasets';
 import {
   inferShape,
+  reshape,
   validateFitInputs,
   validateMatrix1D,
-  validateMatrix2D
+  validateMatrix2D,
+  validateMatrixType
 } from '../../src/lib/ops/tensor_ops';
 import { matchExceptionWithSnapshot } from '../util_testing';
 
@@ -68,6 +70,33 @@ describe('ops', () => {
     it('should throw an exception when 2D matrix is not given', () => {
       matchExceptionWithSnapshot(validateMatrix2D, [irisTargets]);
       matchExceptionWithSnapshot(validateMatrix2D, [y1]);
+    });
+  });
+
+  describe('ops:validateMatrixType', () => {
+    it('should validate', () => {
+      jest.setTimeout(10000);
+      // Number
+      validateMatrixType([1, 2, 3], ['number']);
+      validateMatrixType([[1, 2], [3, 4]], ['number']);
+      validateMatrixType([[[1, 2]], [[3, 4]]], ['number']);
+      // String
+      validateMatrixType(['1', '2', '3', '4'], ['string']);
+      validateMatrixType([['1', '2'], ['3', '4']], ['string']);
+      validateMatrixType([[['1', '2']], [['3', '4']]], ['string']);
+      // Complex type
+      validateMatrixType([[['1', 1]], [['3', 4]]], ['string', 'number']);
+      validateMatrixType(
+        [[['1', 1]], [['3', true]]],
+        ['string', 'number', 'boolean']
+      );
+    });
+    it('should not validate', () => {
+      matchExceptionWithSnapshot(validateMatrixType, [[1, 2, 3], ['string']]);
+      matchExceptionWithSnapshot(validateMatrixType, [
+        ['1', '2', '3', '4'],
+        ['boolean']
+      ]);
     });
   });
 
@@ -155,5 +184,43 @@ describe('ops', () => {
         'Element arr[1][1][1][1] should have 2 elements, but has 1 elements'
       );
     });
+  });
+});
+
+describe('utils.reshape', () => {
+  it('should reshape an array of shape [1] into [2, 3]', () => {
+    const result = reshape([1, 2, 3, 4, 5, 6], [2, 3]);
+    expect(result).toEqual([[1, 2, 3], [4, 5, 6]]);
+  });
+
+  it('should reshape an array of shape [2, 3] into [1]', () => {
+    // console.log(tf.tensor1d([1, 2, 3]).shape);
+    const result = reshape([[1, 2, 3], [4, 5, 6]], [6]);
+    expect(result).toEqual(result);
+  });
+
+  it('should reshape an array of shape [1] into [2, 3, 1]', () => {
+    const result = reshape([1, 2, 3, 4, 5, 6], [2, 3, 1]);
+    expect(result).toEqual([[[1], [2], [3]], [[4], [5], [6]]]);
+  });
+
+  it('should reshape an array of shape [2, 3] into [2, 3, 1]', () => {
+    const result = reshape([[1, 2, 3], [4, 5, 6]], [2, 3, 1]);
+    expect(result).toEqual([[[1], [2], [3]], [[4], [5], [6]]]);
+  });
+
+  it('should not reshape invalid inputs', () => {
+    expect(() => reshape(null, [1])).toThrow(
+      'The input array must be an array!'
+    );
+    expect(() => reshape([], [1])).toThrow(
+      'Target array shape [0] cannot be reshaped into 1'
+    );
+    expect(() => reshape([[1, 2, 3]], null)).toThrow(
+      'The sizes must be an array!'
+    );
+    expect(() => reshape([[1, 2, 3]], 1)).toThrow(
+      'The sizes must be an array!'
+    );
   });
 });

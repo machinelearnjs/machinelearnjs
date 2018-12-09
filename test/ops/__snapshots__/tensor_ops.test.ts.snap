@@ -11,3 +11,7 @@ exports[`ops ops:validate1DMatrix should throw an exception when 1D matrix is no
 exports[`ops ops:validate2DMatrix should throw an exception when 2D matrix is not given 1`] = `[TypeError: The matrix is not 2D shaped: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2] of [150]]`;
 
 exports[`ops ops:validate2DMatrix should throw an exception when 2D matrix is not given 2`] = `[TypeError: The matrix is not 2D shaped: [1,2,3] of [3]]`;
+
+exports[`ops ops:validateMatrixType should not validate 1`] = `[TypeError: Input matrix type of ["number"] does not match with the target types ["string"]]`;
+
+exports[`ops ops:validateMatrixType should not validate 2`] = `[TypeError: Input matrix type of ["string"] does not match with the target types ["boolean"]]`;
