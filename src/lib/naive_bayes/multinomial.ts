@@ -124,10 +124,7 @@ export class MultinomialNB<T extends number | string = number>
    * @returns T
    */
   private singlePredict(predictRow: Type1DMatrix<number>): T {
-    const matrixX: tf.Tensor<tf.Rank> = tf.tensor1d(
-      predictRow as number[],
-      'float32'
-    );
+    const matrixX = tf.tensor1d(predictRow as number[], 'float32');
     const numFeatures = matrixX.shape[0];
     const summaryLength = this.multinomialDist.shape[1];
 
