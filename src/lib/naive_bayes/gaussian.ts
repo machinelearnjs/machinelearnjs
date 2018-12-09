@@ -27,8 +27,8 @@ export class GaussianNB<T extends number | string = number>
   private variance: tf.Tensor2D;
 
   /**
-   * @param  {Type2DMatrix<number>=null} X - array-like or sparse matrix of shape = [n_samples, n_features]
-   * @param  {Type1DMatrix<T>=null} y - array-like, shape = [n_samples] or [n_samples, n_outputs]
+   * @param X - array-like or sparse matrix of shape = [n_samples, n_features]
+   * @param y - array-like, shape = [n_samples] or [n_samples, n_outputs]
    */
   public fit(X: Type2DMatrix<number> = null, y: Type1DMatrix<T> = null): void {
     validateFitInputs(X, y);
