@@ -1,4 +1,5 @@
 import { MultinomialNB } from '../../src/lib/naive_bayes/multinomial';
+import { matchExceptionWithSnapshot } from '../util_testing';
 
 describe('naive_bayes:MultinomialNB', () => {
   const X1 = [[6, 9], [5, 5], [9, 5]];
@@ -91,5 +92,24 @@ describe('naive_bayes:MultinomialNB', () => {
     nb2.fromJSON(checkpoint);
     const result2 = nb2.predict([[1, 20]]);
     expect(result2).toEqual(expected);
+  });
+
+  it('should not fit invalid inputs', () => {
+    const nb = new MultinomialNB<string>();
+    matchExceptionWithSnapshot(nb.fit, [null, 1]);
+    matchExceptionWithSnapshot(nb.fit, [[[1, 2], [1, 3]], [1]]);
+    matchExceptionWithSnapshot(nb.fit, [[], [1]]);
+  });
+
+  it('should not predict invalid inputs', () => {
+    const nb = new MultinomialNB<string>();
+    matchExceptionWithSnapshot(nb.predict, [null]);
+    matchExceptionWithSnapshot(nb.predict, []);
+    matchExceptionWithSnapshot(nb.predict, [1]);
+    matchExceptionWithSnapshot(nb.predict, [[1, 2]]);
+  });
+  it('should not predict if the model is not trained yet', () => {
+    const nb = new MultinomialNB<string>();
+    matchExceptionWithSnapshot(nb.predict, [[[1, 2], [3, 4]]]);
   });
 });

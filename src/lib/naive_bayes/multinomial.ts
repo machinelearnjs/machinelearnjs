@@ -1,5 +1,5 @@
 import * as tf from '@tensorflow/tfjs';
-import { countBy, zip } from 'lodash';
+import { countBy, isEmpty, zip } from 'lodash';
 import { reshape, validateFitInputs, validateMatrix2D } from '../ops';
 import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
 
@@ -69,6 +69,15 @@ export class MultinomialNB<T extends number | string = number>
    */
   public predict(X: Type2DMatrix<number>): T[] {
     validateMatrix2D(X);
+    if (
+      isEmpty(this.classCategories) ||
+      isEmpty(this.multinomialDist) ||
+      isEmpty(this.priorProbability)
+    ) {
+      throw new TypeError(
+        'You should fit the model first before running the predict!'
+      );
+    }
     return X.map(x => this.singlePredict(x));
   }
 
