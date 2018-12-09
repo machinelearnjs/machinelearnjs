@@ -29,7 +29,6 @@ export class GaussianNB<T extends number | string = number>
   /**
    * @param  {Type2DMatrix<number>=null} X - array-like or sparse matrix of shape = [n_samples, n_features]
    * @param  {Type1DMatrix<T>=null} y - array-like, shape = [n_samples] or [n_samples, n_outputs]
-   * @returns void
    */
   public fit(X: Type2DMatrix<number> = null, y: Type1DMatrix<T> = null): void {
     validateFitInputs(X, y);
@@ -40,8 +39,7 @@ export class GaussianNB<T extends number | string = number>
   }
 
   /**
-   * @param  {Type2DMatrix<number>} X
-   * @returns T
+   * @param X - array-like, shape = [n_samples, n_features]
    */
   public predict(X: Type2DMatrix<number>): T[] {
     validateMatrix2D(X);
@@ -49,39 +47,21 @@ export class GaussianNB<T extends number | string = number>
   }
 
   /**
-   * @returns InterfaceFitModel
-   */
-  public model(): {
-    classCategories: T[];
-    mean: tf.Tensor2D;
-    variance: tf.Tensor2D;
-  } {
-    return {
-      classCategories: this.classCategories,
-      mean: this.mean,
-      variance: this.variance
-    };
-  }
-
-  /**
-   * @param  {IterableIterator<IterableIterator<number>>} X
-   * @returns IterableIterator
-   */
-  public *predictIterator(
-    X: IterableIterator<IterableIterator<number>>
-  ): IterableIterator<T> {
-    for (const x of X) {
-      yield this.singlePredict([...x]);
-    }
-  }
-
-  /**
-   * @param  {InterfaceFitModelAsArray<T>} modelState
-   * @returns void
+   * Restore the model from saved states
+   * @param modelState
    */
   public fromJSON(modelState: {
+    /**
+     * List of class categories
+     */
     classCategories: T[];
+    /**
+     * Mean of each feature per class
+     */
     mean: Type2DMatrix<number>;
+    /**
+     * Variance of each feature per class
+     */
     variance: Type2DMatrix<number>;
   }): void {
     this.classCategories = modelState.classCategories;
@@ -90,13 +70,20 @@ export class GaussianNB<T extends number | string = number>
   }
 
   /**
-   * Returns a model checkpoint
-   *
-   * @returns InterfaceFitModelAsArray
+   * Save the model's states
    */
   public toJSON(): {
+    /**
+     * List of class categories
+     */
     classCategories: T[];
+    /**
+     * Mean of each feature per class
+     */
     mean: Type2DMatrix<number>;
+    /**
+     * Variance of each feature per class
+     */
     variance: Type2DMatrix<number>;
   } {
     return {
@@ -112,7 +99,7 @@ export class GaussianNB<T extends number | string = number>
   }
 
   /**
-   * Make a prediction
+   * Make a single prediction
    *
    * @param  {ReadonlyArray<number>} X- values to predict in Matrix format
    * @returns T
@@ -131,21 +118,16 @@ export class GaussianNB<T extends number | string = number>
       );
     }
 
-    const mean = this.mean.clone();
-    const variance = this.variance.clone();
-
-    const meanValPow: tf.Tensor<tf.Rank> = matrixX
-      .sub(mean)
+    const meanValPow: tf.Scalar = matrixX
+      .sub(this.mean as tf.Tensor)
       .pow(tf.scalar(2))
       .mul(tf.scalar(-1));
 
-    const exponent: tf.Tensor<tf.Rank> = meanValPow
-      .div(variance.mul(tf.scalar(2)))
-      .exp();
-    const innerDiv: tf.Tensor<tf.Rank> = tf
-      .scalar(SQRT_2PI)
-      .mul(variance.sqrt());
-    const probabilityArray: tf.Tensor<tf.Rank> = tf
+    const exponent: tf.Tensor = meanValPow
+      .div(this.variance.mul(tf.scalar(2)))
+      .exp() as tf.Tensor;
+    const innerDiv: tf.Tensor = tf.scalar(SQRT_2PI).mul(this.variance.sqrt());
+    const probabilityArray: tf.Tensor = tf
       .scalar(1)
       .div(innerDiv)
       .mul(exponent);
@@ -155,7 +137,7 @@ export class GaussianNB<T extends number | string = number>
       .argMax()
       .dataSync()[0];
 
-    return this.classCategories[selectionIndex];
+    return this.classCategories[selectionIndex] as T;
   }
 
   /**
