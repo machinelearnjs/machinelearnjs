@@ -1,8 +1,8 @@
 import { MultinomialNB } from '../../src/lib/naive_bayes/multinomial';
 
 describe('naive_bayes:MultinomialNB', () => {
-  const X1 = [[6, 9], [6, 9], [5, 5], [9, 5]];
-  const y1 = ['1', '1', '2', '3'];
+  const X1 = [[6, 9], [5, 5], [9, 5]];
+  const y1 = ['1', '2', '3'];
   const expectedTests: ReadonlyArray<[[number, number], string]> = [
     [[6, 9], '1'],
     [[5, 5], '2'],
