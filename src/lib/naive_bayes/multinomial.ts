@@ -1,6 +1,6 @@
 import * as tf from '@tensorflow/tfjs';
 import { countBy, zip } from 'lodash';
-import { reshape } from '../ops';
+import { reshape, validateMatrix2D } from '../ops';
 import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
 
@@ -82,28 +82,9 @@ export class MultinomialNB<T extends number | string = number>
    * @param  {Type2DMatrix<number>} X - values to predict in Matrix format
    * @returns T
    */
-  public predict(X: Type2DMatrix<number>): Type1DMatrix<T> {
-    try {
-      return X.map((x): T => this.singlePredict(x));
-    } catch (e) {
-      if (!isMatrix(X)) {
-        throw new Error('X must be a matrix');
-      } else {
-        throw e;
-      }
-    }
-  }
-
-  /**
-   * @param  {IterableIterator<IterableIterator<number>>} X
-   * @returns IterableIterator
-   */
-  public *predictIterator(
-    X: IterableIterator<IterableIterator<number>>
-  ): IterableIterator<T> {
-    for (const x of X) {
-      yield this.singlePredict([...x]);
-    }
+  public predict(X: Type2DMatrix<number>): T[] {
+    validateMatrix2D(X);
+    return X.map(x => this.singlePredict(x));
   }
 
   /**
@@ -146,9 +127,7 @@ export class MultinomialNB<T extends number | string = number>
    * @param  {ReadonlyArray<number>} predictRow
    * @returns T
    */
-  private singlePredict(
-    predictRow: Type1DMatrix<number>
-  ): Type1DMatrix<T>[any] {
+  private singlePredict(predictRow: Type1DMatrix<number>): T {
     const matrixX: tf.Tensor<tf.Rank> = tf.tensor1d(
       predictRow as number[],
       'float32'
@@ -181,7 +160,7 @@ export class MultinomialNB<T extends number | string = number>
     const selectionIndex = allProbabilities.argMax().dataSync()[0];
     allProbabilities.dispose();
 
-    return this.classCategories[selectionIndex];
+    return this.classCategories[selectionIndex] as T;
   }
 
   /**
