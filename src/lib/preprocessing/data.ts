@@ -1,5 +1,11 @@
+import * as tf from '@tensorflow/tfjs';
 import * as _ from 'lodash';
-import { inferShape, validateMatrix1D, validateMatrix2D } from '../ops';
+import {
+  inferShape,
+  reshape,
+  validateMatrix1D,
+  validateMatrix2D
+} from '../ops';
 import { Type1DMatrix, Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
 import { combinationsWithReplacement } from '../utils/permutations';
@@ -58,10 +64,13 @@ export function add_dummy_feature(
     throw new TypeError('X cannot be empty');
   }
   validateMatrix2D(X);
-  const [nSamples] = math.matrix(X).size();
-  const ones = JSON.parse(math.ones(nSamples, 1).toString());
-  const multipliedOnes = math.multiply(ones, value);
-  return math.contrib.hstack(multipliedOnes, X);
+  const tensorX = tf.tensor2d(X) as tf.Tensor;
+  const [nSamples] = tensorX.shape;
+  const ones = tf.ones([nSamples, 1]) as tf.Tensor;
+  const sValue = tf.scalar(value) as tf.Tensor;
+  const multipledOnes = tf.mul(ones, sValue);
+  const hStacked = tf.concat([multipledOnes, tensorX], 1);
+  return reshape(Array.from(hStacked.dataSync()), hStacked.shape) as number[][];
 }
 
 /**
