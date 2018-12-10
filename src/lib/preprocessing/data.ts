@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import * as tf from '@tensorflow/tfjs';
 import { inferShape, validateMatrix1D, validateMatrix2D } from '../ops';
 import { Type1DMatrix, Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
@@ -404,22 +405,31 @@ export class MinMaxScaler {
    * @param {number[]} X - Array or sparse-matrix data input
    */
   public fit(X: Type1DMatrix<number> | Type2DMatrix<number>): void {
-    const clonedX = this.clone ? _.cloneDeep(X) : X;
-    let rowMax: any = clonedX;
-    let rowMin: any = clonedX;
+    // const clonedX = this.clone ? _.cloneDeep(X) : X;
+    // let rowMax: any = clonedX;
+    // let rowMin: any = clonedX;
+    let rowMax = tf.tensor(X);
+    let rowMin = tf.tensor(X);
     const xShape = inferShape(X);
     // If input is a Matrix...
     if (xShape.length === 0 || xShape[0] === 0) {
       throw new TypeError('Cannot fit with an empty value');
     } else if (xShape.length === 2) {
-      rowMax = math.max(X, 0);
-      rowMin = math.min(X, 0);
+      // tf.max(zz, 0)
+      rowMax = tf.min(rowMax as tf.Tensor, 0);
+      rowMin = tf.min(rowMin as tf.Tensor, 0);
+      // rowMax = math.max(X, 0);
+      //rowMin = math.min(X, 0);
     }
-    this.dataMax = _.max(rowMax);
-    this.dataMin = _.min(rowMin);
+    this.dataMax = tf.max(rowMax as tf.Tensor);
+    this.dataMin = tf.min(rowMin as tf.Tensor);
+    // this.dataMax = _.max(rowMax);
+    // this.dataMin = _.min(rowMin);
     this.featureMax = this.featureRange[1];
     this.featureMin = this.featureRange[0];
-    this.dataRange = this.dataMax - this.dataMin;
+    // this.dataRange = this.dataMax - this.dataMin;
+    this.dataRange = tf.sub(this.dataMax, this.dataMin).dataSync()[0];
+    console.log('checking data range', this.dataRange);
     // We need different data range for multi-dimensional
     this.scale = (this.featureMax - this.featureMin) / this.dataRange;
     this.baseMin = this.featureMin - this.dataMin * this.scale;
