@@ -406,7 +406,7 @@ export class MinMaxScaler {
     if (xShape.length === 0 || xShape[0] === 0) {
       throw new TypeError('Cannot fit with an empty value');
     } else if (xShape.length === 2) {
-      rowMax = tf.min(rowMax as tf.Tensor, 0);
+      rowMax = tf.max(rowMax as tf.Tensor, 0);
       rowMin = tf.min(rowMin as tf.Tensor, 0);
     }
     this.dataMax = tf.max(rowMax as tf.Tensor).dataSync()[0];

@@ -132,9 +132,9 @@ describe('data:MinMaxScaler', () => {
   });
   it('matrix dataset test1', () => {
     const expected = [
-      0.00984993036181191,
-      0.020163993587209703,
-      0.030478056812607495
+      0.005135651088817423,
+      0.01051329621806706,
+      0.015890941347316695
     ];
     const scaler = new MinMaxScaler({ featureRange: [0, 1] });
     scaler.fit(matrix1);
@@ -143,9 +143,9 @@ describe('data:MinMaxScaler', () => {
   });
   it('should transform matrix1 then successfully inverse tranform', () => {
     const expected = [
-      0.00984993036181191,
-      0.020163993587209703,
-      0.030478056812607495
+      0.005135651088817423,
+      0.01051329621806706,
+      0.015890941347316695
     ];
     const scaler = new MinMaxScaler({ featureRange: [0, 1] });
     scaler.fit(matrix1);
