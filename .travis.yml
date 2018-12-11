@@ -11,7 +11,7 @@ node_js:
 # keep the npm cache to speed up installs
 cache:
   directories:
-  - "$HOME/.npm"
+    - '$HOME/.npm'
 
 install:
   - npm install
@@ -21,6 +21,5 @@ script:
   - yarn build
   - yarn test:unit
   - yarn lint
-  - yarn test:nsp
   - yarn test:integration
   - yarn doc
