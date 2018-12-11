@@ -1,5 +1,5 @@
-import * as _ from 'lodash';
 import * as tf from '@tensorflow/tfjs';
+import * as _ from 'lodash';
 import { inferShape, validateMatrix1D, validateMatrix2D } from '../ops';
 import { Type1DMatrix, Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
@@ -371,7 +371,6 @@ export class OneHotEncoder {
  */
 export class MinMaxScaler {
   private featureRange: number[];
-  private clone: boolean;
   private dataMax: number;
   private dataMin: number;
   private featureMax: number;
@@ -382,22 +381,17 @@ export class MinMaxScaler {
 
   /**
    * @param featureRange - scaling range
-   * @param clone - to clone the input
    */
   constructor(
     {
-      featureRange = [0, 1],
-      clone = true
+      featureRange = [0, 1]
     }: {
       featureRange?: number[];
-      clone?: boolean;
     } = {
-      featureRange: [0, 1],
-      clone: true
+      featureRange: [0, 1]
     }
   ) {
     this.featureRange = featureRange;
-    this.clone = clone;
   }
 
   /**
@@ -405,9 +399,6 @@ export class MinMaxScaler {
    * @param {number[]} X - Array or sparse-matrix data input
    */
   public fit(X: Type1DMatrix<number> | Type2DMatrix<number>): void {
-    // const clonedX = this.clone ? _.cloneDeep(X) : X;
-    // let rowMax: any = clonedX;
-    // let rowMin: any = clonedX;
     let rowMax = tf.tensor(X);
     let rowMin = tf.tensor(X);
     const xShape = inferShape(X);
@@ -415,21 +406,15 @@ export class MinMaxScaler {
     if (xShape.length === 0 || xShape[0] === 0) {
       throw new TypeError('Cannot fit with an empty value');
     } else if (xShape.length === 2) {
-      // tf.max(zz, 0)
       rowMax = tf.min(rowMax as tf.Tensor, 0);
       rowMin = tf.min(rowMin as tf.Tensor, 0);
-      // rowMax = math.max(X, 0);
-      //rowMin = math.min(X, 0);
     }
-    this.dataMax = tf.max(rowMax as tf.Tensor);
-    this.dataMin = tf.min(rowMin as tf.Tensor);
-    // this.dataMax = _.max(rowMax);
-    // this.dataMin = _.min(rowMin);
+    this.dataMax = tf.max(rowMax as tf.Tensor).dataSync()[0];
+    this.dataMin = tf.min(rowMin as tf.Tensor).dataSync()[0];
     this.featureMax = this.featureRange[1];
     this.featureMin = this.featureRange[0];
-    // this.dataRange = this.dataMax - this.dataMin;
-    this.dataRange = tf.sub(this.dataMax, this.dataMin).dataSync()[0];
-    console.log('checking data range', this.dataRange);
+    // const zz = zzdataMax - zzdataMin;
+    this.dataRange = this.dataMax - this.dataMin;
     // We need different data range for multi-dimensional
     this.scale = (this.featureMax - this.featureMin) / this.dataRange;
     this.baseMin = this.featureMin - this.dataMin * this.scale;
