@@ -10,6 +10,10 @@ export type Kernel = 'LINEAR' | 'POLYNOMIAL' | 'RBF' | 'SIGMOID';
  */
 export interface SVMOptions {
   /**
+   * Type of SVM
+   */
+  type?: Type;
+  /**
    * Degree of polynomial, test for polynomial kernel
    */
   degree?: number;
@@ -67,12 +71,14 @@ export interface SVMOptions {
  * BaseSVM class used by all parent SVM classes that are based on libsvm
  */
 export class BaseSVM {
-  protected svm: any;
-  protected type: Type;
-  protected options: SVMOptions;
+  public static async create(options?: SVMOptions): Promise<BaseSVM> {
+    if (!options.type) {
+      throw new Error('Cannot create an SVM without a type.');
+    }
 
-  constructor(options?: SVMOptions) {
-    this.options = {
+    const SVM = await require('libsvm-js');
+    const { kernel, type, ...rest } = {
+      type: _.get(options, 'type', null),
       cacheSize: _.get(options, 'cacheSize', 100),
       coef0: _.get(options, 'coef0', 0),
       cost: _.get(options, 'cost', 1),
@@ -87,6 +93,81 @@ export class BaseSVM {
       tolerance: _.get(options, 'tolerance', 0.001),
       weight: _.get(options, 'weight', null)
     };
+
+    const processedOptions = this.processOptions(SVM, rest, type, kernel);
+    const svm = new SVM(processedOptions);
+
+    return this.constructor(svm, processedOptions);
+  }
+
+  /**
+   * Restores the model from a JSON checkpoint
+   * @param {any} svm
+   * @param {any} type
+   * @param {any} options
+   */
+  public static async fromJSON(json: {
+    svm: string;
+    options: SVMOptions;
+  }): Promise<BaseSVM> {
+    const SVM = await require('libsvm-js');
+    const svm = SVM.load(json.svm);
+
+    return this.constructor(svm, json.options);
+  }
+
+  /**
+   * Get Kernel name type using string Kernel name
+   * @param SVM
+   * @param {string} name
+   * @returns {number}
+   */
+  private static getKernel(SVM, name: string): number {
+    return _.get(SVM.KERNEL_TYPES, name);
+  }
+
+  /**
+   * Get Kernel type using string type name
+   * @param SVM
+   * @param {string} name
+   * @returns {number}
+   */
+  private static getType(SVM, name: string): number {
+    return _.get(SVM.SVM_TYPES, name);
+  }
+
+  /**
+   * Get a consolidated options including type and Kernel
+   * @param SVM
+   * @param {Options} options
+   * @param {Type} type
+   * @param {Kernel} kernel
+   * @returns {Object}
+   */
+  private static processOptions(
+    SVM,
+    options: SVMOptions,
+    type: Type,
+    kernel: Kernel
+  ): object {
+    return _.flowRight(
+      opts => {
+        const foundType = this.getType(SVM, type);
+        return _.set(opts, 'type', foundType);
+      },
+      opts => {
+        const foundKernel = this.getKernel(SVM, kernel);
+        return _.set(opts, 'kernel', foundKernel);
+      }
+    )(options);
+  }
+
+  protected svm: any;
+  protected options: SVMOptions;
+
+  constructor(svm: any, options: SVMOptions) {
+    this.svm = svm;
+    this.options = options;
   }
 
   /**
@@ -102,18 +183,6 @@ export class BaseSVM {
     X: number[][];
     y: number[];
   }): Promise<void> {
-    if (!this.type) {
-      throw new Error(`SVM type is unspecified ${this.type}`);
-    }
-
-    const SVM = await require('libsvm-js');
-    const options = this.processOptions(
-      SVM,
-      this.options,
-      this.type,
-      this.options.kernel
-    );
-    this.svm = new SVM(options);
     return this.svm.train(X, y);
   }
 
@@ -137,78 +206,13 @@ export class BaseSVM {
 
   /**
    * Saves the current SVM as a JSON object
-   * @returns {{svm: any; type: Type; options: SVMOptions}}
+   * @returns {{svm: string; options: SVMOptions}}
    */
-  public toJSON(): { svm: any; type: Type; options: SVMOptions } {
+  public toJSON(): { svm: any; options: SVMOptions } {
     return {
-      svm: this.svm,
-      type: this.type,
+      svm: this.svm.serializeModel(),
       options: this.options
     };
-  }
-
-  /**
-   * Restores the model from a JSON checkpoint
-   * @param {any} svm
-   * @param {any} type
-   * @param {any} options
-   */
-  public fromJSON({ svm = null, type = null, options = null }): void {
-    if (!svm || !type || !options) {
-      throw new Error(
-        'You must provide svm, type and options to restore the model'
-      );
-    }
-
-    this.svm = svm;
-    this.type = type;
-    this.options = options;
-  }
-
-  /**
-   * Get Kernel name type using string Kernel name
-   * @param SVM
-   * @param {string} name
-   * @returns {number}
-   */
-  private getKernel(SVM, name: string): number {
-    return _.get(SVM.KERNEL_TYPES, name);
-  }
-
-  /**
-   * Get Kernel type using string type name
-   * @param SVM
-   * @param {string} name
-   * @returns {number}
-   */
-  private getType(SVM, name: string): number {
-    return _.get(SVM.SVM_TYPES, name);
-  }
-
-  /**
-   * Get a consolidated options including type and Kernel
-   * @param SVM
-   * @param {Options} options
-   * @param {Type} type
-   * @param {Kernel} kernel
-   * @returns {Object}
-   */
-  private processOptions(
-    SVM,
-    options: SVMOptions,
-    type: Type,
-    kernel: Kernel
-  ): object {
-    return _.flowRight(
-      opts => {
-        const foundType = this.getType(SVM, type);
-        return _.set(opts, 'type', foundType);
-      },
-      opts => {
-        const foundKernel = this.getKernel(SVM, kernel);
-        return _.set(opts, 'kernel', foundKernel);
-      }
-    )(options);
   }
 }
 
@@ -226,9 +230,8 @@ export class BaseSVM {
  * section in the narrative documentation: Kernel functions.
  */
 export class SVC extends BaseSVM {
-  constructor(options?: SVMOptions) {
-    super(options);
-    this.type = 'C_SVC';
+  public static async create(options?: SVMOptions): Promise<SVC> {
+    return super.create({ ...options, type: 'C_SVC' });
   }
 }
 
@@ -242,9 +245,8 @@ export class SVC extends BaseSVM {
  * This class supports both dense and sparse input.
  */
 export class SVR extends BaseSVM {
-  constructor(options?: SVMOptions) {
-    super(options);
-    this.type = 'EPSILON_SVR';
+  public static async create(options?: SVMOptions): Promise<SVR> {
+    return super.create({ ...options, type: 'EPSILON_SVR' });
   }
 }
 
@@ -256,9 +258,8 @@ export class SVR extends BaseSVM {
  * The implementation is based on libsvm.
  */
 export class OneClassSVM extends BaseSVM {
-  constructor(options?: SVMOptions) {
-    super(options);
-    this.type = 'ONE_CLASS';
+  public static async create(options?: SVMOptions): Promise<OneClassSVM> {
+    return super.create({ ...options, type: 'ONE_CLASS' });
   }
 }
 
@@ -270,9 +271,8 @@ export class OneClassSVM extends BaseSVM {
  * The implementation is based on libsvm.
  */
 export class NuSVC extends BaseSVM {
-  constructor(options?: SVMOptions) {
-    super(options);
-    this.type = 'NU_SVC';
+  public static async create(options?: SVMOptions): Promise<NuSVC> {
+    return super.create({ ...options, type: 'NU_SVC' });
   }
 }
 
@@ -286,8 +286,7 @@ export class NuSVC extends BaseSVM {
  * The implementation is based on libsvm.
  */
 export class NuSVR extends BaseSVM {
-  constructor(options?: SVMOptions) {
-    super(options);
-    this.type = 'NU_SVR';
+  public static async create(options?: SVMOptions): Promise<NuSVR> {
+    return super.create({ ...options, type: 'NU_SVR' });
   }
 }

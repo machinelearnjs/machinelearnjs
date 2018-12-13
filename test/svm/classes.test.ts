@@ -11,8 +11,8 @@ describe('svm:classes', () => {
   const X1 = [[-1, -1], [-2, -1], [1, 1], [2, 1]];
   const y1 = [-1, 1, 2, 2];
 
-  it('should test SVC with X1 and y1, then return the same pred feed', () => {
-    const svc = new SVC();
+  it('should test SVC with X1 and y1, then return the same pred feed', async () => {
+    const svc = await SVC.create();
     return svc.fit({ X: X1, y: y1 }).then(() => {
       const feed = [-0.8, -1];
       const result = svc.predict([feed, feed]);
@@ -22,8 +22,8 @@ describe('svm:classes', () => {
     });
   });
 
-  it('should test SVR with X1 and y1, then return the same pred feed', () => {
-    const svr = new SVR();
+  it('should test SVR with X1 and y1, then return the same pred feed', async () => {
+    const svr = await SVR.create();
     return svr.fit({ X: X1, y: y1 }).then(() => {
       const feed = [-0.8, -1];
       const result = svr.predict([feed, feed]);
@@ -33,8 +33,8 @@ describe('svm:classes', () => {
     });
   });
 
-  it('should test OneClassSVM with X1 and y1, then return the same pred feed', () => {
-    const ocv = new OneClassSVM();
+  it('should test OneClassSVM with X1 and y1, then return the same pred feed', async () => {
+    const ocv = await OneClassSVM.create();
     return ocv.fit({ X: X1, y: y1 }).then(() => {
       const feed = [-0.8, -1];
       const result = ocv.predict([feed, feed]);
@@ -44,8 +44,8 @@ describe('svm:classes', () => {
     });
   });
 
-  it('should test NuSVC with X1 and y1, then return the same pred feed', () => {
-    const nusvc = new NuSVC();
+  it('should test NuSVC with X1 and y1, then return the same pred feed', async () => {
+    const nusvc = await NuSVC.create();
     return nusvc.fit({ X: X1, y: y1 }).then(() => {
       const feed = [-0.8, -1];
       const result = nusvc.predict([feed, feed]);
@@ -55,8 +55,8 @@ describe('svm:classes', () => {
     });
   });
 
-  it('should test NuSVR with X1 and y1, then return the same pred feed', () => {
-    const nusvr = new NuSVR();
+  it('should test NuSVR with X1 and y1, then return the same pred feed', async () => {
+    const nusvr = await NuSVR.create();
     return nusvr.fit({ X: X1, y: y1 }).then(() => {
       const feed = [-0.8, -1];
       const result = nusvr.predict([feed, feed]);

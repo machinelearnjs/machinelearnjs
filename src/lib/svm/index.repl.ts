@@ -5,7 +5,7 @@ console.log('running xor example');
 
 async function svcTest() {
   console.log('inside svctest');
-  const svc2 = new SVC();
+  const svc2 = await SVC.create();
   const X = [[0, 0], [1, 1], [1, 0], [0, 1]];
   const y = [0, 0, 1, 1];
 
@@ -21,7 +21,7 @@ async function svcTest() {
 svcTest().then(() => console.log('svc2 test finished'));
 
 async function xor() {
-  const svc = new SVC();
+  const svc = await SVC.create();
   const features = [[0, 0], [1, 1]];
   const labels = [0, 1];
   await svc.fit({ X: features, y: labels });
@@ -31,7 +31,7 @@ async function xor() {
 xor().then(() => console.log('finished SVC'));
 
 async function xor2() {
-  const svr = new SVR();
+  const svr = await SVR.create();
   const features = [[0, 0], [2, 2]];
   const labels = [0.5, 2.5];
   await svr.fit({ X: features, y: labels });
