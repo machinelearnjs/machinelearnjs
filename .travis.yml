@@ -21,5 +21,6 @@ script:
   - yarn build
   - yarn test:unit
   - yarn lint
+  - yarn audit
   - yarn test:integration
   - yarn doc

@@ -49,6 +49,7 @@ test_script:
   # Run all tests
   - yarn lint
   - yarn test:unit
+  - yarn audit
   - yarn test:integration
   - yarn doc
 
