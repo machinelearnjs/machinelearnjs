@@ -49,7 +49,6 @@ test_script:
   # Run all tests
   - yarn lint
   - yarn test:unit
-  - yarn test:nsp
   - yarn test:integration
   - yarn doc
 
