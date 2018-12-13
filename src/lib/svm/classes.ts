@@ -97,7 +97,7 @@ export class BaseSVM {
     const processedOptions = this.processOptions(SVM, rest, type, kernel);
     const svm = new SVM(processedOptions);
 
-    return this.constructor(svm, processedOptions);
+    return new BaseSVM(svm, processedOptions);
   }
 
   /**
@@ -113,7 +113,7 @@ export class BaseSVM {
     const SVM = await require('libsvm-js');
     const svm = SVM.load(json.svm);
 
-    return this.constructor(svm, json.options);
+    return new BaseSVM(svm, json.options);
   }
 
   /**
@@ -165,7 +165,7 @@ export class BaseSVM {
   protected svm: any;
   protected options: SVMOptions;
 
-  constructor(svm: any, options: SVMOptions) {
+  protected constructor(svm: any, options: SVMOptions) {
     this.svm = svm;
     this.options = options;
   }
