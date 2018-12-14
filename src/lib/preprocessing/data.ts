@@ -379,7 +379,6 @@ export class OneHotEncoder {
  */
 export class MinMaxScaler {
   private featureRange: number[];
-  private clone: boolean;
   private dataMax: number;
   private dataMin: number;
   private featureMax: number;
@@ -390,22 +389,17 @@ export class MinMaxScaler {
 
   /**
    * @param featureRange - scaling range
-   * @param clone - to clone the input
    */
   constructor(
     {
-      featureRange = [0, 1],
-      clone = true
+      featureRange = [0, 1]
     }: {
       featureRange?: number[];
-      clone?: boolean;
     } = {
-      featureRange: [0, 1],
-      clone: true
+      featureRange: [0, 1]
     }
   ) {
     this.featureRange = featureRange;
-    this.clone = clone;
   }
 
   /**
@@ -413,21 +407,21 @@ export class MinMaxScaler {
    * @param {number[]} X - Array or sparse-matrix data input
    */
   public fit(X: Type1DMatrix<number> | Type2DMatrix<number>): void {
-    const clonedX = this.clone ? _.cloneDeep(X) : X;
-    let rowMax: any = clonedX;
-    let rowMin: any = clonedX;
+    let rowMax = tf.tensor(X);
+    let rowMin = tf.tensor(X);
     const xShape = inferShape(X);
     // If input is a Matrix...
     if (xShape.length === 0 || xShape[0] === 0) {
       throw new TypeError('Cannot fit with an empty value');
     } else if (xShape.length === 2) {
-      rowMax = math.max(X, 0);
-      rowMin = math.min(X, 0);
+      rowMax = tf.max(rowMax as tf.Tensor, 0);
+      rowMin = tf.min(rowMin as tf.Tensor, 0);
     }
-    this.dataMax = _.max(rowMax);
-    this.dataMin = _.min(rowMin);
+    this.dataMax = tf.max(rowMax as tf.Tensor).dataSync()[0];
+    this.dataMin = tf.min(rowMin as tf.Tensor).dataSync()[0];
     this.featureMax = this.featureRange[1];
     this.featureMin = this.featureRange[0];
+    // const zz = zzdataMax - zzdataMin;
     this.dataRange = this.dataMax - this.dataMin;
     // We need different data range for multi-dimensional
     this.scale = (this.featureMax - this.featureMin) / this.dataRange;
