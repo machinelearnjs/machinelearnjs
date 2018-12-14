@@ -686,7 +686,7 @@ export function normalize(
     if (norm === 'l1') {
       proportion = row.reduce((accum: any, r) => accum + Math.abs(r), 0);
     } else if (norm === 'l2') {
-      proportion = row.reduce((accum: any, r) => accum + math.pow(r, 2), 0);
+      proportion = row.reduce((accum: any, r) => accum + Math.pow(r, 2), 0);
       proportion = Math.sqrt(proportion);
     } else {
       throw new Error(`${norm} is not a recognised normalization method`);
