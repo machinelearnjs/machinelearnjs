@@ -144,9 +144,9 @@ describe('docs:helper', () => {
 
   describe('searchInterface', () => {
     it('should find reference', () => {
-      const result = searchInterface(docsJson, 920);
+      const result = searchInterface(docsJson, 801);
       const { id, name, kindString } = result;
-      expect(id).toBe(920);
+      expect(id).toBe(801);
       expect(name).toBe('SVMOptions');
       expect(kindString).toBe('Interface');
     });
@@ -323,14 +323,14 @@ describe('docs:helper', () => {
       const type =
         docsJson.children[8].children[1].children[6].signatures[0].type;
       const returnType = renderMethodReturnType(type);
-      expect(returnType).toEqual('any[]');
+      expect(returnType).toEqual('void');
     });
     it('should build a return type for void', () => {
       // Testing with random forest's fit
       const type =
         docsJson.children[8].children[1].children[4].signatures[0].type;
       const returnType = renderMethodReturnType(type);
-      expect(returnType).toEqual('void');
+      expect(returnType).toEqual('any[]');
     });
 
     it('should build a toJSON return type', () => {

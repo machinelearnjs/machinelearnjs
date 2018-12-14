@@ -15,55 +15,55 @@ export interface SVMOptions {
   /**
    * Degree of polynomial, test for polynomial kernel
    */
-  degree: number;
+  degree?: number;
   /**
    * Type of Kernel
    */
-  kernel: Kernel;
+  kernel?: Kernel;
   /**
    * Gamma parameter of the RBF, Polynomial and Sigmoid kernels. Default value is 1/num_features
    */
-  gamma: number | null;
+  gamma?: number | null;
   /**
    * coef0 parameter for Polynomial and Sigmoid kernels
    */
-  coef0: number;
+  coef0?: number;
   /**
    * Cost parameter, for C SVC, Epsilon SVR and NU SVR
    */
-  cost: number;
+  cost?: number;
   /**
    * For NU SVC and NU SVR
    */
-  nu: number;
+  nu?: number;
   /**
    * For epsilon SVR
    */
-  epsilon: number;
+  epsilon?: number;
   /**
    * Cache size in MB
    */
-  cacheSize: number;
+  cacheSize?: number;
   /**
    * Tolerance
    */
-  tolerance: number;
+  tolerance?: number;
   /**
    * Use shrinking euristics (faster)
    */
-  shrinking: boolean;
+  shrinking?: boolean;
   /**
    * weather to train SVC/SVR model for probability estimates,
    */
-  probabilityEstimates: boolean;
+  probabilityEstimates?: boolean;
   /**
    * Set weight for each possible class
    */
-  weight: object | null;
+  weight?: object | null;
   /**
    * Print info during training if false (aka verbose)
    */
-  quiet: boolean;
+  quiet?: boolean;
 }
 
 /**
@@ -74,7 +74,7 @@ export class BaseSVM implements IMlModel<number> {
   protected type: Type;
   protected options: SVMOptions;
 
-  constructor(options: SVMOptions = null) {
+  constructor(options?: SVMOptions) {
     this.options = {
       cacheSize: _.get(options, 'cacheSize', 100),
       coef0: _.get(options, 'coef0', 0),
@@ -94,8 +94,8 @@ export class BaseSVM implements IMlModel<number> {
 
   /**
    * Fit the model according to the given training data.
-   * @param {any[]} X
-   * @param {any[]} y
+   * @param {number[][]} X
+   * @param {number[]} y
    * @returns {Promise<void>}
    */
   public async fit(
@@ -119,7 +119,7 @@ export class BaseSVM implements IMlModel<number> {
 
   /**
    * Predict using the linear model
-   * @param {number[]} X
+   * @param {number[][]} X
    * @returns {number[]}
    */
   public predict(X: Type2DMatrix<number>): number[] {
@@ -130,7 +130,7 @@ export class BaseSVM implements IMlModel<number> {
   /**
    * Predict the label of one sample.
    * @param {number[]} X
-   * @returns {number[]}
+   * @returns {number}
    */
   public predictOne(X: Type1DMatrix<number>): number[] {
     validateMatrix1D(X);
@@ -236,7 +236,7 @@ export class BaseSVM implements IMlModel<number> {
  * section in the narrative documentation: Kernel functions.
  */
 export class SVC extends BaseSVM {
-  constructor(options: SVMOptions = null) {
+  constructor(options?: SVMOptions) {
     super(options);
     this.type = 'C_SVC';
   }
@@ -252,7 +252,7 @@ export class SVC extends BaseSVM {
  * This class supports both dense and sparse input.
  */
 export class SVR extends BaseSVM {
-  constructor(options: SVMOptions = null) {
+  constructor(options?: SVMOptions) {
     super(options);
     this.type = 'EPSILON_SVR';
   }
@@ -266,7 +266,7 @@ export class SVR extends BaseSVM {
  * The implementation is based on libsvm.
  */
 export class OneClassSVM extends BaseSVM {
-  constructor(options: SVMOptions = null) {
+  constructor(options?: SVMOptions) {
     super(options);
     this.type = 'ONE_CLASS';
   }
@@ -280,7 +280,7 @@ export class OneClassSVM extends BaseSVM {
  * The implementation is based on libsvm.
  */
 export class NuSVC extends BaseSVM {
-  constructor(options: SVMOptions = null) {
+  constructor(options?: SVMOptions) {
     super(options);
     this.type = 'NU_SVC';
   }
@@ -296,7 +296,7 @@ export class NuSVC extends BaseSVM {
  * The implementation is based on libsvm.
  */
 export class NuSVR extends BaseSVM {
-  constructor(options: SVMOptions = null) {
+  constructor(options?: SVMOptions) {
     super(options);
     this.type = 'NU_SVR';
   }

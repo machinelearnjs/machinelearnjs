@@ -1,8 +1,8 @@
 import { NuSVC, NuSVR, OneClassSVM, SVC, SVR } from '../../src/lib/svm';
 
 jest.mock('libsvm-js', () => () => ({
-  predict: X => X,
-  predictOne: X => X,
+  predict: (X: number[][]) => X[0],
+  predictOne: (X: number[]) => X[0],
   train: (X, y) => ({ X, y })
 }));
 
@@ -15,9 +15,9 @@ describe('svm:classes', () => {
     return svc.fit(X1, y1).then(() => {
       const feed = [-0.8, -1];
       const result = svc.predict([feed]);
-      expect(result).toEqual([feed]);
+      expect(result).toEqual(feed);
       const result2 = svc.predictOne(feed);
-      expect(result2).toEqual(feed);
+      expect(result2).toEqual(-0.8);
     });
   });
 
@@ -26,9 +26,9 @@ describe('svm:classes', () => {
     return svr.fit(X1, y1).then(() => {
       const feed = [-0.8, -1];
       const result = svr.predict([feed]);
-      expect(result).toEqual([feed]);
+      expect(result).toEqual(feed);
       const result2 = svr.predictOne(feed);
-      expect(result2).toEqual(feed);
+      expect(result2).toEqual(-0.8);
     });
   });
 
@@ -37,9 +37,9 @@ describe('svm:classes', () => {
     return ocv.fit(X1, y1).then(() => {
       const feed = [-0.8, -1];
       const result = ocv.predict([feed]);
-      expect(result).toEqual([feed]);
+      expect(result).toEqual(feed);
       const result2 = ocv.predictOne(feed);
-      expect(result2).toEqual(feed);
+      expect(result2).toEqual(-0.8);
     });
   });
 
@@ -48,9 +48,9 @@ describe('svm:classes', () => {
     return nusvc.fit(X1, y1).then(() => {
       const feed = [-0.8, -1];
       const result = nusvc.predict([feed]);
-      expect(result).toEqual([feed]);
+      expect(result).toEqual(feed);
       const result2 = nusvc.predictOne(feed);
-      expect(result2).toEqual(feed);
+      expect(result2).toEqual(-0.8);
     });
   });
 
@@ -59,9 +59,9 @@ describe('svm:classes', () => {
     return nusvr.fit(X1, y1).then(() => {
       const feed = [-0.8, -1];
       const result = nusvr.predict([feed]);
-      expect(result).toEqual([feed]);
+      expect(result).toEqual(feed);
       const result2 = nusvr.predictOne(feed);
-      expect(result2).toEqual(feed);
+      expect(result2).toEqual(-0.8);
     });
   });
 });

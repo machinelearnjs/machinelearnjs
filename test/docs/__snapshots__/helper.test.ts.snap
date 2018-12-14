@@ -14,24 +14,22 @@ exports[`docs:helper constructParamTable should build a table for param1 1`] = `
 exports[`docs:helper constructParamTable should build a table for params with Type1DMatrix 1`] = `
 "| Param | Type | Default | Description |
 | ------ | ------ | ------ | ------ |
-| X | number[] |  | training values
-| y | number[] |  | target values
+| options.X | number[] | [] | training values
+| options.y | number[] | [] | target values
 "
 `;
 
 exports[`docs:helper constructParamTable should build table for params with Type2DMatrix 1`] = `
 "| Param | Type | Default | Description |
 | ------ | ------ | ------ | ------ |
-| X | number[][] | null | Matrix of data
-| y | number[] | null | Matrix of targets
 "
 `;
 
 exports[`docs:helper constructParamTable should build table for params with Type2DMatrix of multiple types 1`] = `
 "| Param | Type | Default | Description |
 | ------ | ------ | ------ | ------ |
-| X | string[][] or number[][] or boolean[][] | [] | training values
-| y | string[] or number[] or boolean[] | [] | target values
+| options.X | any[][] | null | training values
+| options.y | any[] | null | target values
 "
 `;
 
@@ -128,14 +126,14 @@ Object {
   "flags": Object {
     "isExported": true,
   },
-  "id": 125,
+  "id": 80,
   "kind": 512,
   "kindString": "Constructor",
   "name": "constructor",
   "signatures": Array [
     Object {
       "flags": Object {},
-      "id": 126,
+      "id": 81,
       "kind": 16384,
       "kindString": "Constructor signature",
       "name": "new KMeans",
@@ -147,19 +145,19 @@ Object {
       maxIteration: 300
     }",
           "flags": Object {},
-          "id": 127,
+          "id": 82,
           "kind": 32768,
           "kindString": "Parameter",
           "name": "options",
           "type": Object {
-            "id": 119,
+            "id": 74,
             "name": "KMeansOptions",
             "type": "reference",
           },
         },
       ],
       "type": Object {
-        "id": 124,
+        "id": 79,
         "name": "KMeans",
         "type": "reference",
       },
@@ -169,15 +167,10 @@ Object {
     Object {
       "character": 31,
       "fileName": "cluster/k_means.ts",
-      "line": 45,
+      "line": 43,
     },
   ],
 }
 `;
 
-exports[`docs:helper renderMethodReturnType should build a toJSON return type 1`] = `
-"| Param | Type | Description |
-| ------ | ------ | ------ |
-| trees | any[] | Decision trees
-"
-`;
+exports[`docs:helper renderMethodReturnType should build a toJSON return type 1`] = `"any[]"`;

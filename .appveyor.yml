@@ -4,8 +4,8 @@ image:
 
 environment:
   matrix:
-    - nodejs_version: "8"
-    - nodejs_version: "10"
+    - nodejs_version: '8'
+    - nodejs_version: '10'
 
 # Fail on first error
 matrix:
@@ -13,18 +13,16 @@ matrix:
 
 # Specify cache for yarn in cross platform way
 for:
--
-  matrix:
-    except:
-      - image: Ubuntu
-  cache:
-    - "%LOCALAPPDATA%\\Yarn"
--
-  matrix:
-    only:
-      - image: Ubuntu
-  cache:
-    - "$HOME/.cache/yarn"
+  - matrix:
+      except:
+        - image: Ubuntu
+    cache:
+      - "%LOCALAPPDATA%\\Yarn"
+  - matrix:
+      only:
+        - image: Ubuntu
+    cache:
+      - '$HOME/.cache/yarn'
 
 shallow_clone: true
 
@@ -49,7 +47,7 @@ test_script:
   # Run all tests
   - yarn lint
   - yarn test:unit
-  - yarn test:nsp
+  - yarn audit
   - yarn test:integration
   - yarn doc
 
