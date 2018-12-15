@@ -19,7 +19,11 @@ cd build/lib && yarn link
 echo '4. linking kalimdor to local'
 cd ../.. && yarn link kalimdor
 
+# Running docs
+echo '5. Running doc generation'
+yarn doc
+
 # Running integration test as part of the build
-echo '5. run the jest require tests'
+echo '6. run the jest require tests'
 npx jest -t "integration:require"
 echo 'finished building for prod'
