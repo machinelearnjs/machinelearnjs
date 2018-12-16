@@ -37,10 +37,7 @@ install:
   # install dependencies
   - yarn install
   - yarn build
-
-  # Upgrading the yarn version so `yarn audit` can be available
-  - sh: curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.12.1
-  - sh: export PATH="$HOME/.yarn/bin:$PATH"
+  - npx snyk auth $SNYK_TOKEN
 
 # Post-install test scripts.
 test_script:
@@ -52,7 +49,7 @@ test_script:
   - yarn lint
   - yarn doc
   - yarn test:unit
-  - yarn audit
+  - npx snyk test
   - yarn test:integration
 
 # Don't actually build.
