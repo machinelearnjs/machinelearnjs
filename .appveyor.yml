@@ -26,10 +26,6 @@ for:
 
 shallow_clone: true
 
-before_build:
-  - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.12.1
-  - export PATH="$HOME/.yarn/bin:$PATH"
-
 install:
   # Install specified version of Node.JS (cross platform capable way)
   - cmd: powershell Install-Product node $env:nodejs_version
@@ -41,6 +37,10 @@ install:
   # install dependencies
   - yarn install
   - yarn build
+
+  # Upgrading the yarn version so `yarn audit` can be available
+  - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.12.1
+  - export PATH="$HOME/.yarn/bin:$PATH"
 
 # Post-install test scripts.
 test_script:
