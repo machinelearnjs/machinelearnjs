@@ -37,7 +37,6 @@ install:
   # install dependencies
   - yarn install
   - yarn build
-  - npx snyk auth $SNYK_TOKEN
 
 # Post-install test scripts.
 test_script:
