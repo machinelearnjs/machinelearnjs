@@ -46,10 +46,10 @@ test_script:
   - npm --version
   # Run all tests
   - yarn lint
-  - yarn test:unit
-  - yarn audit
-  - yarn test:integration
   - yarn doc
+  - yarn test:unit
+  - npx snyk test
+  - yarn test:integration
 
 # Don't actually build.
 build: off
