@@ -17,33 +17,39 @@ describe('Imputer', () => {
     expect(() => {
       imp.fit(textX);
       imp.fit_transform([[null, 2], [1, 2, 3], [null, 2, 1]]);
-    }).toThrow('Dimension mismatch (3 != 2)');
+    }).toThrow('Element arr[1] should have 2 elements, but has 3 elements');
   });
 
   it('fitting invalid data type should throw an error', () => {
     // String
     expect(() => {
       new Imputer({ missingValues: null, axis: 0 }).fit('asofjasof');
-    }).toThrow('X is not an array!');
+    }).toThrow(
+      'values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray'
+    );
 
     // Int
     expect(() => {
       new Imputer({ missingValues: null, axis: 0 }).fit(123);
-    }).toThrow('X is not an array!');
+    }).toThrow('The matrix is not 2D shaped: 123 of []');
 
     // Boolean
     expect(() => {
       new Imputer({ missingValues: null, axis: 0 }).fit(true);
-    }).toThrow('X is not an array!');
+    }).toThrow('The matrix is not 2D shaped: true of []');
 
     // Null
     expect(() => {
       new Imputer({ missingValues: null, axis: 0 }).fit(null);
-    }).toThrow('X is not an array!');
+    }).toThrow(
+      'values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray'
+    );
 
     // undefined
     expect(() => {
       new Imputer({ missingValues: null, axis: 0 }).fit(undefined);
-    }).toThrow('Invalid input array of size 0!');
+    }).toThrow(
+      'values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray'
+    );
   });
 });
