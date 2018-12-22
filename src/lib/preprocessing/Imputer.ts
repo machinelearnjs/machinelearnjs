@@ -59,15 +59,9 @@ export class Imputer {
     const colRange = math.contrib.range(0, colLen);
     if (this.strategy === 'mean') {
       if (this.axis === 0) {
-        const colNumbers: any = _.map(colRange, col => {
-          const result = [];
-          // TODO: Replace it with a proper matrix subset method. e.g. http://mathjs.org/docs/reference/functions/subset.html
-          for (let i = 0; i < rowRange.length; i++) {
-            const rowIndex = rowRange[i];
-            result.push([_X[rowIndex][col]]);
-          }
-          return result;
-        });
+        const colNumbers: any = _.map(colRange, col =>
+          math.contrib.subset(_X, rowRange, col)
+        );
         this.means = this.calcArrayMean(colNumbers, [
           'flatten',
           'filter',

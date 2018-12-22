@@ -24,6 +24,26 @@ const size = (X, axis = 0) => {
 };
 
 /**
+ * Just a dumb version of subset, which is sufficient enough for now.
+ * It can only handle range of rows with a single column.
+ *
+ * TODO: Improve.
+ * @param X
+ * @param rowsRange
+ * @param col
+ * @ignore
+ */
+const subset = (X, rowsRange, col): any[][] => {
+  const result = [];
+  // TODO: Replace it with a proper matrix subset method. e.g. http://mathjs.org/docs/reference/functions/subset.html
+  for (let i = 0; i < rowsRange.length; i++) {
+    const rowIndex = rowsRange[i];
+    result.push([X[rowIndex][col]]);
+  }
+  return result;
+};
+
+/**
  * Get range of values
  * @param start
  * @param stop
@@ -156,7 +176,9 @@ const subtract = (X, y) => {
         const subs = y[colIndex];
         _X[rowIndex][colIndex] = column - subs;
       } else {
-        throw Error(`Dimension of y ${y.length} and row ${row.length} are not compatible`);
+        throw Error(
+          `Dimension of y ${y.length} and row ${row.length} are not compatible`
+        );
       }
     }
   }
@@ -276,7 +298,9 @@ const inner = (a, b) => {
     }
     return result;
   } else if (Array.isArray(a) && Array.isArray(b) && a.length !== b.length) {
-    throw new Error(`Dimensions (${a.length},) and (${b.length},) are not aligned`);
+    throw new Error(
+      `Dimensions (${a.length},) and (${b.length},) are not aligned`
+    );
   }
 
   throw new Error(`Cannot process with the invalid inputs ${a} and ${b}`);
@@ -329,6 +353,7 @@ const contrib = {
   manhattanDistance,
   prod,
   range,
+  subset,
   size,
   subtract,
   variance
