@@ -264,38 +264,6 @@ describe('math.contrib.inner', () => {
   });
 });
 
-describe('math.contrib.prod', () => {
-  const X1 = [[1, 1], [3, 3], [5, 5]];
-  const X2 = [[true], [false], ['test']];
-
-  it('should prod without axis', () => {
-    const result = math.contrib.prod(X1);
-    const expected = 225;
-    expect(result).toBe(expected);
-  });
-  it('should prod with axis 1', () => {
-    const result = math.contrib.prod(X1, 0);
-    const expected = [15, 15];
-    expect(result).toEqual(expected);
-  });
-  it('should prod with axis 0', () => {
-    const result = math.contrib.prod(X1, 1);
-    const expected = [1, 9, 25];
-    expect(result).toEqual(expected);
-  });
-  it('should not prod when input is not a matrix of numbers', () => {
-    expect(() => math.contrib.prod(X2, 1)).toThrow(
-      'X has to be a matrix of numbers'
-    );
-  });
-  it('should not prod when axis is invalid', () => {
-    const expected = 'Cannot operate on an invalid axis parameter';
-    expect(() => math.contrib.prod(X1, 10)).toThrow(expected);
-    expect(() => math.contrib.prod(X1, true)).toThrow(expected);
-    expect(() => math.contrib.prod(X1, false)).toThrow(expected);
-  });
-});
-
 describe('math.contrib.subset', () => {
   const X1 = [[1, 2], [3, 4]];
   const X2 = [

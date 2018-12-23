@@ -328,42 +328,6 @@ const inner = (a, b) => {
   throw new Error(`Cannot process with the invalid inputs ${a} and ${b}`);
 };
 
-/**
- * Return the product of array elements over a given axis.
- * @param X
- * @param axis
- * @ignore
- */
-const prod = (X, axis = null) => {
-  if (!isMatrixOf(X, 'number')) {
-    throw new Error('X has to be a matrix of numbers');
-  }
-  if (axis === null) {
-    return math.prod(X);
-  } else if (axis === 0) {
-    // Prod by column
-    return X.reduce((sum, y) => {
-      for (let i = 0; i < y.length; i++) {
-        let entity = sum[i] ? sum[i] : 1;
-        entity *= y[i];
-        sum[i] = entity;
-      }
-      return sum;
-    }, []);
-  } else if (axis === 1) {
-    return X.reduce((sum, y) => {
-      let result = 1;
-      for (let i = 0; i < y.length; i++) {
-        result *= y[i];
-      }
-      return sum.concat(result);
-    }, []);
-  } else {
-    // If axis is invalid
-    throw new Error('Cannot operate on an invalid axis parameter');
-  }
-};
-
 const contrib = {
   covariance,
   euclideanDistance,
@@ -373,7 +337,6 @@ const contrib = {
   isMatrix,
   isMatrixOf,
   manhattanDistance,
-  prod,
   range,
   subset,
   size,
