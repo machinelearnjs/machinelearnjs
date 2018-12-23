@@ -51,7 +51,9 @@ describe('math.contrib.range', () => {
   });
 
   it('should throw an invalid error', () => {
-    expect(() => math.contrib.range('test', 2)).toThrow('start and stop arguments need to be numbers');
+    expect(() => math.contrib.range('test', 2)).toThrow(
+      'start and stop arguments need to be numbers'
+    );
   });
 });
 
@@ -255,7 +257,9 @@ describe('math.contrib.inner', () => {
   it('should throw an error if two vectors are not same in size', () => {
     const a = [1, 2, 3];
     const b = [1, 2];
-    const error = `Dimensions (${a.length},) and (${b.length},) are not aligned`;
+    const error = `Dimensions (${a.length},) and (${
+      b.length
+    },) are not aligned`;
     expect(() => math.contrib.inner(a, b)).toThrow(error);
   });
 });
@@ -280,12 +284,41 @@ describe('math.contrib.prod', () => {
     expect(result).toEqual(expected);
   });
   it('should not prod when input is not a matrix of numbers', () => {
-    expect(() => math.contrib.prod(X2, 1)).toThrow('X has to be a matrix of numbers');
+    expect(() => math.contrib.prod(X2, 1)).toThrow(
+      'X has to be a matrix of numbers'
+    );
   });
   it('should not prod when axis is invalid', () => {
     const expected = 'Cannot operate on an invalid axis parameter';
     expect(() => math.contrib.prod(X1, 10)).toThrow(expected);
     expect(() => math.contrib.prod(X1, true)).toThrow(expected);
     expect(() => math.contrib.prod(X1, false)).toThrow(expected);
+  });
+});
+
+describe('math.contrib.subset', () => {
+  const X1 = [[1, 2], [3, 4]];
+  const X2 = [
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+  ];
+  it('should get subset of X1', () => {
+    const result = math.contrib.subset(X1, [1], [0]);
+    expect(result).toEqual([[3]]);
+  });
+
+  it('should get subset of X2', () => {
+    const result = math.contrib.subset(X2, [0, 1, 2], [0]);
+    expect(result).toEqual([[1], [1], [1]]);
+  });
+
+  it('should subset of X2 with a replacement', () => {
+    const result = math.contrib.subset(X2, [0, 1, 2], [0], [7, 7, 7]);
+    expect(result).toEqual([
+      [7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      [7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      [7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    ]);
   });
 });

@@ -597,7 +597,6 @@ export class PolynomialFeatures {
     const tfOnes = tf.ones([nSamples, nOutputFeatures]);
     let result = reshape(Array.from(tfOnes.dataSync()), tfOnes.shape);
     const rowRange = _.range(0, X.length);
-
     for (let i = 0; i < indexCombination.length; i++) {
       const c = indexCombination[i];
       const colsRange = Array.isArray(c) ? c : [c];
