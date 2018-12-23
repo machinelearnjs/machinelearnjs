@@ -602,7 +602,7 @@ export class PolynomialFeatures {
       const colsRange = Array.isArray(c) ? c : [c];
       // Retrieves column values from X using the index of the indexCombination in the loop
       const srcColValues: any =
-        c !== null ? math.contrib.subset(X, rowRange, colsRange) : [];
+        c !== null ? math.subset(X, rowRange, colsRange) : [];
       let xc = null;
       if (srcColValues.length === 0) {
         xc = _.fill(rowRange.slice(), 1);
@@ -612,7 +612,7 @@ export class PolynomialFeatures {
           .prod(1)
           .dataSync();
       }
-      result = math.contrib.subset(result, rowRange, [i], xc);
+      result = math.subset(result, rowRange, [i], xc);
     }
     return result as number[][];
   }

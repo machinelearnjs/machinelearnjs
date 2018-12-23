@@ -9,40 +9,40 @@ describe('linear_model:LinearRegression', () => {
     lr.fit(X1, y1);
 
     const result1 = lr.predict([1, 2]);
-    const expected1 = [1.1999999999999995, 1.9999999999999996];
-    expect(isEqual(result1, expected1)).toBe(true);
+    const expected1 = [1.1999999523162839, 1.999999952316284];
+    expect(result1).toEqual(expected1);
 
     const result2 = lr.predict([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
     const expected2 = [
-      1.1999999999999995,
-      1.9999999999999996,
-      2.8,
-      3.5999999999999996,
-      4.3999999999999995,
-      5.2,
-      6,
-      6.8,
-      7.6,
-      8.399999999999999
+      1.1999999523162839,
+      1.999999952316284,
+      2.799999952316284,
+      3.599999952316284,
+      4.399999952316284,
+      5.1999999523162845,
+      5.999999952316284,
+      6.799999952316284,
+      7.599999952316284,
+      8.399999952316284
     ];
-    expect(isEqual(result2, expected2)).toBe(true);
+    expect(result2).toEqual(expected2);
   });
 
   it('should reload and predict the same result', () => {
-    const expected1 = [1.1999999999999995, 1.9999999999999996];
+    const expected1 = [1.1999999523162839, 1.999999952316284];
     const lr = new LinearRegression();
     lr.fit(X1, y1);
 
     // Experimenting before saving the checkpoint
     const result1 = lr.predict([1, 2]);
-    expect(isEqual(result1, expected1)).toBe(true);
+    expect(result1).toEqual(expected1);
 
     // Experimenting after saving the checkpoint
     const checkpoint = lr.toJSON();
     const lr2 = new LinearRegression();
     lr2.fromJSON(checkpoint);
     const result2 = lr2.predict([1, 2]);
-    expect(isEqual(result2, expected1)).toBe(true);
+    expect(result2).toEqual(expected1);
   });
 
   it('should test NaNs', () => {
@@ -51,11 +51,11 @@ describe('linear_model:LinearRegression', () => {
 
     const result1 = lr.predict([NaN, NaN]);
     const expected1 = [NaN, NaN];
-    expect(isEqual(result1, expected1)).toBe(true);
+    expect(result1).toEqual(expected1);
 
     const result2 = lr.predict([NaN, 123]);
-    const expected2 = [NaN, 98.80000000000001];
-    expect(isEqual(result2, expected2)).toBe(true);
+    const expected2 = [NaN, 98.79999995231628];
+    expect(result2).toEqual(expected2);
   });
 
   it('should throw an exception when invalid data is given to the fit function', () => {

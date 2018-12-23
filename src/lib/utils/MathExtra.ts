@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import * as math from 'mathjs';
 
 /**
  * Return the number of elements along a given axis.
@@ -328,7 +327,7 @@ const inner = (a, b) => {
   throw new Error(`Cannot process with the invalid inputs ${a} and ${b}`);
 };
 
-const contrib = {
+const math = {
   covariance,
   euclideanDistance,
   hstack,
@@ -344,6 +343,4 @@ const contrib = {
   variance
 };
 
-// Exporting merged result
-// { contrib } because we want users to access contrib API like math.contrib.xx
-export default _.merge(math, { contrib });
+export default math;

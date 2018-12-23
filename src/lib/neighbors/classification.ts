@@ -3,7 +3,7 @@ import { inferShape, validateFitInputs } from '../ops';
 import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
 import KDTree from './KDTree';
-const { euclideanDistance, manhattanDistance } = math.contrib;
+const { euclideanDistance, manhattanDistance } = math;
 const DIST_EUC = 'euclidean';
 const DIST_MAN = 'manhattan';
 const TYPE_KD = 'kdtree';

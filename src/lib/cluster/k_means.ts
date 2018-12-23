@@ -56,10 +56,10 @@ export class KMeans implements IMlModel<number> {
     const distanceType = _.get(options, 'distance', 'euclidean');
     switch (distanceType) {
       case 'euclidean':
-        this.distance = math.contrib.euclideanDistance;
+        this.distance = math.euclideanDistance;
         break;
       case 'manhattan':
-        this.distance = math.contrib.manhattanDistance;
+        this.distance = math.manhattanDistance;
         break;
       default:
         throw new Error(`Unknown distance type ${distanceType}`);

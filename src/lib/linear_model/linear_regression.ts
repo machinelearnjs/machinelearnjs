@@ -2,6 +2,7 @@
  * References:
  * - https://machinelearningmastery.com/implement-simple-linear-regression-scratch-python/
  */
+import * as tf from '@tensorflow/tfjs';
 import { size } from 'lodash';
 import { validateMatrix1D } from '../ops';
 import { Type1DMatrix } from '../types';
@@ -94,11 +95,9 @@ export class LinearRegression {
    * @param y - y targets
    */
   private coefficients(X, y): void {
-    const xMean = math.mean(X);
-    const yMean = math.mean(y);
-    this.b1 =
-      math.contrib.covariance(X, xMean, y, yMean) /
-      math.contrib.variance(X, xMean);
+    const xMean: any = tf.mean(X).dataSync();
+    const yMean: any = tf.mean(y).dataSync();
+    this.b1 = math.covariance(X, xMean, y, yMean) / math.variance(X, xMean);
     this.b0 = yMean - this.b1 * xMean;
   }
 }
