@@ -95,6 +95,7 @@ export class LinearRegression {
    * @param y - y targets
    */
   private coefficients(X, y): void {
+    // TODO: Fix the typing
     const xMean: any = tf.mean(X).dataSync();
     const yMean: any = tf.mean(y).dataSync();
     this.b1 = math.covariance(X, xMean, y, yMean) / math.variance(X, xMean);
