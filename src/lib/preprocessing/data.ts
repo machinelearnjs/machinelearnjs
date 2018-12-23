@@ -607,7 +607,13 @@ export class PolynomialFeatures {
       if (srcColValues.length === 0) {
         xc = _.fill(rowRange.slice(), 1);
       } else {
-        xc = math.contrib.prod(srcColValues, 1);
+        xc = tf
+          .tensor2d(srcColValues)
+          .prod(1)
+          .dataSync();
+        // console.log('tfjs', zz);
+        // xc = math.contrib.prod(srcColValues, 1);
+        // console.log('xc', xc)
       }
       result = math.contrib.subset(result, rowRange, [i], xc);
     }
