@@ -588,30 +588,31 @@ export class PolynomialFeatures {
       throw new TypeError('X cannot be empty');
     }
     validateMatrix2D(X);
-    const matrix = math.matrix(X);
-    const [nSamples, nFeatures] = matrix.size();
+    const matrix = tf.tensor2d(X);
+    const [nSamples, nFeatures] = matrix.shape;
     const indexCombination = this.indexCombination(nFeatures, this.degree);
     const nOutputFeatures = indexCombination.length;
 
     // Polynomial feature extraction loop begins
-    let result: any = math.ones(nSamples, nOutputFeatures);
+    const tfOnes = tf.ones([nSamples, nOutputFeatures]);
+    let result = reshape(Array.from(tfOnes.dataSync()), tfOnes.shape);
     const rowRange = _.range(0, X.length);
+
     for (let i = 0; i < indexCombination.length; i++) {
       const c = indexCombination[i];
+      const colsRange = Array.isArray(c) ? c : [c];
       // Retrieves column values from X using the index of the indexCombination in the loop
       const srcColValues: any =
-        c !== null ? math.subset(X, math.index(rowRange, c)) : [];
-
-      // Subsets the placeholder values at [rowRange:i] using the prod value of srcColValues
+        c !== null ? math.contrib.subset(X, rowRange, colsRange) : [];
       let xc = null;
       if (srcColValues.length === 0) {
         xc = _.fill(rowRange.slice(), 1);
       } else {
         xc = math.contrib.prod(srcColValues, 1);
       }
-      result = math.subset(result, math.index(rowRange, i), xc);
+      result = math.contrib.subset(result, rowRange, [i], xc);
     }
-    return result._data;
+    return result as number[][];
   }
 
   /**

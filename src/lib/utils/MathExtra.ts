@@ -30,17 +30,39 @@ const size = (X, axis = 0) => {
  * TODO: Improve.
  * @param X
  * @param rowsRange
- * @param col
+ * @param colsRange
  * @ignore
  */
-const subset = (X, rowsRange, col): any[][] => {
-  const result = [];
-  // TODO: Replace it with a proper matrix subset method. e.g. http://mathjs.org/docs/reference/functions/subset.html
-  for (let i = 0; i < rowsRange.length; i++) {
-    const rowIndex = rowsRange[i];
-    result.push([X[rowIndex][col]]);
+const subset = (
+  X,
+  rowsRange: number[],
+  colsRange: number[],
+  replacement = null
+): any[][] => {
+  // console.log('checking subset', X, rowsRange, colsRange, replacement);
+  if (replacement) {
+    const _X = _.cloneDeep(X);
+    for (let i = 0; i < rowsRange.length; i++) {
+      const rowIndex = rowsRange[i];
+      colsRange.forEach(col => {
+        _X[rowIndex][col] = replacement[i];
+      });
+    }
+    return _X;
+  } else {
+    const result = [];
+    // TODO: Replace it with a proper matrix subset method. e.g. http://mathjs.org/docs/reference/functions/subset.html
+    for (let i = 0; i < rowsRange.length; i++) {
+      const rowIndex = rowsRange[i];
+      const subSection = [];
+      colsRange.forEach(col => {
+        subSection.push(X[rowIndex][col]);
+      });
+      // result.push([X[rowIndex][col]]);
+      result.push(subSection);
+    }
+    return result;
   }
-  return result;
 };
 
 /**
