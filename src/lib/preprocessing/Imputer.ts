@@ -60,7 +60,7 @@ export class Imputer {
     if (this.strategy === 'mean') {
       if (this.axis === 0) {
         const colNumbers: any = _.map(colRange, col =>
-          math.contrib.subset(_X, rowRange, col)
+          math.contrib.subset(_X, rowRange, [col])
         );
         this.means = this.calcArrayMean(colNumbers, [
           'flatten',
