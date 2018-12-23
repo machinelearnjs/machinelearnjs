@@ -611,9 +611,6 @@ export class PolynomialFeatures {
           .tensor2d(srcColValues)
           .prod(1)
           .dataSync();
-        // console.log('tfjs', zz);
-        // xc = math.contrib.prod(srcColValues, 1);
-        // console.log('xc', xc)
       }
       result = math.contrib.subset(result, rowRange, [i], xc);
     }
