@@ -53,14 +53,14 @@ export class Imputer {
     validateMatrix2D(X);
 
     const _X = this.copy ? _.clone(X) : X;
-    const rowLen = math.contrib.size(_X, 0);
-    const colLen = math.contrib.size(_X, 1);
-    const rowRange = math.contrib.range(0, rowLen);
-    const colRange = math.contrib.range(0, colLen);
+    const rowLen = math.size(_X, 0);
+    const colLen = math.size(_X, 1);
+    const rowRange = math.range(0, rowLen);
+    const colRange = math.range(0, colLen);
     if (this.strategy === 'mean') {
       if (this.axis === 0) {
         const colNumbers: any = _.map(colRange, col =>
-          math.contrib.subset(_X, rowRange, [col])
+          math.subset(_X, rowRange, [col])
         );
         this.means = this.calcArrayMean(colNumbers, [
           'flatten',
