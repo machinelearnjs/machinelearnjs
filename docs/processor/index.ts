@@ -344,9 +344,15 @@ export function constructParamTable(parameters): string {
       } else if (consts.paramTypeUnion === paramType) {
         // 5. Handles any union types.
         // e.g. string[] | string[][]
-        const unionTypes = _.map(param.type.types, singleType =>
-          renderParamType(singleType)
-        );
+        const unionTypes = _.map(param.type.types, singleType => {
+          if (singleType.type === consts.paramTypeReference) {
+            return constructMatrixType(
+              singleType.name,
+              singleType.typeArguments
+            );
+          }
+          return renderParamType(singleType);
+        });
         const unionTypesStr = unionTypes.join(' or ');
         sum.push([
           param.name,
