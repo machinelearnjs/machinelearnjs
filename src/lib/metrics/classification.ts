@@ -139,12 +139,17 @@ number {
  * @param {any} normalize
  * @returns {number}
  */
-export function zeroOneLoss({
-  y_true,
-  y_pred,
-  normalize = true
-  // sample_weight = null
-}): number {
+export function zeroOneLoss(
+  y_true = null,
+  y_pred = null,
+  {
+    normalize = true
+  }: {
+    normalize: boolean;
+  } = {
+    normalize: true
+  }
+): number {
   if (normalize) {
     return 1 - accuracyScore({ y_true, y_pred });
   }
