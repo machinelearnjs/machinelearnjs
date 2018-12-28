@@ -5,21 +5,9 @@ import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
 
 export interface KMeansOptions {
-  /**
-   * Number of clusters
-   */
   k: number;
-  /**
-   * Choice of distance method. Defaulting to euclidean
-   */
   distance?: 'euclidean' | 'manhattan';
-  /**
-   * Relative tolerance with regards to inertia to declare convergence
-   */
   maxIteration?: number;
-  /**
-   * Random state value for sorting centroids during the getInitialCentroid phase
-   */
   randomState?: number;
 }
 
@@ -44,16 +32,29 @@ export class KMeans implements IMlModel<number> {
   private randomState: number;
   private maxIteration: number;
 
+  /**
+   *
+   * @param distance - Choice of distance method. Defaulting to euclidean
+   * @param k - Number of clusters
+   * @param maxIteration - Relative tolerance with regards to inertia to declare convergence
+   * @param randomState - Random state value for sorting centroids during the getInitialCentroid phase
+   */
   constructor(
-    options: KMeansOptions = {
+    {
+      distance = 'euclidean',
+      k = 3,
+      maxIteration = 300,
+      randomState = 0
+    }: KMeansOptions = {
       distance: 'euclidean',
       k: 3,
-      maxIteration: 300
+      maxIteration: 300,
+      randomState: 0
     }
   ) {
-    this.k = _.get(options, 'k', 3);
+    this.k = k;
     // Assigning a distance method
-    const distanceType = _.get(options, 'distance', 'euclidean');
+    const distanceType = distance;
     switch (distanceType) {
       case 'euclidean':
         this.distance = math.euclideanDistance;
@@ -64,8 +65,8 @@ export class KMeans implements IMlModel<number> {
       default:
         throw new Error(`Unknown distance type ${distanceType}`);
     }
-    this.randomState = _.get(options, 'randomState', 0);
-    this.maxIteration = _.get(options, 'maxIteration', 300);
+    this.randomState = randomState;
+    this.maxIteration = maxIteration;
     this.centroids = [];
   }
 
@@ -74,7 +75,7 @@ export class KMeans implements IMlModel<number> {
    * @param {any} X - array-like or sparse matrix of shape = [n_samples, n_features]
    * @returns {{centroids: number[]; clusters: number[]}}
    */
-  public fit(X: Type2DMatrix<number> = []): void {
+  public fit(X: Type2DMatrix<number> = null): void {
     validateMatrix2D(X);
     this.assignment = new Array(_.size(X));
     this.centroids = this.getInitialCentroids(X, this.k);
@@ -134,10 +135,10 @@ export class KMeans implements IMlModel<number> {
 
   /**
    * Predicts the cluster index with the given X
-   * @param {any} X
+   * @param {any} X - array-like or sparse matrix of shape = [n_samples, n_features]
    * @returns {number[]}
    */
-  public predict(X: Type2DMatrix<number>): number[] {
+  public predict(X: Type2DMatrix<number> = null): number[] {
     validateMatrix2D(X);
     return _.map(X, data => {
       return this.getClosestCentroids(data, this.centroids, this.distance);

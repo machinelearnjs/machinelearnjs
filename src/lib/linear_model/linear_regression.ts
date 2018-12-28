@@ -29,7 +29,10 @@ export class LinearRegression {
    * @param {any} X - training values
    * @param {any} y - target values
    */
-  public fit(X: Type1DMatrix<number>, y: Type1DMatrix<number>): void {
+  public fit(
+    X: Type1DMatrix<number> = null,
+    y: Type1DMatrix<number> = null
+  ): void {
     const xShape = validateMatrix1D(X);
     const yShape = validateMatrix1D(y);
     if (xShape.length === 1 && yShape.length === 1 && xShape[0] === yShape[0]) {
@@ -46,7 +49,7 @@ export class LinearRegression {
    * @param {number} X - Values to predict.
    * @returns {number}
    */
-  public predict(X: Type1DMatrix<number>): number[] {
+  public predict(X: Type1DMatrix<number> = null): number[] {
     validateMatrix1D(X);
     const preds = [];
     for (let i = 0; i < size(X); i++) {
