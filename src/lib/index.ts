@@ -1,3 +1,6 @@
+import { installTF } from './utils/deps';
+installTF();
+
 import * as cluster from './cluster';
 import * as datasets from './datasets';
 import * as decomposition from './decomposition';
@@ -10,9 +13,6 @@ import * as neighbors from './neighbors';
 import * as preprocessing from './preprocessing';
 import * as svm from './svm';
 import * as tree from './tree';
-
-// Calling tfjs-node
-import '@tensorflow/tfjs-node';
 
 // prettier-ignore
 export {
