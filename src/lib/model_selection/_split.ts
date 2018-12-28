@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
 import * as Random from 'random-js';
 import { inferShape, validateFitInputs } from '../ops';
-import { Type1DMatrix, Type2DMatrix, TypeMatrix } from '../types';
+import { Type1DMatrix, Type2DMatrix } from '../types';
 
 /**
  * K-Folds cross-validator
@@ -48,11 +48,14 @@ export class KFold {
 
   /**
    *
-   * @param {any} X - Training data, where n_samples is the number of samples and n_features is the number of features.
-   * @param {any} y - The target variable for supervised learning problems.
+   * @param X - Training data, where n_samples is the number of samples and n_features is the number of features.
+   * @param y - The target variable for supervised learning problems.
    * @returns {any[]}
    */
-  public split(X: TypeMatrix<any>, y: TypeMatrix<any>): any[] {
+  public split(
+    X: Type1DMatrix<any> = null,
+    y: Type1DMatrix<any> = null
+  ): any[] {
     const xShape = inferShape(X);
     const yShape = inferShape(y);
     if (xShape.length > 0 && yShape.length > 0 && xShape[0] !== yShape[0]) {

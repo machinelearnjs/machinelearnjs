@@ -327,6 +327,9 @@ export function constructParamTable(parameters): string {
               if (typeArg.type === consts.refTypeArgTypeUnion) {
                 const types = typeArg.types;
                 typeList.push(constructMatrixType(refName, types));
+              } else if (typeArg.type === consts.refTypeTypeParameter) {
+                const types = typeArg.constraint.types;
+                typeList.push(constructMatrixType(refName, types));
               } else if (typeArg.type === consts.refTypeArgTypeIntrinsic) {
                 typeList.push(constructMatrixType(refName, [typeArg]));
               } else {
@@ -344,9 +347,15 @@ export function constructParamTable(parameters): string {
       } else if (consts.paramTypeUnion === paramType) {
         // 5. Handles any union types.
         // e.g. string[] | string[][]
-        const unionTypes = _.map(param.type.types, singleType =>
-          renderParamType(singleType)
-        );
+        const unionTypes = _.map(param.type.types, singleType => {
+          if (singleType.type === consts.paramTypeReference) {
+            return constructMatrixType(
+              singleType.name,
+              singleType.typeArguments
+            );
+          }
+          return renderParamType(singleType);
+        });
         const unionTypesStr = unionTypes.join(' or ');
         sum.push([
           param.name,

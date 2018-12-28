@@ -29,6 +29,7 @@ export const tagTypeIgnore = 'ignore';
 export const refKindInterface = 'Interface';
 export const refKindTypeAlias = 'Type alias';
 export const refTypeArgTypeUnion = 'union';
+export const refTypeTypeParameter = 'typeParameter';
 export const refTypeArgTypeIntrinsic = 'intrinsic';
 
 // Matrix Types

@@ -1,6 +1,7 @@
 import * as tf from '@tensorflow/tfjs';
 import * as _ from 'lodash';
 import { reshape } from '../ops';
+import { Type1DMatrix } from '../types';
 import { checkArray } from '../utils/validation';
 
 /**
@@ -86,24 +87,29 @@ export const validateInitialInputs = (y_true, y_pred, labels, options = {}) => {
  * @example
  * import { accuracyScore } from 'kalimdor/metrics';
  *
- * const accResult = accuracyScore({
- *   y_true: [0, 1, 2, 3],
- *   y_pred: [0, 2, 1, 3]
- * });
+ * const accResult = accuracyScore(
+ *  [0, 1, 2, 3],
+ *  [0, 2, 1, 3]
+ * );
  *
  * // accuracy result: 0.5
  *
- * @param {any} y_true
- * @param {any} y_pred
- * @param {any} normalize
+ * @param y_true - 1d array-like, or label indicator array / sparse matrix
+ * @param y_pred - 1d array-like, or label indicator array / sparse matrix
+ * @param normalize
  */
-export function accuracyScore({
-  y_true,
-  y_pred,
-  normalize = true
-  // sample_weight = null
-}): // TODO: Fix any array type
-number {
+export function accuracyScore(
+  y_true: Type1DMatrix<number | string> = null,
+  y_pred: Type1DMatrix<number | string> = null,
+  {
+    normalize = true
+  }: // sample_weight = null
+  {
+    normalize: boolean;
+  } = {
+    normalize: true
+  }
+): number {
   validateInitialInputs(y_true, y_pred, null, { multiclass: true });
 
   const yTrueRange = _.range(0, _.size(y_true));
@@ -128,45 +134,36 @@ number {
  * @example
  * import { zeroOneLoss } from 'kalimdor/metrics';
  *
- * const loss_zero_one_result = zeroOneLoss({
- *   y_true: [1, 2, 3, 4],
- *   y_pred: [2, 2, 3, 5]
- * });
+ * const loss_zero_one_result = zeroOneLoss(
+ *   [1, 2, 3, 4],
+ *   [2, 2, 3, 5]
+ * );
  * console.log(loss_zero_one_result); // 0.5
  *
- * @param {any} y_true
- * @param {any} y_pred
+ * @param {any} y_true - Ground truth (correct) labels.
+ * @param {any} y_pred - Predicted labels, as returned by a classifier.
  * @param {any} normalize
  * @returns {number}
  */
-export function zeroOneLoss({
-  y_true,
-  y_pred,
-  normalize = true
-  // sample_weight = null
-}): number {
+export function zeroOneLoss(
+  y_true = null,
+  y_pred = null,
+  {
+    /**
+     * If False, return the number of misclassifications. Otherwise, return the fraction of misclassifications.
+     */
+    normalize = true
+  }: {
+    normalize: boolean;
+  } = {
+    normalize: true
+  }
+): number {
   if (normalize) {
-    return 1 - accuracyScore({ y_true, y_pred });
+    return 1 - accuracyScore(y_true, y_pred);
   }
   // TODO: Fix return 0; implement when normalize === false
   return 0;
-}
-
-export interface ConfusionMatrixOptions {
-  /**
-   * Ground truth (correct) target values.
-   */
-  y_true: any[];
-  /**
-   * Estimated targets as returned by a classifier.
-   */
-  y_pred: any[];
-  /**
-   * List of labels to index the matrix. This may be used to reorder or
-   * select a subset of labels. If none is given, those that appear
-   * at least once in y_true or y_pred are used in sorted order.
-   */
-  labels?: any[];
 }
 
 /**
@@ -179,26 +176,35 @@ export interface ConfusionMatrixOptions {
  * @example
  * import { confusion_matrix } from 'kalimdor/metrics';
  *
- * const matrix1 = confusion_matrix({
- *   y_true: [1, 2, 3],
- *   y_pred: [1, 2, 3]
- * });
+ * const matrix1 = confusion_matrix([1, 2, 3], [1, 2, 3]);
  * console.log(matrix1); // [ [ 1, 0, 0 ], [ 0, 1, 0 ], [ 0, 0, 1 ] ]
  *
- * const matrix2 = confusion_matrix({
- *   y_true: ['cat', 'ant', 'cat', 'cat', 'ant', 'bird'],
- *   y_pred: ['ant', 'ant', 'cat', 'cat', 'ant', 'cat']
- * });
+ * const matrix2 = confusion_matrix(
+ *   ['cat', 'ant', 'cat', 'cat', 'ant', 'bird'],
+ *   ['ant', 'ant', 'cat', 'cat', 'ant', 'cat']
+ * );
  * console.log(matrix2); // [ [ 1, 2, 0 ], [ 2, 0, 0 ], [ 0, 1, 0 ] ]
  *
- * @param {ConfusionMatrixOptions} options
- * @returns {number[]}
+ * @param y_true - Ground truth (correct) target values.
+ * @param y_pred - Estimated targets as returned by a classifier.
+ * @param labels
  */
-export function confusion_matrix(options: ConfusionMatrixOptions): number[] {
-  const y_true = _.get(options, 'y_true', null);
-  const y_pred = _.get(options, 'y_pred', null);
-  const labels = _.get(options, 'labels', null);
-
+export function confusion_matrix(
+  y_true: Type1DMatrix<string | number> = null,
+  y_pred: Type1DMatrix<string | number> = null,
+  {
+    /**
+     * List of labels to index the matrix. This may be used to reorder or
+     * select a subset of labels. If none is given, those that appear
+     * at least once in y_true or y_pred are used in sorted order.
+     */
+    labels = null
+  }: {
+    labels?: any[];
+  } = {
+    labels: null
+  }
+): number[] {
   validateInitialInputs(y_true, y_pred, labels);
 
   // TODO: Sorting if set by options

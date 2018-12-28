@@ -43,7 +43,7 @@ describe('ensemble:forest', () => {
       const { xTest, xTrain, yTest, yTrain } = train_test_split(data, targets);
       randomForest.fit(xTrain, yTrain);
       const yPred = randomForest.predict(xTest);
-      const accuracy = accuracyScore({ y_true: yTest, y_pred: yPred });
+      const accuracy = accuracyScore(yTest, yPred);
       expect(accuracy).toBeGreaterThanOrEqual(accuracyTarget);
     });
 
