@@ -41,7 +41,7 @@ export class GaussianNB<T extends number | string = number>
   /**
    * @param X - array-like, shape = [n_samples, n_features]
    */
-  public predict(X: Type2DMatrix<number>): T[] {
+  public predict(X: Type2DMatrix<number> = null): T[] {
     validateMatrix2D(X);
     return X.map((x): T => this.singlePredict(x));
   }
@@ -50,7 +50,11 @@ export class GaussianNB<T extends number | string = number>
    * Restore the model from saved states
    * @param modelState
    */
-  public fromJSON(modelState: {
+  public fromJSON({
+    classCategories = null,
+    mean = null,
+    variance = null
+  }: {
     /**
      * List of class categories
      */
@@ -64,9 +68,9 @@ export class GaussianNB<T extends number | string = number>
      */
     variance: Type2DMatrix<number>;
   }): void {
-    this.classCategories = modelState.classCategories;
-    this.mean = tf.tensor2d(modelState.mean);
-    this.variance = tf.tensor2d(modelState.variance);
+    this.classCategories = classCategories;
+    this.mean = tf.tensor2d(mean);
+    this.variance = tf.tensor2d(variance);
   }
 
   /**
