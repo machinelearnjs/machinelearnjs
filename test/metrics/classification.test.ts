@@ -102,40 +102,31 @@ describe('classification:confusion_matrix', () => {
 
   it('should yTrue1 and yPred1 return [ [ 1, 0, 0 ], [ 0, 1, 0 ], [ 0, 0, 1 ] ]', () => {
     const expectedResult = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
-    const matrixResult = confusion_matrix({
-      y_pred: yPred1,
-      y_true: yTrue1
-    });
+    const matrixResult = confusion_matrix(yTrue1, yPred1);
     expect(_.isEqual(expectedResult, matrixResult)).toBe(true);
   });
 
   it('should yTrue2 and yPred2 return [ [ 1, 2, 0 ], [ 2, 0, 0 ], [ 0, 1, 0 ] ]', () => {
     const expectedResult = [[1, 2, 0], [2, 0, 0], [0, 1, 0]];
-    const matrixResult = confusion_matrix({
-      y_pred: yPred2,
-      y_true: yTrue2
-    });
+    const matrixResult = confusion_matrix(yTrue2, yPred2);
     expect(_.isEqual(expectedResult, matrixResult)).toBe(true);
   });
 
   it('should yTrue3 and yPred3 return [ [ 1, 2, 0 ], [ 2, 0, 0 ], [ 0, 1, 0 ] ]', () => {
     const expectedResult = [[1, 2, 0], [2, 0, 0], [0, 1, 0]];
-    const matrixResult = confusion_matrix({
-      y_pred: yPred3,
-      y_true: yTrue3
-    });
+    const matrixResult = confusion_matrix(yTrue3, yPred3);
     expect(_.isEqual(expectedResult, matrixResult)).toBe(true);
   });
 
   it('should throw an y_true empty exception', () => {
     expect(() => {
-      confusion_matrix({ y_true: [], y_pred: [] });
+      confusion_matrix([], []);
     }).toThrow('y_true cannot be null or empty');
   });
 
   it('should throw y_pred empty exception', () => {
     expect(() => {
-      confusion_matrix({ y_true: yTrue2, y_pred: [] });
+      confusion_matrix(yTrue2, []);
     }).toThrow('y_pred cannot be null or empty');
   });
 });

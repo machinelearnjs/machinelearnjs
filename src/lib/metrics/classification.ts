@@ -166,23 +166,6 @@ export function zeroOneLoss(
   return 0;
 }
 
-export interface ConfusionMatrixOptions {
-  /**
-   * Ground truth (correct) target values.
-   */
-  y_true: any[];
-  /**
-   * Estimated targets as returned by a classifier.
-   */
-  y_pred: any[];
-  /**
-   * List of labels to index the matrix. This may be used to reorder or
-   * select a subset of labels. If none is given, those that appear
-   * at least once in y_true or y_pred are used in sorted order.
-   */
-  labels?: any[];
-}
-
 /**
  * A confusion matrix is a technique for summarizing the performance of a classification algorithm.
  *
@@ -193,26 +176,35 @@ export interface ConfusionMatrixOptions {
  * @example
  * import { confusion_matrix } from 'kalimdor/metrics';
  *
- * const matrix1 = confusion_matrix({
- *   y_true: [1, 2, 3],
- *   y_pred: [1, 2, 3]
- * });
+ * const matrix1 = confusion_matrix([1, 2, 3], [1, 2, 3]);
  * console.log(matrix1); // [ [ 1, 0, 0 ], [ 0, 1, 0 ], [ 0, 0, 1 ] ]
  *
- * const matrix2 = confusion_matrix({
- *   y_true: ['cat', 'ant', 'cat', 'cat', 'ant', 'bird'],
- *   y_pred: ['ant', 'ant', 'cat', 'cat', 'ant', 'cat']
- * });
+ * const matrix2 = confusion_matrix(
+ *   ['cat', 'ant', 'cat', 'cat', 'ant', 'bird'],
+ *   ['ant', 'ant', 'cat', 'cat', 'ant', 'cat']
+ * );
  * console.log(matrix2); // [ [ 1, 2, 0 ], [ 2, 0, 0 ], [ 0, 1, 0 ] ]
  *
- * @param {ConfusionMatrixOptions} options
- * @returns {number[]}
+ * @param y_true - Ground truth (correct) target values.
+ * @param y_pred - Estimated targets as returned by a classifier.
+ * @param labels
  */
-export function confusion_matrix(options: ConfusionMatrixOptions): number[] {
-  const y_true = _.get(options, 'y_true', null);
-  const y_pred = _.get(options, 'y_pred', null);
-  const labels = _.get(options, 'labels', null);
-
+export function confusion_matrix(
+  y_true: Type1DMatrix<string | number> = null,
+  y_pred: Type1DMatrix<string | number> = null,
+  {
+    /**
+     * List of labels to index the matrix. This may be used to reorder or
+     * select a subset of labels. If none is given, those that appear
+     * at least once in y_true or y_pred are used in sorted order.
+     */
+    labels = null
+  }: {
+    labels?: any[];
+  } = {
+    labels: null
+  }
+): number[] {
   validateInitialInputs(y_true, y_pred, labels);
 
   // TODO: Sorting if set by options

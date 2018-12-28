@@ -16,22 +16,16 @@ const loss_zero_one_result = zeroOneLoss([1, 2, 3, 4], [2, 2, 3, 5]);
 
 console.log('loss zero one ', loss_zero_one_result);
 
-const matrix1 = confusion_matrix({
-  y_true: [1, 2, 3],
-  y_pred: [1, 2, 3]
-});
+const matrix1 = confusion_matrix([1, 2, 3], [1, 2, 3]);
 console.log(matrix1);
 
-const matrix2 = confusion_matrix({
-  y_true: [2, 0, 2, 2, 0, 1],
-  y_pred: [0, 0, 2, 2, 0, 2]
-});
+const matrix2 = confusion_matrix([2, 0, 2, 2, 0, 1], [0, 0, 2, 2, 0, 2]);
 console.log(matrix2);
 
-const matrix3 = confusion_matrix({
-  y_true: ['cat', 'ant', 'cat', 'cat', 'ant', 'bird'],
-  y_pred: ['ant', 'ant', 'cat', 'cat', 'ant', 'cat']
-});
+const matrix3 = confusion_matrix(
+  ['cat', 'ant', 'cat', 'cat', 'ant', 'bird'],
+  ['ant', 'ant', 'cat', 'cat', 'ant', 'cat']
+);
 
 console.log(matrix3);
 
