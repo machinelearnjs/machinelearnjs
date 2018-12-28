@@ -14,16 +14,16 @@ exports[`docs:helper constructParamTable should build a table for param1 1`] = `
 exports[`docs:helper constructParamTable should build a table for params with Type1DMatrix 1`] = `
 "| Param | Type | Default | Description |
 | ------ | ------ | ------ | ------ |
-| X | number[] |  | training values
-| y | number[] |  | target values
+| X | intrinsic |  | 
+| y | intrinsic |  | 
 "
 `;
 
 exports[`docs:helper constructParamTable should build table for params with Type2DMatrix 1`] = `
 "| Param | Type | Default | Description |
 | ------ | ------ | ------ | ------ |
-| X | number[][] | null | Matrix of data
-| y | number[] | null | Matrix of targets
+| X | intrinsic |  | 
+| y | intrinsic |  | 
 "
 `;
 
