@@ -11,6 +11,9 @@ import * as preprocessing from './preprocessing';
 import * as svm from './svm';
 import * as tree from './tree';
 
+// Calling tfjs-node
+import '@tensorflow/tfjs-node';
+
 // prettier-ignore
 export {
 	cluster,

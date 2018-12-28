@@ -71,6 +71,7 @@
   },
   "dependencies": {
     "@tensorflow/tfjs": "^0.13.3",
+    "@tensorflow/tfjs-node": "^0.2.1",
     "isomorphic-fetch": "^2.2.1",
     "libsvm-js": "^0.2.0",
     "lodash": "^4.17.10",
