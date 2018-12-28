@@ -106,24 +106,46 @@ export class OneHotEncoder {
    * encode data according to dataKeys and labelKeys
    *
    * @param data - list of records to encode
-   * @param options - dataKeys: independent variables, labelKeys: dependent variables; mandatory
-   * @return {{data: Array, decoders: Array}} - see readme for full explanation
+   * @param options
    */
   public encode(
-    data,
-    options = { dataKeys: null, labelKeys: null }
-  ): { data: any[]; decoders: any[] } {
-    const labelKeys = options.labelKeys;
+    data = null,
+    {
+      /**
+       * Independent variables
+       */
+      dataKeys = null,
+      /**
+       * Depdenent variables
+       */
+      labelKeys = null
+    }: {
+      dataKeys: Type1DMatrix<string>;
+      labelKeys: Type1DMatrix<string>;
+    } = {
+      dataKeys: null,
+      labelKeys: null
+    }
+  ): {
+    /**
+     * Encoded data
+     */
+    data: any[];
+    /**
+     * Decoder
+     */
+    decoders: any[];
+  } {
     const decoders = [];
 
     // shortcut to allow caller to default to "all non-label keys are data keys"
-    const dataKeys = options.dataKeys ? options.dataKeys : _.keys(data[0]);
+    const _dataKeys = dataKeys ? dataKeys : _.keys(data[0]);
     // validations
     if (_.size(data) < 1) {
       throw Error('data cannot be empty!');
     }
     // data keys
-    _.forEach(dataKeys, dataKey => {
+    _.forEach(_dataKeys, dataKey => {
       // TODO: it's only checking data[0] -> It should also check all the others
       if (!_.has(data[0], dataKey)) {
         // TODO: Find the correct error to throw
@@ -142,7 +164,7 @@ export class OneHotEncoder {
 
     // maybe a little too clever but also the simplest;
     // serialize every value for a given data key, then zip the results back up into a (possibly nested) array
-    const transform = (keys: string[]) =>
+    const transform = (keys: Type1DMatrix<string>) =>
       _.zip(
         ..._.map(keys, (key: string) => {
           const standardized = this.standardizeField(key, data);
@@ -157,7 +179,7 @@ export class OneHotEncoder {
           return standardized;
         })
       );
-    const features = transform(dataKeys);
+    const features = transform(_dataKeys);
     const labels = transform(labelKeys);
     return {
       // zip the label data back into the feature data (to ensure label data is at the end)
