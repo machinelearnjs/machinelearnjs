@@ -1,3 +1,5 @@
+import { installTF } from '../utils/deps';
+installTF();
 import { accuracyScore, confusion_matrix, zeroOneLoss } from './classification';
 import { mean_absolute_error, mean_squared_error } from './regression';
 

@@ -1,3 +1,5 @@
+import { installTF } from '../utils/deps';
+installTF();
 import { Lasso, Ridge } from './coordinate_descent';
 import { LinearRegression } from './linear_regression';
 import { SGDClassifier, SGDRegressor, TypeLoss } from './stochastic_gradient';
