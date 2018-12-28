@@ -1,6 +1,7 @@
 import * as tf from '@tensorflow/tfjs';
 import * as _ from 'lodash';
 import { reshape } from '../ops';
+import { Type1DMatrix } from '../types';
 import { checkArray } from '../utils/validation';
 
 /**
@@ -86,24 +87,29 @@ export const validateInitialInputs = (y_true, y_pred, labels, options = {}) => {
  * @example
  * import { accuracyScore } from 'kalimdor/metrics';
  *
- * const accResult = accuracyScore({
- *   y_true: [0, 1, 2, 3],
- *   y_pred: [0, 2, 1, 3]
- * });
+ * const accResult = accuracyScore(
+ *  [0, 1, 2, 3],
+ *  [0, 2, 1, 3]
+ * );
  *
  * // accuracy result: 0.5
  *
- * @param {any} y_true
- * @param {any} y_pred
- * @param {any} normalize
+ * @param y_true - 1d array-like, or label indicator array / sparse matrix
+ * @param y_pred - 1d array-like, or label indicator array / sparse matrix
+ * @param normalize
  */
-export function accuracyScore({
-  y_true,
-  y_pred,
-  normalize = true
-  // sample_weight = null
-}): // TODO: Fix any array type
-number {
+export function accuracyScore(
+  y_true: Type1DMatrix<number | string> = null,
+  y_pred: Type1DMatrix<number | string> = null,
+  {
+    normalize = true
+  }: // sample_weight = null
+  {
+    normalize: boolean;
+  } = {
+    normalize: true
+  }
+): number {
   validateInitialInputs(y_true, y_pred, null, { multiclass: true });
 
   const yTrueRange = _.range(0, _.size(y_true));
@@ -154,7 +160,7 @@ export function zeroOneLoss(
   }
 ): number {
   if (normalize) {
-    return 1 - accuracyScore({ y_true, y_pred });
+    return 1 - accuracyScore(y_true, y_pred);
   }
   // TODO: Fix return 0; implement when normalize === false
   return 0;

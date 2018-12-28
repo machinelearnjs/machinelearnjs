@@ -39,7 +39,7 @@ export class Ridge extends SGDRegressor {
    */
   constructor(
     {
-      l2,
+      l2 = null,
       epochs = 1000,
       learning_rate = 0.001
     }: {

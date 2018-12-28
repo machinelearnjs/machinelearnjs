@@ -13,71 +13,44 @@ describe('classification:accuracy_score', () => {
 
   it('should yTrue1 and yPred1 return 0.5', () => {
     const expectedResult = 0.5;
-    const result = accuracyScore({
-      y_pred: yPred1,
-      y_true: yTrue1
-    });
+    const result = accuracyScore(yTrue1, yPred1);
 
     expect(result).toBe(expectedResult);
   });
 
   it('should yTrue1 and yPred1 with normalize:false return 2', () => {
     const expectedResult = 2;
-    const result = accuracyScore({
-      normalize: false,
-      y_pred: yPred1,
-      y_true: yTrue1
-    });
-
+    const result = accuracyScore(yTrue1, yPred1, { normalize: false });
     expect(result).toBe(expectedResult);
   });
 
   it('should yTrue2 and yPred2 return 0.5', () => {
     const expectedResult = 0.5;
-    const result = accuracyScore({
-      y_pred: yPred2,
-      y_true: yTrue2
-    });
+    const result = accuracyScore(yTrue2, yPred2);
     expect(result).toBe(expectedResult);
   });
 
   it('should yTrue2 and yPred2 with normalize:false ', () => {
     const expectedResult = 2;
-    const result = accuracyScore({
-      normalize: false,
-      y_pred: yPred2,
-      y_true: yTrue2
-    });
+    const result = accuracyScore(yTrue2, yPred2, { normalize: false });
     expect(result).toBe(expectedResult);
   });
 
   it('should throw not equal in size exception', () => {
     expect(() => {
-      accuracyScore({
-        normalize: false,
-        y_pred: yPred2,
-        y_true: [1]
-      });
+      accuracyScore(yPred2, [1], { normalize: false });
     }).toThrow('y_true and y_pred are not equal in size!');
   });
 
   it('should y_true non-array should throw an error', () => {
     expect(() => {
-      accuracyScore({
-        normalize: false,
-        y_pred: yPred2,
-        y_true: true
-      });
+      accuracyScore(true, yPred2, { normalize: false });
     }).toThrow('y_true cannot be null or empty');
   });
 
   it('should y_pred non-array should throw an error', () => {
     expect(() => {
-      accuracyScore({
-        normalize: false,
-        y_pred: 1,
-        y_true: yTrue2
-      });
+      accuracyScore(yTrue2, 1, { normalize: false });
     }).toThrow('y_pred cannot be null or empty');
   });
 });
@@ -90,13 +63,13 @@ describe('classification:zeroOneLoss', () => {
 
   it('should yTrue1 and yPred1 return 1', () => {
     const expectedResult = 0.5;
-    const result = zeroOneLoss(yPred1, yTrue1);
+    const result = zeroOneLoss(yTrue1, yPred1);
     expect(result).toBe(expectedResult);
   });
 
   it('should yTrue2 and yPred2 return 0.33333333333333337', () => {
     const expectedResult = 0.33333333333333337;
-    const result = zeroOneLoss(yPred2, yTrue2);
+    const result = zeroOneLoss(yTrue2, yPred2);
     expect(result).toBe(expectedResult);
   });
 
@@ -108,21 +81,13 @@ describe('classification:zeroOneLoss', () => {
 
   it('should y_true non-array should throw an error', () => {
     expect(() => {
-      accuracyScore({
-        normalize: false,
-        y_pred: yPred2,
-        y_true: true
-      });
+      accuracyScore(true, yPred2, { normalize: false });
     }).toThrow('y_true cannot be null or empty');
   });
 
   it('should y_pred non-array should throw an error', () => {
     expect(() => {
-      accuracyScore({
-        normalize: false,
-        y_pred: 1,
-        y_true: yTrue2
-      });
+      accuracyScore(yTrue2, 1, { normalize: false });
     }).toThrow('y_pred cannot be null or empty');
   });
 });

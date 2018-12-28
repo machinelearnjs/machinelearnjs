@@ -30,10 +30,7 @@ describe('linear_model:SGDClassifier', () => {
     });
     clf.fit(xTrain, yTrain);
     const result = clf.predict(xTest);
-    const accuracy = accuracyScore({
-      y_pred: result,
-      y_true: yTest
-    });
+    const accuracy = accuracyScore(result, yTest);
     expect(accuracy).toBeGreaterThanOrEqual(accuracyExpected1);
   });
 
@@ -46,10 +43,7 @@ describe('linear_model:SGDClassifier', () => {
     });
     clf_l1.fit(xTrain, yTrain);
     const result = clf_l1.predict(xTest);
-    const accuracy = accuracyScore({
-      y_pred: result,
-      y_true: yTest
-    });
+    const accuracy = accuracyScore(result, yTest);
     expect(accuracy).toBeGreaterThanOrEqual(accuracyExpected1);
 
     const clf_l1l2 = new SGDClassifier({
@@ -59,10 +53,7 @@ describe('linear_model:SGDClassifier', () => {
     });
     clf_l1l2.fit(xTrain, yTrain);
     const result2 = clf_l1l2.predict(xTest);
-    const accuracy2 = accuracyScore({
-      y_pred: result2,
-      y_true: yTest
-    });
+    const accuracy2 = accuracyScore(result2, yTest);
     expect(accuracy2).toBeGreaterThanOrEqual(accuracyExpected1);
   });
 
@@ -79,10 +70,7 @@ describe('linear_model:SGDClassifier', () => {
     });
     clf.fit(xTrain, yTrain);
     const result = clf.predict(xTest);
-    const accuracy = accuracyScore({
-      y_pred: result,
-      y_true: yTest
-    });
+    const accuracy = accuracyScore(result, yTest);
     expect(accuracy).toBeGreaterThanOrEqual(accuracyExpected1);
 
     // Model reloading
@@ -95,10 +83,7 @@ describe('linear_model:SGDClassifier', () => {
     clf2.fromJSON(saveState);
 
     const result2 = clf2.predict(xTest);
-    const accuracy2 = accuracyScore({
-      y_pred: result2,
-      y_true: yTest
-    });
+    const accuracy2 = accuracyScore(result2, yTest);
     expect(accuracy2).toBeGreaterThanOrEqual(accuracyExpected1);
   });
 
@@ -116,10 +101,7 @@ describe('linear_model:SGDClassifier', () => {
 
     clf.fit(xTrain, yTrain);
     const result = clf.predict(xTest);
-    const accuracy = accuracyScore({
-      y_pred: result,
-      y_true: yTest
-    });
+    const accuracy = accuracyScore(result, yTest);
     expect(accuracy).toBeGreaterThanOrEqual(accuracyExpected1);
   });
 
