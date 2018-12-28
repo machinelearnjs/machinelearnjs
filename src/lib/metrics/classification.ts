@@ -128,14 +128,14 @@ number {
  * @example
  * import { zeroOneLoss } from 'kalimdor/metrics';
  *
- * const loss_zero_one_result = zeroOneLoss({
- *   y_true: [1, 2, 3, 4],
- *   y_pred: [2, 2, 3, 5]
- * });
+ * const loss_zero_one_result = zeroOneLoss(
+ *   [1, 2, 3, 4],
+ *   [2, 2, 3, 5]
+ * );
  * console.log(loss_zero_one_result); // 0.5
  *
- * @param {any} y_true
- * @param {any} y_pred
+ * @param {any} y_true - Ground truth (correct) labels.
+ * @param {any} y_pred - Predicted labels, as returned by a classifier.
  * @param {any} normalize
  * @returns {number}
  */
@@ -143,6 +143,9 @@ export function zeroOneLoss(
   y_true = null,
   y_pred = null,
   {
+    /**
+     * If False, return the number of misclassifications. Otherwise, return the fraction of misclassifications.
+     */
     normalize = true
   }: {
     normalize: boolean;
