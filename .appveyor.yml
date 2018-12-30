@@ -1,6 +1,5 @@
 image:
   - Ubuntu
-  - Visual Studio 2015
 
 environment:
   matrix:
