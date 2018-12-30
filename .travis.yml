@@ -16,12 +16,10 @@ cache:
 install:
   - npm install
   - npm install -g npx
-  - npx snyk auth $SNYK_TOKEN
 
 script:
   - yarn build
   - yarn doc
   - yarn test:unit
   - yarn lint
-  - npx snyk test
   - yarn test:integration
