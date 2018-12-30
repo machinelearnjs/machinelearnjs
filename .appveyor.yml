@@ -1,5 +1,6 @@
 image:
   - Ubuntu
+  - Visual Studio 2015
 
 environment:
   matrix:
@@ -34,7 +35,7 @@ install:
   - sh: chmod +x ./scripts/build-prod.sh
 
   # install dependencies
-  - yarn install
+  - yarn install --ignore-optional
   - yarn build
 
 # Post-install test scripts.

@@ -4,7 +4,7 @@
     "interface-name": [true, "never-prefix"],
     // TODO: allow devDependencies only in **/*.spec.ts files:
     // waiting on https://github.com/palantir/tslint/pull/3708
-    "no-implicit-dependencies": [true, "dev"],
+    "no-implicit-dependencies": [true, "dev", "optional"],
 
     /* tslint-immutable rules */
     // Recommended built-in rules
@@ -17,7 +17,7 @@
     // Immutability rules
     "readonly-keyword": false,
     "readonly-array": false,
-    "no-let": false,  // Sometime let is more declaritive
+    "no-let": false, // Sometime let is more declaritive
     "no-object-mutation": false,
     "no-delete": true,
     "no-method-signature": true,
