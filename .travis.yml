@@ -4,8 +4,6 @@ services:
   - docker
 language: node_js
 node_js:
-  - 6
-  - 7
   - 8
   - 9
 # keep the npm cache to speed up installs
