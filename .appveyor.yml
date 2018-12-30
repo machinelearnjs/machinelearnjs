@@ -48,7 +48,6 @@ test_script:
   - yarn lint
   - yarn doc
   - yarn test:unit
-  - npx snyk test
   - yarn test:integration
 
 # Don't actually build.
