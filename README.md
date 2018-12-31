@@ -23,6 +23,11 @@ Using NPM
 $ npm install --save kalimdor
 ```
 
+# Accelerations
+
+By default, machinelearning.js will use pure Javascript version of tfjs. To enable acceleration
+through C++ binding or GPU, you must
+
 # Highlights
 
 - Machine Learning on the browser and Node.js
