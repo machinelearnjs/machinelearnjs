@@ -128,9 +128,5 @@
   },
   "prettier": {
     "singleQuote": true
-  },
-  "optionalDependencies": {
-    "@tensorflow/tfjs-node": "^0.2.1",
-    "@tensorflow/tfjs-node-gpu": "^0.2.1"
   }
 }
