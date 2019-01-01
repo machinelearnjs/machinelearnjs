@@ -1,6 +1,3 @@
-import { installTF } from './utils/deps';
-installTF();
-
 import * as cluster from './cluster';
 import * as datasets from './datasets';
 import * as decomposition from './decomposition';
