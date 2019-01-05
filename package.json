@@ -67,7 +67,7 @@
     "precommit": "pretty-quick --staged && yarn run lint && yarn run build"
   },
   "engines": {
-    "node": ">=6"
+    "node": ">=8.11.0"
   },
   "dependencies": {
     "@tensorflow/tfjs": "^0.13.3",

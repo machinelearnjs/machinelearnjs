@@ -287,7 +287,6 @@ export function constructParamTable(parameters): string {
         if (_.isEmpty(foundRef)) {
           // Handling the TS native references
 
-          console.dir(param.type.typeArguments);
           _.forEach(param.type.typeArguments, prop => {
             // Building a readable type arguments
             let args: string;

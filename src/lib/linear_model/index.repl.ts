@@ -1,6 +1,6 @@
 /* tslint:disable */
 
-import { LinearRegression } from './linear_regression';
+import { LinearRegression } from '.';
 
 const lr = new LinearRegression();
 
@@ -11,7 +11,7 @@ lr.fit(X, y);
 
 console.log(lr.predict([1, 2]));
 
-import { SGDClassifier, SGDRegressor } from './stochastic_gradient';
+import { SGDClassifier, SGDRegressor } from '.';
 
 const sgd = new SGDClassifier();
 const X1 = [
@@ -45,7 +45,7 @@ const X3 = [[0, 0], [1, 1]];
 const y3 = [0, 1];
 clf.fit(X3, y3);
 console.log(clf.predict([[2, 2]]));
-import { Ridge } from './coordinate_descent';
+import { Ridge } from '.';
 
 const rr = new Ridge({
   l2: 10
@@ -60,7 +60,7 @@ const result2 = rr.predict([
 
 console.log('checking res', result2);
 
-import { Lasso } from './coordinate_descent';
+import { Lasso } from '.';
 
 const reg1 = new Lasso({ degree: 2, l1: 1 });
 reg1.fit([[0, 0], [1, 1]], [0, 1]);

@@ -3,7 +3,6 @@
 Kalimdor.js is a Machine Learning library written in Typescript. It solves Machine Learning problems
 and teaches users how Machine Learning algorithms work.
 
-[![Build Status](https://travis-ci.org/kalimdorjs/kalimdorjs.svg?branch=master)](https://travis-ci.org/kalimdorjs/kalimdorjs)
 [![Build status](https://ci.appveyor.com/api/projects/status/0e70aia5vi2h35hs/branch/master?svg=true)](https://ci.appveyor.com/project/JasonShin/kalimdorjs/branch/master)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FJasonShin%2Fkalimdorjs.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FJasonShin%2Fkalimdorjs?ref=badge_shield)
 [![Slack](https://slack.bri.im/badge.svg)](https://slack.bri.im)
@@ -22,6 +21,39 @@ Using NPM
 
 ```bash
 $ npm install --save kalimdor
+```
+
+# Accelerations
+
+By default, machinelearning.js will use pure Javascript version of tfjs. To enable acceleration
+through C++ binding or GPU, you must import `machinelearn-node` for C++ or `machinelearn-gpu` for GPU.
+
+1. C++
+
+- installation
+
+```bash
+yarn add machinelearn-node
+```
+
+- activation
+
+```javascript
+import 'machinelearn-node';
+```
+
+2. GPU
+
+- installation
+
+```bash
+yarn add machinelearn-gpu
+```
+
+- activation
+
+```javascript
+import 'machinelearn-gpu';
 ```
 
 # Highlights
