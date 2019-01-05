@@ -118,7 +118,7 @@ export class BaseRandomForest implements IMlModel<number> {
  * It then aggregates the votes from different decision trees to decide the final class of the test object.
  *
  * @example
- * import { RandomForestClassifier } from 'kalimdor/ensemble';
+ * import { RandomForestClassifier } from 'machinelearn/ensemble';
  *
  * const X = [[0, 0], [1, 1], [2, 1], [1, 5], [3, 2]];
  * const y = [0, 1, 2, 3, 7];

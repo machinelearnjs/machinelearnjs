@@ -11,7 +11,7 @@ import { Type1DMatrix, Type2DMatrix } from '../types';
  * Each fold is then used once as a validation while the k - 1 remaining folds form the training set.
  *
  * @example
- * import { KFold } from 'kalimdor/model_selection';
+ * import { KFold } from 'machinelearn/model_selection';
  *
  * const kFold = new KFold({ k: 5 });
  * const X1 = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
@@ -106,7 +106,7 @@ export class KFold {
  * Split arrays or matrices into random train and test subsets
  *
  * @example
- * import { train_test_split } from 'kalimdor/model_selection';
+ * import { train_test_split } from 'machinelearn/model_selection';
  *
  * const X = [[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]];
  * const y = [0, 1, 2, 3, 4];

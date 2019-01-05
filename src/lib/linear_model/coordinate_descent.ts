@@ -16,8 +16,8 @@ import { SGDRegressor, TypeLoss } from './stochastic_gradient';
  * This estimator has built-in support for multi-variate regression (i.e., when y is a 2d-array of shape [n_samples, n_targets]).
  *
  * @example
- * import { Iris } from 'kalimdor/datasets';
- * import { Ridge } from 'kalimdor/linear_model';
+ * import { Iris } from 'machinelearn/datasets';
+ * import { Ridge } from 'machinelearn/linear_model';
  * (async function() {
  *   const irisData = new Iris();
  *   const {
@@ -75,8 +75,8 @@ export class Ridge extends SGDRegressor {
  * Technically the Lasso model is optimizing the same objective function as the Elastic Net with l1_ratio value (no L2 penalty).
  *
  * @example
- * import { Iris } from 'kalimdor/datasets';
- * import { Lasso } from 'kalimdor/linear_model';
+ * import { Iris } from 'machinelearn/datasets';
+ * import { Lasso } from 'machinelearn/linear_model';
  * (async function() {
  *   const irisData = new Iris();
  *   const {

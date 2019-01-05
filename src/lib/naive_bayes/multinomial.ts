@@ -11,7 +11,7 @@ import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
  * probability of a given class.
  *
  * @example
- * import { MultinomialNB } from 'kalimdor/naive_bayes';
+ * import { MultinomialNB } from 'machinelearn/naive_bayes';
  *
  * const nb = new MultinomialNB();
  * const X = [[1, 20], [2, 21], [3, 22], [4, 22]];

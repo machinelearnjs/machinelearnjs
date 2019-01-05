@@ -11,7 +11,7 @@ const SQRT_2PI = Math.sqrt(Math.PI * 2);
  * probability of a given class.
  *
  * @example
- * import { GaussianNB } from 'kalimdor/naive_bayes';
+ * import { GaussianNB } from 'machinelearn/naive_bayes';
  *
  * const nb = new GaussianNB();
  * const X = [[1, 20], [2, 21], [3, 22], [4, 22]];

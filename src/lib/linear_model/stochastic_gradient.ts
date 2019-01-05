@@ -255,7 +255,7 @@ export class BaseSGD implements IMlModel<number> {
  * and unit variance.
  *
  * @example
- * import { SGDClassifier } from 'kalimdor/linear_model';
+ * import { SGDClassifier } from 'machinelearn/linear_model';
  * const clf = new SGDClassifier();
  * const X = [[0., 0.], [1., 1.]];
  * const y = [0, 1];
@@ -281,7 +281,7 @@ export class SGDClassifier extends BaseSGD {
  * the way with a decreasing strength schedule (aka learning rate).
  *
  * @example
- * import { SGDRegressor } from 'kalimdor/linear_model';
+ * import { SGDRegressor } from 'machinelearn/linear_model';
  * const reg = new SGDRegressor();
  * const X = [[0., 0.], [1., 1.]];
  * const y = [0, 1];
