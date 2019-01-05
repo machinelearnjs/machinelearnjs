@@ -1,6 +1,6 @@
 ---
 home: true
-heroImage: /hero.png
+heroImage: /hero.jpg
 actionText: Get Started →
 actionLink: /api/
 footer: MIT Licensed | Copyright © 2018-present Jason Shin
@@ -9,7 +9,7 @@ footer: MIT Licensed | Copyright © 2018-present Jason Shin
 <div class="features">
   <div class="feature">
     <h2>Simplicity First</h2>
-    <p>"Simplicity is the ultimate sophistication"; Kalimdor aims to solve the problem of complixity in Machine Learning
+    <p>"Simplicity is the ultimate sophistication"; machinelearn.js aims to solve the problem of complixity in Machine Learning
     through Web technologies.</p>
   </div>
   <div class="feature">
@@ -29,15 +29,15 @@ footer: MIT Licensed | Copyright © 2018-present Jason Shin
 Using npm
 
 ```bash
-$ npm install --save kalimdor
+$ npm install --save machinelearn
 ```
 
 Using yarn
 
 ```bash
-$ yarn add kalimdor
+$ yarn add machinelearn
 ```
 
 ### You can use it like this
 
-<img src="https://i.imgur.com/I6KUOi8.png">
+<img src="https://i.imgur.com/H7ZW468.png">

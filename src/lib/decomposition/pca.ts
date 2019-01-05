@@ -15,7 +15,7 @@ import { IMlModel, Type2DMatrix } from '../types';
  * of the input data and the number of components to extract. (Will be implemented)
  *
  * @example
- * import { PCA } from 'kalimdor/decomposition';
+ * import { PCA } from 'machinelearn/decomposition';
  *
  * const pca = new PCA();
  * const X = [[1, 2], [3, 4], [5, 6]];

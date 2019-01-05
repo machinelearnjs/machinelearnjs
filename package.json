@@ -1,5 +1,5 @@
 {
-  "name": "kalimdor",
+  "name": "machinelearn",
   "version": "1.2.5",
   "description": "Machine Learning library for the web and Node",
   "main": "index.js",
@@ -7,7 +7,7 @@
   "module": "build/lib/module/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kalimdorjs/kalimdorjs"
+    "url": "https://github.com/machinelearnjs/machinelearnjs"
   },
   "license": "MIT",
   "keywords": [
@@ -38,7 +38,7 @@
     "build": "yarn clean && yarn build:main && yarn build:module && yarn build:web && yarn build:datasets",
     "build:main": "npx tsc -p tsconfig.json && npx ncp package.json ./build/lib/package.json && npx ncp README.md ./build/lib/README.md && npx ncp .npmignore ./build/lib/.npmignore",
     "build:module": "npx tsc -p tsconfig.module.json",
-    "build:web": "npx tsc -p tsconfig.json --module amd --out build/lib/kalimdor.web.js",
+    "build:web": "npx tsc -p tsconfig.json --module amd --out build/lib/machinelearn.web.js",
     "lint": "npx tslint -t verbose 'test/**/*.ts' 'src/**/*.ts' 'docs/**/*.ts'",
     "build:datasets": "npx ncp src/lib/datasets/data build/lib/datasets/data",
     "fix": "yarn fix:tslint",

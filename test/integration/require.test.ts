@@ -2,32 +2,32 @@
 
 describe('integration:require', () => {
   it('should require all', () => {
-    const kalimdor = require('kalimdor');
-    expect(!!kalimdor).toBe(true);
+    const machinelearn = require('machinelearn');
+    expect(!!machinelearn).toBe(true);
   });
   it('should require cluster', () => {
-    const { KMeans } = require('kalimdor/cluster');
+    const { KMeans } = require('machinelearn/cluster');
     expect(!!KMeans).toBe(true);
   });
 
   it('should require datasets', () => {
-    const { Iris, Boston } = require('kalimdor/datasets');
+    const { Iris, Boston } = require('machinelearn/datasets');
     expect(!!Iris).toBe(true);
     expect(!!Boston).toBe(true);
   });
 
   it('should require decomposition', () => {
-    const { PCA } = require('kalimdor/decomposition');
+    const { PCA } = require('machinelearn/decomposition');
     expect(!!PCA).toBe(true);
   });
 
   it('should require ensemble', () => {
-    const { RandomForestClassifier } = require('kalimdor/ensemble');
+    const { RandomForestClassifier } = require('machinelearn/ensemble');
     expect(!!RandomForestClassifier).toBe(true);
   });
 
   it('should require feature_extraction', () => {
-    const { CountVectorizer } = require('kalimdor/feature_extraction');
+    const { CountVectorizer } = require('machinelearn/feature_extraction');
     expect(!!CountVectorizer).toBe(true);
   });
 
@@ -36,7 +36,7 @@ describe('integration:require', () => {
       LinearRegression,
       SGDClassifier,
       SGDRegressor
-    } = require('kalimdor/linear_model');
+    } = require('machinelearn/linear_model');
     expect(!!LinearRegression).toBe(true);
     expect(!!SGDRegressor).toBe(true);
     expect(!!SGDClassifier).toBe(true);
@@ -49,7 +49,7 @@ describe('integration:require', () => {
       zeroOneLoss,
       mean_absolute_error,
       mean_squared_error
-    } = require('kalimdor/metrics');
+    } = require('machinelearn/metrics');
     expect(!!accuracyScore).toBe(true);
     expect(!!confusion_matrix).toBe(true);
     expect(!!mean_absolute_error).toBe(true);
@@ -58,13 +58,13 @@ describe('integration:require', () => {
   });
 
   it('should require model_selection', () => {
-    const { KFold, train_test_split } = require('kalimdor/model_selection');
+    const { KFold, train_test_split } = require('machinelearn/model_selection');
     expect(!!KFold).toBe(true);
     expect(!!train_test_split).toBe(true);
   });
 
   it('should require model_selection', () => {
-    const { KNeighborsClassifier } = require('kalimdor/neighbors');
+    const { KNeighborsClassifier } = require('machinelearn/neighbors');
     expect(!!KNeighborsClassifier).toBe(true);
   });
 
@@ -77,7 +77,7 @@ describe('integration:require', () => {
       OneHotEncoder,
       PolynomialFeatures,
       Imputer
-    } = require('kalimdor/preprocessing');
+    } = require('machinelearn/preprocessing');
     expect(!!Binarizer).toBe(true);
     expect(!!MinMaxScaler).toBe(true);
     expect(!!normalize).toBe(true);
@@ -95,7 +95,7 @@ describe('integration:require', () => {
       OneClassSVM,
       SVC,
       SVR
-    } = require('kalimdor/svm');
+    } = require('machinelearn/svm');
     expect(!!BaseSVM).toBe(true);
     expect(!!NuSVC).toBe(true);
     expect(!!NuSVR).toBe(true);
@@ -105,12 +105,12 @@ describe('integration:require', () => {
   });
 
   it('should require tree', () => {
-    const { DecisionTreeClassifier } = require('kalimdor/tree');
+    const { DecisionTreeClassifier } = require('machinelearn/tree');
     expect(!!DecisionTreeClassifier).toBe(true);
   });
 
   it('should require naive_bayes', () => {
-    const { GaussianNB, MultinomialNB } = require('kalimdor/naive_bayes');
+    const { GaussianNB, MultinomialNB } = require('machinelearn/naive_bayes');
     expect(!!GaussianNB).toBe(true);
     expect(!!MultinomialNB).toBe(true);
   });

@@ -15,7 +15,7 @@ import { BaseDataset } from './BaseDataset';
  * It contains 50 samples with 3 classes of 'Setosa', 'versicolor' and 'virginica'
  *
  * @example
- * import { Iris } from 'kalimdor/datasets';
+ * import { Iris } from 'machinelearn/datasets';
  *
  * (async function() {
  *   const irisData = new Iris();

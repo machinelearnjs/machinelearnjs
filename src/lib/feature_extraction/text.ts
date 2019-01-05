@@ -11,7 +11,7 @@ import { ENGLISH_STOP_WORDS } from './stop_words';
  * to encode new documents using that vocabulary.
  *
  * @example
- * import { CountVectorizer } from 'kalimdor/feature_extraction';
+ * import { CountVectorizer } from 'machinelearn/feature_extraction';
  *
  * const corpus = ['deep learning ian good fellow learning jason shin shin', 'yoshua bengio'];
  * const vocabCounts = cv.fit_transform(corpus);

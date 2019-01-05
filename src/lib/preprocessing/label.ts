@@ -6,7 +6,7 @@ import { Type1DMatrix } from '../types';
  * Encode labels with value between 0 and n_classes-1.
  *
  * @example
- * import { LabelEncoder } from 'kalimdor/preprocessing';
+ * import { LabelEncoder } from 'machinelearn/preprocessing';
  *
  * const labelEncoder = new LabelEncoder();
  * const labelX = ['amsterdam', 'paris', 'tokyo'];

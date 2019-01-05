@@ -118,7 +118,7 @@ export interface Options {
  * A decision tree classifier.
  *
  * @example
- * import { DecisionTreeClassifier } from 'kalimdor/tree';
+ * import { DecisionTreeClassifier } from 'machinelearn/tree';
  * const features = ['color', 'diameter', 'label'];
  * const decision = new DecisionTreeClassifier({ featureLabels: features });
  *
@@ -131,7 +131,7 @@ export interface Options {
  * decision.predict({ X }); // [ [ 'Apple' ], [ 'Apple', 'Lemon' ], [ 'Grape', 'Grape' ], [ 'Grape', 'Grape' ], [ 'Apple', 'Lemon' ] ]
  *
  * @example
- * import { DecisionTreeClassifier } from 'kalimdor/tree';
+ * import { DecisionTreeClassifier } from 'machinelearn/tree';
  * const decision = new DecisionTreeClassifier({ featureLabels: null });
  *
  * const X = [[0, 0], [1, 1]];

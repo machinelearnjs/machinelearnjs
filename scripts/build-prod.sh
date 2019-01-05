@@ -11,13 +11,13 @@ yarn build
 # echo '2. copying the prod bundle to the root scope'
 # cp -a ./build/main/lib/. ./
 
-# Creating a global symlink of kalimdor
+# Creating a global symlink of machinelearn
 echo '3. creating a global link'
 cd build/lib && yarn link
 
-# Linking the global kalimdor to local
-echo '4. linking kalimdor to local'
-cd ../.. && yarn link kalimdor
+# Linking the global machinelearn.js to local
+echo '4. linking machinelearn to local'
+cd ../.. && yarn link machinelearn
 
 # Running docs
 echo '5. Running doc generation'

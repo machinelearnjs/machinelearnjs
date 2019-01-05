@@ -90,7 +90,7 @@ _Updates:_
 
 :baby_chick: hooray! initial release :baby_chick:
 
-In the first release of Kalimdorjs,
+In the first release of machinelearn.js,
 it aims to deliver the essential models and algorithms required to conduct
 the fundamental Machine Learning experiment and development. Some APIs still
 might be unstable but they will be improved over time as we receive feedback

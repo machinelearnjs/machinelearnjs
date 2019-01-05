@@ -49,7 +49,7 @@ interface NumberOneHot {
  * This is useful for fitting an intercept term with implementations which cannot otherwise fit it directly.
  *
  * @example
- * import { add_dummy_feature } from 'kalimdor/preprocessing';
+ * import { add_dummy_feature } from 'machinelearn/preprocessing';
  * const dummy = add_dummy_feature([[0, 1, 2], [1, 0, 3]]);
  * console.log(dummy); // returns: [ [ 1, 0, 1, 2 ], [ 1, 1, 0, 3 ] ]
  *
@@ -392,7 +392,7 @@ export class OneHotEncoder {
  * This transformation is often used as an alternative to zero mean, unit variance scaling.
  *
  * @example
- * import { MinMaxScaler } from 'kalimdor/preprocessing';
+ * import { MinMaxScaler } from 'machinelearn/preprocessing';
  *
  * const minmaxScaler = new MinMaxScaler({ featureRange: [0, 1] });
  * minmaxScaler.fit([4, 5, 6]);
@@ -480,7 +480,7 @@ export class MinMaxScaler {
  * a Bayesian setting).
  *
  * @example
- * import { Binarizer } from 'kalimdor/preprocessing';
+ * import { Binarizer } from 'machinelearn/preprocessing';
  *
  * const binX = [[1, -1, 2], [2, 0, 0], [0, 1, -1]];
  * const binarizer = new Binarizer({ threshold: 0 });
@@ -568,7 +568,7 @@ export class Binarizer {
  * is two dimensional and of the form [a, b], the degree-2 polynomial features are [1, a, b, a^2, ab, b^2].
  *
  * @example
- * import { PolynomialFeatures } from 'kalimdor/preprocessing';
+ * import { PolynomialFeatures } from 'machinelearn/preprocessing';
  * const poly = new PolynomialFeatures();
  * const X = [[0, 1], [2, 3], [4, 5]];
  * poly.transform(X);
@@ -661,7 +661,7 @@ export class PolynomialFeatures {
  * to the square of the  β values, while the L1 norm is proportional the absolute value of the values in  β .
  *
  * @example
- * import { normalize } from 'kalimdor/preprocessing';
+ * import { normalize } from 'machinelearn/preprocessing';
  *
  * const result = normalize([
  *   [1, -1, 2],

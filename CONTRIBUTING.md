@@ -1,4 +1,4 @@
-# Contributing to Kalimdor.js
+# Contributing to machinelearn.js
 
 All sort of contributions are welcome and there are no complicated rules with it.
 We appreciate:
@@ -66,21 +66,21 @@ Running the script will result in following:
 - Creating a Github Release
 - Publishing to NPM with a new version
 
-4. Update the changelog on the Github release, which can be found at [https://github.com/JasonShin/kalimdorjs/releases](https://github.com/JasonShin/kalimdorjs/releases)
+4. Update the changelog on the Github release, which can be found at [https://github.com/machinelearnjs/machinelearnjs/releases](https://github.com/machinelearnjs/machinelearnjs/releases)
 
 #### Disaster recovery
 
 1. Reversing an accidental release
 
-- Goto https://github.com/jasonshin/kalimdorjs and delete mistakenly created release
-- Unpublish the NPM module by running `npm unpublish kalimdor@<version>`
+- Goto https://github.com/machinelearnjs/machinelearnjs/releases and delete mistakenly created release
+- Unpublish the NPM module by running `npm unpublish machinelearn@<version>`
 
 ## Copyright and Licensing
 
-Kalimdor.js is an open source project licensed under the MIT license.
+machinelearn.js is an open source project licensed under the MIT license.
 
-Kalimdor.js does not require you to assign the copyright of your contributions, you retain the copyright.
-Kalimdor.js does require that you make your contributions available under the MIT license in order to be
+machinelearn.js does not require you to assign the copyright of your contributions, you retain the copyright.
+machinelearn.js does require that you make your contributions available under the MIT license in order to be
 included in the main repo.
 
 If appropriate, include the MIT license summary at the top of each file along with the copyright info.

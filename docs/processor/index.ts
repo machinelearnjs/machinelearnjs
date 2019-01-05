@@ -467,7 +467,7 @@ export function renderMethodBracket(parameters): string {
 
 /**
  * Get a source link such as
- * [ensemble/forest.ts:6](https://github.com/JasonShin/kalimdorjs/blob/master/src/lib/ensemble/forest.ts#L6)
+ * [ensemble/forest.ts:6](https://github.com/JasonShin/machinelearnjs/blob/master/src/lib/ensemble/forest.ts#L6)
  * @param sources
  * @returns {string}
  */

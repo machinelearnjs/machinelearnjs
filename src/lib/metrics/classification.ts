@@ -85,7 +85,7 @@ export const validateInitialInputs = (y_true, y_pred, labels, options = {}) => {
  * the set of labels predicted for a sample must exactly match the corresponding set of labels in y_true.
  *
  * @example
- * import { accuracyScore } from 'kalimdor/metrics';
+ * import { accuracyScore } from 'machinelearn/metrics';
  *
  * const accResult = accuracyScore(
  *  [0, 1, 2, 3],
@@ -132,7 +132,7 @@ export function accuracyScore(
  * else it returns the number of misclassifications (int). The best performance is 0.
  *
  * @example
- * import { zeroOneLoss } from 'kalimdor/metrics';
+ * import { zeroOneLoss } from 'machinelearn/metrics';
  *
  * const loss_zero_one_result = zeroOneLoss(
  *   [1, 2, 3, 4],
@@ -174,7 +174,7 @@ export function zeroOneLoss(
  * Calculating a confusion matrix can give you a better idea of what your classification model is getting right and what types of errors it is making.
  *
  * @example
- * import { confusion_matrix } from 'kalimdor/metrics';
+ * import { confusion_matrix } from 'machinelearn/metrics';
  *
  * const matrix1 = confusion_matrix([1, 2, 3], [1, 2, 3]);
  * console.log(matrix1); // [ [ 1, 0, 0 ], [ 0, 1, 0 ], [ 0, 0, 1 ] ]
