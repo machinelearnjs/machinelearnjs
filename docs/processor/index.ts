@@ -7,6 +7,8 @@ import { ConfigProcessor } from './ConfigProcessor';
 import * as consts from './const';
 import { ExampleProcessor } from './ExampleProcessor';
 import { PagesProcessor } from './PagesProcessor';
+import { RedirectProcessor } from './RedirectProcessor';
+
 const docsJson = JSON.parse(
   fs.readFileSync(path.join(__dirname, '../docs.json'), 'utf8')
 );
@@ -564,3 +566,6 @@ exampleProcessor.run(Handlebars);
 
 const configProcessor = new ConfigProcessor();
 configProcessor.run({ apiChildren: apiProcessor.apiChildren });
+
+const redirectProcessor = new RedirectProcessor();
+redirectProcessor.run();
