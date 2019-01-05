@@ -50,8 +50,8 @@ if [ -z "${SSH_PRIV}" ]; then
    exit 1
 fi
 
-echo '1. building a kalimdor docker image'
-docker build -t kalimdor:latest .
+echo '1. building a machinelearn docker image'
+docker build -t machinelearn:latest .
 
 echo '2. Running build-prod.sh in a temporary container'
 docker run --rm -it \
@@ -60,5 +60,5 @@ docker run --rm -it \
 -e VERSION=${VERSION} \
 -e SSH_PUB=${SSH_PUB} \
 -e SSH_PRIV=${SSH_PRIV} \
-kalimdor:latest \
+machinelearn:latest \
 './scripts/releases/docker_internal/pre-release-in-docker.sh'

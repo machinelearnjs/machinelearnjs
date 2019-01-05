@@ -1,5 +1,5 @@
 {
-  "name": "kalimdor",
+  "name": "machinelearn",
   "version": "1.2.5",
   "description": "Machine Learning library for the web and Node",
   "main": "index.js",
