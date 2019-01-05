@@ -8,6 +8,7 @@ import {
 
 describe('linear_model:Ridge', () => {
   it('should solve iris with 10000 epochs', async () => {
+    jest.setTimeout(10000);
     const { xTest, xTrain, yTrain } = await getIris();
     const reg = new Ridge({
       l2: 1,
@@ -20,6 +21,7 @@ describe('linear_model:Ridge', () => {
   });
 
   it('should solve iris with 5000 epochs', async () => {
+    jest.setTimeout(10000);
     const { xTest, xTrain, yTrain } = await getIris();
     const reg = new Ridge({
       l2: 1,
@@ -40,6 +42,7 @@ describe('linear_model:Ridge', () => {
 
 describe('linear_model:Lasso', () => {
   it('should solve iris with 10000 epochs', async () => {
+    jest.setTimeout(10000);
     const { xTest, xTrain, yTrain } = await getIris();
     const reg = new Lasso({
       degree: 2,
@@ -52,6 +55,7 @@ describe('linear_model:Lasso', () => {
     assertArrayAlmostEqual(result, lasso_l2_snap, 2);
   });
   it('should solve iris with 5000 epochs', async () => {
+    jest.setTimeout(10000);
     const { xTest, xTrain, yTrain } = await getIris();
     const reg = new Lasso({
       degree: 2,
