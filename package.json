@@ -52,7 +52,7 @@
     "watch:unit": "yarn test:unit --watch",
     "watch:lint": "watch \" npx tslint --force -t verbose 'test/**/*.ts' 'src/**/*.ts'\" src",
     "doc": "npx del-cli docs/md_out && yarn doc:json && npx tsc ./docs/processor/index.ts && node ./docs/processor",
-    "doc:build": "yarn doc && cd docs/md_out && npx vuepress build",
+    "doc:build": "yarn doc && cd docs/md_out && npx vuepress build && cp _redirects ./.vuepress/dist",
     "doc:md": "npx del-cli docs/md_out && tsc ./docs/processor/index.ts && node ./docs/processor",
     "doc:json": "npx typedoc --json docs/docs.json --tsconfig tdconfig.json --excludePrivate",
     "clean": "npx del-cli build",
