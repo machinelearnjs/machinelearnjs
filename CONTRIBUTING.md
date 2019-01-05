@@ -66,13 +66,13 @@ Running the script will result in following:
 - Creating a Github Release
 - Publishing to NPM with a new version
 
-4. Update the changelog on the Github release, which can be found at [https://github.com/JasonShin/kalimdorjs/releases](https://github.com/JasonShin/kalimdorjs/releases)
+4. Update the changelog on the Github release, which can be found at [https://github.com/machinelearnjs/machinelearnjs/releases](https://github.com/machinelearnjs/machinelearnjs/releases)
 
 #### Disaster recovery
 
 1. Reversing an accidental release
 
-- Goto https://github.com/jasonshin/kalimdorjs and delete mistakenly created release
+- Goto https://github.com/machinelearnjs/machinelearnjs/releases and delete mistakenly created release
 - Unpublish the NPM module by running `npm unpublish machinelearn@<version>`
 
 ## Copyright and Licensing
