@@ -35,7 +35,7 @@ install:
   - sh: chmod +x ./scripts/build-prod.sh
 
   # install dependencies
-  - yarn install --ignore-optional
+  - yarn install
   - yarn build
 
 # Post-install test scripts.
