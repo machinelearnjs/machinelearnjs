@@ -40,4 +40,4 @@ $ yarn add machinelearn
 
 ### You can use it like this
 
-<img src="https://i.imgur.com/I6KUOi8.png">
+<img src="https://i.imgur.com/H7ZW468.png">
