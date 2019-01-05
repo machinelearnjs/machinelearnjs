@@ -5,7 +5,8 @@ export default [
   {
     key: 'general',
     title: 'General examples',
-    description: 'General-purpose and introductory examples for Kalimdor.js',
+    description:
+      'General-purpose and introductory examples for machinelearn.js',
     children: [
       {
         key: 'random_forest_with_titanic_datasets',
