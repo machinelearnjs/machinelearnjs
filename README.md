@@ -26,7 +26,35 @@ $ npm install --save kalimdor
 # Accelerations
 
 By default, machinelearning.js will use pure Javascript version of tfjs. To enable acceleration
-through C++ binding or GPU, you must
+through C++ binding or GPU, you must import `machinelearn-node` for C++ or `machinelearn-gpu` for GPU.
+
+1. C++
+
+- installation
+
+```bash
+yarn add machinelearn-node
+```
+
+- activation
+
+```javascript
+import 'machinelearn-node';
+```
+
+2. GPU
+
+- installation
+
+```bash
+yarn add machinelearn-gpu
+```
+
+- activation
+
+```javascript
+import 'machinelearn-gpu';
+```
 
 # Highlights
 
