@@ -1,36 +1,38 @@
 {
-  "non-interactive": true,
-  "dry-run": false,
-  "verbose": true,
-  "force": false,
-  "pkgFiles": ["package.json"],
   "preReleaseId": null,
+  "pkgFiles": ["package.json"],
   "buildCommand": "yarn build",
-  "safeBump": true,
-  "beforeChangelogCommand": false,
-  "changelogCommand": false,
-  "requireCleanWorkingDir": true,
-  "requireUpstream": true,
-  "src": {
+  "use": "git.tag",
+  "scripts": {
+    "beforeStart": null,
+    "beforeBump": null,
+    "afterBump": null,
+    "beforeStage": null,
+    "changelog": "git log --pretty=format:\"* %s (%h)\" [REV_RANGE]",
+    "afterRelease": null
+  },
+  "git": {
+    "requireCleanWorkingDir": true,
+    "requireUpstream": true,
+    "addUntrackedFiles": false,
     "commit": true,
-    "commitMessage": "Release %s",
+    "commitMessage": "Release ${version}",
     "commitArgs": "",
     "tag": true,
-    "tagName": "%s",
-    "tagAnnotation": "Release %s",
+    "tagName": "${version}",
+    "tagAnnotation": "Release ${version}",
+    "tagArgs": "",
     "push": true,
     "pushArgs": "",
-    "pushRepo": null,
-    "beforeStartCommand": false,
-    "afterReleaseCommand": false,
-    "addUntrackedFiles": false
+    "pushRepo": "origin"
   },
   "npm": {
     "publish": true,
     "publishPath": "./build/lib",
     "tag": "latest",
     "private": false,
-    "access": null
+    "access": null,
+    "otp": null
   },
   "github": {
     "release": true,
@@ -39,8 +41,9 @@
     "draft": false,
     "tokenRef": "GITHUB_TOKEN",
     "assets": null,
-	"host": null,
-	"timeout": 0
+    "host": null,
+    "timeout": 0,
+    "proxy": null
   },
   "dist": {
     "repo": false,
@@ -48,35 +51,31 @@
     "baseDir": "dist",
     "files": ["**/*"],
     "pkgFiles": null,
-    "commit": false,
-    "commitMessage": "Release %s",
-    "commitArgs": "",
-    "tag": false,
-    "tagName": "%s",
-    "tagAnnotation": "Release %s",
-    "push": false,
-    "pushArgs": "",
-    "beforeStageCommand": false,
-    "afterReleaseCommand": false,
-    "addUntrackedFiles": false,
+    "scripts": {
+      "beforeStage": null,
+      "afterRelease": null
+    },
+    "git": {
+      "addUntrackedFiles": false,
+      "commit": true,
+      "tag": true,
+      "push": true
+    },
     "github": {
-      "release": false
+      "release": false,
+      "assets": null
     },
     "npm": {
       "publish": false
     }
   },
   "prompt": {
-    "src": {
-      "status": false,
-      "commit": true,
-      "tag": true,
-      "push": true,
-      "release": true,
-      "publish": true
-    },
+    "commit": true,
+    "tag": true,
+    "push": true,
+    "release": true,
+    "publish": true,
     "dist": {
-      "status": false,
       "commit": true,
       "tag": false,
       "push": true,
