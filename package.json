@@ -7,7 +7,7 @@
   "module": "build/lib/module/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/kalimdorjs/kalimdorjs"
+    "url": "https://github.com/machinelearnjs/machinelearnjs"
   },
   "license": "MIT",
   "keywords": [

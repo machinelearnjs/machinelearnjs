@@ -374,14 +374,14 @@ describe('docs:helper', () => {
     it('should render sources for source1', () => {
       const result = renderSourceLink(source1);
       expect(result).toEqual(
-        '[ensemble/forest.ts:80](https://github.com/kalimdorjs/kalimdorjs/blob/master/src/lib/ensemble/forest.ts#L80)'
+        '[ensemble/forest.ts:80](https://github.com/machinelearnjs/machinelearnjs/blob/master/src/lib/ensemble/forest.ts#L80)'
       );
     });
 
     it('should render sources for source2', () => {
       const result = renderSourceLink(source2);
       expect(result).toEqual(
-        '[svm/classes.ts:254](https://github.com/kalimdorjs/kalimdorjs/blob/master/src/lib/svm/classes.ts#L254)'
+        '[svm/classes.ts:254](https://github.com/machinelearnjs/machinelearnjs/blob/master/src/lib/svm/classes.ts#L254)'
       );
     });
 

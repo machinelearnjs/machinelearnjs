@@ -15,7 +15,7 @@ yarn build
 echo '3. creating a global link'
 cd build/lib && yarn link
 
-# Linking the global kalimdor to local
+# Linking the global machinelearn.js to local
 echo '4. linking machinelearn to local'
 cd ../.. && yarn link machinelearn
 
