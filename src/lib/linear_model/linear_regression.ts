@@ -2,7 +2,10 @@
  * References:
  * - https://machinelearningmastery.com/implement-simple-linear-regression-scratch-python/
  */
+import * as tf from '@tensorflow/tfjs';
 import { size } from 'lodash';
+import { validateMatrix1D } from '../ops';
+import { Type1DMatrix } from '../types';
 import math from '../utils/MathExtra';
 
 /**
@@ -13,7 +16,7 @@ import math from '../utils/MathExtra';
  * const linearRegression = new LinearRegression();
  * const X = [1, 2, 4, 3, 5];
  * const y = [1, 3, 3, 2, 5];
- * linearRegression.fit({ X, y });
+ * linearRegression.fit(X, y);
  * console.log(lr.predict([1, 2]));
  * // [ 1.1999999999999995, 1.9999999999999996 ]
  */
@@ -26,16 +29,19 @@ export class LinearRegression {
    * @param {any} X - training values
    * @param {any} y - target values
    */
-  public fit({ X = [], y = [] }: { X: number[]; y: number[] }): void {
-    if (!Array.isArray(X) || !Array.isArray(y)) {
-      throw new Error('X and y must be arrays');
+  public fit(
+    X: Type1DMatrix<number> = null,
+    y: Type1DMatrix<number> = null
+  ): void {
+    const xShape = validateMatrix1D(X);
+    const yShape = validateMatrix1D(y);
+    if (xShape.length === 1 && yShape.length === 1 && xShape[0] === yShape[0]) {
+      this.coefficients(X, y); // getting b0 and b1
+    } else {
+      throw new Error(
+        `Sample(${xShape[0]}) and target(${yShape[0]}) sizes do not match`
+      );
     }
-
-    if (size(X) !== size(y)) {
-      throw new Error('X and y must be equal in size');
-    }
-
-    this.coefficients(X, y); // getting b0 and b1
   }
 
   /**
@@ -43,7 +49,8 @@ export class LinearRegression {
    * @param {number} X - Values to predict.
    * @returns {number}
    */
-  public predict(X: number[] = []): number[] {
+  public predict(X: Type1DMatrix<number> = null): number[] {
+    validateMatrix1D(X);
     const preds = [];
     for (let i = 0; i < size(X); i++) {
       preds.push(this.b0 + this.b1 * X[i]);
@@ -77,7 +84,9 @@ export class LinearRegression {
    */
   public fromJSON({ b0 = null, b1 = null }: { b0: number; b1: number }): void {
     if (!b0 || !b1) {
-      throw new Error('You must provide both b0 and b1 to restore Linear Regression');
+      throw new Error(
+        'You must provide both b0 and b1 to restore Linear Regression'
+      );
     }
     this.b0 = b0;
     this.b1 = b1;
@@ -89,9 +98,10 @@ export class LinearRegression {
    * @param y - y targets
    */
   private coefficients(X, y): void {
-    const xMean = math.mean(X);
-    const yMean = math.mean(y);
-    this.b1 = math.contrib.covariance(X, xMean, y, yMean) / math.contrib.variance(X, xMean);
+    // TODO: Fix the typing
+    const xMean: any = tf.mean(X).dataSync();
+    const yMean: any = tf.mean(y).dataSync();
+    this.b1 = math.covariance(X, xMean, y, yMean) / math.variance(X, xMean);
     this.b0 = yMean - this.b1 * xMean;
   }
 }

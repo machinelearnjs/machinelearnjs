@@ -50,7 +50,13 @@ export class BaseDataset {
       }
     }
     if (type === 'csv') {
-      return this.processCSV(data, delimiter, lastIsTarget, trainType, targetType);
+      return this.processCSV(
+        data,
+        delimiter,
+        lastIsTarget,
+        trainType,
+        targetType
+      );
     }
     return {
       data: null,
@@ -64,7 +70,12 @@ export class BaseDataset {
    */
   protected async fsLoad(
     type: string,
-    { delimiter = ',', lastIsTarget = true, trainType = 'float', targetType = 'float' } = {
+    {
+      delimiter = ',',
+      lastIsTarget = true,
+      trainType = 'float',
+      targetType = 'float'
+    } = {
       // Default object if nothing is provided
       delimiter: ',',
       lastIsTarget: true,
@@ -73,8 +84,17 @@ export class BaseDataset {
     }
   ): Promise<{ data; targets; labels }> {
     // Make sure the actual data is located under data/type
-    const data = fs.readFileSync(path.join(__dirname, `data/${type}/train.csv`), 'utf8');
-    return this.processCSV(data, delimiter, lastIsTarget, trainType, targetType);
+    const data = fs.readFileSync(
+      path.join(__dirname, `data/${type}/train.csv`),
+      'utf8'
+    );
+    return this.processCSV(
+      data,
+      delimiter,
+      lastIsTarget,
+      trainType,
+      targetType
+    );
   }
 
   /**
@@ -119,7 +139,7 @@ export class BaseDataset {
     const encoder = new LabelEncoder();
 
     // Get the unique labels
-    const labelX = uniqBy(rawTest, x => x);
+    const labelX: string[] = uniqBy(rawTest, x => x);
     encoder.fit(labelX);
 
     // Encode the test values

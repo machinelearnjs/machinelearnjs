@@ -24,3 +24,16 @@ export const returnNamePromise = 'Promise';
 // Tags
 export const tagTypeExample = 'example';
 export const tagTypeIgnore = 'ignore';
+
+// Reference Kinds
+export const refKindInterface = 'Interface';
+export const refKindTypeAlias = 'Type alias';
+export const refTypeArgTypeUnion = 'union';
+export const refTypeTypeParameter = 'typeParameter';
+export const refTypeArgTypeIntrinsic = 'intrinsic';
+
+// Matrix Types
+export const type1DMatrix = 'Type1DMatrix';
+export const type2DMatrix = 'Type2DMatrix';
+export const type3DMatrix = 'Type3DMatrix';
+export const type4DMatrix = 'Type4DMatrix';

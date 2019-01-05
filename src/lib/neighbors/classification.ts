@@ -1,8 +1,9 @@
-import { isEmpty, map, uniqBy } from 'lodash';
+import { map, uniqBy } from 'lodash';
+import { inferShape, validateFitInputs } from '../ops';
+import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
-import { checkArray } from '../utils/validation';
 import KDTree from './KDTree';
-const { euclideanDistance, manhattanDistance, isMatrixOf, isArrayOf } = math.contrib;
+const { euclideanDistance, manhattanDistance } = math;
 const DIST_EUC = 'euclidean';
 const DIST_MAN = 'manhattan';
 const TYPE_KD = 'kdtree';
@@ -14,10 +15,11 @@ const TYPE_KD = 'kdtree';
  * const knn = new KNeighborsClassifier();
  * const X = [[0, 0, 0], [0, 1, 1], [1, 1, 0], [2, 2, 2], [1, 2, 2], [2, 1, 2]];
  * const y = [0, 0, 0, 1, 1, 1];
- * knn.fit({ X, y });
+ * knn.fit(X ,y);
  * console.log(knn.predict([1, 2])); // predicts 1
  */
-export class KNeighborsClassifier {
+export class KNeighborsClassifier<T extends number | string | boolean>
+  implements IMlModel<T> {
   private type = null;
   private tree = null;
   private k = null;
@@ -58,7 +60,9 @@ export class KNeighborsClassifier {
     } else if (options.distance === DIST_MAN) {
       this.distance = manhattanDistance;
     } else {
-      throw new Error(`Unrecognised type of distance ${options.distance} was received`);
+      throw new Error(
+        `Unrecognised type of distance ${options.distance} was received`
+      );
     }
     this.k = options.k;
     this.type = options.type;
@@ -69,15 +73,8 @@ export class KNeighborsClassifier {
    * @param {any} X - Training data.
    * @param {any} y - Target data.
    */
-  public fit({ X = [], y = [] }: { X: number[][]; y: number[] }): void {
-    const xCheck = checkArray(X);
-    if (!xCheck.isArray || !xCheck.multiclass || isEmpty(X)) {
-      throw new Error('X must be a matrix array!');
-    }
-    const yCheck = checkArray(y);
-    if (!yCheck.isArray || yCheck.multiclass || isEmpty(y)) {
-      throw new Error('y must be a vector array!');
-    }
+  public fit(X: Type2DMatrix<T>, y: Type1DMatrix<T>): void {
+    validateFitInputs(X, y);
     // Getting the classes from y
     const classes = uniqBy(y, c => c);
 
@@ -129,9 +126,17 @@ export class KNeighborsClassifier {
    * @param {any} tree
    * @param {any} type
    */
-  public fromJSON({ classes = null, distance = null, k = null, tree = null, type = null }): void {
+  public fromJSON({
+    classes = null,
+    distance = null,
+    k = null,
+    tree = null,
+    type = null
+  }): void {
     if (!classes || !distance || !k || !tree || !type) {
-      throw new Error('You must provide classes, distance, k, tree and type to restore the KNearestNeighbor');
+      throw new Error(
+        'You must provide classes, distance, k, tree and type to restore the KNearestNeighbor'
+      );
     }
     this.classes = classes;
     this.distance = distance;
@@ -145,10 +150,11 @@ export class KNeighborsClassifier {
    * @param {Array} X - Prediction data.
    * @returns number
    */
-  public predict(X: any = []): any {
-    if (isArrayOf(X, 'number')) {
+  public predict(X: Type2DMatrix<T> | Type1DMatrix<T>): any {
+    const shape = inferShape(X);
+    if (shape.length === 1) {
       return this.getSinglePred(X);
-    } else if (isMatrixOf(X, 'number')) {
+    } else if (shape.length === 2) {
       return map(X, currentItem => this.getSinglePred(currentItem));
     } else {
       throw new TypeError('The dataset is neither an array or a matrix');

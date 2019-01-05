@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ensemble:forest RandomForest should throw an exception if incorrect inputs for fit function are given 1`] = `[Error: Input cannot be an empty array]`;
+
+exports[`ensemble:forest RandomForest should throw an exception if incorrect inputs for fit function are given 2`] = `[Error: values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray]`;
+
+exports[`ensemble:forest RandomForest should throw an exception if incorrect inputs for fit function are given 3`] = `[TypeError: The matrix is not 2D shaped: [1,2] of [2]]`;
+
+exports[`ensemble:forest RandomForest should throw an exception if incorrect inputs for fit function are given 4`] = `[Error: Input cannot be an empty array]`;
+
+exports[`ensemble:forest RandomForest should throw an exception if incorrect inputs for fit function are given 5`] = `[TypeError: Number of labels=1 does not math number of samples=2]`;
+
+exports[`ensemble:forest RandomForest should throw an exception if incorrect inputs for predict function are given 1`] = `[TypeError: The matrix is not 2D shaped: [] of [0]]`;
+
+exports[`ensemble:forest RandomForest should throw an exception if incorrect inputs for predict function are given 2`] = `[Error: values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray]`;
+
+exports[`ensemble:forest RandomForest should throw an exception if incorrect inputs for predict function are given 3`] = `[TypeError: The matrix is not 2D shaped: [1,2] of [2]]`;
+
+exports[`ensemble:forest RandomForest should throw an exception if incorrect inputs for predict function are given 4`] = `[TypeError: Cannot read property 'trees' of undefined]`;
+
+exports[`ensemble:forest RandomForest should throw an exception if incorrect inputs for predict function are given 5`] = `[TypeError: Cannot read property 'trees' of undefined]`;

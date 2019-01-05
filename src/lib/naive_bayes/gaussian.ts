@@ -1,16 +1,17 @@
-import { cloneDeep, isNaN } from 'lodash';
-import { exp, mean, pi, pow, sqrt, std } from 'mathjs';
-import math from '../utils/MathExtra';
+import * as tf from '@tensorflow/tfjs';
+import { zip } from 'lodash';
+import { reshape, validateFitInputs, validateMatrix2D } from '../ops';
+import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
 
-const { isMatrix } = math.contrib;
+const SQRT_2PI = Math.sqrt(Math.PI * 2);
 
 /**
  * The Naive is an intuitive method that uses probabilistic of each attribute
- * belonged to each class to make a prediction. It uses Gaussian function to estimate
+ * being in each class to make a prediction. It uses Gaussian function to estimate
  * probability of a given class.
  *
  * @example
- * import { GaussianNB } from 'kalimdor/naive_bayes';
+ * import { GaussianNB } from 'machinelearn/naive_bayes';
  *
  * const nb = new GaussianNB();
  * const X = [[1, 20], [2, 21], [3, 22], [4, 22]];
@@ -19,261 +20,187 @@ const { isMatrix } = math.contrib;
  * nb.predict({ X: [[1, 20]] }); // returns [ 1 ]
  *
  */
-export class GaussianNB {
-  /**
-   * Naive Bayes summary according to classes
-   */
-  private summaries = null;
+export class GaussianNB<T extends number | string = number>
+  implements IMlModel<T> {
+  private classCategories: T[];
+  private mean: tf.Tensor2D;
+  private variance: tf.Tensor2D;
 
   /**
-   * To clone input values
+   * @param X - array-like or sparse matrix of shape = [n_samples, n_features]
+   * @param y - array-like, shape = [n_samples] or [n_samples, n_outputs]
    */
-  private clone = true;
-
-  /**
-   * @param clone - To clone the input values during fit and predict
-   */
-  constructor(
-    {
-      clone = true
-    }: {
-      clone: boolean;
-    } = {
-      clone: true
-    }
-  ) {
-    this.clone = clone;
+  public fit(X: Type2DMatrix<number> = null, y: Type1DMatrix<T> = null): void {
+    validateFitInputs(X, y);
+    const { classCategories, mean, variance } = this.fitModel(X, y);
+    this.classCategories = classCategories;
+    this.mean = mean;
+    this.variance = variance;
   }
 
   /**
-   * Fit date to build Gaussian Distribution summary
-   * @param {any} X - training values
-   * @param {any} y - target values
+   * @param X - array-like, shape = [n_samples, n_features]
    */
-  public fit(
-    {
-      X = null,
-      y = null
-    }: {
-      X: any[][];
-      y: any[];
-    } = {
-      X: null,
-      y: null
-    }
-  ): void {
-    if (!isMatrix(X)) {
-      throw new Error('X must be a matrix');
-    }
-    if (!Array.isArray(y)) {
-      throw new Error('y must be a vector');
-    }
-    if (X.length !== y.length) {
-      throw new Error('X and y must be same in length');
-    }
-    let clonedX = X;
-    let clonedY = y;
-    if (this.clone) {
-      clonedX = cloneDeep(X);
-      clonedY = cloneDeep(y);
-    }
-    this.summaries = this.summarizeByClass({ X: clonedX, y: clonedY });
+  public predict(X: Type2DMatrix<number> = null): T[] {
+    validateMatrix2D(X);
+    return X.map((x): T => this.singlePredict(x));
   }
 
   /**
-   * Predict multiple rows
-   * @param {any[]} X - values to predict in Matrix format
-   * @returns {number[]}
+   * Restore the model from saved states
+   * @param modelState
    */
-  public predict(
-    {
-      X = null
-    }: {
-      X: any[][];
-    } = {
-      X: null
-    }
-  ): number[] {
-    if (!isMatrix(X)) {
-      throw new Error('X must be a matrix');
-    }
-    let clonedX = X;
-
-    if (this.clone) {
-      clonedX = cloneDeep(X);
-    }
-    const result = [];
-    for (let i = 0; i < clonedX.length; i++) {
-      result.push(this.singlePredict({ X: clonedX[i] }));
-    }
-    return result;
+  public fromJSON({
+    classCategories = null,
+    mean = null,
+    variance = null
+  }: {
+    /**
+     * List of class categories
+     */
+    classCategories: T[];
+    /**
+     * Mean of each feature per class
+     */
+    mean: Type2DMatrix<number>;
+    /**
+     * Variance of each feature per class
+     */
+    variance: Type2DMatrix<number>;
+  }): void {
+    this.classCategories = classCategories;
+    this.mean = tf.tensor2d(mean);
+    this.variance = tf.tensor2d(variance);
   }
 
   /**
-   * Restores GaussianNB model from a checkpoint
-   * @param summaries - Gaussian Distribution summaries
-   */
-  public fromJSON(
-    {
-      summaries = null
-    }: {
-      summaries: {};
-    } = {
-      summaries: null
-    }
-  ): void {
-    this.summaries = summaries;
-  }
-
-  /**
-   * Returns a model checkpoint
+   * Save the model's states
    */
   public toJSON(): {
-    summaries: {};
+    /**
+     * List of class categories
+     */
+    classCategories: T[];
+    /**
+     * Mean of each feature per class
+     */
+    mean: Type2DMatrix<number>;
+    /**
+     * Variance of each feature per class
+     */
+    variance: Type2DMatrix<number>;
   } {
     return {
-      summaries: this.summaries
+      classCategories: this.classCategories,
+      mean: reshape([...this.mean.dataSync()], this.mean.shape) as Type2DMatrix<
+        number
+      >,
+      variance: reshape(
+        [...this.variance.dataSync()],
+        this.variance.shape
+      ) as Type2DMatrix<number>
     };
   }
 
   /**
-   * Make a prediction
-   * @param X -
+   * Make a single prediction
+   *
+   * @param  {ReadonlyArray<number>} X- values to predict in Matrix format
+   * @returns T
    */
-  private singlePredict({ X }): number {
-    const summaryKeys = Object.keys(this.summaries);
+  private singlePredict(X: ReadonlyArray<number>): T {
+    const matrixX: tf.Tensor<tf.Rank> = tf.tensor1d(X as number[], 'float32');
+    const numFeatures = matrixX.shape[0];
+
     // Comparing input and summary shapes
-    const summaryLength = this.summaries[summaryKeys[0]].dist.length;
-    const inputLength = X.length;
-    if (inputLength > summaryLength) {
-      throw new Error('Prediction input X length must be equal or less than summary length');
+    const summaryLength = this.mean.shape[1];
+    if (numFeatures !== summaryLength) {
+      throw new Error(
+        `Prediction input ${
+          matrixX.shape[0]
+        } length must be equal or less than summary length ${summaryLength}`
+      );
     }
 
-    // Getting probability of each class
-    const probabilities = {};
-    for (let i = 0; i < summaryKeys.length; i++) {
-      const key = summaryKeys[i];
-      probabilities[key] = 1;
-      const classSummary = this.summaries[key].dist;
-      for (let j = 0; j < classSummary.length; j++) {
-        const meanval = classSummary[j][0];
-        const stdev = classSummary[j][1];
-        const x = X[j];
-        const probability = this.calculateProbability({ x, meanval, stdev });
-        if (!isNaN(probability)) {
-          probabilities[key] *= probability;
-        }
-      }
-    }
+    const meanValPow: tf.Scalar = matrixX
+      .sub(this.mean as tf.Tensor)
+      .pow(tf.scalar(2))
+      .mul(tf.scalar(-1));
 
-    // Vote the best predction
-    let bestProb = 0;
-    let bestClass = null;
-    const probKeys = Object.keys(probabilities);
-    for (let i = 0; i < probKeys.length; i++) {
-      const key = probKeys[i];
-      const prob = probabilities[key];
-      if (prob > bestProb) {
-        bestProb = prob;
-        // Returns the real class value
-        bestClass = this.summaries[key].class;
-      }
-    }
-    return bestClass;
-  }
+    const exponent: tf.Tensor = meanValPow
+      .div(this.variance.mul(tf.scalar(2)))
+      .exp() as tf.Tensor;
+    const innerDiv: tf.Tensor = tf.scalar(SQRT_2PI).mul(this.variance.sqrt());
+    const probabilityArray: tf.Tensor = tf
+      .scalar(1)
+      .div(innerDiv)
+      .mul(exponent);
 
-  /**
-   * Calculate the main division
-   * @param x
-   * @param meanval
-   * @param stdev
-   */
-  private calculateProbability({ x, meanval, stdev }: { x: number; meanval: number; stdev: number }): number {
-    const stdevPow: any = pow(stdev, 2);
-    const meanValPow: any = -pow(x - meanval, 2);
-    const exponent = exp(meanValPow / (2 * stdevPow));
-    return (1 / (sqrt(pi.valueOf() * 2) * stdev)) * exponent;
+    const selectionIndex = probabilityArray
+      .prod(1)
+      .argMax()
+      .dataSync()[0];
+
+    return this.classCategories[selectionIndex] as T;
   }
 
   /**
    * Summarise the dataset per class using "probability density function"
-   * example:
-   * Given
-   * const X = [[1,20], [2,21], [3,22], [4,22]];
-   * const y = [1, 0, 1, 0];
-   * Returns
-   * { '0': [ [ 3, 1.4142135623730951 ], [ 21.5, 0.7071067811865476 ] ],
-   * '1': [ [ 2, 1.4142135623730951 ], [ 21, 1.4142135623730951 ] ] }
-   * @param dataset
+   *
+   * @param  {Type2DMatrix<number>} X
+   * @param  {ReadonlyArray<T>} y
+   * @returns InterfaceFitModel
    */
-  private summarizeByClass({ X, y }): {} {
-    const separated = this.separateByClass({ X, y });
-    const summarize = {};
-    const keys = Object.keys(separated);
-    for (let i = 0; i < keys.length; i++) {
-      const key = keys[i];
-      // tslint:disable-next-line
-      const targetClass = y.find(z => z == key); // Finding the real target value from y array
-      // Mutating "separated" variable instead of immutable approach for performance
-      separated[key].forEach(x => x.push(targetClass));
-      const dataset = separated[key];
-      // storing object to each attribute to store real class value and dist sumamry
-      summarize[key] = {
-        class: targetClass,
-        dist: this.summarize(dataset)
-      };
-    }
-    return summarize;
-  }
+  private fitModel(
+    X: Type2DMatrix<number>,
+    y: Type1DMatrix<T>
+  ): {
+    classCategories: T[];
+    mean: tf.Tensor2D;
+    variance: tf.Tensor2D;
+  } {
+    const classCategories = [...new Set(y)].sort() as T[];
 
-  /**
-   * Summarise the dataset to calculate the ‘pdf’ (probability density function) later on
-   * @param dataset
-   */
-  private summarize(dataset): number[] {
-    const sorted = [];
-    // Manual ZIP; simulating Python's zip(*data)
-    // TODO: Find a way to use a built in function
-    for (let zRow = 0; zRow < dataset.length; zRow++) {
-      const row = dataset[zRow];
-      for (let zCol = 0; zCol < row.length; zCol++) {
-        // Pushes a new array placeholder if it's not populated yet at zRow index
-        if (typeof sorted[zCol] === 'undefined') {
-          sorted.push([]);
-        }
-        const element = dataset[zRow][zCol];
-        sorted[zCol].push(element);
-      }
-    }
+    // Separates X by classes specified by y argument
+    const separatedByCategory: {
+      [key: string]: Type2DMatrix<number>;
+    } = zip<ReadonlyArray<number>, T>(X, y).reduce(
+      (groups, [row, category]) => {
+        groups[category.toString()] = groups[category.toString()] || [];
+        groups[category.toString()].push(row);
+        return groups;
+      },
+      {}
+    );
 
-    const summaries = [];
-    for (let i = 0; i < sorted.length; i++) {
-      const attributes: any = sorted[i];
-      summaries.push([mean(attributes), std(attributes)]);
-    }
-    // Removing the last element
-    summaries.pop();
-    return summaries;
-  }
+    const momentStack = classCategories.map((category: T) => {
+      const classFeatures: tf.Tensor = tf.tensor2d(
+        separatedByCategory[category.toString()] as number[][],
+        null,
+        'float32'
+      ) as tf.Tensor;
+      return tf.moments(classFeatures, [0]);
+    });
 
-  /**
-   * Separates X by classes specified by y argument
-   * @param X
-   * @param y
-   */
-  private separateByClass({ X, y }): {} {
-    const result = {};
-    for (let i = 0; i < X.length; i++) {
-      const row = X[i];
-      const target = y[i];
-      if (result[target]) {
-        // If value already exist
-        result[target].push(row);
-      } else {
-        result[target] = [];
-        result[target].push(row);
-      }
-    }
-    return result;
+    // For every class we have a mean and variance for each feature
+    const mean: tf.Tensor2D = tf.stack(
+      momentStack.map(m => m.mean)
+    ) as tf.Tensor2D;
+    const variance: tf.Tensor2D = tf.stack(
+      momentStack.map(m => m.variance)
+    ) as tf.Tensor2D;
+
+    // TODO check for NaN or 0 variance
+    // setTimeout(() => {
+    //   if ([...variance.dataSync()].some(i => i === 0)) {
+    //     console.error('No variance on one of the features. Errors may result.');
+    //   }
+    // }, 100);
+
+    return {
+      classCategories,
+      mean,
+      variance
+    };
   }
 }

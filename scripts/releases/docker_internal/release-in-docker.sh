@@ -64,9 +64,9 @@ echo "3. Using /tmp/release as the working directory"
 mkdir /tmp/release
 cd /tmp/release
 
-echo "4. Cloning the Kalimdor master branch."
+echo "4. Cloning the machinelearn master branch."
 echo "You must have everything up-to-date on the master branch"
-git clone git@github.com:JasonShin/kalimdorjs.git .
+git clone git@github.com:machinelearnjs/machinelearnjs.git .
 
 echo "5. Setting git meta data"
 git config --global user.email "visualbbasic@gmail.com"
@@ -77,4 +77,5 @@ echo "6. install packages"
 yarn
 
 echo "7. Run release-it patch with the given config"
+npm install -g release-it@8.0.0
 npx release-it ${VERSION} -n -c ./scripts/releases/configs/.release-it.json

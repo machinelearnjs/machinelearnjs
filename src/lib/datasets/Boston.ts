@@ -17,7 +17,7 @@ import { BaseDataset } from './BaseDataset';
  * `Hedonic prices and the demand for clean air', J. Environ. Economics & Management, vol.5, 81-102, 1978.
  *
  * @example
- * import { Boston } from "kalimdor/datasets";
+ * import { Boston } from "machinelearn/datasets";
  *
  * (async function() {
  *   const bostonData = new Boston();

@@ -1,0 +1,17 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`naive_bayes:MultinomialNB should not fit invalid inputs 1`] = `[Error: values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray]`;
+
+exports[`naive_bayes:MultinomialNB should not fit invalid inputs 2`] = `[TypeError: Number of labels=1 does not math number of samples=2]`;
+
+exports[`naive_bayes:MultinomialNB should not fit invalid inputs 3`] = `[Error: Input cannot be an empty array]`;
+
+exports[`naive_bayes:MultinomialNB should not predict if the model is not trained yet 1`] = `[TypeError: Cannot read property 'classCategories' of undefined]`;
+
+exports[`naive_bayes:MultinomialNB should not predict invalid inputs 1`] = `[Error: values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray]`;
+
+exports[`naive_bayes:MultinomialNB should not predict invalid inputs 2`] = `[Error: values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray]`;
+
+exports[`naive_bayes:MultinomialNB should not predict invalid inputs 3`] = `[TypeError: The matrix is not 2D shaped: 1 of []]`;
+
+exports[`naive_bayes:MultinomialNB should not predict invalid inputs 4`] = `[TypeError: The matrix is not 2D shaped: [1,2] of [2]]`;

@@ -1,4 +1,12 @@
+import * as tf from '@tensorflow/tfjs';
 import * as _ from 'lodash';
+import {
+  inferShape,
+  reshape,
+  validateMatrix1D,
+  validateMatrix2D
+} from '../ops';
+import { Type1DMatrix, Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
 import { combinationsWithReplacement } from '../utils/permutations';
 
@@ -41,32 +49,28 @@ interface NumberOneHot {
  * This is useful for fitting an intercept term with implementations which cannot otherwise fit it directly.
  *
  * @example
- * import { add_dummy_feature } from 'kalimdor/preprocessing';
- * const dummy = add_dummy_feature({ X: [[0, 1, 2], [1, 0, 3]] });
+ * import { add_dummy_feature } from 'machinelearn/preprocessing';
+ * const dummy = add_dummy_feature([[0, 1, 2], [1, 0, 3]]);
  * console.log(dummy); // returns: [ [ 1, 0, 1, 2 ], [ 1, 1, 0, 3 ] ]
  *
  * @param X - A matrix of data
  * @param value - Value to use for the dummy feature.
  */
 export function add_dummy_feature(
-  {
-    X = null,
-    value = 1.0
-  }: {
-    X: number[][];
-    value?: number;
-  } = {
-    X: null,
-    value: 1.0
-  }
+  X: Type2DMatrix<number> = null,
+  value: number = 1.0
 ): number[][] {
-  if (!math.contrib.isMatrix(X)) {
-    throw Error('Input must be a matrix');
+  if (Array.isArray(X) && X.length === 0) {
+    throw new TypeError('X cannot be empty');
   }
-  const [nSamples] = math.matrix(X).size();
-  const ones = JSON.parse(math.ones(nSamples, 1).toString());
-  const multipliedOnes = math.multiply(ones, value);
-  return math.contrib.hstack(multipliedOnes, X);
+  validateMatrix2D(X);
+  const tensorX = tf.tensor2d(X) as tf.Tensor;
+  const [nSamples] = tensorX.shape;
+  const ones = tf.ones([nSamples, 1]) as tf.Tensor;
+  const sValue = tf.scalar(value) as tf.Tensor;
+  const multipledOnes = tf.mul(ones, sValue);
+  const hStacked = tf.concat([multipledOnes, tensorX], 1);
+  return reshape(Array.from(hStacked.dataSync()), hStacked.shape) as number[][];
 }
 
 /**
@@ -102,24 +106,46 @@ export class OneHotEncoder {
    * encode data according to dataKeys and labelKeys
    *
    * @param data - list of records to encode
-   * @param options - dataKeys: independent variables, labelKeys: dependent variables; mandatory
-   * @return {{data: Array, decoders: Array}} - see readme for full explanation
+   * @param options
    */
   public encode(
-    data,
-    options = { dataKeys: null, labelKeys: null }
-  ): { data: any[]; decoders: any[] } {
-    const labelKeys = options.labelKeys;
+    data = null,
+    {
+      /**
+       * Independent variables
+       */
+      dataKeys = null,
+      /**
+       * Depdenent variables
+       */
+      labelKeys = null
+    }: {
+      dataKeys: Type1DMatrix<string>;
+      labelKeys: Type1DMatrix<string>;
+    } = {
+      dataKeys: null,
+      labelKeys: null
+    }
+  ): {
+    /**
+     * Encoded data
+     */
+    data: any[];
+    /**
+     * Decoder
+     */
+    decoders: any[];
+  } {
     const decoders = [];
 
     // shortcut to allow caller to default to "all non-label keys are data keys"
-    const dataKeys = options.dataKeys ? options.dataKeys : _.keys(data[0]);
+    const _dataKeys = dataKeys ? dataKeys : _.keys(data[0]);
     // validations
     if (_.size(data) < 1) {
       throw Error('data cannot be empty!');
     }
     // data keys
-    _.forEach(dataKeys, dataKey => {
+    _.forEach(_dataKeys, dataKey => {
       // TODO: it's only checking data[0] -> It should also check all the others
       if (!_.has(data[0], dataKey)) {
         // TODO: Find the correct error to throw
@@ -138,7 +164,7 @@ export class OneHotEncoder {
 
     // maybe a little too clever but also the simplest;
     // serialize every value for a given data key, then zip the results back up into a (possibly nested) array
-    const transform = (keys: string[]) =>
+    const transform = (keys: Type1DMatrix<string>) =>
       _.zip(
         ..._.map(keys, (key: string) => {
           const standardized = this.standardizeField(key, data);
@@ -153,7 +179,7 @@ export class OneHotEncoder {
           return standardized;
         })
       );
-    const features = transform(dataKeys);
+    const features = transform(_dataKeys);
     const labels = transform(labelKeys);
     return {
       // zip the label data back into the feature data (to ensure label data is at the end)
@@ -366,7 +392,7 @@ export class OneHotEncoder {
  * This transformation is often used as an alternative to zero mean, unit variance scaling.
  *
  * @example
- * import { MinMaxScaler } from 'kalimdor/preprocessing';
+ * import { MinMaxScaler } from 'machinelearn/preprocessing';
  *
  * const minmaxScaler = new MinMaxScaler({ featureRange: [0, 1] });
  * minmaxScaler.fit([4, 5, 6]);
@@ -375,7 +401,6 @@ export class OneHotEncoder {
  */
 export class MinMaxScaler {
   private featureRange: number[];
-  private clone: boolean;
   private dataMax: number;
   private dataMin: number;
   private featureMax: number;
@@ -386,42 +411,39 @@ export class MinMaxScaler {
 
   /**
    * @param featureRange - scaling range
-   * @param clone - to clone the input
    */
   constructor(
     {
-      featureRange = [0, 1],
-      clone = true
+      featureRange = [0, 1]
     }: {
       featureRange?: number[];
-      clone?: boolean;
     } = {
-      featureRange: [0, 1],
-      clone: true
+      featureRange: [0, 1]
     }
   ) {
     this.featureRange = featureRange;
-    this.clone = clone;
   }
 
   /**
    * Compute the minimum and maximum to be used for later scaling.
    * @param {number[]} X - Array or sparse-matrix data input
    */
-  public fit(X: number[] | number[][]): void {
-    const clonedX = this.clone ? _.cloneDeep(X) : X;
-    let rowMax: any = clonedX;
-    let rowMin: any = clonedX;
-
+  public fit(X: Type1DMatrix<number> | Type2DMatrix<number>): void {
+    let rowMax = tf.tensor(X);
+    let rowMin = tf.tensor(X);
+    const xShape = inferShape(X);
     // If input is a Matrix...
-    if (math.contrib.isMatrix(X)) {
-      rowMax = math.max(X, 0);
-      rowMin = math.min(X, 0);
+    if (xShape.length === 0 || xShape[0] === 0) {
+      throw new TypeError('Cannot fit with an empty value');
+    } else if (xShape.length === 2) {
+      rowMax = tf.max(rowMax as tf.Tensor, 0);
+      rowMin = tf.min(rowMin as tf.Tensor, 0);
     }
-    this.dataMax = _.max(rowMax);
-    this.dataMin = _.min(rowMin);
+    this.dataMax = tf.max(rowMax as tf.Tensor).dataSync()[0];
+    this.dataMin = tf.min(rowMin as tf.Tensor).dataSync()[0];
     this.featureMax = this.featureRange[1];
     this.featureMin = this.featureRange[0];
+    // const zz = zzdataMax - zzdataMin;
     this.dataRange = this.dataMax - this.dataMin;
     // We need different data range for multi-dimensional
     this.scale = (this.featureMax - this.featureMin) / this.dataRange;
@@ -432,7 +454,8 @@ export class MinMaxScaler {
    * Fit to data, then transform it.
    * @param {number[]} X - Original input vector
    */
-  public fit_transform(X: number[]): number[] {
+  public fit_transform(X: Type1DMatrix<number> = null): number[] {
+    validateMatrix1D(X);
     const X1 = X.map(x => x * this.scale);
     return X1.map(x => x + this.baseMin);
   }
@@ -441,7 +464,8 @@ export class MinMaxScaler {
    * Undo the scaling of X according to feature_range.
    * @param {number[]} X - Scaled input vector
    */
-  public inverse_transform(X: number[]): number[] {
+  public inverse_transform(X: Type1DMatrix<number> = null): number[] {
+    validateMatrix1D(X);
     const X1 = X.map(x => x - this.baseMin);
     return X1.map(x => x / this.scale);
   }
@@ -456,7 +480,7 @@ export class MinMaxScaler {
  * a Bayesian setting).
  *
  * @example
- * import { Binarizer } from 'kalimdor/preprocessing';
+ * import { Binarizer } from 'machinelearn/preprocessing';
  *
  * const binX = [[1, -1, 2], [2, 0, 0], [0, 1, -1]];
  * const binarizer = new Binarizer({ threshold: 0 });
@@ -495,10 +519,11 @@ export class Binarizer {
    * Currently fit does nothing
    * @param {any[]} X - Does nothing
    */
-  public fit(X: any[] = []): void {
-    if (_.isEmpty(X)) {
-      throw new Error('X cannot be null');
+  public fit(X: Type2DMatrix<number> = null): void {
+    if (Array.isArray(X) && X.length === 0) {
+      throw new TypeError('X cannot be empty');
     }
+    validateMatrix2D(X);
     console.info("Currently Bianrizer's fit is designed to do nothing");
   }
 
@@ -513,16 +538,12 @@ export class Binarizer {
    *    [ 0.,  1.,  0.]])
    * @param {any[]} X - The data to binarize.
    */
-  public transform(X: any[] = []): any[] {
-    let _X = null;
-    if (this.copy) {
-      _X = _.clone(X);
-    } else {
-      _X = X;
+  public transform(X: Type2DMatrix<number> = null): any[] {
+    const _X = this.copy ? _.clone(X) : X;
+    if (Array.isArray(_X) && _X.length === 0) {
+      throw new TypeError('X cannot be empty');
     }
-    if (_.isEmpty(X)) {
-      throw new Error('X cannot be null');
-    }
+    validateMatrix2D(_X);
     for (let row = 0; row < _.size(X); row++) {
       const rowValue = _.get(X, `[${row}]`);
       for (let column = 0; column < _.size(rowValue); column++) {
@@ -547,10 +568,10 @@ export class Binarizer {
  * is two dimensional and of the form [a, b], the degree-2 polynomial features are [1, a, b, a^2, ab, b^2].
  *
  * @example
- * import { PolynomialFeatures } from 'kalimdor/preprocessing';
+ * import { PolynomialFeatures } from 'machinelearn/preprocessing';
  * const poly = new PolynomialFeatures();
  * const X = [[0, 1], [2, 3], [4, 5]];
- * poly.transform({ X });
+ * poly.transform(X);
  * // Result:
  * // [ [ 1, 0, 1, 0, 0, 1 ],
  * // [ 1, 2, 3, 4, 6, 9 ],
@@ -574,7 +595,7 @@ export class PolynomialFeatures {
     }
   ) {
     // Constructor variables validation
-    if (!_.isNumber(degree)) {
+    if (!Number.isInteger(degree)) {
       throw new Error('Degree must be a number');
     }
     this.degree = degree;
@@ -584,42 +605,38 @@ export class PolynomialFeatures {
    * Transforms the input data
    * @param X - a matrix
    */
-  public transform(
-    {
-      X = null
-    }: {
-      X: number[][];
-    } = {
-      X: null
+  public transform(X: Type2DMatrix<number> = null): number[][] {
+    if (Array.isArray(X) && X.length === 0) {
+      throw new TypeError('X cannot be empty');
     }
-  ): number[][] {
-    if (!math.contrib.isMatrixOf(X, 'number')) {
-      throw new Error('Input must be a numeric matrix');
-    }
-    const matrix = math.matrix(X);
-    const [nSamples, nFeatures] = matrix.size();
+    validateMatrix2D(X);
+    const matrix = tf.tensor2d(X);
+    const [nSamples, nFeatures] = matrix.shape;
     const indexCombination = this.indexCombination(nFeatures, this.degree);
     const nOutputFeatures = indexCombination.length;
 
     // Polynomial feature extraction loop begins
-    let result: any = math.ones(nSamples, nOutputFeatures);
+    const tfOnes = tf.ones([nSamples, nOutputFeatures]);
+    let result = reshape(Array.from(tfOnes.dataSync()), tfOnes.shape);
     const rowRange = _.range(0, X.length);
     for (let i = 0; i < indexCombination.length; i++) {
       const c = indexCombination[i];
+      const colsRange = Array.isArray(c) ? c : [c];
       // Retrieves column values from X using the index of the indexCombination in the loop
       const srcColValues: any =
-        c !== null ? math.subset(X, math.index(rowRange, c)) : [];
-
-      // Subsets the placeholder values at [rowRange:i] using the prod value of srcColValues
+        c !== null ? math.subset(X, rowRange, colsRange) : [];
       let xc = null;
       if (srcColValues.length === 0) {
         xc = _.fill(rowRange.slice(), 1);
       } else {
-        xc = math.contrib.prod(srcColValues, 1);
+        xc = tf
+          .tensor2d(srcColValues)
+          .prod(1)
+          .dataSync();
       }
-      result = math.subset(result, math.index(rowRange, i), xc);
+      result = math.subset(result, rowRange, [i], xc);
     }
-    return result._data;
+    return result as number[][];
   }
 
   /**
@@ -644,15 +661,13 @@ export class PolynomialFeatures {
  * to the square of the  β values, while the L1 norm is proportional the absolute value of the values in  β .
  *
  * @example
- * import { normalize } from 'kalimdor/preprocessing';
+ * import { normalize } from 'machinelearn/preprocessing';
  *
- * const result = normalize({
- *   X: [
- *     [1, -1, 2],
- *     [2, 0, 0],
- *     [0, 1, -1],
- *   ],
- * });
+ * const result = normalize([
+ *   [1, -1, 2],
+ *   [2, 0, 0],
+ *   [0, 1, -1],
+ * ], { norm: 'l2' });
  * console.log(result);
  * // [ [ 0.4082482904638631, -0.4082482904638631, 0.8164965809277261 ],
  * // [ 1, 0, 0 ],
@@ -663,22 +678,19 @@ export class PolynomialFeatures {
  * @return number[][]
  */
 export function normalize(
+  X: Type2DMatrix<number> = null,
   {
-    X = null,
     norm = 'l2'
   }: {
-    X: number[][];
-    norm?: string;
+    norm: string;
   } = {
-    X: null,
     norm: 'l2'
   }
 ): number[][] {
-  // Validation
-  if (!math.contrib.isMatrixOf(X, 'number')) {
-    throw new Error('The data input must be a matrix of numbers');
+  if (Array.isArray(X) && X.length === 0) {
+    throw new TypeError('X cannot be empty');
   }
-
+  validateMatrix2D(X);
   const normalizedMatrix = [];
   for (let i = 0; i < X.length; i++) {
     const row = X[i];
@@ -693,7 +705,7 @@ export function normalize(
     if (norm === 'l1') {
       proportion = row.reduce((accum: any, r) => accum + Math.abs(r), 0);
     } else if (norm === 'l2') {
-      proportion = row.reduce((accum: any, r) => accum + math.pow(r, 2), 0);
+      proportion = row.reduce((accum: any, r) => accum + Math.pow(r, 2), 0);
       proportion = Math.sqrt(proportion);
     } else {
       throw new Error(`${norm} is not a recognised normalization method`);

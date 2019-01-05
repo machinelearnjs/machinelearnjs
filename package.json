@@ -1,5 +1,5 @@
 {
-  "name": "kalimdor",
+  "name": "machinelearn",
   "version": "1.2.6",
   "description": "Machine Learning library for the web and Node",
   "main": "index.js",
@@ -7,7 +7,7 @@
   "module": "build/lib/module/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/JasonShin/kalimdorjs"
+    "url": "https://github.com/machinelearnjs/machinelearnjs"
   },
   "license": "MIT",
   "keywords": [
@@ -38,16 +38,15 @@
     "build": "yarn clean && yarn build:main && yarn build:module && yarn build:web && yarn build:datasets",
     "build:main": "npx tsc -p tsconfig.json && npx ncp package.json ./build/lib/package.json && npx ncp README.md ./build/lib/README.md && npx ncp .npmignore ./build/lib/.npmignore",
     "build:module": "npx tsc -p tsconfig.module.json",
-    "build:web": "npx tsc -p tsconfig.json --module amd --out build/lib/kalimdor.web.js",
+    "build:web": "npx tsc -p tsconfig.json --module amd --out build/lib/machinelearn.web.js",
     "lint": "npx tslint -t verbose 'test/**/*.ts' 'src/**/*.ts' 'docs/**/*.ts'",
     "build:datasets": "npx ncp src/lib/datasets/data build/lib/datasets/data",
-    "fix": "yarn fix:prettier && yarn fix:tslint",
+    "fix": "yarn fix:tslint",
     "fix:prettier": "npx prettier \"src/**/*.ts\" \"test/**/*.ts\" \"docs/**/*.ts\" --config ./.prettierrc --write",
     "fix:tslint": "npx tslint --fix --force -t verbose 'test/**/*.ts' 'src/**/*.ts' 'docs/**/*.ts'",
-    "test": "yarn build && yarn lint && yarn test:unit && yarn test:integration && yarn test:nsp && yarn doc",
+    "test": "yarn build && yarn lint && yarn doc && yarn test:unit && yarn test:integration",
     "test:unit": "npx jest --testPathIgnorePatterns \"./test/integration/require.test.ts\"",
     "test:integration": "node ./scripts/test-integration.js",
-    "test:nsp": "nsp check",
     "watch": "./scripts/tmux-start.sh",
     "watch:build": "yarn build:main -- -w",
     "watch:unit": "yarn test:unit --watch",
@@ -60,18 +59,21 @@
     "release:major": "./scripts/releases/release-it.sh -v major",
     "release:minor": "./scripts/releases/release-it.sh -v minor",
     "release:patch": "./scripts/releases/release-it.sh -v patch",
+    "pre-release:major": "./scripts/releases/pre-release-it.sh -v major",
+    "pre-release:minor": "./scripts/releases/pre-release-it.sh -v minor",
+    "pre-release:patch": "./scripts/releases/pre-release-it.sh -v patch",
     "contributors:add": "npx all-contributors add",
     "contributors:generate": "npx all-contributors generate",
     "precommit": "pretty-quick --staged && yarn run lint && yarn run build"
   },
   "engines": {
-    "node": ">=6"
+    "node": ">=8.11.0"
   },
   "dependencies": {
+    "@tensorflow/tfjs": "^0.13.3",
     "isomorphic-fetch": "^2.2.1",
     "libsvm-js": "^0.2.0",
     "lodash": "^4.17.10",
-    "mathjs": "5.1.0",
     "numeric": "^1.2.6",
     "random-js": "^1.0.8",
     "stopword": "^0.1.10"
@@ -91,10 +93,10 @@
     "jest": "^22.4.3",
     "jest-fetch-mock": "^1.6.5",
     "ncp": "^2.0.0",
-    "nsp": "^3.2.1",
     "prettier": "^1.10.2",
     "pretty-quick": "^1.8.0",
     "release-it": "^7.4.8",
+    "snyk": "^1.117.1",
     "standard-version": "^4.0.0",
     "ts-jest": "^22.4.5",
     "tslint": "^5.4.3",

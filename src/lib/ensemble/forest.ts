@@ -1,11 +1,25 @@
-import { concat, countBy, find, head, isEqual, keys, map, maxBy, range, reduce, values } from 'lodash';
-import { DecisionTreeClassifier } from '../tree/tree';
+import {
+  concat,
+  countBy,
+  find,
+  head,
+  isEqual,
+  keys,
+  map,
+  maxBy,
+  range,
+  reduce,
+  values
+} from 'lodash';
+import { validateFitInputs, validateMatrix2D } from '../ops';
+import { DecisionTreeClassifier } from '../tree';
+import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
 
 /**
  * Base RandomForest implementation used by both classifier and regressor
  * @ignore
  */
-export class BaseRandomForest {
+export class BaseRandomForest implements IMlModel<number> {
   protected trees = [];
   protected nEstimator;
   protected randomState = null;
@@ -40,16 +54,19 @@ export class BaseRandomForest {
    * @param {Array} y - array-like, shape = [n_samples] or [n_samples, n_outputs]
    * @returns void
    */
-  public fit({ X = [], y = [] }: { X: number[][]; y: number[] }): void {
+  public fit(
+    X: Type2DMatrix<number> = null,
+    y: Type1DMatrix<number> = null
+  ): void {
+    validateFitInputs(X, y);
     this.trees = reduce(
       range(0, this.nEstimator),
       sum => {
         const tree = new DecisionTreeClassifier({
           featureLabels: null,
-          randomise: true,
           random_state: this.randomState
         });
-        tree.fit({ X, y });
+        tree.fit(X, y);
         return concat(sum, [tree]);
       },
       []
@@ -58,11 +75,15 @@ export class BaseRandomForest {
 
   /**
    * Returning the current model's checkpoint
-   * @returns {{trees: any[]; nEstimator: number}}
+   * @returns {{trees: any[]}}
    */
-  public toJSON(): { trees: any[]; nEstimator: number } {
+  public toJSON(): {
+    /**
+     * Decision trees
+     */
+    trees: any[];
+  } {
     return {
-      nEstimator: this.nEstimator,
       trees: this.trees
     };
   }
@@ -83,10 +104,11 @@ export class BaseRandomForest {
    * @param X
    * @private
    */
-  protected _predict(X: number[] | number[][] = []): any[] {
-    return map(this.trees, tree => {
+  public predict(X: Type2DMatrix<number> = null): number[][] {
+    validateMatrix2D(X);
+    return map(this.trees, (tree: DecisionTreeClassifier) => {
       // TODO: Check if it's a matrix or an array
-      return tree.predict({ X });
+      return tree.predict(X);
     });
   }
 }
@@ -96,13 +118,13 @@ export class BaseRandomForest {
  * It then aggregates the votes from different decision trees to decide the final class of the test object.
  *
  * @example
- * import { RandomForestClassifier } from 'kalimdor/ensemble';
+ * import { RandomForestClassifier } from 'machinelearn/ensemble';
  *
  * const X = [[0, 0], [1, 1], [2, 1], [1, 5], [3, 2]];
  * const y = [0, 1, 2, 3, 7];
  *
  * const randomForest = new RandomForestClassifier();
- * randomForest.fit({ X, y });
+ * randomForest.fit(X, y);
  *
  * // Results in a value such as [ '0', '2' ].
  * // Predictions will change as we have not set a seed value.
@@ -116,8 +138,8 @@ export class RandomForestClassifier extends BaseRandomForest {
    * @param {Array} X - array-like or sparse matrix of shape = [n_samples]
    * @returns {string[]}
    */
-  public predict(X: number[] | number[][] = []): any[] {
-    const predictions = this._predict(X);
+  public predict(X: Type2DMatrix<number> = null): any[] {
+    const predictions = super.predict(X);
     return this.votePredictions(predictions);
   }
 
@@ -129,7 +151,7 @@ export class RandomForestClassifier extends BaseRandomForest {
    * @param {Array<any>} predictions - List of initial predictions that may look like [ [1, 2], [1, 1] ... ]
    * @returns {string[]}
    */
-  private votePredictions(predictions: any[]): string[] {
+  private votePredictions(predictions: Type2DMatrix<number>): number[] {
     const counts = countBy(predictions, x => x);
     const countsArray = reduce(
       keys(counts),

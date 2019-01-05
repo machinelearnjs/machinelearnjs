@@ -1,0 +1,3 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`math.covariance should calculate large numbers 1`] = `-2.638764160377759e+30`;

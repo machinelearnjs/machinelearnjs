@@ -1,5 +1,7 @@
 import svmResolver from 'libsvm-js';
 import * as _ from 'lodash';
+import { validateFitInputs, validateMatrix1D, validateMatrix2D } from '../ops';
+import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
 
 export type Type = 'C_SVC' | 'NU_SVC' | 'ONE_CLASS' | 'EPSILON_SVR' | 'NU_SVR';
 
@@ -67,7 +69,7 @@ export interface SVMOptions {
 /**
  * BaseSVM class used by all parent SVM classes that are based on libsvm
  */
-export class BaseSVM {
+export class BaseSVM implements IMlModel<number> {
   protected svm: any;
   protected type: Type;
   protected options: SVMOptions;
@@ -96,13 +98,11 @@ export class BaseSVM {
    * @param {number[]} y
    * @returns {Promise<void>}
    */
-  public async fit({
-    X = [],
-    y = []
-  }: {
-    X: number[][];
-    y: number[];
-  }): Promise<void> {
+  public async fit(
+    X: Type2DMatrix<number>,
+    y: Type1DMatrix<number>
+  ): Promise<void> {
+    validateFitInputs(X, y);
     if (!this.type) {
       throw new Error(`SVM type is unspecified ${this.type}`);
     }
@@ -122,7 +122,8 @@ export class BaseSVM {
    * @param {number[][]} X
    * @returns {number[]}
    */
-  public predict(X: number[][]): number[] {
+  public predict(X: Type2DMatrix<number>): number[] {
+    validateMatrix2D(X);
     return this.svm.predict(X);
   }
 
@@ -131,7 +132,8 @@ export class BaseSVM {
    * @param {number[]} X
    * @returns {number}
    */
-  public predictOne(X: number[]): number {
+  public predictOne(X: Type1DMatrix<number>): number[] {
+    validateMatrix1D(X);
     return this.svm.predictOne(X);
   }
 

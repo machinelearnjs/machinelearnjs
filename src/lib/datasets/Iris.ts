@@ -3,7 +3,9 @@
  * - https://archive.ics.uci.edu/ml/datasets/iris
  * - https://en.wikipedia.org/wiki/Iris_flower_data_set
  */
+import * as fs from 'fs';
 import 'isomorphic-fetch';
+import * as path from 'path';
 import { BaseDataset } from './BaseDataset';
 
 /**
@@ -13,7 +15,7 @@ import { BaseDataset } from './BaseDataset';
  * It contains 50 samples with 3 classes of 'Setosa', 'versicolor' and 'virginica'
  *
  * @example
- * import { Iris } from 'kalimdor/datasets';
+ * import { Iris } from 'machinelearn/datasets';
  *
  * (async function() {
  *   const irisData = new Iris();
@@ -28,8 +30,6 @@ import { BaseDataset } from './BaseDataset';
  *
  */
 export class Iris extends BaseDataset {
-  private dataSources = ['http://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.data'];
-  private descSource = 'https://archive.ics.uci.edu/ml/machine-learning-databases/iris/iris.names';
   /**
    * Load datasets
    */
@@ -55,13 +55,13 @@ export class Iris extends BaseDataset {
      */
     description: string;
   }> {
-    const { data, targets, labels } = await this.fetchLoad(this.dataSources);
+    // const { data, targets, labels } = await this.fetchLoad(this.dataSources);
+    const { data, targets, labels } = await this.fsLoad('iris');
     // prettier-ignore
     const targetNames = ['setosa', 'versicolor', 'virginica'];
 
     // prettier-ignore
-    const descResponse = await fetch(this.descSource);
-    const description = await descResponse.text();
+    const description = await fs.readFileSync(path.join(__dirname, './data/iris/iris.names'), 'utf8');
     return {
       data,
       targets,

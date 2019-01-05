@@ -14,12 +14,12 @@ function runIntegrationTests() {
   if (isDockerInstalled()) {
     const cmds = [
       {
-        comment: '### 1. building a kalimdor docker image',
-        cmd: 'docker build -t kalimdor:latest .'
+        comment: '### 1. building a machinelearn docker image',
+        cmd: 'docker build -t machinelearn:latest .'
       },
       {
         comment: '### 2. Running build-prod.sh in a temporary container',
-        cmd: "docker run --rm kalimdor:latest './scripts/build-prod.sh'"
+        cmd: "docker run --rm machinelearn:latest './scripts/build-prod.sh'"
       }
     ];
 

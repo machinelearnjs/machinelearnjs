@@ -1,27 +1,59 @@
-# Kalimdor.js
+# machinelearn.js
 
-Kalimdor.js is a Machine Learning library written in Typescript. It solves Machine Learning problems
+machinelearn.js is a Machine Learning library written in Typescript. It solves Machine Learning problems
 and teaches users how Machine Learning algorithms work.
 
-[![Build Status](https://travis-ci.org/kalimdorjs/kalimdorjs.svg?branch=master)](https://travis-ci.org/kalimdorjs/kalimdorjs)
 [![Build status](https://ci.appveyor.com/api/projects/status/0e70aia5vi2h35hs/branch/master?svg=true)](https://ci.appveyor.com/project/JasonShin/kalimdorjs/branch/master)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FJasonShin%2Fkalimdorjs.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FJasonShin%2Fkalimdorjs?ref=badge_shield)
 [![Slack](https://slack.bri.im/badge.svg)](https://slack.bri.im)
 
-<img src="https://i.imgur.com/CpZA2U7.png">
+<img src="https://i.imgur.com/I5VbqB1.jpg">
 
 # User Installation
 
 Using yarn
 
 ```bash
-$ yarn add kalimdor
+$ yarn add machinelearn
 ```
 
 Using NPM
 
 ```bash
-$ npm install --save kalimdor
+$ npm install --save machinelearn
+```
+
+# Accelerations
+
+By default, machinelearning.js will use pure Javascript version of tfjs. To enable acceleration
+through C++ binding or GPU, you must import `machinelearn-node` for C++ or `machinelearn-gpu` for GPU.
+
+1. C++
+
+- installation
+
+```bash
+yarn add machinelearn-node
+```
+
+- activation
+
+```javascript
+import 'machinelearn-node';
+```
+
+2. GPU
+
+- installation
+
+```bash
+yarn add machinelearn-gpu
+```
+
+- activation
+
+```javascript
+import 'machinelearn-gpu';
 ```
 
 # Highlights
@@ -42,7 +74,7 @@ to assist new contributors to easily join the project.
 
 # Simplicity
 
-Kalimdor.js provides a simple and consistent set of APIs to interact with the models and algorithms.
+machinelearn.js provides a simple and consistent set of APIs to interact with the models and algorithms.
 For example, all models have follow APIs:
 
 - `fit` for training
@@ -52,7 +84,7 @@ For example, all models have follow APIs:
 
 # Testing
 
-Testing ensures you that you are currently using the most stable version of Kalimdor.js
+Testing ensures you that you are currently using the most stable version of machinelearn.js
 
 ```bash
 $ npm run test

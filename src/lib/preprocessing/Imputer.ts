@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
+import { validateMatrix2D } from '../ops';
+import { Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
-import { checkArray } from '../utils/validation';
 
 /**
  * Imputation transformer for completing missing values.
@@ -48,20 +49,24 @@ export class Imputer {
    * Fit the imputer on X.
    * @param {any[]} X - Input data in array or sparse matrix format
    */
-  public fit(X: any[] = []): void {
+  public fit(X: Type2DMatrix<any> = null): void {
+    validateMatrix2D(X);
+
     const _X = this.copy ? _.clone(X) : X;
-    const check = checkArray(_X);
-    if (!check.isArray) {
-      throw new Error('X is not an array!');
-    }
-    const rowLen = math.contrib.size(_X, 0);
-    const colLen = math.contrib.size(_X, 1);
-    const rowRange = math.contrib.range(0, rowLen);
-    const colRange = math.contrib.range(0, colLen);
+    const rowLen = math.size(_X, 0);
+    const colLen = math.size(_X, 1);
+    const rowRange = math.range(0, rowLen);
+    const colRange = math.range(0, colLen);
     if (this.strategy === 'mean') {
       if (this.axis === 0) {
-        const colNumbers: any = _.map(colRange, col => math.subset(_X, math.index(rowRange, col)));
-        this.means = this.calcArrayMean(colNumbers, ['flatten', 'filter', 'mean']);
+        const colNumbers: any = _.map(colRange, col =>
+          math.subset(_X, rowRange, [col])
+        );
+        this.means = this.calcArrayMean(colNumbers, [
+          'flatten',
+          'filter',
+          'mean'
+        ]);
       } else if (this.axis === 1) {
         const rowNumbers = _.map(rowRange, row => _.get(_X, `[${row}]`));
         this.means = this.calcArrayMean(rowNumbers, ['filter', 'mean']);
@@ -76,7 +81,9 @@ export class Imputer {
    * @param {any[]} X - Input data in array or sparse matrix format
    * @returns {any[]}
    */
-  public fit_transform(X: any[] = []): any[] {
+  public fit_transform(X: Type2DMatrix<any> = null): any[] {
+    validateMatrix2D(X);
+
     const _X: any[] = _.clone(X);
     if (this.strategy === 'mean' && this.axis === 0) {
       // Mean column direction transform
@@ -95,7 +102,11 @@ export class Imputer {
         }
       }
     } else {
-      throw new Error(`Unknown transformation with strategy ${this.strategy} and axis ${this.axis}`);
+      throw new Error(
+        `Unknown transformation with strategy ${this.strategy} and axis ${
+          this.axis
+        }`
+      );
     }
     return _X;
   }

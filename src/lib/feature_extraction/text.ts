@@ -1,5 +1,7 @@
 import * as _ from 'lodash';
 import * as sw from 'stopword';
+import { validateMatrix1D } from '../ops';
+import { Type1DMatrix } from '../types';
 import { WordTokenizer } from '../utils/nlp';
 import { ENGLISH_STOP_WORDS } from './stop_words';
 
@@ -9,7 +11,7 @@ import { ENGLISH_STOP_WORDS } from './stop_words';
  * to encode new documents using that vocabulary.
  *
  * @example
- * import { CountVectorizer } from 'kalimdor/feature_extraction';
+ * import { CountVectorizer } from 'machinelearn/feature_extraction';
  *
  * const corpus = ['deep learning ian good fellow learning jason shin shin', 'yoshua bengio'];
  * const vocabCounts = cv.fit_transform(corpus);
@@ -23,14 +25,15 @@ import { ENGLISH_STOP_WORDS } from './stop_words';
 export class CountVectorizer {
   public vocabulary: object = {};
   /** @ignore */
-  private internalVocabulary: string[];
+  private internalVocabulary: Type1DMatrix<string>;
 
   /**
    * Learn a vocabulary dictionary of all tokens in the raw documents.
    * @param {string[]} doc - An array of strings
    * @returns {CountVectorizer}
    */
-  public fit(doc: string[] = []): this {
+  public fit(doc: Type1DMatrix<string> = null): this {
+    validateMatrix1D(doc);
     this.fit_transform(doc);
     return this;
   }
@@ -40,8 +43,8 @@ export class CountVectorizer {
    * @param {string[]} doc - An array of strings
    * @returns {number[][]}
    */
-  public fit_transform(doc: string[] = []): number[][] {
-    // Automatically assig
+  public fit_transform(doc: Type1DMatrix<string> = null): number[][] {
+    validateMatrix1D(doc);
     const { internalVocabulary, pubVocabulary } = this.buildVocabulary(doc);
     this.vocabulary = pubVocabulary;
     this.internalVocabulary = internalVocabulary;
@@ -55,7 +58,8 @@ export class CountVectorizer {
    * @param {string[]} doc - An array of strings
    * @returns {number[][]}
    */
-  public transform(doc: string[] = []): number[][] {
+  public transform(doc: Type1DMatrix<string> = null): number[][] {
+    validateMatrix1D(doc);
     return this.countVocab(doc);
   }
 
@@ -65,7 +69,9 @@ export class CountVectorizer {
    */
   public getFeatureNames(): object {
     if (!this.internalVocabulary) {
-      throw new Error('You must fit a document first before you can retrieve the feature names!');
+      throw new Error(
+        'You must fit a document first before you can retrieve the feature names!'
+      );
     }
     return this.internalVocabulary;
   }
@@ -84,7 +90,7 @@ export class CountVectorizer {
    * @param doc
    */
   private buildVocabulary(
-    doc: string[]
+    doc: Type1DMatrix<string>
   ): {
     internalVocabulary: string[];
     pubVocabulary: object;
@@ -118,7 +124,7 @@ export class CountVectorizer {
    * [1, 1, 0, 0]
    * @param doc
    */
-  private countVocab(doc: string[]): number[][] {
+  private countVocab(doc: Type1DMatrix<string>): number[][] {
     const analyze = this.buildAnalyzer();
     // 1. Reducing the doc
     return _.reduce(
@@ -167,7 +173,8 @@ export class CountVectorizer {
       (x: string) => tokenizer.tokenize(x),
       (x: string[]) => x.join(' '),
       // TODO: Somehow it's removing too many words??!!
-      (x: string[]) => (removeSW ? sw.removeStopwords(x, ENGLISH_STOP_WORDS) : x),
+      (x: string[]) =>
+        removeSW ? sw.removeStopwords(x, ENGLISH_STOP_WORDS) : x,
       (x: string) => x.split(' ')
     )(text);
   }

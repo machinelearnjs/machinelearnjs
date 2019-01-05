@@ -3,7 +3,9 @@ import * as _ from 'lodash';
 import * as path from 'path';
 import { BaseProcesser } from './BaseProcesser';
 import * as consts from './const';
-const docsJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../docs.json'), 'utf8'));
+const docsJson = JSON.parse(
+  fs.readFileSync(path.join(__dirname, '../docs.json'), 'utf8')
+);
 
 interface SidebarDefinition {
   children: [string, string];
@@ -16,7 +18,10 @@ interface SidebarDefinition {
  */
 export class APIProcessor extends BaseProcesser {
   public apiChildren = [];
-  private vuepressExtraConfigPath = path.join(__dirname, '../md_out/.vuepress/apiExtra.json');
+  private vuepressExtraConfigPath = path.join(
+    __dirname,
+    '../md_out/.vuepress/apiExtra.json'
+  );
   private themePath = path.join(__dirname, '../themes/markdown');
   private entityPageFile = 'entity_page.hbs';
   private homePageFile = 'api_readme.hbs';
@@ -24,7 +29,10 @@ export class APIProcessor extends BaseProcesser {
   private srcApiHomeTheme = path.join(this.themePath, this.homePageFile);
   private destApiHomePage = path.join(__dirname, '../md_out/api/README.md');
   private pathDelimeter = '.';
-  private entityKindWhitelist = [consts.kindStringClass, consts.kindStringFunction]; // Whitelisting kinds when grabbing class or method
+  private entityKindWhitelist = [
+    consts.kindStringClass,
+    consts.kindStringFunction
+  ]; // Whitelisting kinds when grabbing class or method
   private moduleNameBlackList = ['"'];
 
   /**
@@ -55,7 +63,11 @@ export class APIProcessor extends BaseProcesser {
       apiSidebar: this.buildSidebarJSON(apiChildren)
     };
     // Writing extraConfig object as .vuepress/apiExtra.json
-    fs.writeFileSync(this.vuepressExtraConfigPath, JSON.stringify(extraConfig), 'utf-8');
+    fs.writeFileSync(
+      this.vuepressExtraConfigPath,
+      JSON.stringify(extraConfig),
+      'utf-8'
+    );
   }
 
   /**
@@ -83,7 +95,9 @@ export class APIProcessor extends BaseProcesser {
           // If there's an existing module definition,
           // then append the current child's definition to the children list
           const existing = sum[existingGroupIndex];
-          const newChildren = _.concat(existing.children, [[`./${child.name}`, name]]);
+          const newChildren = _.concat(existing.children, [
+            [`./${child.name}`, name]
+          ]);
           const updated = _.set(existing, 'children', newChildren);
           return _.set(sum, `[${existingGroupIndex}]`, updated);
         }
@@ -128,10 +142,15 @@ export class APIProcessor extends BaseProcesser {
           moduleChild.children,
           (entityList, entityChild) => {
             // Filter by entityKindWhitelist and skips if isIgnore comment is set
-            if (this.entityKindWhitelist.indexOf(entityChild.kindString) !== -1 && !this.isIgnore(entityChild)) {
+            if (
+              this.entityKindWhitelist.indexOf(entityChild.kindString) !== -1 &&
+              !this.isIgnore(entityChild)
+            ) {
               // each function or class name
               const entityName = entityChild.name;
-              const fullEntityName = [cleanedModuleName, entityName].join(this.pathDelimeter);
+              const fullEntityName = [cleanedModuleName, entityName].join(
+                this.pathDelimeter
+              );
               const newEntityChild = _.set(entityChild, 'name', fullEntityName);
               return _.concat(entityList, [newEntityChild]);
             }
@@ -140,7 +159,10 @@ export class APIProcessor extends BaseProcesser {
           []
         );
         // Filter out undefined entity appended as a result of whitelisting during the reduce
-        const filteredEntityList = _.filter(squashedEntityList, x => !_.isUndefined(x));
+        const filteredEntityList = _.filter(
+          squashedEntityList,
+          x => !_.isUndefined(x)
+        );
 
         // Concat the squashedEntityList to the _.reduce aggregation
         // Also applies a shallow flatten as squashedEntityList is an array
@@ -157,7 +179,7 @@ export class APIProcessor extends BaseProcesser {
    * Create API directory if not exist
    */
   private createDir(): void {
-    // 1.2. creating the second portion: /Users/jasons/Desktop/kalimdorjs/docs/md_out/pages
+    // 1.2. creating the second portion: /Users/jasons/Desktop/machinelearnjs/docs/md_out/pages
     if (!fs.existsSync(this.apiOutputPath)) {
       fs.mkdirSync(this.apiOutputPath);
     }
@@ -167,7 +189,10 @@ export class APIProcessor extends BaseProcesser {
    * Process API folder's homepage aka README
    */
   private processHomePage(hbs, apiChildren): void {
-    const grouped = _.groupBy(apiChildren, o => o.name.split(this.pathDelimeter)[0]);
+    const grouped = _.groupBy(
+      apiChildren,
+      o => o.name.split(this.pathDelimeter)[0]
+    );
     const keys = _.keys(grouped);
     const restructedChildren = _.map(keys, key => {
       return {
@@ -176,7 +201,10 @@ export class APIProcessor extends BaseProcesser {
       };
     });
 
-    const apiHomePageThemeContent = fs.readFileSync(this.srcApiHomeTheme, 'utf8');
+    const apiHomePageThemeContent = fs.readFileSync(
+      this.srcApiHomeTheme,
+      'utf8'
+    );
     const template = hbs.compile(apiHomePageThemeContent);
     const compiledPage = template(restructedChildren);
     fs.appendFileSync(this.destApiHomePage, compiledPage, { flag: 'a' });

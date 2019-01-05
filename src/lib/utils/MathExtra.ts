@@ -1,5 +1,4 @@
 import * as _ from 'lodash';
-import * as math from 'mathjs';
 
 /**
  * Return the number of elements along a given axis.
@@ -21,6 +20,48 @@ const size = (X, axis = 0) => {
     )(X);
   }
   throw new Error(`Invalid axis value ${axis} was given`);
+};
+
+/**
+ * Just a dumb version of subset, which is sufficient enough for now.
+ * It can only handle range of rows with a single column.
+ *
+ * TODO: Improve.
+ * @param X
+ * @param rowsRange
+ * @param colsRange
+ * @ignore
+ */
+const subset = (
+  X,
+  rowsRange: number[],
+  colsRange: number[],
+  replacement = null
+): any[][] => {
+  // console.log('checking subset', X, rowsRange, colsRange, replacement);
+  if (replacement) {
+    const _X = _.cloneDeep(X);
+    for (let i = 0; i < rowsRange.length; i++) {
+      const rowIndex = rowsRange[i];
+      colsRange.forEach(col => {
+        _X[rowIndex][col] = replacement[i];
+      });
+    }
+    return _X;
+  } else {
+    const result = [];
+    // TODO: Replace it with a proper matrix subset method. e.g. http://mathjs.org/docs/reference/functions/subset.html
+    for (let i = 0; i < rowsRange.length; i++) {
+      const rowIndex = rowsRange[i];
+      const subSection = [];
+      colsRange.forEach(col => {
+        subSection.push(X[rowIndex][col]);
+      });
+      // result.push([X[rowIndex][col]]);
+      result.push(subSection);
+    }
+    return result;
+  }
 };
 
 /**
@@ -156,7 +197,9 @@ const subtract = (X, y) => {
         const subs = y[colIndex];
         _X[rowIndex][colIndex] = column - subs;
       } else {
-        throw Error(`Dimension of y ${y.length} and row ${row.length} are not compatible`);
+        throw Error(
+          `Dimension of y ${y.length} and row ${row.length} are not compatible`
+        );
       }
     }
   }
@@ -276,49 +319,15 @@ const inner = (a, b) => {
     }
     return result;
   } else if (Array.isArray(a) && Array.isArray(b) && a.length !== b.length) {
-    throw new Error(`Dimensions (${a.length},) and (${b.length},) are not aligned`);
+    throw new Error(
+      `Dimensions (${a.length},) and (${b.length},) are not aligned`
+    );
   }
 
   throw new Error(`Cannot process with the invalid inputs ${a} and ${b}`);
 };
 
-/**
- * Return the product of array elements over a given axis.
- * @param X
- * @param axis
- * @ignore
- */
-const prod = (X, axis = null) => {
-  if (!isMatrixOf(X, 'number')) {
-    throw new Error('X has to be a matrix of numbers');
-  }
-  if (axis === null) {
-    return math.prod(X);
-  } else if (axis === 0) {
-    // Prod by column
-    return X.reduce((sum, y) => {
-      for (let i = 0; i < y.length; i++) {
-        let entity = sum[i] ? sum[i] : 1;
-        entity *= y[i];
-        sum[i] = entity;
-      }
-      return sum;
-    }, []);
-  } else if (axis === 1) {
-    return X.reduce((sum, y) => {
-      let result = 1;
-      for (let i = 0; i < y.length; i++) {
-        result *= y[i];
-      }
-      return sum.concat(result);
-    }, []);
-  } else {
-    // If axis is invalid
-    throw new Error('Cannot operate on an invalid axis parameter');
-  }
-};
-
-const contrib = {
+const math = {
   covariance,
   euclideanDistance,
   hstack,
@@ -327,13 +336,11 @@ const contrib = {
   isMatrix,
   isMatrixOf,
   manhattanDistance,
-  prod,
   range,
+  subset,
   size,
   subtract,
   variance
 };
 
-// Exporting merged result
-// { contrib } because we want users to access contrib API like math.contrib.xx
-export default _.merge(math, { contrib });
+export default math;
