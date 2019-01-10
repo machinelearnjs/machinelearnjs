@@ -1,5 +1,6 @@
 /* tslint:disable */
 
+/*
 import { LinearRegression } from '.';
 
 const lr = new LinearRegression();
@@ -65,3 +66,11 @@ import { Lasso } from '.';
 const reg1 = new Lasso({ degree: 2, l1: 1 });
 reg1.fit([[0, 0], [1, 1]], [0, 1]);
 console.log('lasso', reg1.predict([[1, 1], [2, 3]]));
+*/
+
+import * as numeric from 'numeric';
+import * as tf from '@tensorflow/tfjs';
+const X = [[1, 1], [1, 2], [2, 2], [2, 3]];
+const y = [1, 1, 2, 2];
+let [q, r] = tf.linalg.qr(tf.tensor2d(X));
+const b = tf.tensor(numeric.inv(r)).dot(tf.tensor(q).transpose()).dot(tf.tensor(y));
