@@ -23,14 +23,23 @@ export enum TypeLinearReg {
 /**
  * Ordinary least squares Linear Regression.
  *
+ * It supports both univariate and multivariate linear regressions.
+ *
  * @example
  * import { LinearRegression } from './linear_regression';
  * const linearRegression = new LinearRegression();
  * const X = [1, 2, 4, 3, 5];
  * const y = [1, 3, 3, 2, 5];
  * linearRegression.fit(X, y);
- * console.log(lr.predict([1, 2]));
+ * lr.predict([1, 2]);
  * // [ 1.1999999999999995, 1.9999999999999996 ]
+ *
+ * const linearRegression2 = new LinearRegression();
+ * const X2 = [[1, 1], [1, 2], [2, 2], [2, 3]];
+ * const y2 = [1, 1, 2, 2];
+ * linearRegression2.fit(X2, y2);
+ * lr.predict([[1, 2]]);
+ * // [1.0000001788139343]
  */
 export class LinearRegression {
   private weights: number[] = [];
@@ -85,9 +94,9 @@ export class LinearRegression {
       return this.multivariatePredict(X as Type2DMatrix<number>);
     } else {
       throw new TypeError(
-        `The matrix is not 1D shaped: ${JSON.stringify(X)} of ${JSON.stringify(
-          xShape
-        )}`
+        `The matrix is incorrectly shaped: while X is ${
+          xShape.length
+        }, type is ${this.type.toString().toLowerCase()}`
       );
     }
   }

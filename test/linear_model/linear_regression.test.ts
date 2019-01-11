@@ -75,7 +75,7 @@ describe('linear_model:LinearRegression (Univariate)', () => {
     const err =
       'values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray';
     expect(() => lr.predict([])).toThrow(
-      'The matrix is not 1D shaped: [] of [0]'
+      'The matrix is incorrectly shaped: while X is 1, type is multivariate'
     );
     expect(() => lr.predict('test')).toThrow(err);
     expect(() => lr.predict(null)).toThrow(err);
@@ -129,5 +129,33 @@ describe('linear_model:LinearRegression (Multivariate)', () => {
 
     const result2 = lr.predict([[NaN, 123]]);
     expect(result2).toEqual(expected1);
+  });
+
+  it('should throw an exception when X and y sample sizes do not match', () => {
+    const lr = new LinearRegression();
+    expect(() => lr.fit([[1, 2], [3, 4]], [1])).toThrow(
+      'Sample(2) and target(1) sizes do not match'
+    );
+  });
+
+  it('should throw an example when invalid inputs are given to fit', () => {
+    const lr = new LinearRegression();
+    expect(() => lr.fit(null, [1])).toThrow(
+      'values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray'
+    );
+    expect(() => lr.fit([[1]], null)).toThrow(
+      'values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray'
+    );
+  });
+
+  it('should throw an exception when invalid data is given to the predict function', () => {
+    const lr = new LinearRegression();
+    lr.fit(X1, y1);
+    expect(() => lr.predict([1])).toThrow(
+      'The matrix is incorrectly shaped: while X is 1, type is multivariate'
+    );
+    expect(() => lr.predict([])).toThrow(
+      'The matrix is incorrectly shaped: while X is 1, type is multivariate'
+    );
   });
 });
