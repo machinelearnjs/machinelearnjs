@@ -1,6 +1,6 @@
 import { LinearRegression } from '../../src/lib/linear_model';
 
-describe('linear_model:LinearRegression', () => {
+describe('linear_model:LinearRegression (Univariate)', () => {
   const X1 = [1, 2, 4, 3, 5];
   const y1 = [1, 3, 3, 2, 5];
   it('should train on X1 and y1, predict a few results', () => {
@@ -63,7 +63,7 @@ describe('linear_model:LinearRegression', () => {
       'values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray'
     );
     expect(() => lr.fit([], 'abc')).toThrow(
-      'The matrix is not 1D shaped: [] of [0]'
+      'values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray'
     );
     expect(() => lr.fit([1, 2, 3], [1, 2])).toThrow(
       'Sample(3) and target(2) sizes do not match'

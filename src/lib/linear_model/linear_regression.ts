@@ -83,8 +83,13 @@ export class LinearRegression {
       this.type.toString() === TypeLinearReg.MULTIVARIATE.toString()
     ) {
       return this.multivariatePredict(X as Type2DMatrix<number>);
+    } else {
+      throw new TypeError(
+        `The matrix is not 1D shaped: ${JSON.stringify(X)} of ${JSON.stringify(
+          xShape
+        )}`
+      );
     }
-    return null;
   }
   /**
    * Get the model details in JSON format
