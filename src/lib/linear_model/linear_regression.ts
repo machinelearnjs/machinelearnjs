@@ -9,6 +9,12 @@ import { inferShape, reshape } from '../ops';
 import { Type1DMatrix, Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
 
+/**
+ * Type of Linear Regression
+ * Univariate = It can handle a 1 dimensional input
+ * Multivariate = It can handle a 2 dimensional input
+ * @ignore
+ */
 export enum TypeLinearReg {
   UNIVARIATE = 'UNIVARIATE',
   MULTIVARIATE = 'MULTIVARIATE'
@@ -88,9 +94,14 @@ export class LinearRegression {
      * Coefficients
      */
     weights: number[];
+    /**
+     * Type of the linear regression model
+     */
+    type: TypeLinearReg;
   } {
     return {
-      weights: this.weights
+      weights: this.weights,
+      type: this.type
     };
   }
 
@@ -99,15 +110,28 @@ export class LinearRegression {
    * @param {number} b0 - Coefficients component: b0
    * @param {number} b1 - Coefficients component: b1
    */
-  public fromJSON({ weights = null }: { weights: number[] }): void {
-    if (!weights) {
+  public fromJSON({
+    weights = null,
+    type = null
+  }: {
+    weights: number[];
+    type: TypeLinearReg;
+  }): void {
+    if (!weights || !type) {
       throw new Error(
-        'You must provide both b0 and b1 to restore Linear Regression'
+        'You must provide both weights and type to restore the linear regression model'
       );
     }
     this.weights = weights;
+    this.type = type;
   }
 
+  /**
+   * Univariate prediction
+   * y = b0 + b1 * X
+   *
+   * @param X
+   */
   private univariatePredict(X: Type1DMatrix<number> = null): number[] {
     const preds = [];
     for (let i = 0; i < size(X); i++) {
@@ -116,6 +140,12 @@ export class LinearRegression {
     return preds;
   }
 
+  /**
+   * Multivariate prediction
+   * y = (b0 * X0) + (b1 * X1) + (b2 * X2) + ....
+   *
+   * @param X
+   */
   private multivariatePredict(X: Type2DMatrix<number> = null): number[] {
     const preds = [];
     for (let i = 0; i < X.length; i++) {
