@@ -11,6 +11,11 @@ lr.fit(X, y);
 
 console.log(lr.predict([1, 2]));
 
+const lr2 = new LinearRegression();
+lr2.fit([[1, 1], [1, 2], [2, 2], [2, 3]], [1, 1, 2, 2]);
+
+console.log(lr2.predict([[1, 1]]));
+
 import { SGDClassifier, SGDRegressor } from '.';
 
 const sgd = new SGDClassifier();
@@ -65,27 +70,3 @@ import { Lasso } from '.';
 const reg1 = new Lasso({ degree: 2, l1: 1 });
 reg1.fit([[0, 0], [1, 1]], [0, 1]);
 console.log('lasso', reg1.predict([[1, 1], [2, 3]]));
-
-/*
-import * as numeric from 'numeric';
-import { reshape } from '../ops';
-import * as tf from '@tensorflow/tfjs';
-// const X = [[0.05], [0.18], [0.31], [0.42], [0.5]];
-// const y = [0.12, 0.22, 0.35, 0.38, 0.49];
-const X = [[1, 1], [1, 2], [2, 2], [2, 3]];
-const y = [6, 8, 9, 11];
-let [q, r] = tf.linalg.qr(tf.tensor2d(X));
-const rawR = reshape(Array.from(r.dataSync()), r.shape);
-const b = tf
-  .tensor(numeric.inv(rawR))
-  .dot(q.transpose())
-  .dot(tf.tensor(y));
-const yhat = tf
-  .tensor(X)
-  .dot(b)
-  .dataSync();
-console.log('checking b');
-b.print();
-
-console.log(yhat);
-*/

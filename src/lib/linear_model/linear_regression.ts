@@ -4,9 +4,15 @@
  */
 import * as tf from '@tensorflow/tfjs';
 import { size } from 'lodash';
-import { validateMatrix1D } from '../ops';
-import { Type1DMatrix } from '../types';
+import * as numeric from 'numeric';
+import { inferShape, reshape } from '../ops';
+import { Type1DMatrix, Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
+
+export enum TypeLinearReg {
+  UNIVARIATE = 'UNIVARIATE',
+  MULTIVARIATE = 'MULTIVARIATE'
+}
 
 /**
  * Ordinary least squares Linear Regression.
@@ -21,8 +27,8 @@ import math from '../utils/MathExtra';
  * // [ 1.1999999999999995, 1.9999999999999996 ]
  */
 export class LinearRegression {
-  private b0: number;
-  private b1: number;
+  private weights: number[] = [];
+  private type: TypeLinearReg = TypeLinearReg.MULTIVARIATE;
 
   /**
    * fit linear model
@@ -30,50 +36,61 @@ export class LinearRegression {
    * @param {any} y - target values
    */
   public fit(
-    X: Type1DMatrix<number> = null,
-    y: Type1DMatrix<number> = null
+    X: Type1DMatrix<number> | Type2DMatrix<number> = null,
+    y: Type1DMatrix<number> | Type2DMatrix<number> = null
   ): void {
-    const xShape = validateMatrix1D(X);
-    const yShape = validateMatrix1D(y);
+    const xShape = inferShape(X);
+    const yShape = inferShape(y);
     if (xShape.length === 1 && yShape.length === 1 && xShape[0] === yShape[0]) {
-      this.coefficients(X, y); // getting b0 and b1
+      // Univariate linear regression
+      this.type = TypeLinearReg.UNIVARIATE;
+      this.weights = this.calculateUnivariateCoeff(X, y); // getting b0 and b1
+    } else if (
+      xShape.length === 2 &&
+      yShape.length === 1 &&
+      xShape[0] === yShape[0]
+    ) {
+      this.type = TypeLinearReg.MULTIVARIATE;
+      this.weights = this.calculateMultiVariateCoeff(X, y);
     } else {
       throw new Error(
         `Sample(${xShape[0]}) and target(${yShape[0]}) sizes do not match`
       );
     }
   }
-
   /**
    * Predict using the linear model
    * @param {number} X - Values to predict.
    * @returns {number}
    */
-  public predict(X: Type1DMatrix<number> = null): number[] {
-    validateMatrix1D(X);
-    const preds = [];
-    for (let i = 0; i < size(X); i++) {
-      preds.push(this.b0 + this.b1 * X[i]);
+  public predict(
+    X: Type1DMatrix<number> | Type2DMatrix<number> = null
+  ): number[] {
+    const xShape = inferShape(X);
+    if (
+      xShape.length === 1 &&
+      this.type.toString() === TypeLinearReg.UNIVARIATE.toString()
+    ) {
+      return this.univariatePredict(X as Type1DMatrix<number>);
+    } else if (
+      xShape.length === 2 &&
+      this.type.toString() === TypeLinearReg.MULTIVARIATE.toString()
+    ) {
+      return this.multivariatePredict(X as Type2DMatrix<number>);
     }
-    return preds;
+    return null;
   }
-
   /**
    * Get the model details in JSON format
    */
   public toJSON(): {
     /**
-     * Coefficients component: b0
+     * Coefficients
      */
-    b0: number;
-    /**
-     * Coefficients component: b1
-     */
-    b1: number;
+    weights: number[];
   } {
     return {
-      b0: this.b0,
-      b1: this.b1
+      weights: this.weights
     };
   }
 
@@ -82,26 +99,62 @@ export class LinearRegression {
    * @param {number} b0 - Coefficients component: b0
    * @param {number} b1 - Coefficients component: b1
    */
-  public fromJSON({ b0 = null, b1 = null }: { b0: number; b1: number }): void {
-    if (!b0 || !b1) {
+  public fromJSON({ weights = null }: { weights: number[] }): void {
+    if (!weights) {
       throw new Error(
         'You must provide both b0 and b1 to restore Linear Regression'
       );
     }
-    this.b0 = b0;
-    this.b1 = b1;
+    this.weights = weights;
+  }
+
+  private univariatePredict(X: Type1DMatrix<number> = null): number[] {
+    const preds = [];
+    for (let i = 0; i < size(X); i++) {
+      preds.push(this.weights[0] + this.weights[1] * X[i]);
+    }
+    return preds;
+  }
+
+  private multivariatePredict(X: Type2DMatrix<number> = null): number[] {
+    const preds = [];
+    for (let i = 0; i < X.length; i++) {
+      const row = X[i];
+      let yPred = 0;
+      for (let j = 0; j < row.length; j++) {
+        yPred += this.weights[j] * row[j];
+      }
+      preds.push(yPred);
+    }
+    return preds;
   }
 
   /**
-   * Calculates coefficient for linear regression
+   * Calculates univariate coefficients for linear regression
    * @param X - X values
    * @param y - y targets
    */
-  private coefficients(X, y): void {
-    // TODO: Fix the typing
+  private calculateUnivariateCoeff(X, y): number[] {
     const xMean: any = tf.mean(X).dataSync();
     const yMean: any = tf.mean(y).dataSync();
-    this.b1 = math.covariance(X, xMean, y, yMean) / math.variance(X, xMean);
-    this.b0 = yMean - this.b1 * xMean;
+    const b1 = math.covariance(X, xMean, y, yMean) / math.variance(X, xMean);
+    const b0 = yMean - b1 * xMean;
+    return this.weights.concat([b0, b1]);
+  }
+
+  /**
+   * Calculate multivariate coefficients for linear regression
+   * @param X
+   * @param y
+   */
+  private calculateMultiVariateCoeff(X, y): number[] {
+    const [q, r] = tf.linalg.qr(tf.tensor2d(X));
+    const rawR = reshape(Array.from(r.dataSync()), r.shape);
+    const weights = tf
+      .tensor(numeric.inv(rawR))
+      .dot(q.transpose())
+      .dot(tf.tensor(y))
+      .dataSync();
+    return Array.from(weights);
   }
 }

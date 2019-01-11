@@ -1,4 +1,3 @@
-import { isEqual } from 'lodash';
 import { LinearRegression } from '../../src/lib/linear_model';
 
 describe('linear_model:LinearRegression', () => {
