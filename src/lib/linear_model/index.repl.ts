@@ -1,6 +1,5 @@
 /* tslint:disable */
 
-/*
 import { LinearRegression } from '.';
 
 const lr = new LinearRegression();
@@ -66,8 +65,8 @@ import { Lasso } from '.';
 const reg1 = new Lasso({ degree: 2, l1: 1 });
 reg1.fit([[0, 0], [1, 1]], [0, 1]);
 console.log('lasso', reg1.predict([[1, 1], [2, 3]]));
-*/
 
+/*
 import * as numeric from 'numeric';
 import { reshape } from '../ops';
 import * as tf from '@tensorflow/tfjs';
@@ -89,7 +88,4 @@ console.log('checking b');
 b.print();
 
 console.log(yhat);
-// [3, 5]
-// (3 * 2) + (5 * 2.5)
-// 6 + 12.5
-// 18.5
+*/
