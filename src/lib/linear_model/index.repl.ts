@@ -69,8 +69,27 @@ console.log('lasso', reg1.predict([[1, 1], [2, 3]]));
 */
 
 import * as numeric from 'numeric';
+import { reshape } from '../ops';
 import * as tf from '@tensorflow/tfjs';
+// const X = [[0.05], [0.18], [0.31], [0.42], [0.5]];
+// const y = [0.12, 0.22, 0.35, 0.38, 0.49];
 const X = [[1, 1], [1, 2], [2, 2], [2, 3]];
-const y = [1, 1, 2, 2];
+const y = [6, 8, 9, 11];
 let [q, r] = tf.linalg.qr(tf.tensor2d(X));
-const b = tf.tensor(numeric.inv(r)).dot(tf.tensor(q).transpose()).dot(tf.tensor(y));
+const rawR = reshape(Array.from(r.dataSync()), r.shape);
+const b = tf
+  .tensor(numeric.inv(rawR))
+  .dot(q.transpose())
+  .dot(tf.tensor(y));
+const yhat = tf
+  .tensor(X)
+  .dot(b)
+  .dataSync();
+console.log('checking b');
+b.print();
+
+console.log(yhat);
+// [3, 5]
+// (3 * 2) + (5 * 2.5)
+// 6 + 12.5
+// 18.5
