@@ -3,7 +3,7 @@
 machinelearn.js is a Machine Learning library written in Typescript. It solves Machine Learning problems
 and teaches users how Machine Learning algorithms work.
 
-[![Build status](https://ci.appveyor.com/api/projects/status/juf77mt9fujcd2a2?svg=true)](https://ci.appveyor.com/project/JasonShin/machinelearnjs)
+[![Build status](https://ci.appveyor.com/api/projects/status/juf77mt9fujcd2a2/branch/master?svg=true)](https://ci.appveyor.com/project/JasonShin/machinelearnjs/branch/master)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FJasonShin%2Fkalimdorjs.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FJasonShin%2Fkalimdorjs?ref=badge_shield)
 [![Slack](https://slack.bri.im/badge.svg)](https://slack.bri.im)
 
