@@ -81,3 +81,53 @@ describe('linear_model:LinearRegression (Univariate)', () => {
     expect(() => lr.predict(null)).toThrow(err);
   });
 });
+
+describe('linear_model:LinearRegression (Multivariate)', () => {
+  const X1 = [[1, 1], [1, 2], [2, 2], [2, 3]];
+  const y1 = [1, 1, 2, 2];
+  it('should train X1 and y1, predict a few results', () => {
+    const lr = new LinearRegression();
+    lr.fit(X1, y1);
+    const result1 = lr.predict([[1, 2]]);
+    const expected1 = [1.0000001788139343];
+    expect(result1).toEqual(expected1);
+
+    const result2 = lr.predict([[1, 2], [3, 4], [5, 6], [7, 8]]);
+    const expected = [
+      1.0000001788139343,
+      3.0000003576278687,
+      5.000000536441803,
+      7.000000715255737
+    ];
+    expect(result2).toEqual(expected);
+  });
+
+  it('should reload and predict the same result', () => {
+    const expected1 = [1.0000001788139343];
+    const lr = new LinearRegression();
+    lr.fit(X1, y1);
+
+    // Experimenting before saving the checkpoint
+    const result1 = lr.predict([[1, 2]]);
+    expect(result1).toEqual(expected1);
+
+    // Experimenting after saving the checkpoint
+    const checkpoint = lr.toJSON();
+    const lr2 = new LinearRegression();
+    lr2.fromJSON(checkpoint);
+    const result2 = lr2.predict([[1, 2]]);
+    expect(result2).toEqual(expected1);
+  });
+
+  it('should test NaNs', () => {
+    const lr = new LinearRegression();
+    lr.fit(X1, y1);
+
+    const result1 = lr.predict([[NaN, NaN]]);
+    const expected1 = [NaN];
+    expect(result1).toEqual(expected1);
+
+    const result2 = lr.predict([[NaN, 123]]);
+    expect(result2).toEqual(expected1);
+  });
+});
