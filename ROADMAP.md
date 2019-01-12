@@ -8,12 +8,12 @@ in the platform - this roadmap is more of a "North Star" of what we're looking t
 
 Please feel free to file issues on this repository if you have questions, concerns, or suggestions.
 
-Last Updated: 30 / 10 / 2018 by Jason Shin
+Last Updated: 13 / 1 / 2019 by Jason Shin
 
 # machinelearn.js 3.0
 
 Version 3 of machinelearn.js aims to extend the library by introducing more useful APIs based on tfjs as backend.
-Unlike version 2, APIs will be gradually released under version 2 because each feature will be self-contained and 
+Unlike version 2, APIs will be gradually released under version 2 because each feature will be self-contained and
 will not bring in any breaking changes.
 
 Ideas:
