@@ -11,6 +11,11 @@ lr.fit(X, y);
 
 console.log(lr.predict([1, 2]));
 
+const lr2 = new LinearRegression();
+lr2.fit([[1, 1], [1, 2], [2, 2], [2, 3]], [1, 1, 2, 2]);
+
+console.log(lr2.predict([[1, 1]]));
+
 import { SGDClassifier, SGDRegressor } from '.';
 
 const sgd = new SGDClassifier();
