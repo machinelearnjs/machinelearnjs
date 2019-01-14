@@ -252,9 +252,9 @@ export function constructParamTable(parameters): string {
    */
   const buildParamsFromReference = (param, sum, typeId) => {
     const foundRef = searchInterface(docsJson, typeId);
+    // console.log(foundRef);
     if (_.isEmpty(foundRef)) {
       // Handling the TS native references
-
       _.forEach(param.type.typeArguments, prop => {
         // Building a readable type arguments
         let args: string;
@@ -310,6 +310,13 @@ export function constructParamTable(parameters): string {
           getText(param)
         ]);
       }
+    } else if (foundRef.kindString === consts.kindStringEnum) {
+      sum.push([
+        param.name,
+        foundRef.children.map(x => x.name).join(' or '),
+        param.defaultValue,
+        getText(param)
+      ]);
     }
   };
 
@@ -325,14 +332,19 @@ export function constructParamTable(parameters): string {
         // e.g. x: { test1, test2 }
         _.forEach(param.type.declaration.children, namedParam => {
           // const foundRef = searchInterface(docsJson, namedParam.type.id);
-
-          /* sum.push([
-            `options.${namedParam.name}`,
-            renderParamType(namedParam.type),
-            namedParam.defaultValue,
-            getText(namedParam)
-          ]); */
-          buildParamsFromReference(param, sum, namedParam.type.id);
+          // console.log('param type type', namedParam.type.name, namedParam.type.type);
+          if (consts.paramTypeReference === namedParam.type.type) {
+            // If the reflection is actually a reference, such as ENUM, then buildParamFromReference
+            buildParamsFromReference(namedParam, sum, namedParam.type.id);
+          } else {
+            sum.push([
+              `options.${namedParam.name}`,
+              renderParamType(namedParam.type),
+              namedParam.defaultValue,
+              getText(namedParam)
+            ]);
+          }
+          // buildParamsFromReference(param, sum, namedParam.type.id);
         });
       } else if (consts.paramTypeIntrinsic === paramType) {
         //  2. Handle any intrintic params

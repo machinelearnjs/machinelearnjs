@@ -31,8 +31,8 @@ exports[`docs:helper constructParamTable should build table for params with Type
 "| Param | Type | Default | Description |
 | ------ | ------ | ------ | ------ |
 | options.classCategories | T[] |  | List of class categories
-| options.mean | Type2DMatrix |  | Mean of each feature per class
-| options.variance | Type2DMatrix |  | Variance of each feature per class
+| mean | number[][] |  | Mean of each feature per class
+| variance | number[][] |  | Variance of each feature per class
 "
 `;
 
