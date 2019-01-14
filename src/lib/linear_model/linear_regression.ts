@@ -121,11 +121,15 @@ export class LinearRegression {
 
   /**
    * Restore the model from a checkpoint
-   * @param {number} b0 - Coefficients component: b0
-   * @param {number} b1 - Coefficients component: b1
    */
   public fromJSON({
+    /**
+     * Model's weights
+     */
     weights = null,
+    /**
+     * Type of linear regression, it can be either UNIVARIATE or MULTIVARIATE
+     */
     type = null
   }: {
     weights: number[];

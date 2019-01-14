@@ -4,6 +4,7 @@ export const kindStringConst = 'Constructor';
 export const kindStringFunction = 'Function';
 export const kindStringMethod = 'Method';
 export const kindStringProperty = 'Property';
+export const kindStringEnum = 'Enumeration';
 
 // Parameter type
 export const paramTypeReflection = 'reflection';

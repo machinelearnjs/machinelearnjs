@@ -244,6 +244,87 @@ export function constructParamTable(parameters): string {
     }
   };
 
+  /**
+   * Builds a readable reference parameter and append the result to the sum array
+   * @param param
+   * @param sum
+   * @param typeId
+   */
+  const buildParamsFromReference = (
+    param,
+    sum,
+    typeId,
+    preprend = 'options'
+  ) => {
+    const foundRef = searchInterface(docsJson, typeId);
+    // console.log(foundRef);
+    if (_.isEmpty(foundRef)) {
+      // Handling the TS native references
+      _.forEach(param.type.typeArguments, prop => {
+        // Building a readable type arguments
+        let args: string;
+        if (_.isArray(prop.typeArguments)) {
+          args = prop.typeArguments.map(renderParamType).join(' | ');
+        } else if (prop.constraint) {
+          args =
+            prop.constraint.type +
+            ' ' +
+            prop.constraint.types.map(renderParamType).join(' | ');
+        } else {
+          args = prop.type;
+        }
+        sum.push([`${param.name}`, args, prop.defaultValue, getText(prop)]);
+      });
+    } else if (foundRef.kindString === consts.refKindInterface) {
+      _.forEach(foundRef.children, prop => {
+        sum.push([
+          `${param.name}.${prop.name}`,
+          renderParamType(prop.type),
+          prop.defaultValue,
+          getText(prop)
+        ]);
+      });
+    } else if (foundRef.kindString === consts.refKindTypeAlias) {
+      // Handling a custom `type` such as Type2DMatrix or Type3DMatrix
+      const { type } = foundRef.type;
+      if (type === consts.returnTypeArray) {
+        // For each TypeXMatrix render its array representation as a string
+        // example: number[][][] | string[][][]
+        const { typeArguments } = param.type;
+        // const refType = foundRef.type.type;
+        const refName = foundRef.name;
+        const typeList = [];
+        for (let i = 0; i < typeArguments.length; i++) {
+          const typeArg = typeArguments[i];
+          if (typeArg.type === consts.refTypeArgTypeUnion) {
+            const types = typeArg.types;
+            typeList.push(constructMatrixType(refName, types));
+          } else if (typeArg.type === consts.refTypeTypeParameter) {
+            const types = typeArg.constraint.types;
+            typeList.push(constructMatrixType(refName, types));
+          } else if (typeArg.type === consts.refTypeArgTypeIntrinsic) {
+            typeList.push(constructMatrixType(refName, [typeArg]));
+          } else {
+            typeList.push('unknown');
+          }
+        }
+        sum.push([
+          param.name,
+          typeList.join(' or '),
+          param.defaultValue,
+          getText(param)
+        ]);
+      }
+    } else if (foundRef.kindString === consts.kindStringEnum) {
+      sum.push([
+        `${preprend}.${param.name}`,
+        foundRef.children.map(x => x.name).join(' or '),
+        param.defaultValue,
+        getText(param)
+      ]);
+    }
+  };
+
   // Going through the method level params
   // e.g. test(a: {}, b: number, c: string)
   // a -> b -> c
@@ -255,12 +336,20 @@ export function constructParamTable(parameters): string {
         // 1. Handle reflection/named param
         // e.g. x: { test1, test2 }
         _.forEach(param.type.declaration.children, namedParam => {
-          sum.push([
-            `options.${namedParam.name}`,
-            renderParamType(namedParam.type),
-            namedParam.defaultValue,
-            getText(namedParam)
-          ]);
+          // const foundRef = searchInterface(docsJson, namedParam.type.id);
+          // console.log('param type type', namedParam.type.name, namedParam.type.type);
+          if (consts.paramTypeReference === namedParam.type.type) {
+            // If the reflection is actually a reference, such as ENUM, then buildParamFromReference
+            buildParamsFromReference(namedParam, sum, namedParam.type.id);
+          } else {
+            sum.push([
+              `options.${namedParam.name}`,
+              renderParamType(namedParam.type),
+              namedParam.defaultValue,
+              getText(namedParam)
+            ]);
+          }
+          // buildParamsFromReference(param, sum, namedParam.type.id);
         });
       } else if (consts.paramTypeIntrinsic === paramType) {
         //  2. Handle any intrintic params
@@ -285,66 +374,7 @@ export function constructParamTable(parameters): string {
         // e.g. x: IterableIterator
         // 4.2. Handle any custom defined interfaces / references. Custom references should have an ID that references definition within the docs.json
         // e.g. x: Options
-        const foundRef = searchInterface(docsJson, param.type.id);
-        if (_.isEmpty(foundRef)) {
-          // Handling the TS native references
-
-          _.forEach(param.type.typeArguments, prop => {
-            // Building a readable type arguments
-            let args: string;
-            if (_.isArray(prop.typeArguments)) {
-              args = prop.typeArguments.map(renderParamType).join(' | ');
-            } else if (prop.constraint) {
-              args =
-                prop.constraint.type +
-                ' ' +
-                prop.constraint.types.map(renderParamType).join(' | ');
-            } else {
-              args = prop.type;
-            }
-            sum.push([`${param.name}`, args, prop.defaultValue, getText(prop)]);
-          });
-        } else if (foundRef.kindString === consts.refKindInterface) {
-          _.forEach(foundRef.children, prop => {
-            sum.push([
-              `${param.name}.${prop.name}`,
-              renderParamType(prop.type),
-              prop.defaultValue,
-              getText(prop)
-            ]);
-          });
-        } else if (foundRef.kindString === consts.refKindTypeAlias) {
-          // Handling a custom `type` such as Type2DMatrix or Type3DMatrix
-          const { type } = foundRef.type;
-          if (type === consts.returnTypeArray) {
-            // For each TypeXMatrix render its array representation as a string
-            // example: number[][][] | string[][][]
-            const { typeArguments } = param.type;
-            // const refType = foundRef.type.type;
-            const refName = foundRef.name;
-            const typeList = [];
-            for (let i = 0; i < typeArguments.length; i++) {
-              const typeArg = typeArguments[i];
-              if (typeArg.type === consts.refTypeArgTypeUnion) {
-                const types = typeArg.types;
-                typeList.push(constructMatrixType(refName, types));
-              } else if (typeArg.type === consts.refTypeTypeParameter) {
-                const types = typeArg.constraint.types;
-                typeList.push(constructMatrixType(refName, types));
-              } else if (typeArg.type === consts.refTypeArgTypeIntrinsic) {
-                typeList.push(constructMatrixType(refName, [typeArg]));
-              } else {
-                typeList.push('unknown');
-              }
-            }
-            sum.push([
-              param.name,
-              typeList.join(' or '),
-              param.defaultValue,
-              getText(param)
-            ]);
-          }
-        }
+        buildParamsFromReference(param, sum, param.type.id);
       } else if (consts.paramTypeUnion === paramType) {
         // 5. Handles any union types.
         // e.g. string[] | string[][]
