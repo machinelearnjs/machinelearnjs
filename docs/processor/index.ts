@@ -250,7 +250,12 @@ export function constructParamTable(parameters): string {
    * @param sum
    * @param typeId
    */
-  const buildParamsFromReference = (param, sum, typeId) => {
+  const buildParamsFromReference = (
+    param,
+    sum,
+    typeId,
+    preprend = 'options'
+  ) => {
     const foundRef = searchInterface(docsJson, typeId);
     // console.log(foundRef);
     if (_.isEmpty(foundRef)) {
@@ -312,7 +317,7 @@ export function constructParamTable(parameters): string {
       }
     } else if (foundRef.kindString === consts.kindStringEnum) {
       sum.push([
-        param.name,
+        `${preprend}.${param.name}`,
         foundRef.children.map(x => x.name).join(' or '),
         param.defaultValue,
         getText(param)
