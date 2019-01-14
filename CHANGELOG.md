@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.1]
+
+:rocket: feature implementations :rocket:
+
+- **feature:** Multivariate Linear Regression
+
 ## [2.0.0]
 
 :rocket: Version 2 release! :rocket:

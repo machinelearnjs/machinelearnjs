@@ -59,9 +59,6 @@
     "release:major": "./scripts/releases/release-it.sh -v major",
     "release:minor": "./scripts/releases/release-it.sh -v minor",
     "release:patch": "./scripts/releases/release-it.sh -v patch",
-    "pre-release:major": "./scripts/releases/pre-release-it.sh -v major",
-    "pre-release:minor": "./scripts/releases/pre-release-it.sh -v minor",
-    "pre-release:patch": "./scripts/releases/pre-release-it.sh -v patch",
     "contributors:add": "npx all-contributors add",
     "contributors:generate": "npx all-contributors generate",
     "precommit": "pretty-quick --staged && yarn run lint && yarn run build"
