@@ -6,6 +6,7 @@ and teaches users how Machine Learning algorithms work.
 [![Build status](https://ci.appveyor.com/api/projects/status/juf77mt9fujcd2a2/branch/master?svg=true)](https://ci.appveyor.com/project/JasonShin/machinelearnjs/branch/master)
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FJasonShin%2Fkalimdorjs.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FJasonShin%2Fkalimdorjs?ref=badge_shield)
 [![Slack](https://slack.bri.im/badge.svg)](https://slack.bri.im)
+[![ZenHub](https://i.imgur.com/nMF1yqZ.png)](https://app.zenhub.com/workspaces/machinelearnjs-5bef95354b5806bc2bf57ff3/boards?repos=131453423)
 
 <img src="https://i.imgur.com/I5VbqB1.jpg">
 
