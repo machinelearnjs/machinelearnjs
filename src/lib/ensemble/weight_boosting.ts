@@ -1,5 +1,5 @@
 import * as tf from '@tensorflow/tfjs';
-import { flattenDeep, uniq } from 'lodash';
+import { flattenDeep, uniq, sum } from 'lodash';
 import { inferShape, reshape } from '../ops';
 import { IMlModel, Type1DMatrix, Type2DMatrix, TypeModelState } from '../types';
 
@@ -51,13 +51,27 @@ export class AdaboostClassifier implements IMlModel<number> {
           // Current threshold
           const threshold = uniqueValues[k];
           let p = 1;
+          // Label the samples whose values are below threshold as '-1'
           const predictions = reshape(
             Array.from(tf.ones(tensorY.shape).dataSync()).map(
               x => (x < threshold ? -1 : x)
             ),
             tensorY.shape
           );
-          // Label the samples whose values are below threshold as '-1'
+          // Sum of weights of misclassified samples
+          // w = [0.213, 0.21342] -> y = [1, 2] -> prediction = [2, 2] ->
+          // any index that has -1 -> grab them from w and get a sum of them
+          let error = w
+            .filter((el, index) => y[index] !== predictions[index])
+            .reduce((total, x) => total + x);
+
+          // If error is over 50%, flip the polarity so that
+          // samples that were classified as 0 are classified as 1
+          // E.g error = 0.8 => (1 - error) = 0.2
+          if (error > 0.5) {
+            error = 1 - error;
+            p = -1;
+          }
         }
       }
     }
