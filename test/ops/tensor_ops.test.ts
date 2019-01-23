@@ -5,9 +5,11 @@ import {
   validateFitInputs,
   validateMatrix1D,
   validateMatrix2D,
-  validateMatrixType
+  validateMatrixType,
+  expandDims,
 } from '../../src/lib/ops/tensor_ops';
 import { matchExceptionWithSnapshot } from '../util_testing';
+import * as tf from '@tensorflow/tfjs';
 
 // Dummy data
 const X1 = [[1, 2], [3, 4], [5, 6]];

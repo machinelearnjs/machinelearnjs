@@ -1,5 +1,6 @@
 import * as tf from '@tensorflow/tfjs';
 import { flattenDeep, isEqual, sortBy, uniq } from 'lodash';
+import {isNumber} from "util";
 import { Type1DMatrix, Type2DMatrix, TypeMatrix } from '../types';
 
 /**
