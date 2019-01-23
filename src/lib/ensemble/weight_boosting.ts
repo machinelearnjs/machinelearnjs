@@ -1,5 +1,5 @@
 import * as tf from '@tensorflow/tfjs';
-import { flattenDeep, uniq, sum } from 'lodash';
+import { flattenDeep, uniq } from 'lodash';
 import { inferShape, reshape } from '../ops';
 import { IMlModel, Type1DMatrix, Type2DMatrix, TypeModelState } from '../types';
 
@@ -36,6 +36,7 @@ export class AdaboostClassifier implements IMlModel<number> {
 
     for (let i = 0; i < this.nCls; i++) {
       const clf = new DecisionStump();
+      let minError = Infinity;
       // Iterate through every unique feature value and see what value
       // makes the best threshold for predicting y
       for (let j = 0; j < nFeatures; j++) {
@@ -62,7 +63,7 @@ export class AdaboostClassifier implements IMlModel<number> {
           // w = [0.213, 0.21342] -> y = [1, 2] -> prediction = [2, 2] ->
           // any index that has -1 -> grab them from w and get a sum of them
           let error = w
-            .filter((el, index) => y[index] !== predictions[index])
+            .filter((_, index) => y[index] !== predictions[index])
             .reduce((total, x) => total + x);
 
           // If error is over 50%, flip the polarity so that
@@ -71,6 +72,15 @@ export class AdaboostClassifier implements IMlModel<number> {
           if (error > 0.5) {
             error = 1 - error;
             p = -1;
+          }
+
+          // If the thresh hold resulted in the smallest error, then save the
+          // configuration
+          if (error < minError) {
+              clf.polarity = p;
+              clf.threshold = threshold;
+              clf.featureIndex = i;
+              minError = error;
           }
         }
       }
