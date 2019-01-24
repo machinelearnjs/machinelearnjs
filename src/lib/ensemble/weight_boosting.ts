@@ -1,5 +1,5 @@
 import * as tf from '@tensorflow/tfjs';
-import { flattenDeep, uniq } from 'lodash';
+import { flattenDeep, uniq, range } from 'lodash';
 import { inferShape, reshape } from '../ops';
 import { IMlModel, Type1DMatrix, Type2DMatrix, TypeModelState } from '../types';
 
@@ -53,7 +53,7 @@ export class AdaboostClassifier implements IMlModel<number> {
           const threshold = uniqueValues[k];
           let p = 1;
           // Label the samples whose values are below threshold as '-1'
-          const predictions = reshape(
+          const prediction = reshape(
             Array.from(tf.ones(tensorY.shape).dataSync()).map(
               x => (x < threshold ? -1 : x)
             ),
@@ -63,7 +63,7 @@ export class AdaboostClassifier implements IMlModel<number> {
           // w = [0.213, 0.21342] -> y = [1, 2] -> prediction = [2, 2] ->
           // any index that has -1 -> grab them from w and get a sum of them
           let error = w
-            .filter((_, index) => y[index] !== predictions[index])
+            .filter((_, index) => y[index] !== prediction[index])
             .reduce((total, x) => total + x);
 
           // If error is over 50%, flip the polarity so that
@@ -84,6 +84,19 @@ export class AdaboostClassifier implements IMlModel<number> {
           }
         }
       }
+
+      // Calculate alpha that is used to update sample weights
+      // Alpha is also an approximation of the classifier's proficiency
+      clf.alpha = 0.5 * Math.log((1.0 - minError) / (minError + 1e-10));
+
+      // Set all predictions to 1 initially
+      const predictions = tf.ones(tensorY.shape);
+
+      // The indexes where the sample values are below threshold
+      const idx_to_threshold = range(0, X.slice(0, clf.featureIndex).length);
+      const negative_idx = idx_to_threshold.filter((fi) => {
+        return clf.polarity * X[fi] <
+      });
     }
   }
 
