@@ -53,6 +53,7 @@ export class AdaboostClassifier implements IMlModel<number> {
           const threshold = uniqueValues[k];
           let p = 1;
           // Label the samples whose values are below threshold as '-1'
+          // TODO check this part again
           const prediction = reshape(
             Array.from(tf.ones(tensorY.shape).dataSync()).map(
               x => (x < threshold ? -1 : x)
@@ -93,10 +94,29 @@ export class AdaboostClassifier implements IMlModel<number> {
       const predictions = tf.ones(tensorY.shape);
 
       // The indexes where the sample values are below threshold
-      const idx_to_threshold = range(0, X.slice(0, clf.featureIndex).length);
+      /* const idx_to_threshold = range(0, X.slice(0, clf.featureIndex).length);
       const negative_idx = idx_to_threshold.filter((fi) => {
         return clf.polarity * X[fi] <
-      });
+      }); */
+      // [[1, 2, 3], [4, 5, 6]], fi = 0, take
+      // X[:, 1] => [2, 5]
+      // 2 * X[:, 1] < 2 * 3
+      // 2 * [2, 5] => [4, 10]
+      // then compare -> get [true, false...]
+      /*
+      array([1, 2])
+      >>> predictions = np.ones(np.shape(y))
+      >>> predictions
+      array([1., 1.])
+      >>> predictions[neg_idx]
+      array([1.])
+      >>> predictions[neg_idx] = -1
+      >>> predictions
+      array([-1.,  1.])
+
+       */
+      // negative_idx = (clf.polarity * X[:, clf.feature_index] < clf.polarity * clf.threshold)
+
     }
   }
 
