@@ -32,7 +32,7 @@ export class AdaboostClassifier implements IMlModel<number> {
     const [nSamples, nFeatures] = inferShape(X);
 
     // Initialise weights to 1/n
-    const w = Array.from(tf.fill([nSamples], 1 / nSamples).dataSync());
+    let w = Array.from(tf.fill([nSamples], 1 / nSamples).dataSync());
 
     for (let i = 0; i < this.nCls; i++) {
       const clf = new DecisionStump();
@@ -63,6 +63,7 @@ export class AdaboostClassifier implements IMlModel<number> {
           // Sum of weights of misclassified samples
           // w = [0.213, 0.21342] -> y = [1, 2] -> prediction = [2, 2] ->
           // any index that has -1 -> grab them from w and get a sum of them
+          // TODO: Refactor
           let error = w
             .filter((_, index) => y[index] !== prediction[index])
             .reduce((total, x) => total + x);
@@ -90,32 +91,27 @@ export class AdaboostClassifier implements IMlModel<number> {
       // Alpha is also an approximation of the classifier's proficiency
       clf.alpha = 0.5 * Math.log((1.0 - minError) / (minError + 1e-10));
 
-      // Set all predictions to 1 initially
-      const predictions = tf.ones(tensorY.shape);
+      // Set all predictions to 1 initially then extracts into a pure array
+      const predictions = [...tf.ones(tensorY.shape).dataSync()];
 
       // The indexes where the sample values are below threshold
-      /* const idx_to_threshold = range(0, X.slice(0, clf.featureIndex).length);
-      const negative_idx = idx_to_threshold.filter((fi) => {
-        return clf.polarity * X[fi] <
-      }); */
-      // [[1, 2, 3], [4, 5, 6]], fi = 0, take
-      // X[:, 1] => [2, 5]
-      // 2 * X[:, 1] < 2 * 3
-      // 2 * [2, 5] => [4, 10]
-      // then compare -> get [true, false...]
-      /*
-      array([1, 2])
-      >>> predictions = np.ones(np.shape(y))
-      >>> predictions
-      array([1., 1.])
-      >>> predictions[neg_idx]
-      array([1.])
-      >>> predictions[neg_idx] = -1
-      >>> predictions
-      array([-1.,  1.])
+      const indices = tf.tensor1d([1], 'int32');
+      const tensorPolar = tf.scalar(clf.polarity);
+      const tensorThreshold = tf.scalar(clf.threshold);
+      const negativeIndexes = [...tensorX
+        // polarity * X[:, indices]
+        .gather(indices, 1).mul(tensorPolar)
+        // < polarity * threshold
+        .less(tensorPolar.mul(tensorThreshold))
+        // Return a flatten data
+        .dataSync()];
 
-       */
-      // negative_idx = (clf.polarity * X[:, clf.feature_index] < clf.polarity * clf.threshold)
+      // Label the ones below the threshold as -1
+      for (let pi = 0; pi < predictions.length; pi++) {
+        predictions[pi] = negativeIndexes[pi] === 1 ? -1 : 1;
+      }
+
+      // Calculate w here
 
     }
   }
