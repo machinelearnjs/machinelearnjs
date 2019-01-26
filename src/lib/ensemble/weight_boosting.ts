@@ -1,18 +1,26 @@
 import * as tf from '@tensorflow/tfjs';
-import { flattenDeep, uniq, range } from 'lodash';
+import { flattenDeep, flow, uniq } from 'lodash';
 import { inferShape, reshape } from '../ops';
 import { IMlModel, Type1DMatrix, Type2DMatrix, TypeModelState } from '../types';
 
 class DecisionStump {
-  public polarity = 1;
-  public featureIndex = null;
+  public polarity: number = 1;
+  public featureIndex: number = null;
   public threshold = null;
-  public alpha = null;
+  public alpha: number = null;
+
+  public getTsPolarity(): tf.Scalar {
+    return tf.scalar(this.polarity);
+  }
+
+  public getTsThreshold(): tf.Scalar {
+    return tf.scalar(this.threshold);
+  }
 }
 
 export class AdaboostClassifier implements IMlModel<number> {
   private nCls: number;
-  private cls: DecisionStump[] = [];
+  private classifiers: DecisionStump[] = [];
 
   constructor(
     {
@@ -32,7 +40,7 @@ export class AdaboostClassifier implements IMlModel<number> {
     const [nSamples, nFeatures] = inferShape(X);
 
     // Initialise weights to 1/n
-    let w = Array.from(tf.fill([nSamples], 1 / nSamples).dataSync());
+    let w = tf.fill([nSamples], 1 / nSamples);
 
     for (let i = 0; i < this.nCls; i++) {
       const clf = new DecisionStump();
@@ -40,17 +48,21 @@ export class AdaboostClassifier implements IMlModel<number> {
       // Iterate through every unique feature value and see what value
       // makes the best threshold for predicting y
       for (let j = 0; j < nFeatures; j++) {
-        const featureValues = Array.from(
-          tensorX
-            .slice([0], [j])
-            .expandDims(1)
-            .dataSync()
-        );
-        const uniqueValues = uniq(flattenDeep(featureValues));
+        const featureValues = flow(
+          x =>
+            x
+              .slice([0], [j])
+              .expandDims(1)
+              .dataSync(),
+          // Parse to a standard JS array
+          Array.from,
+          flattenDeep,
+          uniq
+        )(tensorX);
         // Try every unique feature as threshold
-        for (let k = 0; k < uniqueValues.length; k++) {
+        for (let k = 0; k < featureValues.length; k++) {
           // Current threshold
-          const threshold = uniqueValues[k];
+          const threshold = featureValues[k];
           let p = 1;
           // Label the samples whose values are below threshold as '-1'
           // TODO check this part again
@@ -63,8 +75,7 @@ export class AdaboostClassifier implements IMlModel<number> {
           // Sum of weights of misclassified samples
           // w = [0.213, 0.21342] -> y = [1, 2] -> prediction = [2, 2] ->
           // any index that has -1 -> grab them from w and get a sum of them
-          // TODO: Refactor
-          let error = w
+          let error = Array.from(w.dataSync())
             .filter((_, index) => y[index] !== prediction[index])
             .reduce((total, x) => total + x);
 
@@ -79,10 +90,10 @@ export class AdaboostClassifier implements IMlModel<number> {
           // If the thresh hold resulted in the smallest error, then save the
           // configuration
           if (error < minError) {
-              clf.polarity = p;
-              clf.threshold = threshold;
-              clf.featureIndex = i;
-              minError = error;
+            clf.polarity = p;
+            clf.threshold = threshold;
+            clf.featureIndex = i;
+            minError = error;
           }
         }
       }
@@ -95,32 +106,50 @@ export class AdaboostClassifier implements IMlModel<number> {
       const predictions = [...tf.ones(tensorY.shape).dataSync()];
 
       // The indexes where the sample values are below threshold
-      const indices = tf.tensor1d([1], 'int32');
-      const tensorPolar = tf.scalar(clf.polarity);
-      const tensorThreshold = tf.scalar(clf.threshold);
-      const negativeIndexes = [...tensorX
-        // polarity * X[:, indices]
-        .gather(indices, 1).mul(tensorPolar)
-        // < polarity * threshold
-        .less(tensorPolar.mul(tensorThreshold))
-        // Return a flatten data
-        .dataSync()];
+      const negativeIndexes = [
+        ...tensorX
+          // X[:, indices]
+          .gather(tf.tensor1d([clf.featureIndex]), 1)
+          // * polarity
+          .mul(clf.getTsPolarity())
+          // < polarity * threshold
+          .less(clf.getTsPolarity().mul(clf.getTsThreshold()))
+          // Return a flatten data
+          .dataSync()
+      ];
 
-      // Label the ones below the threshold as -1
+      // Equivalent with 1/-1 to update weights
       for (let pi = 0; pi < predictions.length; pi++) {
         predictions[pi] = negativeIndexes[pi] === 1 ? -1 : 1;
       }
 
-      // Calculate w here
+      // Turn predictions back to tfjs
+      const tensorPredictions = tf.tensor(predictions);
 
+      // Missclassified samples gets larger weights and correctly classified samples smaller
+      w = w.mul(
+        tf
+          .scalar(-clf.alpha)
+          .mul(tensorY)
+          .mul(tensorPredictions)
+      );
+
+      // Normalize to one
+      w = w.div(tf.sum(w));
+
+      // Save the classifier
+      this.classifiers.push(clf);
     }
   }
 
-  public fromJSON(state: TypeModelState): void {}
+  public fromJSON(state: TypeModelState): void {
+    console.info(state);
+  }
 
   public predict(
     X: Type2DMatrix<number> | Type1DMatrix<number>
   ): number[] | number[][] {
+    console.info(X);
     return undefined;
   }
 
