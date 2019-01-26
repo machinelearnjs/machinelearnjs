@@ -1,5 +1,5 @@
 import * as tf from '@tensorflow/tfjs';
-import { flattenDeep, flow, uniq } from 'lodash';
+import { uniq } from 'lodash';
 import { inferShape, reshape } from '../ops';
 import { IMlModel, Type1DMatrix, Type2DMatrix, TypeModelState } from '../types';
 
@@ -48,21 +48,16 @@ export class AdaboostClassifier implements IMlModel<number> {
       // Iterate through every unique feature value and see what value
       // makes the best threshold for predicting y
       for (let j = 0; j < nFeatures; j++) {
-        const featureValues = flow(
-          x =>
-            x
-              .slice([0], [j])
-              .expandDims(1)
-              .dataSync(),
-          // Parse to a standard JS array
-          Array.from,
-          flattenDeep,
-          uniq
-        )(tensorX);
+        const featureValues = tensorX
+          .gather(tf.tensor1d([j]), nSamples - 1)
+          .expandDims(1)
+          .squeeze();
+        const uniqueValues = uniq([...featureValues.dataSync()]);
+
         // Try every unique feature as threshold
-        for (let k = 0; k < featureValues.length; k++) {
+        for (let k = 0; k < uniqueValues.length; k++) {
           // Current threshold
-          const threshold = featureValues[k];
+          const threshold = uniqueValues[k];
           let p = 1;
           // Label the samples whose values are below threshold as '-1'
           // TODO check this part again
