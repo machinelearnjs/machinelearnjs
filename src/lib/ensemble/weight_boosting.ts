@@ -1,6 +1,6 @@
 import * as tf from '@tensorflow/tfjs';
 import { uniq } from 'lodash';
-import { inferShape, reshape } from '../ops';
+import { inferShape } from '../ops';
 import { IMlModel, Type1DMatrix, Type2DMatrix, TypeModelState } from '../types';
 
 class DecisionStump {
@@ -59,20 +59,20 @@ export class AdaboostClassifier implements IMlModel<number> {
           // Current threshold
           const threshold = uniqueValues[k];
           let p = 1;
-          // Label the samples whose values are below threshold as '-1'
-          // TODO check this part again
-          const prediction = reshape(
-            Array.from(tf.ones(tensorY.shape).dataSync()).map(
-              x => (x < threshold ? -1 : x)
-            ),
-            tensorY.shape
-          );
+          // Getting the list of samples whose values are below threshold
+          const prediction = tensorX
+            .gather(tf.tensor1d([j]), nSamples - 1)
+            .less(tf.scalar(threshold))
+            .squeeze();
           // Sum of weights of misclassified samples
           // w = [0.213, 0.21342] -> y = [1, 2] -> prediction = [2, 2] ->
           // any index that has -1 -> grab them from w and get a sum of them
-          let error = Array.from(w.dataSync())
-            .filter((_, index) => y[index] !== prediction[index])
-            .reduce((total, x) => total + x);
+          let error: number = [
+            ...tf
+              .where(tf.notEqual(y, prediction), tf.zeros([nSamples]), w)
+              .sum()
+              .dataSync()
+          ][0];
 
           // If error is over 50%, flip the polarity so that
           // samples that were classified as 0 are classified as 1
@@ -121,7 +121,7 @@ export class AdaboostClassifier implements IMlModel<number> {
       // Turn predictions back to tfjs
       const tensorPredictions = tf.tensor(predictions);
 
-      // Missclassified samples gets larger weights and correctly classified samples smaller
+      // Misclassified samples gets larger weights and correctly classified samples smaller
       w = w.mul(
         tf
           .scalar(-clf.alpha)
