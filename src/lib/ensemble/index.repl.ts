@@ -1,4 +1,6 @@
 /* tslint:disable */
+
+/*
 import { RandomForestClassifier } from './forest';
 import { Iris } from '../datasets/Iris';
 
@@ -18,4 +20,23 @@ import { Iris } from '../datasets/Iris';
   rf2.fit(data, targets);
 
   console.log('pred', rf2.predict([[6.7, 3, 5.2, 2.3]]));
+})();
+*/
+
+import {accuracyScore} from "../metrics";
+import {train_test_split} from "../model_selection";
+import { AdaboostClassifier } from './weight_boosting';
+import { Iris } from '../datasets/Iris';
+
+(async function() {
+  const irisDataset = new Iris();
+  const { data, targets } = await irisDataset.load();
+  const { xTest, xTrain, yTest, yTrain } = train_test_split(data, targets);
+
+  const clf = new AdaboostClassifier();
+  clf.fit(xTrain, yTrain);
+  const yPred = clf.predict(xTest);
+
+  const accuracy = accuracyScore(yTest, yPred);
+  console.log('pred', accuracy);
 })();
