@@ -67,12 +67,10 @@ export class AdaboostClassifier implements IMlModel<number> {
           // Sum of weights of misclassified samples
           // w = [0.213, 0.21342] -> y = [1, 2] -> prediction = [2, 2] ->
           // any index that has -1 -> grab them from w and get a sum of them
-          let error: number = [
-            ...tf
-              .where(tf.notEqual(y, prediction), tf.zeros([nSamples]), w)
-              .sum()
-              .dataSync()
-          ][0];
+          let error: number = tf
+            .where(tf.notEqual(y, prediction), tf.zeros([nSamples]), w)
+            .sum()
+            .dataSync()[0];
 
           // If error is over 50%, flip the polarity so that
           // samples that were classified as 0 are classified as 1
