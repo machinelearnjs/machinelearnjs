@@ -96,35 +96,28 @@ export class AdaboostClassifier implements IMlModel<number> {
       clf.alpha = 0.5 * Math.log((1.0 - minError) / (minError + 1e-10));
 
       // Set all predictions to 1 initially then extracts into a pure array
-      const predictions = [...tf.ones(tensorY.shape).dataSync()];
+      // const predictions = [...tf.ones(tensorY.shape).dataSync()];
+      const predictions = tf.ones(tensorY.shape);
+      const minusOnes = tf.fill(tensorY.shape, -1);
 
       // The indexes where the sample values are below threshold
-      const negativeIndexes = [
-        ...tensorX
-          // X[:, indices]
-          .gather(tf.tensor1d([clf.featureIndex]), 1)
-          // * polarity
-          .mul(clf.getTsPolarity())
-          // < polarity * threshold
-          .less(clf.getTsPolarity().mul(clf.getTsThreshold()))
-          // Return a flatten data
-          .dataSync()
-      ];
+      const negativeIndex = tensorX
+        // X[:, indices]
+        .gather(tf.tensor1d([clf.featureIndex]), 1)
+        // * polarity
+        .mul(clf.getTsPolarity())
+        // < polarity * threshold
+        .less(clf.getTsPolarity().mul(clf.getTsThreshold()));
 
-      // Equivalent with 1/-1 to update weights
-      for (let pi = 0; pi < predictions.length; pi++) {
-        predictions[pi] = negativeIndexes[pi] === 1 ? -1 : 1;
-      }
-
-      // Turn predictions back to tfjs
-      const tensorPredictions = tf.tensor(predictions);
+      // Label those as '-1'
+      const labeledPreds = minusOnes.where(negativeIndex, predictions);
 
       // Misclassified samples gets larger weights and correctly classified samples smaller
       w = w.mul(
         tf
           .scalar(-clf.alpha)
           .mul(tensorY)
-          .mul(tensorPredictions)
+          .mul(labeledPreds)
       );
 
       // Normalize to one
@@ -142,8 +135,31 @@ export class AdaboostClassifier implements IMlModel<number> {
   public predict(
     X: Type2DMatrix<number> | Type1DMatrix<number>
   ): number[] | number[][] {
-    console.info(X);
-    return undefined;
+    const tensorX = tf.tensor2d(X);
+    const nSamples = tensorX.shape[0];
+    let yPred = tf.zeros([nSamples, 1]);
+    const predictions = tf.ones(yPred.shape);
+    const minusOnes = tf.fill(yPred.shape, -1);
+
+    for (let i = 0; i < this.classifiers.length; i++) {
+      const clf = this.classifiers[i];
+      const negativeIndex = clf
+        // clf.polarity * X[:, clf.feature_index]
+        .getTsPolarity()
+        .mul(tensorX.gather(tf.tensor1d([clf.featureIndex]), 1))
+        // < clf.polarity * clf.threshold
+        .less(clf.getTsPolarity().mul(clf.getTsThreshold()));
+
+      // Label those as '-1'
+      const labeledPreds = minusOnes.where(negativeIndex, predictions);
+
+      // Add predictions weighted by the classifiers alpha
+      // (alpha indicative of classifier's proficiency)
+      yPred = yPred.add(tf.scalar(clf.alpha)).mul(labeledPreds);
+    }
+
+    yPred = tf.sign(yPred).squeeze();
+    return [...yPred.dataSync()];
   }
 
   public toJSON(): TypeModelState {
