@@ -59,14 +59,9 @@ export class AdaboostClassifier implements IMlModel<number> {
           // Current threshold
           const threshold = uniqueValues[k];
           let p = 1;
-          console.log('-----------------');
           // Getting the list of samples whose values are below threshold
           const prediction = tensorX.gather([featureIndex] as any, 1);
-          console.log('preds');
-          prediction.print();
           const predNegativeIndex = prediction.less(tf.scalar(threshold));
-          console.log('pred negative index');
-          predNegativeIndex.print();
           const predMinusOnes = tf.fill(prediction.shape, -1);
 
           const predLabeledPreds = predMinusOnes
@@ -76,17 +71,17 @@ export class AdaboostClassifier implements IMlModel<number> {
           // w = [0.213, 0.21342] -> y = [1, 2] -> prediction = [2, 2] ->
           // any index that has -1 -> grab them from w and get a sum of them
 
-          let error: number = [...
-            // .where(tf.notEqual(tensorY, prediction), tf.zeros([nSamples]), w)
-            w.where(tf.notEqual(tensorY, predLabeledPreds), tf.zeros([nSamples]))
-            .sum()
-            .dataSync()][0];
-          console.log('not equal');
-          tf.notEqual(tensorY, predLabeledPreds).print();
-           w.where(tf.notEqual(tensorY, predLabeledPreds), tf.zeros([nSamples])).print();
-           // fix the NaN array issue
-           console.log('zz err', error);
-          // console.log('error', error);
+          let error: number = [
+            ...// .where(tf.notEqual(tensorY, prediction), tf.zeros([nSamples]), w)
+            w
+              .where(
+                tf.notEqual(tensorY, predLabeledPreds),
+                tf.zeros([nSamples])
+              )
+              .sum()
+              .dataSync()
+          ][0];
+
           // If error is over 50%, flip the polarity so that
           // samples that were classified as 0 are classified as 1
           // E.g error = 0.8 => (1 - error) = 0.2
@@ -98,7 +93,6 @@ export class AdaboostClassifier implements IMlModel<number> {
           // If the thresh hold resulted in the smallest error, then save the
           // configuration
           if (error < minError) {
-            console.log('checking err ', error, minError);
             clf.polarity = p;
             clf.threshold = threshold;
             clf.featureIndex = i;
@@ -114,7 +108,6 @@ export class AdaboostClassifier implements IMlModel<number> {
       // Set all predictions to 1 initially then extracts into a pure array
       const predictions = tf.ones(tensorY.shape);
       const minusOnes = tf.fill(tensorY.shape, -1);
-      console.log('checking clf', clf.alpha, clf.polarity, clf.threshold);
       // The indexes where the sample values are below threshold
       const negativeIndex = tensorX
         // X[:, indices]
@@ -148,9 +141,7 @@ export class AdaboostClassifier implements IMlModel<number> {
     console.info(state);
   }
 
-  public predict(
-    X: Type2DMatrix<number> | Type1DMatrix<number>
-  ): number[] {
+  public predict(X: Type2DMatrix<number> | Type1DMatrix<number>): number[] {
     const tensorX = tf.tensor2d(X);
     const nSamples = tensorX.shape[0];
     let yPred = tf.zeros([nSamples, 1]);

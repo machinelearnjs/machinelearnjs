@@ -23,9 +23,10 @@ import { Iris } from '../datasets/Iris';
 })();
 */
 
-import {accuracyScore} from "../metrics";
-import {train_test_split} from "../model_selection";
+import { accuracyScore } from '../metrics';
+import { train_test_split } from '../model_selection';
 import { AdaboostClassifier } from './weight_boosting';
+import { MinMaxScaler } from '../preprocessing';
 import { Iris } from '../datasets/Iris';
 
 (async function() {
@@ -33,10 +34,22 @@ import { Iris } from '../datasets/Iris';
   const { data, targets } = await irisDataset.load();
   const { xTest, xTrain, yTest, yTrain } = train_test_split(data, targets);
 
-  const clf = new AdaboostClassifier();
-  clf.fit(xTrain, yTrain);
-  const yPred = clf.predict(xTest);
+  const clf = new AdaboostClassifier({ n_cls: 3 });
 
+  const minmaxScaler = new MinMaxScaler({ featureRange: [0, 1] });
+  const dataset = xTrain.map((x, i) => {
+    x.push(yTrain[i]);
+    return x;
+  });
+  minmaxScaler.fit(dataset);
+  const newXtrain = xTrain.map(x => minmaxScaler.fit_transform(x));
+  const newYtrain = minmaxScaler.fit_transform(yTrain);
+  clf.fit(newXtrain, newYtrain);
+
+  const newXtest = xTest.map(x => minmaxScaler.fit_transform(x));
+  const yPred = minmaxScaler.inverse_transform(clf.predict(newXtest));
+
+  console.log('yPred', yPred);
   const accuracy = accuracyScore(yTest, yPred);
   console.log('pred', accuracy);
 })();
