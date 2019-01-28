@@ -2,6 +2,12 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.2]
+
+:bug: API consistency update :bug:
+
+- **enhance:** MinMaxScaler now implements `transform` and `fit_transform` correctly accroding to ScikitLearn MinMaxScaler
+
 ## [2.0.1]
 
 :rocket: feature implementations :rocket:
