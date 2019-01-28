@@ -158,11 +158,12 @@ export class AdaboostClassifier implements IMlModel<number> {
         .less(clf.getTsPolarity().mul(clf.getTsThreshold()));
 
       // Label those as '-1'
-      const labeledPreds = minusOnes.where(negativeIndex, predictions);
+      // const labeledPreds = minusOnes.where(negativeIndex, predictions);
+      const labeledPreds = predictions.where(negativeIndex, minusOnes);
 
       // Add predictions weighted by the classifiers alpha
       // (alpha indicative of classifier's proficiency)
-      yPred = yPred.add(tf.scalar(clf.alpha)).mul(labeledPreds);
+      yPred = yPred.add(tf.scalar(clf.alpha).mul(labeledPreds));
     }
 
     yPred = tf.sign(yPred).squeeze();
