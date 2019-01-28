@@ -395,9 +395,18 @@ export class OneHotEncoder {
  * import { MinMaxScaler } from 'machinelearn/preprocessing';
  *
  * const minmaxScaler = new MinMaxScaler({ featureRange: [0, 1] });
+ *
+ * // Fitting an 1D matrix
  * minmaxScaler.fit([4, 5, 6]);
- * const result = minmaxScaler.fit_transform([4, 5, 6]);
- * // [ 0, 0.5, 1 ]
+ * const result = minmaxScaler.transform([4, 5, 6]);
+ * // result = [ 0, 0.5, 1 ]
+ *
+ * // Fitting a 2D matrix
+ * const minmaxScaler2 = new MinMaxScaler({ featureRange: [0, 1] });
+ * minmaxScaler2.fit([[1, 2, 3], [4, 5, 6]]);
+ * const result2 = minmaxScaler2.transform([[1, 2, 3]]);
+ * // result2 = [ [ 0, 0.2, 0.4000000000000001 ] ]
+ *
  */
 export class MinMaxScaler {
   private featureRange: number[];
