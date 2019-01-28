@@ -428,7 +428,7 @@ export class MinMaxScaler {
    * Compute the minimum and maximum to be used for later scaling.
    * @param {number[]} X - Array or sparse-matrix data input
    */
-  public fit(X: Type1DMatrix<number> | Type2DMatrix<number>): void {
+  public fit(X: Type1DMatrix<number> | Type2DMatrix<number> = null): void {
     let rowMax = tf.tensor(X);
     let rowMin = tf.tensor(X);
     const xShape = inferShape(X);
@@ -452,12 +452,37 @@ export class MinMaxScaler {
 
   /**
    * Fit to data, then transform it.
-   * @param {number[]} X - Original input vector
+   * @param X - Original input vector
    */
-  public fit_transform(X: Type1DMatrix<number> = null): number[] {
-    validateMatrix1D(X);
-    const X1 = X.map(x => x * this.scale);
-    return X1.map(x => x + this.baseMin);
+  public fit_transform(
+    X: Type1DMatrix<number> | Type2DMatrix<number>
+  ): number[] | number[][] {
+    this.fit(X);
+    return this.transform(X);
+  }
+
+  /**
+   * Scaling features of X according to feature_range.
+   * @param X - Original input vector
+   */
+  public transform(
+    X: Type1DMatrix<number> | Type2DMatrix<number> = null
+  ): number[] | number[][] {
+    // Transforms a single vector
+    const transform_single = _X => {
+      const X1 = _X.map(x => x * this.scale);
+      return X1.map(x => x + this.baseMin);
+    };
+    const shapes = inferShape(X);
+    if (shapes.length === 2) {
+      return (X as number[][]).map(z => transform_single(z));
+    } else if (shapes.length === 1) {
+      return transform_single(X);
+    } else {
+      throw new TypeError(
+        `The input shape ${JSON.stringify(shapes)} cannot be transformed`
+      );
+    }
   }
 
   /**
