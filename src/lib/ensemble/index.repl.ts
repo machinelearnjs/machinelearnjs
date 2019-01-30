@@ -34,7 +34,7 @@ import { Iris } from '../datasets/Iris';
   const { data, targets } = await irisDataset.load();
   const { xTest, xTrain, yTest, yTrain } = train_test_split(data, targets);
 
-  const clf = new AdaboostClassifier({ n_cls: 1000 });
+  const clf = new AdaboostClassifier({ n_cls: 10 });
 
   const minmaxScaler = new MinMaxScaler({ featureRange: [0, 1] });
   const dataset = xTrain.map((x, i) => {
@@ -44,6 +44,8 @@ import { Iris } from '../datasets/Iris';
   minmaxScaler.fit(dataset);
   const newXtrain = xTrain.map(x => minmaxScaler.fit_transform(x));
   const newYtrain = minmaxScaler.fit_transform(yTrain);
+  // console.log(newXtrain);
+  // console.log(newYtrain);
   clf.fit(newXtrain, newYtrain);
 
   const newXtest = xTest.map(x => minmaxScaler.fit_transform(x));
