@@ -74,21 +74,10 @@ export class AdaboostClassifier implements IMlModel<number> {
           let error = w
             .where(tf.notEqual(tensorY, predLabeledPreds), tf.zeros([nSamples]))
             .sum();
-          // the issue is ehere!!
-          // console.log('checking err', error, ' minerr ', minError, '  ', (error < minError));
-          /* console.log(
-            'conds',
-            JSON.stringify([...tf.notEqual(tensorY, predLabeledPreds).dataSync()]),
-            'seconds:',
-            JSON.stringify([...w
-            .where(tf.notEqual(tensorY, predLabeledPreds), tf.zeros([nSamples])).dataSync()]),
-            'error: ',
-            error.dataSync()
-          ); */
           // If error is over 50%, flip the polarity so that
           // samples that were classified as 0 are classified as 1
           // E.g error = 0.8 => (1 - error) = 0.2
-          if (error.greater(tf.scalar(0.5)).dataSync()[0]) {
+          if (error.greater(tf.scalar(0.5)).dataSync()[0] === 1) {
             error = tf.scalar(1).sub(error);
             p = -1;
           }
@@ -96,10 +85,10 @@ export class AdaboostClassifier implements IMlModel<number> {
           // If the thresh hold resulted in the smallest error, then save the
           // configuration
 
-          if (error.less(minError).dataSync()[0]) {
+          if (error.less(minError).dataSync()[0] === 1) {
             clf.polarity = p;
             clf.threshold = threshold;
-            clf.featureIndex = i;
+            clf.featureIndex = featureIndex;
             minError = error;
           }
         }
@@ -107,7 +96,6 @@ export class AdaboostClassifier implements IMlModel<number> {
 
       // Calculate alpha that is used to update sample weights
       // Alpha is also an approximation of the classifier's proficiency
-      // console.log('before min err', minError.dataSync());
       clf.alpha = tf
         // 0.5 *
         .scalar(0.5)
@@ -131,11 +119,11 @@ export class AdaboostClassifier implements IMlModel<number> {
       const predictions = tf.ones(tensorY.shape);
       const minusOnes = tf.fill(tensorY.shape, -1);
       // The indexes where the sample values are below threshold
-      const negativeIndex = tensorX
+      const negativeIndex = (tensorX
         // X[:, indices]
         .gather([clf.featureIndex] as any, 1)
         // * polarity
-        .mul(clf.getTsPolarity())
+        .mul(clf.getTsPolarity()))
         // < polarity * threshold
         .less(clf.getTsPolarity().mul(clf.getTsThreshold()))
         .squeeze();
@@ -156,6 +144,8 @@ export class AdaboostClassifier implements IMlModel<number> {
 
       // Normalize to one
       w = w.div(tf.sum(w));
+      console.log('after - checking w');
+      w.print();
       // Save the classifier
       this.classifiers.push(clf);
     }
@@ -165,38 +155,45 @@ export class AdaboostClassifier implements IMlModel<number> {
     console.info(state);
   }
 
-  public predict(X: Type2DMatrix<number> | Type1DMatrix<number>): number[] {
+  public predict(X: Type2DMatrix<number>): number[] {
     const tensorX = tf.tensor2d(X);
     const nSamples = tensorX.shape[0];
     let yPred = tf.zeros([nSamples, 1]);
+    console.log('checking tensorX');
+    tensorX.print();
 
     for (let i = 0; i < this.classifiers.length; i++) {
       const predictions = tf.ones(yPred.shape);
       const minusOnes = tf.fill(yPred.shape, -1);
       const clf = this.classifiers[i];
-      const negativeIndex = clf
+      console.log(`clf ${i}: polarity ${clf.polarity}. threshold: ${clf.threshold}. featureIndex: ${clf.featureIndex} alpha: ${clf.alpha}`);
+      const negativeIndex = (clf
         // clf.polarity * X[:, clf.feature_index]
         .getTsPolarity()
-        .mul(tensorX.gather([clf.featureIndex] as any, 1))
+        .mul(tensorX.gather([clf.featureIndex] as any, 1)))
         // < clf.polarity * clf.threshold
         .less(clf.getTsPolarity().mul(clf.getTsThreshold()));
-      // console.log('pred checking neg index');
-      // console.log(negativeIndex.dataSync());
-      /* console.log('checking clf featureIndex', clf.featureIndex,
-        'polarity: ', clf.polarity,
-        'threshold', clf.threshold,
-        'alpha:', clf.alpha,
-        'indexes', negativeIndex.dataSync()); */
+      /*console.log('checking tensorX gather',
+        '1. ', JSON.stringify([...tensorX.gather([clf.featureIndex]as any, 1).dataSync()]),
+        '2.', JSON.stringify([...clf.getTsPolarity().mul(clf.getTsThreshold()).dataSync()]));
+      */
       // Label those as '-1'
       const labeledPreds = minusOnes.where(negativeIndex, predictions);
+      /* console.log('checking',
+        '1. ', JSON.stringify([...negativeIndex.dataSync()]),
+        '2. ', JSON.stringify([...predictions.dataSync()]),
+        '3. ', JSON.stringify([...labeledPreds.dataSync()]),
+        ); */
       // const labeledPreds = predictions.where(negativeIndex, minusOnes);
 
       // Add predictions weighted by the classifiers alpha
       // (alpha indicative of classifier's proficiency)
-      yPred = yPred.add(clf.alpha.mul(labeledPreds));
+      yPred = clf.alpha.mul(labeledPreds).add(yPred);
       // console.log('checking yPred', yPred.dataSync());
     }
 
+    console.log('checking ypred');
+    yPred.print();
     yPred = tf.sign(yPred).squeeze();
     return [...yPred.dataSync()];
   }
