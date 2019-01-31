@@ -49,8 +49,9 @@ import { Iris } from '../datasets/Iris';
   clf.fit(newXtrain, newYtrain);
 
   const newXtest = xTest.map(x => minmaxScaler.fit_transform(x));
-  const yPred = minmaxScaler.inverse_transform(clf.predict(newXtest));
-
+  const result = clf.predict(newXtest);
+  const yPred = minmaxScaler.inverse_transform(result);
   const accuracy = accuracyScore(yTest, yPred);
+  console.log(result);
   console.log('pred', accuracy);
 })();

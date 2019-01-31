@@ -76,12 +76,15 @@ export class AdaboostClassifier implements IMlModel<number> {
             .sum();
           // the issue is ehere!!
           // console.log('checking err', error, ' minerr ', minError, '  ', (error < minError));
-          console.log(
-            'first: ',
-            tf.notEqual(tensorY, predLabeledPreds).dataSync(),
+          /* console.log(
+            'conds',
+            JSON.stringify([...tf.notEqual(tensorY, predLabeledPreds).dataSync()]),
+            'seconds:',
+            JSON.stringify([...w
+            .where(tf.notEqual(tensorY, predLabeledPreds), tf.zeros([nSamples])).dataSync()]),
             'error: ',
             error.dataSync()
-          );
+          ); */
           // If error is over 50%, flip the polarity so that
           // samples that were classified as 0 are classified as 1
           // E.g error = 0.8 => (1 - error) = 0.2
@@ -104,6 +107,7 @@ export class AdaboostClassifier implements IMlModel<number> {
 
       // Calculate alpha that is used to update sample weights
       // Alpha is also an approximation of the classifier's proficiency
+      // console.log('before min err', minError.dataSync());
       clf.alpha = tf
         // 0.5 *
         .scalar(0.5)
@@ -112,12 +116,14 @@ export class AdaboostClassifier implements IMlModel<number> {
           tf.log(
             // (1.0 - minError)
             tf
-              .scalar(1.0)
+              .scalar(1)
               .sub(minError)
               // / (minError + 1e-10)
-              .div(minError.add(tf.tensor(1e-10)))
+              .div(minError.add(tf.scalar(1e-10)))
           )
         );
+      // .add(tf.tensor(1e-10)
+
       // clf.alpha = 0.5 * Math.log((1.0 - minError) / (minError + 1e-10));
       // console.log('checking train alpha', clf.alpha, 'min err', minError);
 
@@ -138,16 +144,18 @@ export class AdaboostClassifier implements IMlModel<number> {
       const labeledPreds = minusOnes.where(negativeIndex, predictions);
 
       // Misclassified samples gets larger weights and correctly classified samples smaller
-      w = w.mul(
-        clf.alpha
-          .neg()
-          .mul(tensorY)
-          .mul(labeledPreds)
+
+      w = tf.exp(
+        w.mul(
+          clf.alpha
+            .neg()
+            .mul(tensorY)
+            .mul(labeledPreds)
+        )
       );
 
       // Normalize to one
       w = w.div(tf.sum(w));
-
       // Save the classifier
       this.classifiers.push(clf);
     }
@@ -180,8 +188,8 @@ export class AdaboostClassifier implements IMlModel<number> {
         'alpha:', clf.alpha,
         'indexes', negativeIndex.dataSync()); */
       // Label those as '-1'
-      // const labeledPreds = minusOnes.where(negativeIndex, predictions);
-      const labeledPreds = predictions.where(negativeIndex, minusOnes);
+      const labeledPreds = minusOnes.where(negativeIndex, predictions);
+      // const labeledPreds = predictions.where(negativeIndex, minusOnes);
 
       // Add predictions weighted by the classifiers alpha
       // (alpha indicative of classifier's proficiency)
