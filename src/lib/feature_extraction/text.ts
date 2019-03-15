@@ -153,18 +153,15 @@ export class CountVectorizer {
    * 1) tokenization
    * 2) removing stopwords
    * @param text
-   * @param {any} removeSW
+   * @param { boolean } removeSW
    * @returns {any}
    */
   private preprocess(text: string, { removeSW = false }): string[] {
     const tokenizer = new WordTokenizer();
-    return _.flowRight(
-      (x: string) => tokenizer.tokenize(x),
-      (x: string[]) => x.join(' '),
-      // TODO: Somehow it's removing too many words??!!
-      (x: string[]) =>
-        removeSW ? sw.removeStopwords(x, ENGLISH_STOP_WORDS) : x,
-      (x: string) => x.split(' ')
-    )(text);
+    let tokens = text.split(' ');
+    if (removeSW) {
+      tokens = sw.removeStopwords(tokens, ENGLISH_STOP_WORDS);
+    }
+    return tokenizer.tokenize(tokens.join(' '));
   }
 }
