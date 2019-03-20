@@ -372,6 +372,10 @@ const sigmoidDerivative = (x: number): number => {
   return sigm * (1 - sigm);
 };
 
+const sigmoidDerivative2D = (X: Type2DMatrix<number>): Type2DMatrix<number> => {
+  return X.map(x => x.map(x2 => sigmoidDerivative(x2)));
+};
+
 const math = {
   covariance,
   euclideanDistance,
@@ -388,7 +392,8 @@ const math = {
   variance,
   makeDiagonal,
   sigmoid,
-  sigmoidDerivative
+  sigmoidDerivative,
+  sigmoidDerivative2D
 };
 
 export default math;

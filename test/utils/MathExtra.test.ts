@@ -345,3 +345,34 @@ describe('math.sigmoidDerivative', () => {
     expect(math.sigmoidDerivative(2)).toBeCloseTo(0.104);
   });
 });
+
+describe('math.sigmoidDerivative2D', () => {
+  it('Returns correct matrix for 1x1 shape', () => {
+    const { sigmoidDerivative } = math;
+    const result = math.sigmoidDerivative2D([[1]]);
+    const expected = [[sigmoidDerivative(1)]];
+
+    for (let i = 0; i < result.length; ++i) {
+      for (let j = 0; j < result[i].length; ++j) {
+        expect(result[i][j]).toBeCloseTo(expected[i][j]);
+      }
+    }
+  });
+
+  it('Returns correct matrix for 3x2 shape', () => {
+    const { sigmoidDerivative } = math;
+    const m = [[5, 3], [5, 1], [6, 3]];
+    const result = math.sigmoidDerivative2D(m);
+    const expected = [
+      [sigmoidDerivative(5), sigmoidDerivative(3)],
+      [sigmoidDerivative(5), sigmoidDerivative(1)],
+      [sigmoidDerivative(6), sigmoidDerivative(3)]
+    ];
+
+    for (let i = 0; i < result.length; ++i) {
+      for (let j = 0; j < result[i].length; ++j) {
+        expect(result[i][j]).toBeCloseTo(expected[i][j]);
+      }
+    }
+  });
+});
