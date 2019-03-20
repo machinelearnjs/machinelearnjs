@@ -352,6 +352,21 @@ const makeDiagonal = (X: Type1DMatrix<number>): Type2DMatrix<number> => {
   return result;
 };
 
+/**
+ * Computes numerically stable sigmoid in point x
+ * See https://timvieira.github.io/blog/post/2014/02/11/exp-normalize-trick/ for reference
+ * @param x - point in which sigmoid is computed
+ */
+const sigmoid = (x: number): number => {
+  if (x >= 0) {
+    const z = Math.exp(-x);
+    return 1 / (1 + z);
+  } else {
+    const z = Math.exp(x);
+    return z / (1 + z);
+  }
+};
+
 const math = {
   covariance,
   euclideanDistance,
@@ -366,7 +381,8 @@ const math = {
   size,
   subtract,
   variance,
-  makeDiagonal
+  makeDiagonal,
+  sigmoid
 };
 
 export default math;

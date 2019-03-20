@@ -309,3 +309,17 @@ describe('math.makeDiagonal', () => {
     expect(result).toEqual([[1, 0, 0], [0, 2, 0], [0, 0, 3]]);
   });
 });
+
+describe('math.sigmoid', () => {
+  it('should return correct value for zero', () => {
+    expect(math.sigmoid(0)).toBeCloseTo(0.5);
+  });
+
+  it('should return correct value for 1', () => {
+    expect(math.sigmoid(1)).toBeCloseTo(0.73);
+  });
+
+  it('should return correct value for -1', () => {
+    expect(math.sigmoid(-1)).toBeCloseTo(0.268);
+  });
+});
