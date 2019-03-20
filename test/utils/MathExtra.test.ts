@@ -346,6 +346,22 @@ describe('math.sigmoidDerivative', () => {
   });
 });
 
+describe('math.sigmoidDerivative1D', () => {
+  it('Returns correct 1D matrix for 1x5 shape', () => {
+    const { sigmoidDerivative } = math;
+    const result = math.sigmoidDerivative1D([1, 2, 3]);
+    const expected = [
+      sigmoidDerivative(1),
+      sigmoidDerivative(2),
+      sigmoidDerivative(3)
+    ];
+
+    for (let i = 0; i < result.length; ++i) {
+      expect(result[i]).toBeCloseTo(expected[i]);
+    }
+  });
+});
+
 describe('math.sigmoidDerivative2D', () => {
   it('Returns correct matrix for 1x1 shape', () => {
     const { sigmoidDerivative } = math;

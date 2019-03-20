@@ -372,8 +372,12 @@ const sigmoidDerivative = (x: number): number => {
   return sigm * (1 - sigm);
 };
 
+const sigmoidDerivative1D = (X: Type1DMatrix<number>): Type1DMatrix<number> => {
+  return X.map(x => sigmoidDerivative(x));
+};
+
 const sigmoidDerivative2D = (X: Type2DMatrix<number>): Type2DMatrix<number> => {
-  return X.map(x => x.map(x2 => sigmoidDerivative(x2)));
+  return X.map(x => sigmoidDerivative1D(x));
 };
 
 const math = {
@@ -393,6 +397,7 @@ const math = {
   makeDiagonal,
   sigmoid,
   sigmoidDerivative,
+  sigmoidDerivative1D,
   sigmoidDerivative2D
 };
 
