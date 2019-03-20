@@ -367,6 +367,11 @@ const sigmoid = (x: number): number => {
   }
 };
 
+const sigmoidDerivative = (x: number): number => {
+  const sigm = sigmoid(x);
+  return sigm * (1 - sigm);
+};
+
 const math = {
   covariance,
   euclideanDistance,
@@ -382,7 +387,8 @@ const math = {
   subtract,
   variance,
   makeDiagonal,
-  sigmoid
+  sigmoid,
+  sigmoidDerivative
 };
 
 export default math;

@@ -311,7 +311,7 @@ describe('math.makeDiagonal', () => {
 });
 
 describe('math.sigmoid', () => {
-  it('should return correct value for zero', () => {
+  it('should return correct value for 0', () => {
     expect(math.sigmoid(0)).toBeCloseTo(0.5);
   });
 
@@ -321,5 +321,27 @@ describe('math.sigmoid', () => {
 
   it('should return correct value for -1', () => {
     expect(math.sigmoid(-1)).toBeCloseTo(0.268);
+  });
+
+  it('should return correct value for 2', () => {
+    expect(math.sigmoid(2)).toBeCloseTo(0.88);
+  });
+});
+
+describe('math.sigmoidDerivative', () => {
+  it('should return correct value for 0', () => {
+    expect(math.sigmoidDerivative(0)).toBeCloseTo(0.25);
+  });
+
+  it('should return correct value for 1', () => {
+    expect(math.sigmoidDerivative(1)).toBeCloseTo(0.1966);
+  });
+
+  it('should return correct value for -1', () => {
+    expect(math.sigmoidDerivative(-1)).toBeCloseTo(0.1966);
+  });
+
+  it('should return correct value for 2', () => {
+    expect(math.sigmoidDerivative(2)).toBeCloseTo(0.104);
   });
 });
