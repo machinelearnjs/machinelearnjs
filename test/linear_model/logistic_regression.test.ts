@@ -1,4 +1,6 @@
 import { LogisticRegression } from '../../src/lib/linear_model';
+import { accuracyScore } from '../../src/lib/metrics';
+import { getHeartDisease } from '../data_testing';
 
 describe('linear_model:LogisticRegression', () => {
   describe('Multivariate', () => {
@@ -49,6 +51,18 @@ describe('linear_model:LogisticRegression', () => {
       const xTest = [[1, 2], [1]];
 
       expect(() => lr.predict(xTest)).toThrowError();
+    });
+
+    it('Should train on heart disease dataset and have at least 50% accuracy', async () => {
+      const { xTest, xTrain, yTest, yTrain } = await getHeartDisease();
+
+      const lr = new LogisticRegression();
+      lr.fit(xTest, yTest);
+
+      const result = lr.predict(xTest);
+      const accuracy = accuracyScore(yTest, result);
+
+      expect(accuracy).toBeGreaterThan(0.6);
     });
   });
 
