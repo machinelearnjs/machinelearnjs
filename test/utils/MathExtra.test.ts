@@ -291,3 +291,21 @@ describe('math.subset', () => {
     ]);
   });
 });
+
+describe('math.makeDiagonal', () => {
+  it('should throw an exception given empty array', () => {
+    expect(() => math.makeDiagonal([])).toThrowError(
+      "Can't make diagonal matrix from an empty array"
+    );
+  });
+
+  it('should work correctly on array of length 1', () => {
+    const result = math.makeDiagonal([2]);
+    expect(result).toEqual([[2]]);
+  });
+
+  it('should work correctly on array of length > 1', () => {
+    const result = math.makeDiagonal([1, 2, 3]);
+    expect(result).toEqual([[1, 0, 0], [0, 2, 0], [0, 0, 3]]);
+  });
+});

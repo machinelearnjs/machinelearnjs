@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { Type1DMatrix, Type2DMatrix } from '../types/matrix.types';
 
 /**
  * Return the number of elements along a given axis.
@@ -327,6 +328,30 @@ const inner = (a, b) => {
   throw new Error(`Cannot process with the invalid inputs ${a} and ${b}`);
 };
 
+/**
+ * Converts 1D matrix of size N to a 2D diagonal matrix of size NxN
+ * @example makeDiagonal([1, 2, 3])
+ * returns [[1, 0, 0], [0, 2, 0], [0, 0, 3]
+ * @param x - source array
+ */
+const makeDiagonal = (X: Type1DMatrix<number>): Type2DMatrix<number> => {
+  const xSize = X.length;
+  if (xSize === 0) {
+    throw new Error("Can't make diagonal matrix from an empty array");
+  }
+
+  const result = [];
+  for (let i = 0; i < xSize; ++i) {
+    const curArray = [];
+    for (let j = 0; j < xSize; ++j) {
+      curArray.push(j === i ? X[i] : 0);
+    }
+    result.push(curArray);
+  }
+
+  return result;
+};
+
 const math = {
   covariance,
   euclideanDistance,
@@ -340,7 +365,8 @@ const math = {
   subset,
   size,
   subtract,
-  variance
+  variance,
+  makeDiagonal
 };
 
 export default math;
