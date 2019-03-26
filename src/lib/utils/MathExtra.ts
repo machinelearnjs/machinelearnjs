@@ -353,8 +353,7 @@ const makeDiagonal = (X: Type1DMatrix<number>): Type2DMatrix<number> => {
 };
 
 /**
- * Computes numerically stable sigmoid in point x
- * See https://timvieira.github.io/blog/post/2014/02/11/exp-normalize-trick/ for reference
+ * Computes sigmoid function in point x
  * @param x - point in which sigmoid is computed
  */
 const sigmoid = (x: number): number => {
@@ -367,15 +366,27 @@ const sigmoid = (x: number): number => {
   }
 };
 
+/**
+ * Computes derivative of sigmoid function in point x
+ * @param x - point in which gradient is computed
+ */
 const sigmoidDerivative = (x: number): number => {
   const sigm = sigmoid(x);
   return sigm * (1 - sigm);
 };
 
+/**
+ * Applies sigmoid derivative function to each element of 1D matrix
+ * @param X - source 1D matrix
+ */
 const sigmoidDerivative1D = (X: Type1DMatrix<number>): Type1DMatrix<number> => {
   return X.map(x => sigmoidDerivative(x));
 };
 
+/**
+ * Applies sigmoid derivative function to each element of 2D matrix
+ * @param X - source 2D matrix
+ */
 const sigmoidDerivative2D = (X: Type2DMatrix<number>): Type2DMatrix<number> => {
   return X.map(x => sigmoidDerivative1D(x));
 };
