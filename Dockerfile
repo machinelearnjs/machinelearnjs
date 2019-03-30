@@ -1,9 +1,8 @@
-FROM node:8.12.0
+FROM node:8.15.1-jessie-slim
 MAINTAINER Jason Shin <visualbbasic@gmail.com>
 
 # System Deps
 RUN apt-get update -y
-RUN apt-get install tmux -y
 RUN apt-get clean
 
 ENV CORE /home/node/app
@@ -11,7 +10,6 @@ RUN mkdir $CORE
 RUN echo $CORE
 WORKDIR $CORE
 
-RUN git init
 # Install baseline cache
 COPY ./package.json $CORE
 COPY ./yarn.lock $CORE
