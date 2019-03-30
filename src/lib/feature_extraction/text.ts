@@ -126,36 +126,25 @@ export class CountVectorizer {
    */
   private countVocab(doc: Type1DMatrix<string>): number[][] {
     const analyze = this.buildAnalyzer();
-    // 1. Reducing the doc
-    return _.reduce(
-      doc,
-      (sum: any, text: string) => {
-        const tokens = analyze(text);
+    const docVocabCounts: number[][] = [];
+    for (const sentence of doc) {
+      // For each sentence, get tokens
+      const tokens: string[] = analyze(sentence);
+      const sentenceCounts: number[] = [];
 
-        // 2. Looping each vocab for counting
-        const sentenceCounted = _.reduce(
-          this.internalVocabulary,
-          (sentenceCounts: any, vocab) => {
-            // 3. Getting number of occurences of vocab in each tokens (tokens of a sentence)
-            const vocabCount = _.reduce(
-              tokens,
-              (tokenCounts: number, t) => {
-                if (_.isEqual(t, vocab)) {
-                  return tokenCounts + 1;
-                } else {
-                  return tokenCounts;
-                }
-              },
-              0
-            );
-            return _.concat(sentenceCounts, [vocabCount]);
-          },
-          []
-        );
-        return _.concat(sum, [sentenceCounted]);
-      },
-      []
-    );
+      // For each vocab, count number of appearance of each vocab in the tokens
+      for (const vocab of this.internalVocabulary) {
+        let vocabCount = 0;
+        for (const t of tokens) {
+          if (t === vocab) {
+            vocabCount++;
+          }
+        }
+        sentenceCounts.push(vocabCount);
+      }
+      docVocabCounts.push(sentenceCounts);
+    }
+    return docVocabCounts;
   }
 
   /**
@@ -164,18 +153,15 @@ export class CountVectorizer {
    * 1) tokenization
    * 2) removing stopwords
    * @param text
-   * @param {any} removeSW
+   * @param { boolean } removeSW
    * @returns {any}
    */
   private preprocess(text: string, { removeSW = false }): string[] {
     const tokenizer = new WordTokenizer();
-    return _.flowRight(
-      (x: string) => tokenizer.tokenize(x),
-      (x: string[]) => x.join(' '),
-      // TODO: Somehow it's removing too many words??!!
-      (x: string[]) =>
-        removeSW ? sw.removeStopwords(x, ENGLISH_STOP_WORDS) : x,
-      (x: string) => x.split(' ')
-    )(text);
+    let tokens = text.split(' ');
+    if (removeSW) {
+      tokens = sw.removeStopwords(tokens, ENGLISH_STOP_WORDS);
+    }
+    return tokenizer.tokenize(tokens.join(' '));
   }
 }

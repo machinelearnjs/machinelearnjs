@@ -119,7 +119,10 @@ export default class KDTree {
         saveNode(node, ownDistance);
       }
 
-      if (bestNodes.size() < maxNodes || Math.abs(linearDistance) < bestNodes.peek()[1]) {
+      if (
+        bestNodes.size() < maxNodes ||
+        Math.abs(linearDistance) < bestNodes.peek()[1]
+      ) {
         if (bestChild === node.left) {
           otherChild = node.right;
         } else {
