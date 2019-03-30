@@ -23,6 +23,11 @@ minmaxScaler.fit([4, 5, 6]);
 const result = minmaxScaler.fit_transform([4, 5, 6]);
 console.log('minmax result', result);
 
+const minmaxScaler2 = new MinMaxScaler({ featureRange: [0, 1] });
+minmaxScaler2.fit([[1, 2, 3], [4, 5, 6]]);
+const result2 = minmaxScaler2.transform([[1, 2, 3]]);
+console.log('minmax result 2', result2);
+
 // Imputer
 import { Imputer } from './Imputer';
 

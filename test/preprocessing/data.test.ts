@@ -138,7 +138,7 @@ describe('data:MinMaxScaler', () => {
     ];
     const scaler = new MinMaxScaler({ featureRange: [0, 1] });
     scaler.fit(matrix1);
-    const result = scaler.fit_transform([1, 2, 3]);
+    const result = scaler.transform([1, 2, 3]);
     expect(result).toEqual(expected);
   });
   it('should transform matrix1 then successfully inverse tranform', () => {
@@ -150,7 +150,7 @@ describe('data:MinMaxScaler', () => {
     const scaler = new MinMaxScaler({ featureRange: [0, 1] });
     scaler.fit(matrix1);
     const data = [1, 2, 3];
-    const transformed = scaler.fit_transform(data);
+    const transformed = scaler.transform(data);
     expect(transformed).toEqual(expected);
     const result = scaler.inverse_transform(transformed);
     expect(result).toEqual(data);
@@ -165,10 +165,10 @@ describe('data:MinMaxScaler', () => {
     const scaler = new MinMaxScaler({ featureRange: [0, 1] });
     expect(() => scaler.fit_transform('?')).toThrow(tensorErr);
     expect(() => scaler.fit_transform(1)).toThrow(
-      'The matrix is not 1D shaped: 1 of []'
+      'Cannot fit with an empty value'
     );
     expect(() => scaler.fit_transform([])).toThrow(
-      'The matrix is not 1D shaped: [] of [0]'
+      'Cannot fit with an empty value'
     );
   });
   it('should not inverse_transform invalid inputs', () => {
