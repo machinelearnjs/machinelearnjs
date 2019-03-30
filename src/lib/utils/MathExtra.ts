@@ -15,10 +15,7 @@ const size = (X, axis = 0) => {
   if (axis === 0) {
     return rows;
   } else if (axis === 1) {
-    return _.flowRight(
-      _.size,
-      a => _.get(a, '[0]')
-    )(X);
+    return _.flowRight(_.size, a => _.get(a, '[0]'))(X);
   }
   throw new Error(`Invalid axis value ${axis} was given`);
 };
@@ -332,7 +329,8 @@ const inner = (a, b) => {
  * Converts 1D matrix of size N to a 2D diagonal matrix of size NxN
  * @example makeDiagonal([1, 2, 3])
  * returns [[1, 0, 0], [0, 2, 0], [0, 0, 3]
- * @param x - source array
+ * @param X - source array
+ * @ignore
  */
 const makeDiagonal = (X: Type1DMatrix<number>): Type2DMatrix<number> => {
   const xSize = X.length;
@@ -355,6 +353,7 @@ const makeDiagonal = (X: Type1DMatrix<number>): Type2DMatrix<number> => {
 /**
  * Computes sigmoid function in point x
  * @param x - point in which sigmoid is computed
+ * @ignore
  */
 const sigmoid = (x: number): number => {
   if (x >= 0) {
@@ -369,6 +368,7 @@ const sigmoid = (x: number): number => {
 /**
  * Computes derivative of sigmoid function in point x
  * @param x - point in which gradient is computed
+ * @ignore
  */
 const sigmoidDerivative = (x: number): number => {
   const sigm = sigmoid(x);
@@ -378,6 +378,7 @@ const sigmoidDerivative = (x: number): number => {
 /**
  * Applies sigmoid derivative function to each element of 1D matrix
  * @param X - source 1D matrix
+ * @ignore
  */
 const sigmoidDerivative1D = (X: Type1DMatrix<number>): Type1DMatrix<number> => {
   return X.map(x => sigmoidDerivative(x));
@@ -386,6 +387,7 @@ const sigmoidDerivative1D = (X: Type1DMatrix<number>): Type1DMatrix<number> => {
 /**
  * Applies sigmoid derivative function to each element of 2D matrix
  * @param X - source 2D matrix
+ * @ignore
  */
 const sigmoidDerivative2D = (X: Type2DMatrix<number>): Type2DMatrix<number> => {
   return X.map(x => sigmoidDerivative1D(x));
