@@ -1,11 +1,13 @@
+import * as tf from '@tensorflow/tfjs';
 import { Iris } from '../../src/lib/datasets';
 import {
+  expandDims,
   inferShape,
   reshape,
   validateFitInputs,
   validateMatrix1D,
   validateMatrix2D,
-  validateMatrixType
+  validateMatrixType,
 } from '../../src/lib/ops/tensor_ops';
 import { matchExceptionWithSnapshot } from '../util_testing';
 

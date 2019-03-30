@@ -1,4 +1,6 @@
 /* tslint:disable */
+
+/*
 import { RandomForestClassifier } from './forest';
 import { Iris } from '../datasets/Iris';
 
@@ -18,4 +20,36 @@ import { Iris } from '../datasets/Iris';
   rf2.fit(data, targets);
 
   console.log('pred', rf2.predict([[6.7, 3, 5.2, 2.3]]));
+})();
+*/
+
+import { accuracyScore } from '../metrics';
+import { train_test_split } from '../model_selection';
+import { AdaboostClassifier } from './weight_boosting';
+import { MinMaxScaler } from '../preprocessing';
+import { Iris } from '../datasets/Iris';
+
+(async function() {
+  const irisDataset = new Iris();
+  const { data, targets } = await irisDataset.load();
+  const { xTest, xTrain, yTest, yTrain } = train_test_split(data, targets);
+
+  const clf = new AdaboostClassifier({ n_cls: 50 });
+
+  const minmaxScaler = new MinMaxScaler({ featureRange: [0, 1] });
+  const dataset = xTrain.map((x, i) => {
+    x.push(yTrain[i]);
+    return x;
+  });
+  minmaxScaler.fit(dataset);
+  const newXtrain = xTrain.map(x => minmaxScaler.fit_transform(x));
+  const newYtrain = minmaxScaler.fit_transform(yTrain);
+  clf.fit(newXtrain, newYtrain);
+
+  const newXtest = xTest.map(x => minmaxScaler.fit_transform(x));
+  const result = clf.predict(newXtest);
+  const yPred = minmaxScaler.inverse_transform(result);
+  const accuracy = accuracyScore(yTest, yPred);
+  console.log(result);
+  console.log('pred', accuracy);
 })();
