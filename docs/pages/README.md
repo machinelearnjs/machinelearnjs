@@ -3,7 +3,7 @@ home: true
 heroImage: /hero.jpg
 actionText: Get Started →
 actionLink: /api/
-footer: MIT Licensed | Copyright © 2018-present Jason Shin
+footer: MIT Licensed | Copyright © 2019-present Jason Shin
 ---
 
 <div class="features">
