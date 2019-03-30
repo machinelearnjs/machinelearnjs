@@ -1,4 +1,4 @@
-FROM node:8.15.1-jessie-slim
+FROM node:8.15.1-stretch
 MAINTAINER Jason Shin <visualbbasic@gmail.com>
 
 # System Deps
