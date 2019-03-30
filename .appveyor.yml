@@ -6,6 +6,7 @@ environment:
   matrix:
     - nodejs_version: '8'
     - nodejs_version: '10'
+    - nodejs_version: '11'
 
 # Fail on first error
 matrix:
