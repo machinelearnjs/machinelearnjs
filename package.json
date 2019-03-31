@@ -45,7 +45,7 @@
     "pretty:fix": "npx prettier \"src/**/*.ts\" \"test/**/*.ts\" \"docs/**/*.ts\" --config ./.prettierrc.json --write",
     "lint:fix": "npx tslint --fix --force -t verbose 'test/**/*.ts' 'src/**/*.ts' 'docs/**/*.ts'",
     "test": "yarn build && yarn lint && yarn doc && yarn test:unit && yarn test:integration",
-    "test:unit": "npx jest --testPathIgnorePatterns \"./test/integration/require.test.ts\"",
+    "test:unit": "npx jest --testPathIgnorePatterns \"./test/integration/require.test.ts\" --runInBand",
     "test:integration": "node ./scripts/test-integration.js",
     "watch": "./scripts/tmux-start.sh",
     "watch:build": "yarn build:main -- -w",
