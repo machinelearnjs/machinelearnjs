@@ -61,7 +61,7 @@
     "release:patch": "./scripts/releases/release-it.sh -v patch",
     "contributors:add": "npx all-contributors add",
     "contributors:generate": "npx all-contributors generate",
-    "precommit": "pretty-quick --staged && yarn run lint && yarn run build"
+    "precommit": "yarn run lint && yarn run build"
   },
   "engines": {
     "node": ">=8.11.0"
@@ -93,7 +93,6 @@
     "jest-fetch-mock": "1.6.5",
     "ncp": "2.0.0",
     "prettier": "1.10.2",
-    "pretty-quick": "1.8.0",
     "release-it": "7.4.8",
     "standard-version": "4.0.0",
     "ts-jest": "22.4.5",
