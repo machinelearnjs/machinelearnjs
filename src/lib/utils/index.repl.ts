@@ -1,5 +1,6 @@
 /* tslint:disable */
-import { inferShape, validateMatrixType } from './tensor_ops';
+import { inferShape } from './tensors';
+import { validateMatrixType } from './validation';
 
 const result = inferShape([[1, 2]]);
 

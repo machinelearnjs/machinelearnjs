@@ -1,47 +1,20 @@
 {
-  "extends": ["tslint:latest", "tslint-config-prettier", "tslint-immutable"],
+  "defaultSeverity": "error",
+  "extends": ["tslint:recommended", "tslint-config-prettier"],
+  "jsRules": {},
   "rules": {
-    "interface-name": [true, "never-prefix"],
-    // TODO: allow devDependencies only in **/*.spec.ts files:
-    // waiting on https://github.com/palantir/tslint/pull/3708
-    "no-implicit-dependencies": [true, "dev"],
-
-    /* tslint-immutable rules */
-    // Recommended built-in rules
-    "no-var-keyword": true,
-    "no-parameter-reassignment": true,
-    "typedef": [true, "call-signature"],
-    "prefer-for-of": false,
     "variable-name": [true, "allow-leading-underscore", "allow-snake-case"],
-
-    // Immutability rules
-    "readonly-keyword": false,
-    "readonly-array": false,
-    "no-let": false, // Sometime let is more declaritive
-    "no-object-mutation": false,
-    "no-delete": true,
-    "no-method-signature": true,
-
-    // Class rules
-    "no-unnecessary-class": true,
-    "max-classes-per-file": [false],
-    "prefer-conditional-expression": false,
+    "prefer-for-of": false,
     "no-console": [true, "log"],
-
-    // Object rules
+    "member-ordering": false,
+    "interface-name": false,
+    "member-access": false,
     "object-literal-sort-keys": false,
-
-    // Functional style rules
-    "no-invalid-this": true,
-    "no-class": false,
-    "no-mixed-interface": true,
-    "no-expression-statement": [
-      false,
-      { "ignore-prefix": ["console.", "process.exit"] }
-    ],
-    "no-if-statement": false,
-    /* end tslint-immutable rules */
-
-    "array-type": [true, "array-simple"]
-  }
+    "quotemark": [true, "single", "avoid-escape"],
+    "arrow-parens": false,
+    "no-var-requires": false,
+    "max-classes-per-file": false,
+    "arrow-return-shorthand": false
+  },
+  "rulesDirectory": []
 }

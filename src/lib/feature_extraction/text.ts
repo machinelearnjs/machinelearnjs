@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
 import * as sw from 'stopword';
-import { validateMatrix1D } from '../ops';
 import { Type1DMatrix } from '../types';
 import { WordTokenizer } from '../utils/nlp';
+import { validateMatrix1D } from '../utils/validation';
 import { ENGLISH_STOP_WORDS } from './stop_words';
 
 /**

@@ -1,6 +1,6 @@
 import { findIndex, map, uniq } from 'lodash';
-import { validateMatrix1D } from '../ops';
 import { Type1DMatrix } from '../types';
+import { validateMatrix1D } from '../utils/validation';
 
 /**
  * Encode labels with value between 0 and n_classes-1.

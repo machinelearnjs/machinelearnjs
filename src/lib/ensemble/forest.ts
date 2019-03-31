@@ -11,9 +11,9 @@ import {
   reduce,
   values
 } from 'lodash';
-import { validateFitInputs, validateMatrix2D } from '../ops';
 import { DecisionTreeClassifier } from '../tree';
 import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
+import { validateFitInputs, validateMatrix2D } from '../utils/validation';
 
 /**
  * Base RandomForest implementation used by both classifier and regressor

@@ -25,5 +25,5 @@ yarn doc
 
 # Running integration test as part of the build
 echo '6. run the jest require tests'
-npx jest -t "integration:require"
+npx jest -t "integration:require" --runInBand
 echo 'finished building for prod'

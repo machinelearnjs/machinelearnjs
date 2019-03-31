@@ -5,6 +5,10 @@ import {
 } from '../../src/lib/linear_model';
 import { accuracyScore } from '../../src/lib/metrics';
 import { getIris } from '../data_testing';
+import {
+  validate1DMatrixErrorMessage,
+  validate2DMatrixErrorMessage
+} from '../Errors';
 import { assertArrayAlmostEqual } from '../util_testing';
 import {
   reg_l12_snap,
@@ -14,10 +18,6 @@ import {
 
 const X1 = [[0, 0], [1, 1]];
 const y1 = [0, 1];
-
-// Constant error messages
-const tensorErr =
-  'values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray';
 
 describe('linear_model:SGDClassifier', () => {
   const accuracyExpected1 = 0.5;
@@ -108,28 +108,22 @@ describe('linear_model:SGDClassifier', () => {
   it('Should throw exceptions on fit with invalid inputs', () => {
     const clf = new SGDClassifier();
     // X
-    expect(() => clf.fit(null, y1)).toThrow(tensorErr);
-    expect(() => clf.fit(1, y1)).toThrow(
-      'The matrix is not 2D shaped: 1 of []'
-    );
-    expect(() => clf.fit('test', y1)).toThrow(tensorErr);
+    expect(() => clf.fit(null, y1)).toThrow(validate2DMatrixErrorMessage);
+    expect(() => clf.fit(1, y1)).toThrow(validate2DMatrixErrorMessage);
+    expect(() => clf.fit('test', y1)).toThrow(validate2DMatrixErrorMessage);
 
     // y
-    expect(() => clf.fit(X1, null)).toThrow(tensorErr);
-    expect(() => clf.fit(X1, 1)).toThrow(
-      'The matrix is not 1D shaped: 1 of []'
-    );
-    expect(() => clf.fit(X1, 'test')).toThrow(tensorErr);
+    expect(() => clf.fit(X1, null)).toThrow(validate1DMatrixErrorMessage);
+    expect(() => clf.fit(X1, 1)).toThrow(validate1DMatrixErrorMessage);
+    expect(() => clf.fit(X1, 'test')).toThrow(validate1DMatrixErrorMessage);
   });
 
   it('Should throw exceptions on predict with invalid inputs', () => {
     const clf = new SGDClassifier();
     // X
-    expect(() => clf.predict(null)).toThrow(tensorErr);
-    expect(() => clf.predict(1)).toThrow(
-      'The matrix is not 2D shaped: 1 of []'
-    );
-    expect(() => clf.predict({})).toThrow(tensorErr);
+    expect(() => clf.predict(null)).toThrow(validate2DMatrixErrorMessage);
+    expect(() => clf.predict(1)).toThrow(validate2DMatrixErrorMessage);
+    expect(() => clf.predict({})).toThrow(validate2DMatrixErrorMessage);
   });
 });
 
@@ -204,27 +198,23 @@ describe('linear_model:SGDRegressor', () => {
     const clf = new SGDRegressor();
 
     // X
-    expect(() => clf.fit(null, y1)).toThrow(tensorErr);
-    expect(() => clf.fit(1, y1)).toThrow(
-      'The matrix is not 2D shaped: 1 of []'
-    );
-    expect(() => clf.fit('test', y1)).toThrow(tensorErr);
+    expect(() => clf.fit(null, y1)).toThrow(validate2DMatrixErrorMessage);
+    expect(() => clf.fit(1, y1)).toThrow(validate2DMatrixErrorMessage);
+    expect(() => clf.fit('test', y1)).toThrow(validate2DMatrixErrorMessage);
 
     // y
-    expect(() => clf.fit(X1, null)).toThrow(tensorErr);
-    expect(() => clf.fit(X1, 1)).toThrow(
-      'The matrix is not 1D shaped: 1 of []'
+    expect(() => clf.fit(X1, null)).toThrowError(validate1DMatrixErrorMessage);
+    expect(() => clf.fit(X1, 1)).toThrowError(validate1DMatrixErrorMessage);
+    expect(() => clf.fit(X1, 'test')).toThrowError(
+      validate1DMatrixErrorMessage
     );
-    expect(() => clf.fit(X1, 'test')).toThrow(tensorErr);
   });
 
   it('Should throw exceptions on predict with invalid inputs', () => {
     const clf = new SGDRegressor();
     // X
-    expect(() => clf.predict(null)).toThrow(tensorErr);
-    expect(() => clf.predict(1)).toThrow(
-      'The matrix is not 2D shaped: 1 of []'
-    );
-    expect(() => clf.predict({})).toThrow(tensorErr);
+    expect(() => clf.predict(null)).toThrow(validate2DMatrixErrorMessage);
+    expect(() => clf.predict(1)).toThrow(validate2DMatrixErrorMessage);
+    expect(() => clf.predict({})).toThrow(validate2DMatrixErrorMessage);
   });
 });

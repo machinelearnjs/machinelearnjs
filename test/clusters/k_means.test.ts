@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import { KMeans } from '../../src/lib/cluster';
+import { validate2DMatrixErrorMessage } from '../Errors';
 
 // TODO: Improve on kmeans cluster testing
 describe('clusters:k_means', () => {
@@ -74,9 +75,7 @@ describe('clusters:k_means', () => {
     expect(() => kmean.fit([1, 2])).toThrow(
       'The matrix is not 2D shaped: [1,2] of [2]'
     );
-    expect(() => kmean.fit(null)).toThrow(
-      'values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray'
-    );
+    expect(() => kmean.fit(null)).toThrow(validate2DMatrixErrorMessage);
     // TODO: implement datatype check to the validation method
     // expect(() => kmean.fit([["aa", "bb"]])).toThrow('The matrix is not 2D shaped: [1,2] of [2]');
   });

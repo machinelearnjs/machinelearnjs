@@ -1,7 +1,7 @@
 import * as tf from '@tensorflow/tfjs';
 import * as _ from 'lodash';
-import { reshape } from '../ops';
 import { Type1DMatrix } from '../types';
+import { reshape } from '../utils/tensors';
 import { checkArray } from '../utils/validation';
 
 /**
@@ -58,15 +58,13 @@ export const validateInitialInputs = (y_true, y_pred, labels, options = {}) => {
   // Checking labels equal to both y_true and y_pred classes
   // Labels is optional
   if (labels) {
-    const yTrueCls = _.flowRight(
-      x => _.sortBy(x, y => y),
-      x => _.uniq(x)
-    )(y_true);
+    const yTrueCls = _.flowRight(x => _.sortBy(x, y => y), x => _.uniq(x))(
+      y_true
+    );
 
-    const yPredCls = _.flowRight(
-      x => _.sortBy(x, y => y),
-      x => _.uniq(x)
-    )(y_pred);
+    const yPredCls = _.flowRight(x => _.sortBy(x, y => y), x => _.uniq(x))(
+      y_pred
+    );
 
     const sortedLabels = _.sortBy(labels, x => x);
     if (

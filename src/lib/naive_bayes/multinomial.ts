@@ -1,7 +1,8 @@
 import * as tf from '@tensorflow/tfjs';
 import { countBy, isEmpty, zip } from 'lodash';
-import { reshape, validateFitInputs, validateMatrix2D } from '../ops';
 import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
+import { reshape } from '../utils/tensors';
+import { validateFitInputs, validateMatrix2D } from '../utils/validation';
 
 /**
  * Multinomial naive bayes machine learning algorithm

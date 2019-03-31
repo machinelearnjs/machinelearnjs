@@ -8,6 +8,12 @@ import {
   OneHotEncoder,
   PolynomialFeatures
 } from '../../src/lib/preprocessing';
+import {
+  matrixEmptyErrorMessage,
+  tensorCreationErrorMessage,
+  validate1DMatrixErrorMessage,
+  validate2DMatrixErrorMessage
+} from '../Errors';
 
 // Constant error messages
 const tensorErr =
@@ -36,14 +42,12 @@ describe('data:add_dummy_feature', () => {
   });
 
   it('should throw error when invalid data is given', () => {
-    expect(() => add_dummy_feature(true)).toThrow(
-      'The matrix is not 2D shaped: true of []'
+    expect(() => add_dummy_feature(true)).toThrow(validate2DMatrixErrorMessage);
+    expect(() => add_dummy_feature(1)).toThrow(validate2DMatrixErrorMessage);
+    expect(() => add_dummy_feature(null)).toThrow(validate2DMatrixErrorMessage);
+    expect(() => add_dummy_feature(undefined)).toThrow(
+      validate2DMatrixErrorMessage
     );
-    expect(() => add_dummy_feature(1)).toThrow(
-      'The matrix is not 2D shaped: 1 of []'
-    );
-    expect(() => add_dummy_feature(null)).toThrow(tensorErr);
-    expect(() => add_dummy_feature(undefined)).toThrow(tensorErr);
   });
 });
 
@@ -157,25 +161,23 @@ describe('data:MinMaxScaler', () => {
   });
   it('should not fit invalid inputs', () => {
     const scaler = new MinMaxScaler({ featureRange: [0, 1] });
-    expect(() => scaler.fit('?')).toThrow(tensorErr);
-    expect(() => scaler.fit(1)).toThrow('Cannot fit with an empty value');
-    expect(() => scaler.fit([])).toThrow('Cannot fit with an empty value');
+    expect(() => scaler.fit('?')).toThrow(tensorCreationErrorMessage);
+    expect(() => scaler.fit(1)).toThrow(matrixEmptyErrorMessage);
+    expect(() => scaler.fit([])).toThrow(matrixEmptyErrorMessage);
   });
   it('should not fit_transform invalid inputs', () => {
     const scaler = new MinMaxScaler({ featureRange: [0, 1] });
-    expect(() => scaler.fit_transform('?')).toThrow(tensorErr);
-    expect(() => scaler.fit_transform(1)).toThrow(
-      'Cannot fit with an empty value'
-    );
-    expect(() => scaler.fit_transform([])).toThrow(
-      'Cannot fit with an empty value'
-    );
+    expect(() => scaler.fit_transform('?')).toThrow(tensorCreationErrorMessage);
+    expect(() => scaler.fit_transform(1)).toThrow(matrixEmptyErrorMessage);
+    expect(() => scaler.fit_transform([])).toThrow(matrixEmptyErrorMessage);
   });
   it('should not inverse_transform invalid inputs', () => {
     const scaler = new MinMaxScaler({ featureRange: [0, 1] });
-    expect(() => scaler.inverse_transform('?')).toThrow(tensorErr);
+    expect(() => scaler.inverse_transform('?')).toThrow(
+      validate1DMatrixErrorMessage
+    );
     expect(() => scaler.inverse_transform(1)).toThrow(
-      'The matrix is not 1D shaped: 1 of []'
+      validate1DMatrixErrorMessage
     );
     expect(() => scaler.inverse_transform([])).toThrow(
       'The matrix is not 1D shaped: [] of [0]'
@@ -194,14 +196,14 @@ describe('data:Binarizer', () => {
   it('should not fit invalid data', () => {
     const newBin = new Binarizer({ threshold: 0 });
     expect(() => newBin.fit([])).toThrow('X cannot be empty');
-    expect(() => newBin.fit('?')).toThrow(tensorErr);
-    expect(() => newBin.fit(null)).toThrow(tensorErr);
+    expect(() => newBin.fit('?')).toThrow(validate2DMatrixErrorMessage);
+    expect(() => newBin.fit(null)).toThrow(validate2DMatrixErrorMessage);
   });
   it('should not transform invalid data', () => {
     const newBin = new Binarizer({ threshold: 0 });
     expect(() => newBin.transform([])).toThrow('X cannot be empty');
-    expect(() => newBin.transform('?')).toThrow(tensorErr);
-    expect(() => newBin.transform(null)).toThrow(tensorErr);
+    expect(() => newBin.transform('?')).toThrow(validate2DMatrixErrorMessage);
+    expect(() => newBin.transform(null)).toThrow(validate2DMatrixErrorMessage);
   });
 });
 
@@ -233,12 +235,12 @@ describe('data:PolynomialFeatures', () => {
   // Exceptions
   it('should not transform when invalid values are given', () => {
     const poly = new PolynomialFeatures();
-    expect(() => poly.transform(null)).toThrow(tensorErr);
+    expect(() => poly.transform(null)).toThrow(validate2DMatrixErrorMessage);
     expect(() => poly.transform([])).toThrow('X cannot be empty');
-    expect(() => poly.transform(1)).toThrow(
-      'The matrix is not 2D shaped: 1 of []'
+    expect(() => poly.transform(1)).toThrow(validate2DMatrixErrorMessage);
+    expect(() => poly.transform('string')).toThrow(
+      validate2DMatrixErrorMessage
     );
-    expect(() => poly.transform('string')).toThrow(tensorErr);
   });
   // TODO: Implement matrix data type check in validateMatrixXX and reimplement the test
   /* it('should not transform when matrix with non numberic value is given', () => {
@@ -278,8 +280,12 @@ describe('data:normalize', () => {
     expect(() => normalize(X1, { norm: 'test' })).toThrow(expected);
   });
   it('should throw an error if the input is invalid', () => {
-    expect(() => normalize(null, { norm: 'l1' })).toThrow(tensorErr);
+    expect(() => normalize(null, { norm: 'l1' })).toThrow(
+      validate2DMatrixErrorMessage
+    );
     expect(() => normalize([], { norm: 'l1' })).toThrow('X cannot be empty');
-    expect(() => normalize('aisjd', { norm: 'l1' })).toThrow(tensorErr);
+    expect(() => normalize('aisjd', { norm: 'l1' })).toThrow(
+      validate2DMatrixErrorMessage
+    );
   });
 });

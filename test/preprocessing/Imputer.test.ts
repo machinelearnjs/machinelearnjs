@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import { Imputer } from '../../src/lib/preprocessing/Imputer';
+import { validate2DMatrixErrorMessage } from '../Errors';
 
 describe('Imputer', () => {
   it('fit [[1, 2], [null, 3], [7, 6]] and transform [[null, 2], [6, null], [7, 6]]', () => {
@@ -24,32 +25,26 @@ describe('Imputer', () => {
     // String
     expect(() => {
       new Imputer({ missingValues: null, axis: 0 }).fit('asofjasof');
-    }).toThrow(
-      'values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray'
-    );
+    }).toThrow(validate2DMatrixErrorMessage);
 
     // Int
     expect(() => {
       new Imputer({ missingValues: null, axis: 0 }).fit(123);
-    }).toThrow('The matrix is not 2D shaped: 123 of []');
+    }).toThrow(validate2DMatrixErrorMessage);
 
     // Boolean
     expect(() => {
       new Imputer({ missingValues: null, axis: 0 }).fit(true);
-    }).toThrow('The matrix is not 2D shaped: true of []');
+    }).toThrow(validate2DMatrixErrorMessage);
 
     // Null
     expect(() => {
       new Imputer({ missingValues: null, axis: 0 }).fit(null);
-    }).toThrow(
-      'values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray'
-    );
+    }).toThrow(validate2DMatrixErrorMessage);
 
     // undefined
     expect(() => {
       new Imputer({ missingValues: null, axis: 0 }).fit(undefined);
-    }).toThrow(
-      'values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray'
-    );
+    }).toThrow(validate2DMatrixErrorMessage);
   });
 });

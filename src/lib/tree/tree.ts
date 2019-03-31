@@ -1,7 +1,7 @@
 import { map, range, uniqBy } from 'lodash';
 import * as Random from 'random-js';
-import { validateFitInputs, validateMatrix2D } from '../ops';
 import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
+import { validateFitInputs, validateMatrix2D } from '../utils/validation';
 
 /**
  * Question used by decision tree algorithm to determine whether to split branch or not

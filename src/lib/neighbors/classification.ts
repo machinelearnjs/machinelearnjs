@@ -1,7 +1,8 @@
 import { map, uniqBy } from 'lodash';
-import { inferShape, validateFitInputs } from '../ops';
 import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
+import { inferShape } from '../utils/tensors';
+import { validateFitInputs } from '../utils/validation';
 import KDTree from './KDTree';
 const { euclideanDistance, manhattanDistance } = math;
 const DIST_EUC = 'euclidean';

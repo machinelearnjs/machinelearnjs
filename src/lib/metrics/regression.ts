@@ -1,7 +1,7 @@
 import * as tf from '@tensorflow/tfjs';
 import { isEqual } from 'lodash';
-import { inferShape } from '../ops';
 import { Type1DMatrix, Type2DMatrix } from '../types';
+import { inferShape } from '../utils/tensors';
 
 /**
  * Mean absolute error regression loss

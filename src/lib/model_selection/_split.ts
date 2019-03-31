@@ -1,7 +1,8 @@
 import * as _ from 'lodash';
 import * as Random from 'random-js';
-import { inferShape, validateFitInputs } from '../ops';
 import { Type1DMatrix, Type2DMatrix } from '../types';
+import { inferShape } from '../utils/tensors';
+import { validateFitInputs } from '../utils/validation';
 
 /**
  * K-Folds cross-validator
