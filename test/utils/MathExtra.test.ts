@@ -52,9 +52,7 @@ describe('math.range', () => {
   });
 
   it('should throw an invalid error', () => {
-    expect(() => math.range('test', 2)).toThrow(
-      'start and stop arguments need to be numbers'
-    );
+    expect(() => math.range('test', 2)).toThrow('start and stop arguments need to be numbers');
   });
 });
 
@@ -258,9 +256,7 @@ describe('math.inner', () => {
   it('should throw an error if two vectors are not same in size', () => {
     const a = [1, 2, 3];
     const b = [1, 2];
-    const error = `Dimensions (${a.length},) and (${
-      b.length
-    },) are not aligned`;
+    const error = `Dimensions (${a.length},) and (${b.length},) are not aligned`;
     expect(() => math.inner(a, b)).toThrow(error);
   });
 });
@@ -270,7 +266,7 @@ describe('math.subset', () => {
   const X2 = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
   ];
   it('should get subset of X1', () => {
     const result = math.subset(X1, [1], [0]);
@@ -287,7 +283,7 @@ describe('math.subset', () => {
     expect(result).toEqual([
       [7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
       [7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      [7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+      [7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     ]);
   });
 });

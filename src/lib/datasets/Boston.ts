@@ -52,7 +52,7 @@ export class Boston extends BaseDataset {
     return {
       data,
       targets,
-      labels
+      labels,
     };
   }
 }

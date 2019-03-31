@@ -1,10 +1,6 @@
 import fakeFetch from 'jest-fetch-mock';
 import { Iris } from '../../src/lib/datasets';
-import {
-  classCounts,
-  DecisionTreeClassifier,
-  Leaf
-} from '../../src/lib/tree/tree';
+import { classCounts, DecisionTreeClassifier, Leaf } from '../../src/lib/tree/tree';
 import { IRIS_FAKE_DATA, IRIS_FAKE_DESC } from '../datasets/fake_data/iris';
 import { matchExceptionWithSnapshot } from '../util_testing';
 
@@ -12,13 +8,7 @@ import { matchExceptionWithSnapshot } from '../util_testing';
 global.fetch = fakeFetch;
 
 describe('tree:DecisionTreeClassifier', () => {
-  const fruitX = [
-    ['Green', 3],
-    ['Yellow', 3],
-    ['Red', 1],
-    ['Red', 1],
-    ['Yellow', 3]
-  ];
+  const fruitX = [['Green', 3], ['Yellow', 3], ['Red', 1], ['Red', 1], ['Yellow', 3]];
   const fruitY = ['Apple', 'Apple', 'Grape', 'Grape', 'Lemon'];
 
   const numberX = [[0, 0], [1, 1]];
@@ -112,7 +102,7 @@ describe('tree:DecisionTreeClassifier', () => {
 
   it('should use fruitX and print a correct tree', () => {
     let outputData = '';
-    console.info = inputs => (outputData += inputs);
+    console.info = (inputs) => (outputData += inputs);
     const features = ['color', 'diameter', 'label'];
     const decision = new DecisionTreeClassifier({ featureLabels: features });
     decision.fit(fruitX, fruitY);

@@ -37,10 +37,7 @@ export function inferShape(X: TypeMatrix<any>): number[] {
  * @param sizes - New array shape to resize into
  * @ignore
  */
-export function reshape<T>(
-  array: TypeMatrix<T>,
-  sizes: number[]
-): TypeMatrix<T> {
+export function reshape<T>(array: TypeMatrix<T>, sizes: number[]): TypeMatrix<T> {
   // Initial validations
   if (!Array.isArray(array)) {
     throw new TypeError('The input array must be an array!');
@@ -55,11 +52,7 @@ export function reshape<T>(
   if (sizes.length === 1 && deepFlatArray.length === sizes[0]) {
     return deepFlatArray;
   } else if (sizes.length === 1 && deepFlatArray.length !== sizes[0]) {
-    throw new TypeError(
-      `Target array shape [${
-        deepFlatArray.length
-      }] cannot be reshaped into ${sizes}`
-    );
+    throw new TypeError(`Target array shape [${deepFlatArray.length}] cannot be reshaped into ${sizes}`);
   }
 
   // testing if there are enough elements for the requested shape

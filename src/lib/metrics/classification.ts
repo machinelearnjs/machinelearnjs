@@ -14,7 +14,7 @@ import { checkArray } from '../utils/validation';
 function _weightedSum({
   sampleScore,
   // sampleWeight = null,
-  normalize = false
+  normalize = false,
 }): number {
   if (normalize) {
     return _.mean(sampleScore);
@@ -58,19 +58,12 @@ export const validateInitialInputs = (y_true, y_pred, labels, options = {}) => {
   // Checking labels equal to both y_true and y_pred classes
   // Labels is optional
   if (labels) {
-    const yTrueCls = _.flowRight(x => _.sortBy(x, y => y), x => _.uniq(x))(
-      y_true
-    );
+    const yTrueCls = _.flowRight((x) => _.sortBy(x, (y) => y), (x) => _.uniq(x))(y_true);
 
-    const yPredCls = _.flowRight(x => _.sortBy(x, y => y), x => _.uniq(x))(
-      y_pred
-    );
+    const yPredCls = _.flowRight((x) => _.sortBy(x, (y) => y), (x) => _.uniq(x))(y_pred);
 
-    const sortedLabels = _.sortBy(labels, x => x);
-    if (
-      !_.isEqual(sortedLabels, yTrueCls) ||
-      !_.isEqual(sortedLabels, yPredCls)
-    ) {
+    const sortedLabels = _.sortBy(labels, (x) => x);
+    if (!_.isEqual(sortedLabels, yTrueCls) || !_.isEqual(sortedLabels, yPredCls)) {
       throw new Error('Labels must match the classes');
     }
   }
@@ -100,18 +93,18 @@ export function accuracyScore(
   y_true: Type1DMatrix<number | string> = null,
   y_pred: Type1DMatrix<number | string> = null,
   {
-    normalize = true
+    normalize = true,
   }: // sample_weight = null
   {
     normalize: boolean;
   } = {
-    normalize: true
-  }
+    normalize: true,
+  },
 ): number {
   validateInitialInputs(y_true, y_pred, null, { multiclass: true });
 
   const yTrueRange = _.range(0, _.size(y_true));
-  const normalised = _.map(yTrueRange, index => {
+  const normalised = _.map(yTrueRange, (index) => {
     const yTrue = y_true[index];
     const yPred = y_pred[index];
     return yTrue === yPred ? 1 : 0;
@@ -119,7 +112,7 @@ export function accuracyScore(
 
   return _weightedSum({
     normalize,
-    sampleScore: normalised
+    sampleScore: normalised,
   });
 }
 
@@ -150,12 +143,12 @@ export function zeroOneLoss(
     /**
      * If False, return the number of misclassifications. Otherwise, return the fraction of misclassifications.
      */
-    normalize = true
+    normalize = true,
   }: {
     normalize: boolean;
   } = {
-    normalize: true
-  }
+    normalize: true,
+  },
 ): number {
   if (normalize) {
     return 1 - accuracyScore(y_true, y_pred);
@@ -196,19 +189,19 @@ export function confusion_matrix(
      * select a subset of labels. If none is given, those that appear
      * at least once in y_true or y_pred are used in sorted order.
      */
-    labels = null
+    labels = null,
   }: {
     labels?: any[];
   } = {
-    labels: null
-  }
+    labels: null,
+  },
 ): number[] {
   validateInitialInputs(y_true, y_pred, labels);
 
   // TODO: Sorting if set by options
   // TODO: classes should be based on yTrue
-  const yTrueCls = _.uniqBy(y_true, x => x);
-  const yPredCls = _.uniqBy(y_pred, x => x);
+  const yTrueCls = _.uniqBy(y_true, (x) => x);
+  const yPredCls = _.uniqBy(y_pred, (x) => x);
 
   // TODO: Issue was raisen to fix the typing: https://github.com/josdejong/mathjs/issues/1150
   const yTrueSize = _.size(yTrueCls);
@@ -219,10 +212,10 @@ export function confusion_matrix(
   // Calculating the confusion matrix
   // Looping the index for y_true
   const rowRange = _.range(0, _.size(placeholder));
-  _.forEach(rowRange, rowIndex => {
+  _.forEach(rowRange, (rowIndex) => {
     // Looping the index for y_pred
     const colRange = _.range(0, _.size(placeholder[rowIndex]));
-    _.forEach(colRange, colIndex => {
+    _.forEach(colRange, (colIndex) => {
       // Get current target y true and y pred
       const yTargetTrueVal = yTrueCls[rowIndex];
       const yTargetPredVal = yPredCls[colIndex];
@@ -235,15 +228,12 @@ export function confusion_matrix(
           const trueVal = y_true[n];
           const predVal = y_pred[n];
 
-          if (
-            _.isEqual(trueVal, yTargetTrueVal) &&
-            _.isEqual(predVal, yTargetPredVal)
-          ) {
+          if (_.isEqual(trueVal, yTargetTrueVal) && _.isEqual(predVal, yTargetPredVal)) {
             return sum + 1;
           }
           return sum;
         },
-        0
+        0,
       );
 
       // Recording the score

@@ -1,20 +1,9 @@
-import {
-  SGDClassifier,
-  SGDRegressor,
-  TypeLoss
-} from '../../src/lib/linear_model';
+import { SGDClassifier, SGDRegressor, TypeLoss } from '../../src/lib/linear_model';
 import { accuracyScore } from '../../src/lib/metrics';
 import { getIris } from '../data_testing';
-import {
-  validate1DMatrixErrorMessage,
-  validate2DMatrixErrorMessage
-} from '../Errors';
+import { validate1DMatrixErrorMessage, validate2DMatrixErrorMessage } from '../Errors';
 import { assertArrayAlmostEqual } from '../util_testing';
-import {
-  reg_l12_snap,
-  reg_l1_snap,
-  reg_l2_snap
-} from './__snapshots__/manual_sgd_regressor.snap';
+import { reg_l12_snap, reg_l1_snap, reg_l2_snap } from './__snapshots__/manual_sgd_regressor.snap';
 
 const X1 = [[0, 0], [1, 1]];
 const y1 = [0, 1];
@@ -26,7 +15,7 @@ describe('linear_model:SGDClassifier', () => {
 
     const clf = new SGDClassifier({
       epochs: 10000,
-      learning_rate: 0.000001
+      learning_rate: 0.000001,
     });
     clf.fit(xTrain, yTrain);
     const result = clf.predict(xTest);
@@ -39,7 +28,7 @@ describe('linear_model:SGDClassifier', () => {
     const clf_l1 = new SGDClassifier({
       epochs: 10000,
       learning_rate: 0.000001,
-      loss: TypeLoss.L1
+      loss: TypeLoss.L1,
     });
     clf_l1.fit(xTrain, yTrain);
     const result = clf_l1.predict(xTest);
@@ -49,7 +38,7 @@ describe('linear_model:SGDClassifier', () => {
     const clf_l1l2 = new SGDClassifier({
       epochs: 10000,
       learning_rate: 0.000001,
-      loss: TypeLoss.L1L2
+      loss: TypeLoss.L1L2,
     });
     clf_l1l2.fit(xTrain, yTrain);
     const result2 = clf_l1l2.predict(xTest);
@@ -66,7 +55,7 @@ describe('linear_model:SGDClassifier', () => {
 
     const clf = new SGDClassifier({
       epochs: 10000,
-      learning_rate: 0.000001
+      learning_rate: 0.000001,
     });
     clf.fit(xTrain, yTrain);
     const result = clf.predict(xTest);
@@ -96,7 +85,7 @@ describe('linear_model:SGDClassifier', () => {
     const clf = new SGDClassifier({
       epochs: 10000,
       learning_rate: 0.000001,
-      random_state: 123
+      random_state: 123,
     });
 
     clf.fit(xTrain, yTrain);
@@ -143,7 +132,7 @@ describe('linear_model:SGDRegressor', () => {
     const { xTest, xTrain, yTrain } = await getIris();
     const reg_l1 = new SGDRegressor({
       epochs: 10000,
-      loss: TypeLoss.L1
+      loss: TypeLoss.L1,
     });
     reg_l1.fit(xTrain, yTrain);
     const result = reg_l1.predict(xTest);
@@ -152,7 +141,7 @@ describe('linear_model:SGDRegressor', () => {
 
     const reg_l1l2 = new SGDRegressor({
       epochs: 10000,
-      loss: TypeLoss.L1L2
+      loss: TypeLoss.L1L2,
     });
     reg_l1l2.fit(xTrain, yTrain);
     const result2 = reg_l1l2.predict(xTest);
@@ -186,7 +175,7 @@ describe('linear_model:SGDRegressor', () => {
     const { xTest, xTrain, yTrain } = await getIris();
 
     const reg = new SGDRegressor({
-      random_state: 123
+      random_state: 123,
     });
     reg.fit(xTrain, yTrain);
     const result = reg.predict(xTest);
@@ -205,9 +194,7 @@ describe('linear_model:SGDRegressor', () => {
     // y
     expect(() => clf.fit(X1, null)).toThrowError(validate1DMatrixErrorMessage);
     expect(() => clf.fit(X1, 1)).toThrowError(validate1DMatrixErrorMessage);
-    expect(() => clf.fit(X1, 'test')).toThrowError(
-      validate1DMatrixErrorMessage
-    );
+    expect(() => clf.fit(X1, 'test')).toThrowError(validate1DMatrixErrorMessage);
   });
 
   it('Should throw exceptions on predict with invalid inputs', () => {

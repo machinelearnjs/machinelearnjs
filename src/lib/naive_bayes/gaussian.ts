@@ -21,8 +21,7 @@ const SQRT_2PI = Math.sqrt(Math.PI * 2);
  * nb.predict({ X: [[1, 20]] }); // returns [ 1 ]
  *
  */
-export class GaussianNB<T extends number | string = number>
-  implements IMlModel<T> {
+export class GaussianNB<T extends number | string = number> implements IMlModel<T> {
   private classCategories: T[];
   private mean: tf.Tensor2D;
   private variance: tf.Tensor2D;
@@ -54,7 +53,7 @@ export class GaussianNB<T extends number | string = number>
   public fromJSON({
     classCategories = null,
     mean = null,
-    variance = null
+    variance = null,
   }: {
     /**
      * List of class categories
@@ -93,13 +92,8 @@ export class GaussianNB<T extends number | string = number>
   } {
     return {
       classCategories: this.classCategories,
-      mean: reshape([...this.mean.dataSync()], this.mean.shape) as Type2DMatrix<
-        number
-      >,
-      variance: reshape(
-        [...this.variance.dataSync()],
-        this.variance.shape
-      ) as Type2DMatrix<number>
+      mean: reshape([...this.mean.dataSync()], this.mean.shape) as Type2DMatrix<number>,
+      variance: reshape([...this.variance.dataSync()], this.variance.shape) as Type2DMatrix<number>,
     };
   }
 
@@ -117,9 +111,7 @@ export class GaussianNB<T extends number | string = number>
     const summaryLength = this.mean.shape[1];
     if (numFeatures !== summaryLength) {
       throw new Error(
-        `Prediction input ${
-          matrixX.shape[0]
-        } length must be equal or less than summary length ${summaryLength}`
+        `Prediction input ${matrixX.shape[0]} length must be equal or less than summary length ${summaryLength}`,
       );
     }
 
@@ -128,9 +120,7 @@ export class GaussianNB<T extends number | string = number>
       .pow(tf.scalar(2))
       .mul(tf.scalar(-1));
 
-    const exponent: tf.Tensor = meanValPow
-      .div(this.variance.mul(tf.scalar(2)))
-      .exp() as tf.Tensor;
+    const exponent: tf.Tensor = meanValPow.div(this.variance.mul(tf.scalar(2))).exp() as tf.Tensor;
     const innerDiv: tf.Tensor = tf.scalar(SQRT_2PI).mul(this.variance.sqrt());
     const probabilityArray: tf.Tensor = tf
       .scalar(1)
@@ -154,7 +144,7 @@ export class GaussianNB<T extends number | string = number>
    */
   private fitModel(
     X: Type2DMatrix<number>,
-    y: Type1DMatrix<T>
+    y: Type1DMatrix<T>,
   ): {
     classCategories: T[];
     mean: tf.Tensor2D;
@@ -165,31 +155,24 @@ export class GaussianNB<T extends number | string = number>
     // Separates X by classes specified by y argument
     const separatedByCategory: {
       [key: string]: Type2DMatrix<number>;
-    } = zip<ReadonlyArray<number>, T>(X, y).reduce(
-      (groups, [row, category]) => {
-        groups[category.toString()] = groups[category.toString()] || [];
-        groups[category.toString()].push(row);
-        return groups;
-      },
-      {}
-    );
+    } = zip<ReadonlyArray<number>, T>(X, y).reduce((groups, [row, category]) => {
+      groups[category.toString()] = groups[category.toString()] || [];
+      groups[category.toString()].push(row);
+      return groups;
+    }, {});
 
     const momentStack = classCategories.map((category: T) => {
       const classFeatures: tf.Tensor = tf.tensor2d(
         separatedByCategory[category.toString()] as number[][],
         null,
-        'float32'
+        'float32',
       ) as tf.Tensor;
       return tf.moments(classFeatures, [0]);
     });
 
     // For every class we have a mean and variance for each feature
-    const mean: tf.Tensor2D = tf.stack(
-      momentStack.map(m => m.mean)
-    ) as tf.Tensor2D;
-    const variance: tf.Tensor2D = tf.stack(
-      momentStack.map(m => m.variance)
-    ) as tf.Tensor2D;
+    const mean: tf.Tensor2D = tf.stack(momentStack.map((m) => m.mean)) as tf.Tensor2D;
+    const variance: tf.Tensor2D = tf.stack(momentStack.map((m) => m.variance)) as tf.Tensor2D;
 
     // TODO check for NaN or 0 variance
     // setTimeout(() => {
@@ -201,7 +184,7 @@ export class GaussianNB<T extends number | string = number>
     return {
       classCategories,
       mean,
-      variance
+      variance,
     };
   }
 }

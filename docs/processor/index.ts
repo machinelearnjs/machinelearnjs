@@ -9,12 +9,8 @@ import { ExampleProcessor } from './ExampleProcessor';
 import { PagesProcessor } from './PagesProcessor';
 import { RedirectProcessor } from './RedirectProcessor';
 
-const docsJson = JSON.parse(
-  fs.readFileSync(path.join(__dirname, '../docs.json'), 'utf8')
-);
-const pjson = JSON.parse(
-  fs.readFileSync(path.join(__dirname, '../../package.json'), 'utf8')
-);
+const docsJson = JSON.parse(fs.readFileSync(path.join(__dirname, '../docs.json'), 'utf8'));
+const pjson = JSON.parse(fs.readFileSync(path.join(__dirname, '../../package.json'), 'utf8'));
 
 /**
  * check equality of x and y.
@@ -38,19 +34,14 @@ export function ifEquals(children, x, y, options): any {
  */
 export function filterByKind(children, options, kind): any {
   if (children) {
-    const filtered = children.filter(child => {
+    const filtered = children.filter((child) => {
       return child.kindString === kind;
     });
     // Filtering by isProtected = true and any constructors (we always want to display constructors
-    const publicFiltered = filtered.filter(filteredChild => {
-      return (
-        filteredChild.flags.isPublic ||
-        filteredChild.kindString === consts.kindStringConst
-      );
+    const publicFiltered = filtered.filter((filteredChild) => {
+      return filteredChild.flags.isPublic || filteredChild.kindString === consts.kindStringConst;
     });
-    return _.isEmpty(publicFiltered)
-      ? options.inverse(children)
-      : options.fn(publicFiltered);
+    return _.isEmpty(publicFiltered) ? options.inverse(children) : options.fn(publicFiltered);
   } else {
     return options.inverse(children);
   }
@@ -68,12 +59,10 @@ export function filterByKind(children, options, kind): any {
  */
 export function filterByTag(children, options, tag): any {
   if (children) {
-    const filtered = children.filter(child => {
+    const filtered = children.filter((child) => {
       return child.tag === tag;
     });
-    return _.isEmpty(filtered)
-      ? options.inverse(children)
-      : options.fn(filtered);
+    return _.isEmpty(filtered) ? options.inverse(children) : options.fn(filtered);
   } else {
     return options.inverse(children);
   }
@@ -87,8 +76,8 @@ export function filterByTag(children, options, tag): any {
  */
 export function searchInterface(docs, id): any {
   let candidate = null;
-  _.forEach(docs.children, module => {
-    _.forEach(module.children, entity => {
+  _.forEach(docs.children, (module) => {
+    _.forEach(module.children, (entity) => {
       if (entity.id === id) {
         candidate = entity;
       }
@@ -150,10 +139,7 @@ export function traverseArrayDefinition(arrayTree, result = ''): string {
  * @param dim
  * @param types
  */
-export function constructMatrixType(
-  dim: string,
-  types: [{ type: string; name: string }]
-): string {
+export function constructMatrixType(dim: string, types: [{ type: string; name: string }]): string {
   if (dim === null || dim === undefined) {
     throw new TypeError('dim should not be null or undefined');
   }
@@ -174,7 +160,7 @@ export function constructMatrixType(
     brackets = '[][][][]';
   }
 
-  types.forEach(type => {
+  types.forEach((type) => {
     buffer.push(`${type.name}${brackets}`);
   });
 
@@ -219,13 +205,13 @@ export function constructParamTable(parameters): string {
    * @param text
    * @returns {string}
    */
-  const cleanTableText = text => {
+  const cleanTableText = (text) => {
     const blacklistCleaned = _.reduce(
       paramTableCharsBlackList,
       (result, rmChar) => {
         return _.replace(result, rmChar, '');
       },
-      text
+      text,
     );
     return _.trim(blacklistCleaned);
   };
@@ -234,7 +220,7 @@ export function constructParamTable(parameters): string {
    * Transforms param types, for example number[] or number[][]
    * @param obj
    */
-  const renderParamType = obj => {
+  const renderParamType = (obj) => {
     if (obj.type === consts.paramTypeArray) {
       // Handling arrays
       return traverseArrayDefinition(obj);
@@ -250,39 +236,26 @@ export function constructParamTable(parameters): string {
    * @param sum
    * @param typeId
    */
-  const buildParamsFromReference = (
-    param,
-    sum,
-    typeId,
-    preprend = 'options'
-  ) => {
+  const buildParamsFromReference = (param, sum, typeId, preprend = 'options') => {
     const foundRef = searchInterface(docsJson, typeId);
     // console.log(foundRef);
     if (_.isEmpty(foundRef)) {
       // Handling the TS native references
-      _.forEach(param.type.typeArguments, prop => {
+      _.forEach(param.type.typeArguments, (prop) => {
         // Building a readable type arguments
         let args: string;
         if (_.isArray(prop.typeArguments)) {
           args = prop.typeArguments.map(renderParamType).join(' | ');
         } else if (prop.constraint) {
-          args =
-            prop.constraint.type +
-            ' ' +
-            prop.constraint.types.map(renderParamType).join(' | ');
+          args = prop.constraint.type + ' ' + prop.constraint.types.map(renderParamType).join(' | ');
         } else {
           args = prop.type;
         }
         sum.push([`${param.name}`, args, prop.defaultValue, getText(prop)]);
       });
     } else if (foundRef.kindString === consts.refKindInterface) {
-      _.forEach(foundRef.children, prop => {
-        sum.push([
-          `${param.name}.${prop.name}`,
-          renderParamType(prop.type),
-          prop.defaultValue,
-          getText(prop)
-        ]);
+      _.forEach(foundRef.children, (prop) => {
+        sum.push([`${param.name}.${prop.name}`, renderParamType(prop.type), prop.defaultValue, getText(prop)]);
       });
     } else if (foundRef.kindString === consts.refKindTypeAlias) {
       // Handling a custom `type` such as Type2DMatrix or Type3DMatrix
@@ -308,19 +281,14 @@ export function constructParamTable(parameters): string {
             typeList.push('unknown');
           }
         }
-        sum.push([
-          param.name,
-          typeList.join(' or '),
-          param.defaultValue,
-          getText(param)
-        ]);
+        sum.push([param.name, typeList.join(' or '), param.defaultValue, getText(param)]);
       }
     } else if (foundRef.kindString === consts.kindStringEnum) {
       sum.push([
         `${preprend}.${param.name}`,
-        foundRef.children.map(x => x.name).join(' or '),
+        foundRef.children.map((x) => x.name).join(' or '),
         param.defaultValue,
-        getText(param)
+        getText(param),
       ]);
     }
   };
@@ -335,7 +303,7 @@ export function constructParamTable(parameters): string {
       if (consts.paramTypeReflection === paramType) {
         // 1. Handle reflection/named param
         // e.g. x: { test1, test2 }
-        _.forEach(param.type.declaration.children, namedParam => {
+        _.forEach(param.type.declaration.children, (namedParam) => {
           // const foundRef = searchInterface(docsJson, namedParam.type.id);
           // console.log('param type type', namedParam.type.name, namedParam.type.type);
           if (consts.paramTypeReference === namedParam.type.type) {
@@ -346,7 +314,7 @@ export function constructParamTable(parameters): string {
               `options.${namedParam.name}`,
               renderParamType(namedParam.type),
               namedParam.defaultValue,
-              getText(namedParam)
+              getText(namedParam),
             ]);
           }
           // buildParamsFromReference(param, sum, namedParam.type.id);
@@ -354,21 +322,11 @@ export function constructParamTable(parameters): string {
       } else if (consts.paramTypeIntrinsic === paramType) {
         //  2. Handle any intrintic params
         // e.g. x: number
-        sum.push([
-          param.name,
-          renderParamType(param.type),
-          param.defaultValue,
-          getText(param)
-        ]);
+        sum.push([param.name, renderParamType(param.type), param.defaultValue, getText(param)]);
       } else if (consts.paramTypeArray === paramType) {
         // 3. Handle any array params
         // e.g. string[]
-        sum.push([
-          param.name,
-          renderParamType(param.type),
-          param.defaultValue,
-          getText(param)
-        ]);
+        sum.push([param.name, renderParamType(param.type), param.defaultValue, getText(param)]);
       } else if (consts.paramTypeReference === paramType) {
         // 4.1. Handle any TS native references -> determined by _.isEmpty(foundRef)
         // e.g. x: IterableIterator
@@ -378,26 +336,18 @@ export function constructParamTable(parameters): string {
       } else if (consts.paramTypeUnion === paramType) {
         // 5. Handles any union types.
         // e.g. string[] | string[][]
-        const unionTypes = _.map(param.type.types, singleType => {
+        const unionTypes = _.map(param.type.types, (singleType) => {
           if (singleType.type === consts.paramTypeReference) {
-            return constructMatrixType(
-              singleType.name,
-              singleType.typeArguments
-            );
+            return constructMatrixType(singleType.name, singleType.typeArguments);
           }
           return renderParamType(singleType);
         });
         const unionTypesStr = unionTypes.join(' or ');
-        sum.push([
-          param.name,
-          unionTypesStr,
-          param.defaultValue,
-          getText(param)
-        ]);
+        sum.push([param.name, unionTypesStr, param.defaultValue, getText(param)]);
       }
       return sum;
     },
-    []
+    [],
   );
   // flatten any [ [ [] ] ] 3rd layer arrays
   const tableHeader = '| Param | Type | Default | Description |\n';
@@ -436,9 +386,7 @@ function constructReturnTable(typeArgument): string {
       // If it's a simple type, such as string, number and etc
       table += `| ${child.name} | ${child.type.name} | ${getText(child)}\n`;
     } else if (type === consts.returnTypeArray) {
-      table += `| ${child.name} | ${traverseArrayDefinition(
-        child.type
-      )} | ${getText(child)}\n`;
+      table += `| ${child.name} | ${traverseArrayDefinition(child.type)} | ${getText(child)}\n`;
     }
   }
   return table;
@@ -461,12 +409,9 @@ export function renderMethodReturnType(type): any {
   } else if (type.type === consts.returnTypeReflection) {
     // Handles object return type
     return constructReturnTable(type);
-  } else if (
-    type.type === consts.returnTypeReference &&
-    type.name === consts.returnNamePromise
-  ) {
+  } else if (type.type === consts.returnTypeReference && type.name === consts.returnNamePromise) {
     // Handles return type that returns a complex object
-    const returnTypes = type.typeArguments.map(typeArg => {
+    const returnTypes = type.typeArguments.map((typeArg) => {
       let result;
       if (typeArg.type === consts.returnTypeIntrinsic) {
         // Simply return name if it's an intrinsic type
@@ -490,7 +435,7 @@ export function renderMethodReturnType(type): any {
  * @returns {string}
  */
 export function renderMethodBracket(parameters): string {
-  const params = _.map(parameters, param => {
+  const params = _.map(parameters, (param) => {
     const paramType = _.isString(param.type) ? param.type : 'object';
     return `${param.name}: *\`${paramType}\`*`;
   });
@@ -507,10 +452,8 @@ export function renderSourceLink(sources): string {
   if (_.isEmpty(sources)) {
     throw new TypeError('Sources cannot be empty');
   }
-  const defined = _.map(sources, src => {
-    return `[${src.fileName}:${src.line}](${
-      pjson.repository.url
-    }/blob/master/src/lib/${src.fileName}#L${src.line})`;
+  const defined = _.map(sources, (src) => {
+    return `[${src.fileName}:${src.line}](${pjson.repository.url}/blob/master/src/lib/${src.fileName}#L${src.line})`;
   });
   return defined.join(',');
 }
@@ -540,49 +483,37 @@ export function cleanHyperLink(str: string): string {
   return newStr.toLowerCase();
 }
 
-Handlebars.registerHelper('ifEquals', (children, x, y, options) =>
-  ifEquals(children, x, y, options)
-);
+Handlebars.registerHelper('ifEquals', (children, x, y, options) => ifEquals(children, x, y, options));
 
-Handlebars.registerHelper('isSignatureValid', (context, options) =>
-  isSignatureValid(context, options)
-);
+Handlebars.registerHelper('isSignatureValid', (context, options) => isSignatureValid(context, options));
 
 Handlebars.registerHelper('filterConstructor', (children, options) =>
-  filterByKind(children, options, consts.kindStringConst)
+  filterByKind(children, options, consts.kindStringConst),
 );
 
 Handlebars.registerHelper('filterMethod', (children, options) =>
-  filterByKind(children, options, consts.kindStringMethod)
+  filterByKind(children, options, consts.kindStringMethod),
 );
 
 Handlebars.registerHelper('filterProperty', (children, options) =>
-  filterByKind(children, options, consts.kindStringProperty)
+  filterByKind(children, options, consts.kindStringProperty),
 );
 
 Handlebars.registerHelper('filterTagExample', (children, options) =>
-  filterByTag(children, options, consts.tagTypeExample)
+  filterByTag(children, options, consts.tagTypeExample),
 );
 
-Handlebars.registerHelper('constructParamTable', parameters =>
-  constructParamTable(parameters)
-);
+Handlebars.registerHelper('constructParamTable', (parameters) => constructParamTable(parameters));
 
-Handlebars.registerHelper('renderMethodReturnType', type =>
-  renderMethodReturnType(type)
-);
+Handlebars.registerHelper('renderMethodReturnType', (type) => renderMethodReturnType(type));
 
-Handlebars.registerHelper('methodBracket', parameters =>
-  renderMethodBracket(parameters)
-);
+Handlebars.registerHelper('methodBracket', (parameters) => renderMethodBracket(parameters));
 
-Handlebars.registerHelper('getSourceLink', sources =>
-  renderSourceLink(sources)
-);
+Handlebars.registerHelper('getSourceLink', (sources) => renderSourceLink(sources));
 
 Handlebars.registerHelper('newLine', renderNewLine);
 
-Handlebars.registerHelper('cleanHyperLink', str => cleanHyperLink(str));
+Handlebars.registerHelper('cleanHyperLink', (str) => cleanHyperLink(str));
 
 // Processors
 const apiProcessor = new APIProcessor();

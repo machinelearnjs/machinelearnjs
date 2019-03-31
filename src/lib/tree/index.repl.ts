@@ -7,13 +7,7 @@ import { Iris } from '../datasets';
   const features = ['color', 'diameter', 'label'];
   const decision = new DecisionTreeClassifier({ featureLabels: features });
 
-  const X = [
-    ['Green', 3],
-    ['Yellow', 3],
-    ['Red', 1],
-    ['Red', 1],
-    ['Yellow', 3]
-  ];
+  const X = [['Green', 3], ['Yellow', 3], ['Red', 1], ['Red', 1], ['Yellow', 3]];
 
   const y = ['Apple', 'Apple', 'Grape', 'Grape', 'Lemon'];
   decision.fit(X, y);

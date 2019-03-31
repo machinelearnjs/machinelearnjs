@@ -4,7 +4,7 @@ import {
   validateFitInputs,
   validateMatrix1D,
   validateMatrix2D,
-  validateMatrixType
+  validateMatrixType,
 } from '../../src/lib/utils/validation';
 import { matchExceptionWithSnapshot } from '../util_testing';
 
@@ -58,14 +58,12 @@ describe('MatrixValidations', () => {
 
     it('should throw an error if the train input X is 3D', () => {
       expect(() => validateFitInputs(X2, y2)).toThrow(
-        'The matrix is not 2D shaped: [[[1,2],[3,4],[5,6]],[[1,2],[3,4],[5,6]]] of [2,3,2]'
+        'The matrix is not 2D shaped: [[[1,2],[3,4],[5,6]],[[1,2],[3,4],[5,6]]] of [2,3,2]',
       );
     });
 
     it('should throw an error if train input y is 2D', () => {
-      expect(() => validateFitInputs(X1, X1)).toThrow(
-        'The matrix is not 1D shaped: [[1,2],[3,4],[5,6]] of [3,2]'
-      );
+      expect(() => validateFitInputs(X1, X1)).toThrow('The matrix is not 1D shaped: [[1,2],[3,4],[5,6]] of [3,2]');
     });
 
     it('should validate Iris dataset', () => {
@@ -112,17 +110,11 @@ describe('MatrixValidations', () => {
       validateMatrixType([[['1', '2']], [['3', '4']]], ['string']);
       // Complex type
       validateMatrixType([[['1', 1]], [['3', 4]]], ['string', 'number']);
-      validateMatrixType(
-        [[['1', 1]], [['3', true]]],
-        ['string', 'number', 'boolean']
-      );
+      validateMatrixType([[['1', 1]], [['3', true]]], ['string', 'number', 'boolean']);
     });
     it('should not validate', () => {
       matchExceptionWithSnapshot(validateMatrixType, [[1, 2, 3], ['string']]);
-      matchExceptionWithSnapshot(validateMatrixType, [
-        ['1', '2', '3', '4'],
-        ['boolean']
-      ]);
+      matchExceptionWithSnapshot(validateMatrixType, [['1', '2', '3', '4'], ['boolean']]);
     });
   });
 });

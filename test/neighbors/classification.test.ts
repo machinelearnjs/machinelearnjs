@@ -43,7 +43,7 @@ describe('classification:KNeighborsClassifier', () => {
   it('should predict [ 1, 0, 1 ] for [ [1, 2, 4], [0], [9, 5] ] against the sample 1', () => {
     const knn = new KNeighborsClassifier();
     expect(() => knn.predict([[1, 2, 4], [0], [9, 5]])).toThrow(
-      'Element arr[1] should have 3 elements, but has 1 elements'
+      'Element arr[1] should have 3 elements, but has 1 elements',
     );
   });
 

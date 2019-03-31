@@ -53,10 +53,7 @@ export class KFold {
    * @param y - The target variable for supervised learning problems.
    * @returns {any[]}
    */
-  public split(
-    X: Type1DMatrix<any> = null,
-    y: Type1DMatrix<any> = null
-  ): any[] {
+  public split(X: Type1DMatrix<any> = null, y: Type1DMatrix<any> = null): any[] {
     const xShape = inferShape(X);
     const yShape = inferShape(y);
     if (xShape.length > 0 && yShape.length > 0 && xShape[0] !== yShape[0]) {
@@ -64,11 +61,7 @@ export class KFold {
     }
 
     if (this.k > X.length || this.k > y.length) {
-      throw Error(
-        `Cannot have number of splits k=${
-          this.k
-        } greater than the number of samples: ${_.size(X)}`
-      );
+      throw Error(`Cannot have number of splits k=${this.k} greater than the number of samples: ${_.size(X)}`);
     }
 
     const binSize = _.floor(_.size(X) / this.k);
@@ -78,27 +71,21 @@ export class KFold {
       splitRange,
       (sum, index) => {
         // Calculate binSizeRange according to k value. e.g. 0 -> [0,1]. 1 -> [2, 3].
-        const binSizeRange = _.range(
-          index * binSize,
-          index * binSize + binSize
-        );
+        const binSizeRange = _.range(index * binSize, index * binSize + binSize);
         // X index range used for test set. It can either be shuffled e.g. [ 2, 0, 1 ] or raw value [ 0, 1, 2 ]
-        const testXRange = _.flowRight(
-          x => (this.shuffle ? _.shuffle(x) : x),
-          () => _.clone(xRange)
-        )();
+        const testXRange = _.flowRight((x) => (this.shuffle ? _.shuffle(x) : x), () => _.clone(xRange))();
         // Getting testIndex according to binSizeRange from testXRange
         const testIndex = _.reduce(
           binSizeRange,
           (xIndeces, i) => {
             return _.concat(xIndeces, [testXRange[i]]);
           },
-          []
+          [],
         );
         const trainIndex = _.pullAll(_.clone(xRange), testIndex);
         return _.concat(sum, [{ trainIndex, testIndex }]);
       },
-      []
+      [],
     );
   }
 }
@@ -140,7 +127,7 @@ export function train_test_split(
     test_size = 0.25,
     train_size = 0.75,
     random_state = 0,
-    clone = true
+    clone = true,
   }: {
     // Param types
     test_size?: number;
@@ -152,8 +139,8 @@ export function train_test_split(
     test_size: 0.25,
     train_size: 0.75,
     random_state: 0,
-    clone: true
-  }
+    clone: true,
+  },
 ): {
   xTest: any[];
   xTrain: any[];
@@ -210,12 +197,11 @@ export function train_test_split(
   }
 
   // Filter return results
-  const clean = (items: any[]) =>
-    _.filter(items, (item: any) => !_.isUndefined(item));
+  const clean = (items: any[]) => _.filter(items, (item: any) => !_.isUndefined(item));
   return {
     xTest: clean(xTest),
     xTrain: clean(xTrain),
     yTest: clean(yTest),
-    yTrain: clean(yTrain)
+    yTrain: clean(yTrain),
   };
 }

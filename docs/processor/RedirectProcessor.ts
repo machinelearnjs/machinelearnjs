@@ -11,8 +11,6 @@ export class RedirectProcessor extends BaseProcesser {
    */
   public run(): void {
     // 1. redirects
-    fs
-      .createReadStream(this.srcRedirectsPath)
-      .pipe(fs.createWriteStream(this.destRedirectsPath));
+    fs.createReadStream(this.srcRedirectsPath).pipe(fs.createWriteStream(this.destRedirectsPath));
   }
 }

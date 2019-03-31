@@ -80,7 +80,7 @@ export class PCA implements IMlModel<number> {
   } {
     return {
       components: this.components,
-      explained_variance: this.explained_variance
+      explained_variance: this.explained_variance,
     };
   }
 
@@ -92,14 +92,14 @@ export class PCA implements IMlModel<number> {
   public fromJSON(
     {
       components = null,
-      explained_variance = null
+      explained_variance = null,
     }: {
       components: Type2DMatrix<number>;
       explained_variance: Type2DMatrix<number>;
     } = {
       components: null,
-      explained_variance: null
-    }
+      explained_variance: null,
+    },
   ): void {
     this.components = components;
     this.explained_variance = explained_variance;

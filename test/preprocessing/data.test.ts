@@ -6,18 +6,17 @@ import {
   MinMaxScaler,
   normalize,
   OneHotEncoder,
-  PolynomialFeatures
+  PolynomialFeatures,
 } from '../../src/lib/preprocessing';
 import {
   matrixEmptyErrorMessage,
   tensorCreationErrorMessage,
   validate1DMatrixErrorMessage,
-  validate2DMatrixErrorMessage
+  validate2DMatrixErrorMessage,
 } from '../Errors';
 
 // Constant error messages
-const tensorErr =
-  'values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray';
+const tensorErr = 'values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray';
 
 describe('data:add_dummy_feature', () => {
   const X1 = [[0, 1], [1, 0]];
@@ -45,9 +44,7 @@ describe('data:add_dummy_feature', () => {
     expect(() => add_dummy_feature(true)).toThrow(validate2DMatrixErrorMessage);
     expect(() => add_dummy_feature(1)).toThrow(validate2DMatrixErrorMessage);
     expect(() => add_dummy_feature(null)).toThrow(validate2DMatrixErrorMessage);
-    expect(() => add_dummy_feature(undefined)).toThrow(
-      validate2DMatrixErrorMessage
-    );
+    expect(() => add_dummy_feature(undefined)).toThrow(validate2DMatrixErrorMessage);
   });
 });
 
@@ -56,7 +53,7 @@ describe('data:OneHotEncoder', () => {
   const planetList = [
     { planet: 'mars', isGasGiant: false, value: 10 },
     { planet: 'saturn', isGasGiant: true, value: 20 },
-    { planet: 'jupiter', isGasGiant: true, value: 30 }
+    { planet: 'jupiter', isGasGiant: true, value: 30 },
   ];
 
   it('should encode planet list correctly', () => {
@@ -65,7 +62,7 @@ describe('data:OneHotEncoder', () => {
     const expectedEncode = [[-1, 0, 1, 0, 0], [0, 1, 0, 1, 0], [1, 1, 0, 0, 1]];
     const encodeInfo = enc.encode(planetList, {
       dataKeys: ['value', 'isGasGiant'],
-      labelKeys: ['planet']
+      labelKeys: ['planet'],
     });
     expect(encodeInfo.data).toEqual(expectedEncode);
   });
@@ -75,7 +72,7 @@ describe('data:OneHotEncoder', () => {
 
     const encodeInfo = enc.encode(planetList, {
       dataKeys: ['value', 'isGasGiant'],
-      labelKeys: ['planet']
+      labelKeys: ['planet'],
     });
     const decodedInfo = enc.decode(encodeInfo.data, encodeInfo.decoders);
     expect(planetList).toEqual(decodedInfo);
@@ -86,7 +83,7 @@ describe('data:OneHotEncoder', () => {
     expect(() => {
       enc.encode(planetList, {
         dataKeys: ['values'],
-        labelKeys: ['planet']
+        labelKeys: ['planet'],
       });
     }).toThrow('Cannot find values from data');
   });
@@ -96,7 +93,7 @@ describe('data:OneHotEncoder', () => {
     expect(() => {
       enc.encode(planetList, {
         dataKeys: ['value'],
-        labelKeys: ['planot']
+        labelKeys: ['planot'],
       });
     }).toThrow('Cannot find planot from labels');
   });
@@ -108,7 +105,7 @@ describe('data:MinMaxScaler', () => {
     [6.3, 0.3, 0.34, 1.6, 0.049, 14, 132, 0.994, 3.3, 0.49, 9.5],
     [8.1, 0.28, 0.4, 6.9, 0.05, 30, 97, 0.9951, 3.26, 0.44, 10.1],
     [7.2, 0.23, 0.32, 8.5, 0.058, 47, 186, 0.9956, 3.19, 0.4, 9.9],
-    [7.2, 0.23, 0.32, 8.5, 0.058, 47, 186, 0.9956, 3.19, 0.4, 9.9]
+    [7.2, 0.23, 0.32, 8.5, 0.058, 47, 186, 0.9956, 3.19, 0.4, 9.9],
   ];
   it('should feature range [0, 1] of [4, 5, 6] return [0, 0.5, 1]', () => {
     const expectedResult = [0, 0.5, 1];
@@ -135,22 +132,14 @@ describe('data:MinMaxScaler', () => {
     expect(_.isEqual(expectedResult, result)).toBe(true);
   });
   it('matrix dataset test1', () => {
-    const expected = [
-      0.005135651088817423,
-      0.01051329621806706,
-      0.015890941347316695
-    ];
+    const expected = [0.005135651088817423, 0.01051329621806706, 0.015890941347316695];
     const scaler = new MinMaxScaler({ featureRange: [0, 1] });
     scaler.fit(matrix1);
     const result = scaler.transform([1, 2, 3]);
     expect(result).toEqual(expected);
   });
   it('should transform matrix1 then successfully inverse tranform', () => {
-    const expected = [
-      0.005135651088817423,
-      0.01051329621806706,
-      0.015890941347316695
-    ];
+    const expected = [0.005135651088817423, 0.01051329621806706, 0.015890941347316695];
     const scaler = new MinMaxScaler({ featureRange: [0, 1] });
     scaler.fit(matrix1);
     const data = [1, 2, 3];
@@ -173,15 +162,9 @@ describe('data:MinMaxScaler', () => {
   });
   it('should not inverse_transform invalid inputs', () => {
     const scaler = new MinMaxScaler({ featureRange: [0, 1] });
-    expect(() => scaler.inverse_transform('?')).toThrow(
-      validate1DMatrixErrorMessage
-    );
-    expect(() => scaler.inverse_transform(1)).toThrow(
-      validate1DMatrixErrorMessage
-    );
-    expect(() => scaler.inverse_transform([])).toThrow(
-      'The matrix is not 1D shaped: [] of [0]'
-    );
+    expect(() => scaler.inverse_transform('?')).toThrow(validate1DMatrixErrorMessage);
+    expect(() => scaler.inverse_transform(1)).toThrow(validate1DMatrixErrorMessage);
+    expect(() => scaler.inverse_transform([])).toThrow('The matrix is not 1D shaped: [] of [0]');
   });
 });
 
@@ -214,11 +197,7 @@ describe('data:PolynomialFeatures', () => {
   it('should transform X1 with default degree value', () => {
     const poly = new PolynomialFeatures();
     const result = poly.transform(X1);
-    const expected = [
-      [1, 0, 1, 0, 0, 1],
-      [1, 2, 3, 4, 6, 9],
-      [1, 4, 5, 16, 20, 25]
-    ];
+    const expected = [[1, 0, 1, 0, 0, 1], [1, 2, 3, 4, 6, 9], [1, 4, 5, 16, 20, 25]];
     expect(result).toEqual(expected);
   });
   it('should transform X1 with degree value 3', () => {
@@ -227,7 +206,7 @@ describe('data:PolynomialFeatures', () => {
     const expected = [
       [1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1],
       [1, 2, 3, 4, 6, 9, 8, 12, 12, 18, 18, 27],
-      [1, 4, 5, 16, 20, 25, 64, 80, 80, 100, 100, 125]
+      [1, 4, 5, 16, 20, 25, 64, 80, 80, 100, 100, 125],
     ];
     expect(result).toEqual(expected);
   });
@@ -238,9 +217,7 @@ describe('data:PolynomialFeatures', () => {
     expect(() => poly.transform(null)).toThrow(validate2DMatrixErrorMessage);
     expect(() => poly.transform([])).toThrow('X cannot be empty');
     expect(() => poly.transform(1)).toThrow(validate2DMatrixErrorMessage);
-    expect(() => poly.transform('string')).toThrow(
-      validate2DMatrixErrorMessage
-    );
+    expect(() => poly.transform('string')).toThrow(validate2DMatrixErrorMessage);
   });
   // TODO: Implement matrix data type check in validateMatrixXX and reimplement the test
   /* it('should not transform when matrix with non numberic value is given', () => {
@@ -252,9 +229,7 @@ describe('data:PolynomialFeatures', () => {
   it('should not initiate the class if an invalid degree value is given', () => {
     const expected = 'Degree must be a number';
     expect(() => new PolynomialFeatures({ degree: null })).toThrow(expected);
-    expect(() => new PolynomialFeatures({ degree: 'string' })).toThrow(
-      expected
-    );
+    expect(() => new PolynomialFeatures({ degree: 'string' })).toThrow(expected);
     expect(() => new PolynomialFeatures({ degree: [] })).toThrow(expected);
   });
 });
@@ -265,7 +240,7 @@ describe('data:normalize', () => {
     const expected = [
       [0.4082482904638631, -0.4082482904638631, 0.8164965809277261],
       [1, 0, 0],
-      [0, 0.7071067811865475, -0.7071067811865475]
+      [0, 0.7071067811865475, -0.7071067811865475],
     ];
     const result = normalize(X1, { norm: 'l2' });
     expect(result).toEqual(expected);
@@ -280,12 +255,8 @@ describe('data:normalize', () => {
     expect(() => normalize(X1, { norm: 'test' })).toThrow(expected);
   });
   it('should throw an error if the input is invalid', () => {
-    expect(() => normalize(null, { norm: 'l1' })).toThrow(
-      validate2DMatrixErrorMessage
-    );
+    expect(() => normalize(null, { norm: 'l1' })).toThrow(validate2DMatrixErrorMessage);
     expect(() => normalize([], { norm: 'l1' })).toThrow('X cannot be empty');
-    expect(() => normalize('aisjd', { norm: 'l1' })).toThrow(
-      validate2DMatrixErrorMessage
-    );
+    expect(() => normalize('aisjd', { norm: 'l1' })).toThrow(validate2DMatrixErrorMessage);
   });
 });

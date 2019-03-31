@@ -29,9 +29,7 @@ export class Question {
 
   public toString(): string {
     if (!this.features) {
-      throw Error(
-        'You must provide feature labels in order to render toString!'
-      );
+      throw Error('You must provide feature labels in order to render toString!');
     }
     const condition = typeof this.value === 'number' ? '>=' : '==';
     return `Is ${this.features[this.column]} ${condition} ${this.value}`;
@@ -52,12 +50,12 @@ export function classCounts(targets: any[]): {} {
     if (typeof count === 'number' && count > 0) {
       result[target] = {
         value: target,
-        count: count + 1
+        count: count + 1,
       };
     } else {
       result[target] = {
         value: target,
-        count: 1
+        count: 1,
       };
     }
   }
@@ -139,8 +137,7 @@ export interface Options {
  * decision.fit({ X, y });
  * decision2.predict({ row: [[2, 2]] }); // [ 1 ]
  */
-export class DecisionTreeClassifier
-  implements IMlModel<string | boolean | number> {
+export class DecisionTreeClassifier implements IMlModel<string | boolean | number> {
   private featureLabels = null;
   private tree = null;
   private verbose = true;
@@ -157,7 +154,7 @@ export class DecisionTreeClassifier
     {
       featureLabels = null,
       verbose = false,
-      random_state = null
+      random_state = null,
     }: {
       featureLabels?: any[];
       verbose?: boolean;
@@ -165,8 +162,8 @@ export class DecisionTreeClassifier
     } = {
       featureLabels: null,
       verbose: false,
-      random_state: null
-    }
+      random_state: null,
+    },
   ) {
     this.featureLabels = featureLabels;
     this.verbose = verbose;
@@ -186,7 +183,7 @@ export class DecisionTreeClassifier
    */
   public fit(
     X: Type2DMatrix<string | number | boolean> = null,
-    y: Type1DMatrix<string | number | boolean> = null
+    y: Type1DMatrix<string | number | boolean> = null,
   ): void {
     validateFitInputs(X, y);
     this.tree = this.buildTree({ X, y });
@@ -233,7 +230,7 @@ export class DecisionTreeClassifier
       featureLabels: this.featureLabels,
       tree: this.tree,
       verbose: this.verbose,
-      random_state: this.randomState
+      random_state: this.randomState,
     };
   }
 
@@ -248,7 +245,7 @@ export class DecisionTreeClassifier
     featureLabels = null,
     tree = null,
     verbose = false,
-    random_state = null
+    random_state = null,
   }: {
     featureLabels: string[];
     tree: any;
@@ -282,7 +279,7 @@ export class DecisionTreeClassifier
   private partition(
     X,
     y,
-    question: Question
+    question: Question,
   ): {
     trueX: any[];
     trueY: any[];
@@ -370,7 +367,7 @@ export class DecisionTreeClassifier
 
     for (let i = 0; i < featureIndex.length; i++) {
       const col = featureIndex[i];
-      const uniqFeatureValues = uniqBy(map(X, row => row[col]), x => x);
+      const uniqFeatureValues = uniqBy(map(X, (row) => row[col]), (x) => x);
       for (let j = 0; j < uniqFeatureValues.length; j++) {
         const feature = uniqFeatureValues[j];
         // featureLabels is for the model interoperability

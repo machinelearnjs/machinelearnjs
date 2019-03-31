@@ -19,8 +19,7 @@ const TYPE_KD = 'kdtree';
  * knn.fit(X ,y);
  * console.log(knn.predict([1, 2])); // predicts 1
  */
-export class KNeighborsClassifier<T extends number | string | boolean>
-  implements IMlModel<T> {
+export class KNeighborsClassifier<T extends number | string | boolean> implements IMlModel<T> {
   private type = null;
   private tree = null;
   private k = null;
@@ -37,7 +36,7 @@ export class KNeighborsClassifier<T extends number | string | boolean>
       // Each object param default value
       distance = DIST_EUC,
       k = 0,
-      type = TYPE_KD
+      type = TYPE_KD,
     }: {
       // Param types
       distance: string;
@@ -47,13 +46,13 @@ export class KNeighborsClassifier<T extends number | string | boolean>
       // Default value on empty constructor
       distance: DIST_EUC,
       k: 0,
-      type: TYPE_KD
-    }
+      type: TYPE_KD,
+    },
   ) {
     const options = {
       distance,
       k,
-      type
+      type,
     };
     // Handling distance
     if (options.distance === DIST_EUC) {
@@ -61,9 +60,7 @@ export class KNeighborsClassifier<T extends number | string | boolean>
     } else if (options.distance === DIST_MAN) {
       this.distance = manhattanDistance;
     } else {
-      throw new Error(
-        `Unrecognised type of distance ${options.distance} was received`
-      );
+      throw new Error(`Unrecognised type of distance ${options.distance} was received`);
     }
     this.k = options.k;
     this.type = options.type;
@@ -77,7 +74,7 @@ export class KNeighborsClassifier<T extends number | string | boolean>
   public fit(X: Type2DMatrix<T>, y: Type1DMatrix<T>): void {
     validateFitInputs(X, y);
     // Getting the classes from y
-    const classes = uniqBy(y, c => c);
+    const classes = uniqBy(y, (c) => c);
 
     // Setting k; if it's null, use the class length
     const k = this.k ? this.k : classes.length + 1;
@@ -115,7 +112,7 @@ export class KNeighborsClassifier<T extends number | string | boolean>
       distance: this.distance,
       k: this.k,
       tree: this.tree,
-      type: this.type
+      type: this.type,
     };
   }
 
@@ -127,17 +124,9 @@ export class KNeighborsClassifier<T extends number | string | boolean>
    * @param {any} tree
    * @param {any} type
    */
-  public fromJSON({
-    classes = null,
-    distance = null,
-    k = null,
-    tree = null,
-    type = null
-  }): void {
+  public fromJSON({ classes = null, distance = null, k = null, tree = null, type = null }): void {
     if (!classes || !distance || !k || !tree || !type) {
-      throw new Error(
-        'You must provide classes, distance, k, tree and type to restore the KNearestNeighbor'
-      );
+      throw new Error('You must provide classes, distance, k, tree and type to restore the KNearestNeighbor');
     }
     this.classes = classes;
     this.distance = distance;
@@ -156,7 +145,7 @@ export class KNeighborsClassifier<T extends number | string | boolean>
     if (shape.length === 1) {
       return this.getSinglePred(X);
     } else if (shape.length === 2) {
-      return map(X, currentItem => this.getSinglePred(currentItem));
+      return map(X, (currentItem) => this.getSinglePred(currentItem));
     } else {
       throw new TypeError('The dataset is neither an array or a matrix');
     }

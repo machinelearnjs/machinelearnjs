@@ -69,9 +69,7 @@ export class CountVectorizer {
    */
   public getFeatureNames(): object {
     if (!this.internalVocabulary) {
-      throw new Error(
-        'You must fit a document first before you can retrieve the feature names!'
-      );
+      throw new Error('You must fit a document first before you can retrieve the feature names!');
     }
     return this.internalVocabulary;
   }
@@ -81,7 +79,7 @@ export class CountVectorizer {
    * @returns {(x: string) => string[]}
    */
   private buildAnalyzer(): (x: string) => string[] {
-    return x => this.preprocess(x, { removeSW: true });
+    return (x) => this.preprocess(x, { removeSW: true });
   }
 
   /**
@@ -90,7 +88,7 @@ export class CountVectorizer {
    * @param doc
    */
   private buildVocabulary(
-    doc: Type1DMatrix<string>
+    doc: Type1DMatrix<string>,
   ): {
     internalVocabulary: string[];
     pubVocabulary: object;
@@ -98,20 +96,20 @@ export class CountVectorizer {
     const analyze = this.buildAnalyzer();
     const processedDoc: string[] = _.flowRight(
       (d: string[]) => _.uniq(d),
-      (d: string[]) => _.sortBy(d, z => z),
+      (d: string[]) => _.sortBy(d, (z) => z),
       (d: string[][]) => _.flatten(d),
-      (d: string[]) => _.map(d, text => analyze(text))
+      (d: string[]) => _.map(d, (text) => analyze(text)),
     )(doc);
     const pubVocabulary = _.reduce(
       processedDoc,
       (sum, val, index) => {
         return _.set(sum, val, index);
       },
-      {}
+      {},
     );
     return {
       internalVocabulary: processedDoc,
-      pubVocabulary
+      pubVocabulary,
     };
   }
 

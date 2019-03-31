@@ -67,7 +67,7 @@ export class Iris extends BaseDataset {
       targets,
       labels,
       targetNames,
-      description
+      description,
     };
   }
 }

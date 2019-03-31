@@ -35,7 +35,7 @@ export class Imputer {
     strategy = 'mean',
     axis = 0,
     // verbose = 0,
-    copy = false
+    copy = false,
   }) {
     this.missingValues = missingValues;
     this.strategy = strategy;
@@ -59,16 +59,10 @@ export class Imputer {
     const colRange = math.range(0, colLen);
     if (this.strategy === 'mean') {
       if (this.axis === 0) {
-        const colNumbers: any = _.map(colRange, col =>
-          math.subset(_X, rowRange, [col])
-        );
-        this.means = this.calcArrayMean(colNumbers, [
-          'flatten',
-          'filter',
-          'mean'
-        ]);
+        const colNumbers: any = _.map(colRange, (col) => math.subset(_X, rowRange, [col]));
+        this.means = this.calcArrayMean(colNumbers, ['flatten', 'filter', 'mean']);
       } else if (this.axis === 1) {
-        const rowNumbers = _.map(rowRange, row => _.get(_X, `[${row}]`));
+        const rowNumbers = _.map(rowRange, (row) => _.get(_X, `[${row}]`));
         this.means = this.calcArrayMean(rowNumbers, ['filter', 'mean']);
       }
     } else {
@@ -102,11 +96,7 @@ export class Imputer {
         }
       }
     } else {
-      throw new Error(
-        `Unknown transformation with strategy ${this.strategy} and axis ${
-          this.axis
-        }`
-      );
+      throw new Error(`Unknown transformation with strategy ${this.strategy} and axis ${this.axis}`);
     }
     return _X;
   }
@@ -138,8 +128,8 @@ export class Imputer {
               // Expecting any type of matrics array
               // TODO: implement a correct type
               (arr: any[]) => {
-                return _.filter(arr, z => z !== this.missingValues);
-              }
+                return _.filter(arr, (z) => z !== this.missingValues);
+              },
             );
           case 'mean':
             return _.map(result, _.mean);
@@ -147,6 +137,6 @@ export class Imputer {
             return result;
         }
       },
-      matrix
+      matrix,
     );
 }

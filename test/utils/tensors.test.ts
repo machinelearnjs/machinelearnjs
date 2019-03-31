@@ -19,7 +19,7 @@ describe('inferShape', () => {
   });
   it('should throw an error if a 2D matrix is incorrectly shaped', () => {
     expect(() => inferShape([[2, 3], [1, 2], [4]])).toThrow(
-      'Element arr[2] should have 2 elements, but has 1 elements'
+      'Element arr[2] should have 2 elements, but has 1 elements',
     );
   });
 
@@ -31,39 +31,25 @@ describe('inferShape', () => {
 
   it('should throw an error if a 3D matrix is incorrectly shaped', () => {
     expect(() => inferShape([[[1, 2], [3, 4]], [[5, 6], [7]]])).toThrow(
-      'Element arr[1][1] should have 2 elements, but has 1 elements'
+      'Element arr[1][1] should have 2 elements, but has 1 elements',
     );
   });
 
   it('should infer a shape of a 4D matrix', () => {
-    const shape = inferShape([
-      [[[1, 2], [1, 2]], [[1, 2], [1, 2]]],
-      [[[1, 2], [1, 2]], [[1, 2], [1, 2]]]
-    ]);
+    const shape = inferShape([[[[1, 2], [1, 2]], [[1, 2], [1, 2]]], [[[1, 2], [1, 2]], [[1, 2], [1, 2]]]]);
     const expected = [2, 2, 2, 2];
     expect(shape).toEqual(expected);
   });
   it('should throw an error if a 4D matrix is incorrectly shaped', () => {
-    expect(() =>
-      inferShape([
-        [[[1, 2], [1, 2]], [[1, 2], [1, 2]]],
-        [[[1, 2], [1, 2]], [[1, 2], [1]]]
-      ])
-    ).toThrow(
-      'Element arr[1][1][1] should have 2 elements, but has 1 elements'
+    expect(() => inferShape([[[[1, 2], [1, 2]], [[1, 2], [1, 2]]], [[[1, 2], [1, 2]], [[1, 2], [1]]]])).toThrow(
+      'Element arr[1][1][1] should have 2 elements, but has 1 elements',
     );
   });
 
   it('should infer a shape of a 5D matrix', () => {
     const shape = inferShape([
-      [
-        [[[1, 2], [1, 2]], [[1, 2], [1, 2]]],
-        [[[1, 2], [1, 2]], [[1, 2], [1, 2]]]
-      ],
-      [
-        [[[1, 2], [1, 2]], [[1, 2], [1, 2]]],
-        [[[1, 2], [1, 2]], [[1, 2], [1, 2]]]
-      ]
+      [[[[1, 2], [1, 2]], [[1, 2], [1, 2]]], [[[1, 2], [1, 2]], [[1, 2], [1, 2]]]],
+      [[[[1, 2], [1, 2]], [[1, 2], [1, 2]]], [[[1, 2], [1, 2]], [[1, 2], [1, 2]]]],
     ]);
     const expected = [2, 2, 2, 2, 2];
     expect(shape).toEqual(expected);
@@ -72,18 +58,10 @@ describe('inferShape', () => {
   it('should throw an error if a 5D matrix is incorrectly shaped', () => {
     expect(() =>
       inferShape([
-        [
-          [[[1, 2], [1, 2]], [[1, 2], [1, 2]]],
-          [[[1, 2], [1, 2]], [[1, 2], [1, 2]]]
-        ],
-        [
-          [[[1, 2], [1, 2]], [[1, 2], [1, 2]]],
-          [[[1, 2], [1, 2]], [[1, 2], [1]]]
-        ]
-      ])
-    ).toThrow(
-      'Element arr[1][1][1][1] should have 2 elements, but has 1 elements'
-    );
+        [[[[1, 2], [1, 2]], [[1, 2], [1, 2]]], [[[1, 2], [1, 2]], [[1, 2], [1, 2]]]],
+        [[[[1, 2], [1, 2]], [[1, 2], [1, 2]]], [[[1, 2], [1, 2]], [[1, 2], [1]]]],
+      ]),
+    ).toThrow('Element arr[1][1][1][1] should have 2 elements, but has 1 elements');
   });
 });
 
@@ -110,17 +88,9 @@ describe('reshape', () => {
   });
 
   it('should not reshape invalid inputs', () => {
-    expect(() => reshape(null, [1])).toThrow(
-      'The input array must be an array!'
-    );
-    expect(() => reshape([], [1])).toThrow(
-      'Target array shape [0] cannot be reshaped into 1'
-    );
-    expect(() => reshape([[1, 2, 3]], null)).toThrow(
-      'The sizes must be an array!'
-    );
-    expect(() => reshape([[1, 2, 3]], 1)).toThrow(
-      'The sizes must be an array!'
-    );
+    expect(() => reshape(null, [1])).toThrow('The input array must be an array!');
+    expect(() => reshape([], [1])).toThrow('Target array shape [0] cannot be reshaped into 1');
+    expect(() => reshape([[1, 2, 3]], null)).toThrow('The sizes must be an array!');
+    expect(() => reshape([[1, 2, 3]], 1)).toThrow('The sizes must be an array!');
   });
 });

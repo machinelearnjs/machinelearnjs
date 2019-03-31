@@ -15,7 +15,7 @@ function _cartesianProductObj(optObj): any[] {
   const keys = _.keys(optObj);
   const opts = _.values(optObj);
   const combs = _cartesianProductOf(opts);
-  return _.map(combs, comb => {
+  return _.map(combs, (comb) => {
     return _.zipObject(keys, comb);
   });
 }
@@ -35,19 +35,19 @@ function _cartesianProductOf(args): any[] {
   }
 
   // strings to arrays of letters
-  _args = _.map(_args, opt => (typeof opt === 'string' ? _.toArray(opt) : opt));
+  _args = _.map(_args, (opt) => (typeof opt === 'string' ? _.toArray(opt) : opt));
   return _.reduce(
     _args,
     (a, b) => {
       return _.flatten(
-        _.map(a, x => {
-          return _.map(b, y => {
+        _.map(a, (x) => {
+          return _.map(b, (y) => {
             return _.concat(x, [y]);
           });
-        })
+        }),
       );
     },
-    [[]]
+    [[]],
   );
 }
 
@@ -108,6 +108,6 @@ export function combinationsWithReplacement(X, n?: number): number[][] {
     nInds.push(_.keys(_X));
   }
   // get product of the indices, then filter to keep elements in order
-  const arrangements = product(nInds).filter(pair => pair[0] <= pair[1]);
-  return _.map(arrangements, indices => _.map(indices, i => _X[i]));
+  const arrangements = product(nInds).filter((pair) => pair[0] <= pair[1]);
+  return _.map(arrangements, (indices) => _.map(indices, (i) => _X[i]));
 }

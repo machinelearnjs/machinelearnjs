@@ -6,18 +6,12 @@ import exampleConfig from './exampleConfig';
 // import * as path from 'path';
 
 export class ExampleProcessor extends BaseProcesser {
-  private vuepressExampleConfigPath = path.join(
-    __dirname,
-    '../md_out/.vuepress/exampleExtra.json'
-  );
+  private vuepressExampleConfigPath = path.join(__dirname, '../md_out/.vuepress/exampleExtra.json');
   private themePath = path.join(__dirname, '../themes/markdown');
   private exampleOutputPath = path.join(__dirname, '../md_out/examples');
   private homePageFile = 'examples_readme.hbs';
   private srcExampleHomeTheme = path.join(this.themePath, this.homePageFile);
-  private destExampleHomePage = path.join(
-    __dirname,
-    '../md_out/examples/README.md'
-  );
+  private destExampleHomePage = path.join(__dirname, '../md_out/examples/README.md');
   private examplePageFile = 'example_entity_page.hbs';
   private srcExamplePageTheme = path.join(this.themePath, this.examplePageFile);
 
@@ -36,28 +30,21 @@ export class ExampleProcessor extends BaseProcesser {
    * Writes the sidebar config for examples
    */
   private createSidebar(): void {
-    const config = exampleConfig.map(category => {
+    const config = exampleConfig.map((category) => {
       const categoryKey = category.key;
       const categoryTitle = category.title;
-      const categoryChildren = category.children.map(child => [
-        `./${categoryKey}/${child.key}.md`,
-        child.title
-      ]);
+      const categoryChildren = category.children.map((child) => [`./${categoryKey}/${child.key}.md`, child.title]);
       return {
         children: categoryChildren,
         collapsable: false,
-        title: categoryTitle
+        title: categoryTitle,
       };
     });
     const extraConfig = {
-      exampleSidebar: config
+      exampleSidebar: config,
     };
     // Writing extraConfig object as .vuepress/exampleExtra.json
-    fs.writeFileSync(
-      this.vuepressExampleConfigPath,
-      JSON.stringify(extraConfig),
-      'utf-8'
-    );
+    fs.writeFileSync(this.vuepressExampleConfigPath, JSON.stringify(extraConfig), 'utf-8');
   }
 
   /**
@@ -84,22 +71,16 @@ export class ExampleProcessor extends BaseProcesser {
    * @param hbs
    */
   private createReadMe(hbs): void {
-    const exampleHomePageThemeContent = fs.readFileSync(
-      this.srcExampleHomeTheme,
-      'utf8'
-    );
+    const exampleHomePageThemeContent = fs.readFileSync(this.srcExampleHomeTheme, 'utf8');
     const template = hbs.compile(exampleHomePageThemeContent);
     const compiledPage = template(exampleConfig);
     fs.appendFileSync(this.destExampleHomePage, compiledPage, { flag: 'a' });
   }
 
   private createExamplePage(hbs): void {
-    const examplePageThemeContent = fs.readFileSync(
-      this.srcExamplePageTheme,
-      'utf8'
-    );
+    const examplePageThemeContent = fs.readFileSync(this.srcExamplePageTheme, 'utf8');
     const template = hbs.compile(examplePageThemeContent);
-    forEach(exampleConfig, category => {
+    forEach(exampleConfig, (category) => {
       const categoryKey = category.key;
       const categoryDir = path.join(this.exampleOutputPath, categoryKey);
 
@@ -107,7 +88,7 @@ export class ExampleProcessor extends BaseProcesser {
       this.createDirByName(categoryDir);
 
       const categoryChildren = category.children;
-      forEach(categoryChildren, child => {
+      forEach(categoryChildren, (child) => {
         const childKey = child.key;
         const examplePageName = path.join(categoryDir, `${childKey}.md`);
         const compiledPage = template(child);

@@ -69,7 +69,7 @@ export default class KDTree {
     const dimensions = this.dimensions;
     let i;
 
-    const bestNodes = new BinaryHeap(e => -e[1]);
+    const bestNodes = new BinaryHeap((e) => -e[1]);
 
     function nearestSearch(node) {
       const dimension = dimensions[node.dimension];
@@ -119,10 +119,7 @@ export default class KDTree {
         saveNode(node, ownDistance);
       }
 
-      if (
-        bestNodes.size() < maxNodes ||
-        Math.abs(linearDistance) < bestNodes.peek()[1]
-      ) {
+      if (bestNodes.size() < maxNodes || Math.abs(linearDistance) < bestNodes.peek()[1]) {
         if (bestChild === node.left) {
           otherChild = node.right;
         } else {

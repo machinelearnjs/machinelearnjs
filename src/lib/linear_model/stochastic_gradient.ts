@@ -7,7 +7,7 @@ import { validateFitInputs, validateMatrix2D } from '../utils/validation';
 export enum TypeLoss {
   L1 = 'L1',
   L2 = 'L2',
-  L1L2 = 'L1L2'
+  L1L2 = 'L1L2',
 }
 
 /**
@@ -44,7 +44,7 @@ export class BaseSGD implements IMlModel<number> {
       clone = true,
       random_state = null,
       loss = TypeLoss.L2,
-      reg_factor = null
+      reg_factor = null,
     }: {
       learning_rate?: number;
       epochs?: number;
@@ -58,8 +58,8 @@ export class BaseSGD implements IMlModel<number> {
       clone: true,
       random_state: null,
       loss: TypeLoss.L2,
-      reg_factor: null
-    }
+      reg_factor: null,
+    },
   ) {
     this.learningRate = learning_rate;
     this.epochs = epochs;
@@ -71,16 +71,16 @@ export class BaseSGD implements IMlModel<number> {
     // Setting a loss function according to the input option
     if (this.loss === TypeLoss.L1 && this.regFactor) {
       this.loss = tf.regularizers.l1({
-        l1: this.regFactor.l1
+        l1: this.regFactor.l1,
       });
     } else if (this.loss === TypeLoss.L1L2 && this.regFactor) {
       this.loss = tf.regularizers.l1l2({
         l1: this.regFactor.l1,
-        l2: this.regFactor.l2
+        l2: this.regFactor.l2,
       });
     } else if (this.loss === TypeLoss.L2 && this.regFactor) {
       this.loss = tf.regularizers.l2({
-        l2: this.regFactor.l2
+        l2: this.regFactor.l2,
       });
     } else {
       this.loss = tf.regularizers.l2();
@@ -99,10 +99,7 @@ export class BaseSGD implements IMlModel<number> {
    * @param X - Matrix of data
    * @param y - Matrix of targets
    */
-  public fit(
-    X: Type2DMatrix<number> = null,
-    y: Type1DMatrix<number> = null
-  ): void {
+  public fit(X: Type2DMatrix<number> = null, y: Type1DMatrix<number> = null): void {
     validateFitInputs(X, y);
 
     // holds all the preprocessed X values
@@ -137,7 +134,7 @@ export class BaseSGD implements IMlModel<number> {
       learning_rate: this.learningRate,
       epochs: this.epochs,
       weights: [...this.weights.dataSync()],
-      random_state: this.randomState
+      random_state: this.randomState,
     };
   }
 
@@ -153,7 +150,7 @@ export class BaseSGD implements IMlModel<number> {
       learning_rate = 0.0001,
       epochs = 10000,
       weights = [],
-      random_state = null
+      random_state = null,
     }: {
       learning_rate: number;
       epochs: number;
@@ -163,8 +160,8 @@ export class BaseSGD implements IMlModel<number> {
       learning_rate: 0.0001,
       epochs: 10000,
       weights: [],
-      random_state: null
-    }
+      random_state: null,
+    },
   ): void {
     this.learningRate = learning_rate;
     this.epochs = epochs;
@@ -270,7 +267,7 @@ export class SGDClassifier extends BaseSGD {
    */
   public predict(X: Type2DMatrix<number> = null): number[] {
     const results: number[] = super.predict(X);
-    return results.map(x => Math.round(x));
+    return results.map((x) => Math.round(x));
   }
 }
 

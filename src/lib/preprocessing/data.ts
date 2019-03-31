@@ -53,10 +53,7 @@ interface NumberOneHot {
  * @param X - A matrix of data
  * @param value - Value to use for the dummy feature.
  */
-export function add_dummy_feature(
-  X: Type2DMatrix<number> = null,
-  value: number = 1.0
-): number[][] {
+export function add_dummy_feature(X: Type2DMatrix<number> = null, value: number = 1.0): number[][] {
   if (Array.isArray(X) && X.length === 0) {
     throw new TypeError('X cannot be empty');
   }
@@ -115,14 +112,14 @@ export class OneHotEncoder {
       /**
        * Depdenent variables
        */
-      labelKeys = null
+      labelKeys = null,
     }: {
       dataKeys: Type1DMatrix<string>;
       labelKeys: Type1DMatrix<string>;
     } = {
       dataKeys: null,
-      labelKeys: null
-    }
+      labelKeys: null,
+    },
   ): {
     /**
      * Encoded data
@@ -142,7 +139,7 @@ export class OneHotEncoder {
       throw Error('data cannot be empty!');
     }
     // data keys
-    _.forEach(_dataKeys, dataKey => {
+    _.forEach(_dataKeys, (dataKey) => {
       // TODO: it's only checking data[0] -> It should also check all the others
       if (!_.has(data[0], dataKey)) {
         // TODO: Find the correct error to throw
@@ -151,7 +148,7 @@ export class OneHotEncoder {
     });
 
     // label keys
-    _.forEach(labelKeys, labelKey => {
+    _.forEach(labelKeys, (labelKey) => {
       // TODO: it's only checking data[0] -> It should also check all the others
       if (!_.has(data[0], labelKey)) {
         // TODO Find the correct error to throw
@@ -174,14 +171,14 @@ export class OneHotEncoder {
           }
           // Otherwise just return values itself
           return standardized;
-        })
+        }),
       );
     const features = transform(_dataKeys);
     const labels = transform(labelKeys);
     return {
       // zip the label data back into the feature data (to ensure label data is at the end)
       data: _.map(_.zip(features, labels), _.flattenDeep),
-      decoders
+      decoders,
     };
   }
 
@@ -189,7 +186,7 @@ export class OneHotEncoder {
    * Decode the encoded data back into its original format
    */
   public decode(encoded, decoders): any[] {
-    return _.map(encoded, row => this.decodeRow(row, decoders));
+    return _.map(encoded, (row) => this.decodeRow(row, decoders));
   }
 
   /**
@@ -242,10 +239,7 @@ export class OneHotEncoder {
    * @param data: the entire dataset
    * @returns {any}
    */
-  private standardizeField(
-    key,
-    data
-  ): StringOneHot | BooleanOneHot | NumberOneHot | any[] {
+  private standardizeField(key, data): StringOneHot | BooleanOneHot | NumberOneHot | any[] {
     const type = typeof data[0][key];
     const values = _.map(data, key);
     switch (type) {
@@ -253,7 +247,7 @@ export class OneHotEncoder {
         const result = this.buildStringOneHot(type, key, values);
         return {
           decode: result.decode,
-          encoded: result.encoded
+          encoded: result.encoded,
         };
       }
 
@@ -265,7 +259,7 @@ export class OneHotEncoder {
 
         return {
           decode: result.decode,
-          encoded: result.encoded
+          encoded: result.encoded,
         };
       }
 
@@ -276,7 +270,7 @@ export class OneHotEncoder {
 
         return {
           decode: result.decode,
-          encoded: result.encoded
+          encoded: result.encoded,
         };
       }
 
@@ -309,7 +303,7 @@ export class OneHotEncoder {
     const std = this.calculateStd(values, mean);
     return {
       decode: { type, mean, std, key },
-      encoded: _.map(values, (value: number) => (value - mean) / std)
+      encoded: _.map(values, (value: number) => (value - mean) / std),
     };
   }
 
@@ -328,7 +322,7 @@ export class OneHotEncoder {
   private buildBooleanOneHot(type, key, values): BooleanOneHot {
     return {
       decode: { type, key },
-      encoded: _.map(values, value => (value ? 1 : 0))
+      encoded: _.map(values, (value) => (value ? 1 : 0)),
     };
   }
 
@@ -357,7 +351,7 @@ export class OneHotEncoder {
     });
 
     const encoded = _.map(values, (value: string) =>
-      _.range(0, i).map(pos => (_.get(lookup, value) === pos ? 1 : 0))
+      _.range(0, i).map((pos) => (_.get(lookup, value) === pos ? 1 : 0)),
     );
 
     return {
@@ -365,9 +359,9 @@ export class OneHotEncoder {
         key,
         lookupTable,
         offset: encoded[0].length,
-        type
+        type,
       },
-      encoded
+      encoded,
     };
   }
 }
@@ -420,12 +414,12 @@ export class MinMaxScaler {
    */
   constructor(
     {
-      featureRange = [0, 1]
+      featureRange = [0, 1],
     }: {
       featureRange?: number[];
     } = {
-      featureRange: [0, 1]
-    }
+      featureRange: [0, 1],
+    },
   ) {
     this.featureRange = featureRange;
   }
@@ -459,9 +453,7 @@ export class MinMaxScaler {
    * Fit to data, then transform it.
    * @param X - Original input vector
    */
-  public fit_transform(
-    X: Type1DMatrix<number> | Type2DMatrix<number>
-  ): number[] | number[][] {
+  public fit_transform(X: Type1DMatrix<number> | Type2DMatrix<number>): number[] | number[][] {
     this.fit(X);
     return this.transform(X);
   }
@@ -470,23 +462,19 @@ export class MinMaxScaler {
    * Scaling features of X according to feature_range.
    * @param X - Original input vector
    */
-  public transform(
-    X: Type1DMatrix<number> | Type2DMatrix<number> = null
-  ): number[] | number[][] {
+  public transform(X: Type1DMatrix<number> | Type2DMatrix<number> = null): number[] | number[][] {
     // Transforms a single vector
-    const transform_single = _X => {
-      const X1 = _X.map(x => x * this.scale);
-      return X1.map(x => x + this.baseMin);
+    const transform_single = (_X) => {
+      const X1 = _X.map((x) => x * this.scale);
+      return X1.map((x) => x + this.baseMin);
     };
     const shapes = inferShape(X);
     if (shapes.length === 2) {
-      return (X as number[][]).map(z => transform_single(z));
+      return (X as number[][]).map((z) => transform_single(z));
     } else if (shapes.length === 1) {
       return transform_single(X);
     } else {
-      throw new TypeError(
-        `The input shape ${JSON.stringify(shapes)} cannot be transformed`
-      );
+      throw new TypeError(`The input shape ${JSON.stringify(shapes)} cannot be transformed`);
     }
   }
 
@@ -496,8 +484,8 @@ export class MinMaxScaler {
    */
   public inverse_transform(X: Type1DMatrix<number> = null): number[] {
     validateMatrix1D(X);
-    const X1 = X.map(x => x - this.baseMin);
-    return X1.map(x => x / this.scale);
+    const X1 = X.map((x) => x - this.baseMin);
+    return X1.map((x) => x / this.scale);
   }
 }
 
@@ -530,7 +518,7 @@ export class Binarizer {
     {
       // Each object param default value
       copy = true,
-      threshold = 0
+      threshold = 0,
     }: {
       // Param types
       copy?: boolean;
@@ -538,8 +526,8 @@ export class Binarizer {
     } = {
       // Default value on empty constructor
       copy: true,
-      threshold: 0
-    }
+      threshold: 0,
+    },
   ) {
     this.threshold = threshold;
     this.copy = copy;
@@ -617,12 +605,12 @@ export class PolynomialFeatures {
    */
   constructor(
     {
-      degree = 2
+      degree = 2,
     }: {
       degree: number;
     } = {
-      degree: 2
-    }
+      degree: 2,
+    },
   ) {
     // Constructor variables validation
     if (!Number.isInteger(degree)) {
@@ -653,8 +641,7 @@ export class PolynomialFeatures {
       const c = indexCombination[i];
       const colsRange = Array.isArray(c) ? c : [c];
       // Retrieves column values from X using the index of the indexCombination in the loop
-      const srcColValues: any =
-        c !== null ? math.subset(X, rowRange, colsRange) : [];
+      const srcColValues: any = c !== null ? math.subset(X, rowRange, colsRange) : [];
       let xc = null;
       if (srcColValues.length === 0) {
         xc = _.fill(rowRange.slice(), 1);
@@ -676,7 +663,7 @@ export class PolynomialFeatures {
    */
   private indexCombination(nFeatures, degree): number[][] {
     const range = _.range(0, degree + 1);
-    const combs = range.map(i => {
+    const combs = range.map((i) => {
       return combinationsWithReplacement(_.range(nFeatures), i);
     });
     return combs.reduce((sum, cur) => {
@@ -710,12 +697,12 @@ export class PolynomialFeatures {
 export function normalize(
   X: Type2DMatrix<number> = null,
   {
-    norm = 'l2'
+    norm = 'l2',
   }: {
     norm: string;
   } = {
-    norm: 'l2'
-  }
+    norm: 'l2',
+  },
 ): number[][] {
   if (Array.isArray(X) && X.length === 0) {
     throw new TypeError('X cannot be empty');

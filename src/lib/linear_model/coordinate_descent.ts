@@ -41,7 +41,7 @@ export class Ridge extends SGDRegressor {
     {
       l2 = null,
       epochs = 1000,
-      learning_rate = 0.001
+      learning_rate = 0.001,
     }: {
       l2: number;
       epochs?: number;
@@ -49,8 +49,8 @@ export class Ridge extends SGDRegressor {
     } = {
       l2: null,
       epochs: 1000,
-      learning_rate: 0.001
-    }
+      learning_rate: 0.001,
+    },
   ) {
     if (l2 === null) {
       throw TypeError('Ridge cannot be initiated with null l2');
@@ -60,7 +60,7 @@ export class Ridge extends SGDRegressor {
       reg_factor: { l2 },
       learning_rate,
       epochs,
-      loss: TypeLoss.L2.toString()
+      loss: TypeLoss.L2.toString(),
     });
   }
 }
@@ -104,7 +104,7 @@ export class Lasso extends SGDRegressor {
       degree = null,
       l1,
       epochs = 1000,
-      learning_rate = 0.001
+      learning_rate = 0.001,
     }: {
       degree: number;
       l1: number;
@@ -114,8 +114,8 @@ export class Lasso extends SGDRegressor {
       degree: null,
       l1: null,
       epochs: 1000,
-      learning_rate: 0.001
-    }
+      learning_rate: 0.001,
+    },
   ) {
     if (l1 === null) {
       throw TypeError('Lasso cannot be initiated with null l1');
@@ -127,7 +127,7 @@ export class Lasso extends SGDRegressor {
       reg_factor: { l1 },
       learning_rate,
       epochs,
-      loss: TypeLoss.L1.toString()
+      loss: TypeLoss.L1.toString(),
     });
     this.degree = degree;
   }
@@ -137,10 +137,7 @@ export class Lasso extends SGDRegressor {
    * @param X - A matrix of samples
    * @param y - A vector of targets
    */
-  public fit(
-    X: Type2DMatrix<number> = null,
-    y: Type1DMatrix<number> = null
-  ): void {
+  public fit(X: Type2DMatrix<number> = null, y: Type1DMatrix<number> = null): void {
     const polynomial = new PolynomialFeatures({ degree: this.degree });
     const newX = normalize(polynomial.transform(X));
     super.fit(newX, y);

@@ -19,7 +19,7 @@ import { validateMatrix2D } from '../utils/validation';
  */
 export enum TypeLinearReg {
   UNIVARIATE = 'UNIVARIATE',
-  MULTIVARIATE = 'MULTIVARIATE'
+  MULTIVARIATE = 'MULTIVARIATE',
 }
 
 /**
@@ -54,7 +54,7 @@ export class LinearRegression {
    */
   public fit(
     X: Type1DMatrix<number> | Type2DMatrix<number> = null,
-    y: Type1DMatrix<number> | Type2DMatrix<number> = null
+    y: Type1DMatrix<number> | Type2DMatrix<number> = null,
   ): void {
     const xShape = inferShape(X);
     const yShape = inferShape(y);
@@ -62,17 +62,11 @@ export class LinearRegression {
       // Univariate linear regression
       this.type = TypeLinearReg.UNIVARIATE;
       this.weights = this.calculateUnivariateCoeff(X, y); // getting b0 and b1
-    } else if (
-      xShape.length === 2 &&
-      yShape.length === 1 &&
-      xShape[0] === yShape[0]
-    ) {
+    } else if (xShape.length === 2 && yShape.length === 1 && xShape[0] === yShape[0]) {
       this.type = TypeLinearReg.MULTIVARIATE;
       this.weights = this.calculateMultiVariateCoeff(X, y);
     } else {
-      throw new Error(
-        `Sample(${xShape[0]}) and target(${yShape[0]}) sizes do not match`
-      );
+      throw new Error(`Sample(${xShape[0]}) and target(${yShape[0]}) sizes do not match`);
     }
   }
   /**
@@ -80,25 +74,15 @@ export class LinearRegression {
    * @param {number} X - Values to predict.
    * @returns {number}
    */
-  public predict(
-    X: Type1DMatrix<number> | Type2DMatrix<number> = null
-  ): number[] {
+  public predict(X: Type1DMatrix<number> | Type2DMatrix<number> = null): number[] {
     const xShape = inferShape(X);
-    if (
-      xShape.length === 1 &&
-      this.type.toString() === TypeLinearReg.UNIVARIATE.toString()
-    ) {
+    if (xShape.length === 1 && this.type.toString() === TypeLinearReg.UNIVARIATE.toString()) {
       return this.univariatePredict(X as Type1DMatrix<number>);
-    } else if (
-      xShape.length === 2 &&
-      this.type.toString() === TypeLinearReg.MULTIVARIATE.toString()
-    ) {
+    } else if (xShape.length === 2 && this.type.toString() === TypeLinearReg.MULTIVARIATE.toString()) {
       return this.multivariatePredict(X as Type2DMatrix<number>);
     } else {
       throw new TypeError(
-        `The matrix is incorrectly shaped: while X is ${
-          xShape.length
-        }, type is ${this.type.toString().toLowerCase()}`
+        `The matrix is incorrectly shaped: while X is ${xShape.length}, type is ${this.type.toString().toLowerCase()}`,
       );
     }
   }
@@ -117,7 +101,7 @@ export class LinearRegression {
   } {
     return {
       weights: this.weights,
-      type: this.type
+      type: this.type,
     };
   }
 
@@ -132,15 +116,13 @@ export class LinearRegression {
     /**
      * Type of linear regression, it can be either UNIVARIATE or MULTIVARIATE
      */
-    type = null
+    type = null,
   }: {
     weights: number[];
     type: TypeLinearReg;
   }): void {
     if (!weights || !type) {
-      throw new Error(
-        'You must provide both weights and type to restore the linear regression model'
-      );
+      throw new Error('You must provide both weights and type to restore the linear regression model');
     }
     this.weights = weights;
     this.type = type;

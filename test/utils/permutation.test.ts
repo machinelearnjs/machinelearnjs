@@ -20,7 +20,7 @@ describe('utils.permutation.combinationsWithReplacement', () => {
     [2, 3, 3],
     [3, 3, 1],
     [3, 3, 2],
-    [3, 3, 3]
+    [3, 3, 3],
   ];
   const expected3 = [
     ['t', 't'],
@@ -32,7 +32,7 @@ describe('utils.permutation.combinationsWithReplacement', () => {
     ['e', 't'],
     ['s', 's'],
     ['s', 't'],
-    ['t', 't']
+    ['t', 't'],
   ];
   it('should permutate [1, 2, 3] with 2 repeats', () => {
     const result = combinationsWithReplacement([1, 2, 3], 2);

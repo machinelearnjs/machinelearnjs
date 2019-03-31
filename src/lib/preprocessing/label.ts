@@ -39,8 +39,8 @@ export class LabelEncoder {
    */
   public transform(X: Type1DMatrix<string> = null): any[] {
     validateMatrix1D(X);
-    return map(X, item => {
-      return findIndex(this.classes, cur => cur === item);
+    return map(X, (item) => {
+      return findIndex(this.classes, (cur) => cur === item);
     });
   }
 }
