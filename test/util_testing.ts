@@ -17,7 +17,7 @@ const assertArrayAlmostEqual = (
     results.push(calc);
   }
   const numTrues = results.reduce((sum, cur) => (cur ? sum + 1 : sum), 0);
-  return (numTrues / results.length) * 100;
+  return numTrues / results.length * 100;
 };
 
 const matchExceptionWithSnapshot = (
