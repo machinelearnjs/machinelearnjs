@@ -1,7 +1,11 @@
 import svmResolver from 'libsvm-js';
 import * as _ from 'lodash';
-import { validateFitInputs, validateMatrix1D, validateMatrix2D } from '../ops';
 import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
+import {
+  validateFitInputs,
+  validateMatrix1D,
+  validateMatrix2D
+} from '../utils/validation';
 
 export type Type = 'C_SVC' | 'NU_SVC' | 'ONE_CLASS' | 'EPSILON_SVR' | 'NU_SVR';
 

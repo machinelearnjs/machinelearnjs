@@ -1,7 +1,7 @@
 import * as _ from 'lodash';
-import { validateMatrix2D } from '../ops';
 import { Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
+import { validateMatrix2D } from '../utils/validation';
 
 /**
  * Imputation transformer for completing missing values.

@@ -5,9 +5,11 @@
 import * as tf from '@tensorflow/tfjs';
 import { size } from 'lodash';
 import * as numeric from 'numeric';
-import { inferShape, reshape } from '../ops';
 import { Type1DMatrix, Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
+import { reshape } from '../utils/tensors';
+import { inferShape } from '../utils/tensors';
+import { validateMatrix2D } from '../utils/validation';
 
 /**
  * Type of Linear Regression
@@ -197,9 +199,10 @@ export class LinearRegression {
    */
   private calculateMultiVariateCoeff(X, y): number[] {
     const [q, r] = tf.linalg.qr(tf.tensor2d(X));
-    const rawR = reshape(Array.from(r.dataSync()), r.shape);
+    const rawR = reshape<number>(Array.from(r.dataSync()), r.shape);
+    const validatedR = validateMatrix2D(rawR);
     const weights = tf
-      .tensor(numeric.inv(rawR))
+      .tensor(numeric.inv(validatedR))
       .dot(q.transpose())
       .dot(tf.tensor(y))
       .dataSync();

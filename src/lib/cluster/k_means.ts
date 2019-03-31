@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
 import * as Random from 'random-js';
-import { validateMatrix2D } from '../ops';
 import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
+import { validateMatrix2D } from '../utils/validation';
 
 export interface KMeansOptions {
   k: number;

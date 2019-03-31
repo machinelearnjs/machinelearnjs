@@ -1,7 +1,8 @@
 import * as tf from '@tensorflow/tfjs';
 import * as numeric from 'numeric';
-import { reshape, validateMatrix2D, validateMatrixType } from '../ops';
 import { IMlModel, Type2DMatrix } from '../types';
+import { reshape } from '../utils/tensors';
+import { validateMatrix2D, validateMatrixType } from '../utils/validation';
 
 /**
  * Principal component analysis (PCA)
@@ -58,7 +59,7 @@ export class PCA implements IMlModel<number> {
     const C: any = reshape([...rawC.dataSync()], rawC.shape);
     const svd = numeric.svd(C);
     this.components = svd.V;
-    this.explained_variance = numeric.div(numeric.pow(svd.U), nSamples - 1);
+    this.explained_variance = numeric.div(numeric.pow(svd.U, 1), nSamples - 1);
   }
 
   /**

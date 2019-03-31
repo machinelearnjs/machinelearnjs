@@ -1,8 +1,8 @@
 import * as tf from '@tensorflow/tfjs';
 import { cloneDeep, range } from 'lodash';
 import * as Random from 'random-js';
-import { validateFitInputs, validateMatrix2D } from '../ops';
 import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
+import { validateFitInputs, validateMatrix2D } from '../utils/validation';
 
 export enum TypeLoss {
   L1 = 'L1',

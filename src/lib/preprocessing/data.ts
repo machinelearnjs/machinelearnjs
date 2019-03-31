@@ -1,14 +1,11 @@
 import * as tf from '@tensorflow/tfjs';
 import * as _ from 'lodash';
-import {
-  inferShape,
-  reshape,
-  validateMatrix1D,
-  validateMatrix2D
-} from '../ops';
 import { Type1DMatrix, Type2DMatrix } from '../types';
+import { ValidationError } from '../utils/Errors';
 import math from '../utils/MathExtra';
 import { combinationsWithReplacement } from '../utils/permutations';
+import { inferShape, reshape } from '../utils/tensors';
+import { validateMatrix1D, validateMatrix2D } from '../utils/validation';
 
 interface StringOneHotDecoder {
   key: number;
@@ -443,7 +440,7 @@ export class MinMaxScaler {
     const xShape = inferShape(X);
     // If input is a Matrix...
     if (xShape.length === 0 || xShape[0] === 0) {
-      throw new TypeError('Cannot fit with an empty value');
+      throw new ValidationError('Cannot fit with an empty value');
     } else if (xShape.length === 2) {
       rowMax = tf.max(rowMax as tf.Tensor, 0);
       rowMin = tf.min(rowMin as tf.Tensor, 0);
@@ -452,7 +449,6 @@ export class MinMaxScaler {
     this.dataMin = tf.min(rowMin as tf.Tensor).dataSync()[0];
     this.featureMax = this.featureRange[1];
     this.featureMin = this.featureRange[0];
-    // const zz = zzdataMax - zzdataMin;
     this.dataRange = this.dataMax - this.dataMin;
     // We need different data range for multi-dimensional
     this.scale = (this.featureMax - this.featureMin) / this.dataRange;

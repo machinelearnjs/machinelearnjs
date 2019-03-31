@@ -4,20 +4,20 @@ exports[`naive_bayes:GaussianNB Should fit only accept X and y if number of attr
 
 exports[`naive_bayes:GaussianNB Should fit only accept X and y if number of attributes is same 2`] = `[TypeError: Number of labels=7 does not math number of samples=3]`;
 
-exports[`naive_bayes:GaussianNB Should not fit non array for testing data 1`] = `[TypeError: The matrix is not 1D shaped: 123 of []]`;
+exports[`naive_bayes:GaussianNB Should not fit non array for testing data 1`] = `[Error: validateMatrix1D has received a non-array argument]`;
 
-exports[`naive_bayes:GaussianNB Should not fit non array for testing data 2`] = `[Error: values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray]`;
+exports[`naive_bayes:GaussianNB Should not fit non array for testing data 2`] = `[Error: validateMatrix1D has received a non-array argument]`;
 
-exports[`naive_bayes:GaussianNB Should not fit non array for testing data 3`] = `[Error: Input cannot be an empty array]`;
+exports[`naive_bayes:GaussianNB Should not fit non array for testing data 3`] = `[Error: The matrix is not 1D shaped: [] of [0]]`;
 
-exports[`naive_bayes:GaussianNB Should not fit non array for training data 1`] = `[TypeError: The matrix is not 2D shaped: 123 of []]`;
+exports[`naive_bayes:GaussianNB Should not fit non array for training data 1`] = `[Error: validateMatrix2D has received a non-array argument]`;
 
-exports[`naive_bayes:GaussianNB Should not fit non array for training data 2`] = `[TypeError: The matrix is not 2D shaped: [1,2,3] of [3]]`;
+exports[`naive_bayes:GaussianNB Should not fit non array for training data 2`] = `[Error: The matrix is not 2D shaped: [1,2,3] of [3]]`;
 
-exports[`naive_bayes:GaussianNB Should not fit non array for training data 3`] = `[Error: values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray]`;
+exports[`naive_bayes:GaussianNB Should not fit non array for training data 3`] = `[Error: validateMatrix2D has received a non-array argument]`;
 
-exports[`naive_bayes:GaussianNB should predict only accept X as matrix 1`] = `[TypeError: The matrix is not 2D shaped: 1 of []]`;
+exports[`naive_bayes:GaussianNB should predict only accept X as matrix 1`] = `[Error: validateMatrix2D has received a non-array argument]`;
 
-exports[`naive_bayes:GaussianNB should predict only accept X as matrix 2`] = `[Error: values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray]`;
+exports[`naive_bayes:GaussianNB should predict only accept X as matrix 2`] = `[Error: validateMatrix2D has received a non-array argument]`;
 
-exports[`naive_bayes:GaussianNB should predict only accept X as matrix 3`] = `[TypeError: The matrix is not 2D shaped: [1,2,3] of [3]]`;
+exports[`naive_bayes:GaussianNB should predict only accept X as matrix 3`] = `[Error: The matrix is not 2D shaped: [1,2,3] of [3]]`;
