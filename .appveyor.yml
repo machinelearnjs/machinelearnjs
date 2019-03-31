@@ -2,6 +2,10 @@ image:
   - Ubuntu
   - Visual Studio 2015
 
+branches:
+  only:
+    - master
+
 environment:
   matrix:
     - nodejs_version: '8'
