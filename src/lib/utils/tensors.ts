@@ -1,6 +1,6 @@
 import * as tf from '@tensorflow/tfjs';
 import * as _ from 'lodash';
-import { TypeMatrix } from '../types';
+import { Type1DMatrix, Type2DMatrix, TypeMatrix } from '../types';
 
 /**
  * Infers shape of a tensor using TF
@@ -75,3 +75,18 @@ export function reshape<T>(array: TypeMatrix<T>, sizes: number[]): TypeMatrix<T>
 
   return tmpArray;
 }
+
+/**
+ * Ensures that matrix passed in is two dimensional
+ * If passed a one dimensional matrix, transforms it into a two dimensional matrix by turning each element into a row with 1 element
+ * If passed a two dimensional matrix, does nothing
+ * @param X - target matrix
+ */
+export const ensure2DMatrix = (
+  X: Type2DMatrix<number> | Type1DMatrix<number>
+): Type2DMatrix<number> => {
+  const shape: number[] = inferShape(X);
+  return shape.length === 2
+    ? (X as Type2DMatrix<number>)
+    : (_.map(X, x => [x]) as Type2DMatrix<number>);
+};
