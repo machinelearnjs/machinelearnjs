@@ -19,7 +19,7 @@ describe('metrics:mean_absolute_error', () => {
 
   it('should calculate MAE of yTrue1 and yPred1 with weights [1, 2] then', () => {
     const error = mean_absolute_error(yTrue1, yPred1, {
-      sample_weight: [1, 2, 3, 4]
+      sample_weight: [1, 2, 3, 4],
     });
     expect(error).toBe(0.550000011920929);
   });
@@ -28,11 +28,7 @@ describe('metrics:mean_absolute_error', () => {
     matchExceptionWithSnapshot(mean_absolute_error, [1, 2]);
     matchExceptionWithSnapshot(mean_absolute_error, ['test', 'zz']);
     matchExceptionWithSnapshot(mean_absolute_error, [[1, 2, 3], [4, 5]]);
-    matchExceptionWithSnapshot(mean_absolute_error, [
-      [1, 2],
-      [3, 4],
-      { sample_weight: [1] }
-    ]);
+    matchExceptionWithSnapshot(mean_absolute_error, [[1, 2], [3, 4], { sample_weight: [1] }]);
   });
 });
 

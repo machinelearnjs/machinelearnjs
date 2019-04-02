@@ -32,11 +32,7 @@ describe('integration:require', () => {
   });
 
   it('should require linear_model', () => {
-    const {
-      LinearRegression,
-      SGDClassifier,
-      SGDRegressor
-    } = require('machinelearn/linear_model');
+    const { LinearRegression, SGDClassifier, SGDRegressor } = require('machinelearn/linear_model');
     expect(!!LinearRegression).toBe(true);
     expect(!!SGDRegressor).toBe(true);
     expect(!!SGDClassifier).toBe(true);
@@ -48,7 +44,7 @@ describe('integration:require', () => {
       confusion_matrix,
       zeroOneLoss,
       mean_absolute_error,
-      mean_squared_error
+      mean_squared_error,
     } = require('machinelearn/metrics');
     expect(!!accuracyScore).toBe(true);
     expect(!!confusion_matrix).toBe(true);
@@ -76,7 +72,7 @@ describe('integration:require', () => {
       normalize,
       OneHotEncoder,
       PolynomialFeatures,
-      Imputer
+      Imputer,
     } = require('machinelearn/preprocessing');
     expect(!!Binarizer).toBe(true);
     expect(!!MinMaxScaler).toBe(true);
@@ -88,14 +84,7 @@ describe('integration:require', () => {
   });
 
   it('should require svm', () => {
-    const {
-      BaseSVM,
-      NuSVC,
-      NuSVR,
-      OneClassSVM,
-      SVC,
-      SVR
-    } = require('machinelearn/svm');
+    const { BaseSVM, NuSVC, NuSVR, OneClassSVM, SVC, SVR } = require('machinelearn/svm');
     expect(!!BaseSVM).toBe(true);
     expect(!!NuSVC).toBe(true);
     expect(!!NuSVR).toBe(true);

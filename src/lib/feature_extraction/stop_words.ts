@@ -320,5 +320,5 @@ export const ENGLISH_STOP_WORDS = [
   'your',
   'yours',
   'yourself',
-  'yourselves'
+  'yourselves',
 ];

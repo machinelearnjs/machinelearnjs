@@ -7,7 +7,7 @@ const accResult = accuracyScore([0, 1, 2, 3], [0, 2, 1, 3]);
 console.log('accuracy result ', accResult);
 
 const accResultNorm = accuracyScore([0, 1, 2, 3], [0, 2, 1, 3], {
-  normalize: false
+  normalize: false,
 });
 
 console.log('accuracy result with norm false ', accResultNorm);
@@ -24,7 +24,7 @@ console.log(matrix2);
 
 const matrix3 = confusion_matrix(
   ['cat', 'ant', 'cat', 'cat', 'ant', 'bird'],
-  ['ant', 'ant', 'cat', 'cat', 'ant', 'cat']
+  ['ant', 'ant', 'cat', 'cat', 'ant', 'cat'],
 );
 
 console.log(matrix3);
@@ -42,10 +42,4 @@ const y_pred1 = [[0, 2], [-1, 2], [8, -5]];
 console.log(mean_squared_error(y_true1, y_pred1));
 
 console.log(mean_absolute_error([3, -0.5, 2, 7], [2.5, 0.0, 2, 8]));
-console.log(
-  mean_absolute_error(
-    [[0.5, 1], [-1, 1], [7, -6]],
-    [[0, 2], [-1, 2], [8, -5]],
-    { sample_weight: [1, 2] }
-  )
-);
+console.log(mean_absolute_error([[0.5, 1], [-1, 1], [7, -6]], [[0, 2], [-1, 2], [8, -5]], { sample_weight: [1, 2] }));

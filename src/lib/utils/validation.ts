@@ -1,4 +1,8 @@
 import * as _ from 'lodash';
+import { isArray } from 'util';
+import { Type1DMatrix, Type2DMatrix, TypeMatrix } from '../types';
+import { Validation1DMatrixError, Validation2DMatrixError, ValidationError } from './Errors';
+import { inferShape } from './tensors';
 
 /**
  * Check below array conditions
@@ -12,14 +16,14 @@ import * as _ from 'lodash';
  * @ignore
  */
 export function checkArray(
-  arr: any[]
+  arr: unknown,
 ): {
   readonly isArray: boolean;
   readonly multiclass: boolean;
 } {
   let result = {
     isArray: false,
-    multiclass: false
+    multiclass: false,
   };
 
   // Setting isArray flag
@@ -38,4 +42,87 @@ export function checkArray(
   }
 
   return result;
+}
+
+/**
+ * Validates the input matrix's types with the targetted types.
+ * Specified target types must be one of https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/typeof#Description
+ *
+ * @example
+ * validateMatrixType([['z', 'z']],['string']); // no errors
+ * validateMatrixType([['z', 'z']],['test']); // error: Input matrix type of ["string"] does not match with the target types ["test"]
+ *
+ * @param X - The input matrix
+ * @param targetTypes - Target matrix types
+ * @ignore
+ */
+export function validateMatrixType(X: TypeMatrix<any>, targetTypes: string[]): void {
+  const flatX = _.flattenDeep(X);
+  const xTypes = _.uniq(flatX.map((x) => typeof x));
+  const sortedXTypes = _.sortBy(xTypes, (x) => x);
+  const sortedTargetTypes = _.sortBy(targetTypes, (x) => x);
+  if (!_.isEqual(sortedXTypes, sortedTargetTypes)) {
+    throw new TypeError(
+      `Input matrix type of ${JSON.stringify(sortedXTypes)} does not match with the target types ${JSON.stringify(
+        sortedTargetTypes,
+      )}`,
+    );
+  }
+}
+
+/**
+ * Validate typical X and y train data and check they are 2D and 1D shaped respectively
+ *
+ * @example
+ * validateTrainInputs([ [1, 2], [3, 4] ], [ 1, 2 ]) // No errors
+ * validateTrainInputs([ [[1, 2], [3, 3]], [[1, 2], [3, 3]] ], [ 1, 2 ]) // Error: The matrix is not 1D shaped: [ [[1, 2], [3, 3]], [[1, 2], [3, 3]] ] of [2, 2, 2]
+ *
+ * @param X
+ * @param y
+ * @ignore
+ */
+export function validateFitInputs(X: Type2DMatrix<any>, y: Type1DMatrix<any>): void {
+  // Check X is always a matrix
+  const sampleShape = inferShape(validateMatrix2D(X));
+  // Check y is always a vector
+  const targetShape = inferShape(validateMatrix1D(y));
+  if (sampleShape[0] !== targetShape[0]) {
+    throw new TypeError(`Number of labels=${targetShape[0]} does not math number of samples=${sampleShape[0]}`);
+  }
+}
+
+/**
+ * Validate the matrix is 1D shaped by checking the shape's length is exactly  1
+ * @param X
+ * @ignore
+ */
+export function validateMatrix1D(X: unknown): number[] {
+  if (!isArray(X)) {
+    throw new ValidationError('validateMatrix1D has received a non-array argument');
+  }
+
+  const shape = inferShape(X);
+
+  if (shape.length !== 1 || shape[0] === 0) {
+    throw new Validation1DMatrixError(`The matrix is not 1D shaped: ${JSON.stringify(X)} of ${JSON.stringify(shape)}`);
+  }
+  return X;
+}
+
+/**
+ * Validate the matrix is 2D shaped by checking the shape's length is exactly 2
+ * @param X - An input array
+ * @ignore
+ */
+export function validateMatrix2D(X: unknown): number[][] {
+  if (!Array.isArray(X)) {
+    throw new ValidationError('validateMatrix2D has received a non-array argument');
+  }
+
+  const shape = inferShape(X);
+
+  if (shape.length !== 2) {
+    throw new Validation2DMatrixError(`The matrix is not 2D shaped: ${JSON.stringify(X)} of ${JSON.stringify(shape)}`);
+  }
+  return X;
 }

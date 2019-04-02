@@ -1,6 +1,6 @@
 import { findIndex, map, uniq } from 'lodash';
-import { validateMatrix1D } from '../ops';
 import { Type1DMatrix } from '../types';
+import { validateMatrix1D } from '../utils/validation';
 
 /**
  * Encode labels with value between 0 and n_classes-1.
@@ -39,8 +39,8 @@ export class LabelEncoder {
    */
   public transform(X: Type1DMatrix<string> = null): any[] {
     validateMatrix1D(X);
-    return map(X, item => {
-      return findIndex(this.classes, cur => cur === item);
+    return map(X, (item) => {
+      return findIndex(this.classes, (cur) => cur === item);
     });
   }
 }

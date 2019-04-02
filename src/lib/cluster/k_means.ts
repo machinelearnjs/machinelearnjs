@@ -1,8 +1,8 @@
 import * as _ from 'lodash';
 import * as Random from 'random-js';
-import { validateMatrix2D } from '../ops';
 import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
+import { validateMatrix2D } from '../utils/validation';
 
 export interface KMeansOptions {
   k: number;
@@ -40,17 +40,12 @@ export class KMeans implements IMlModel<number> {
    * @param randomState - Random state value for sorting centroids during the getInitialCentroid phase
    */
   constructor(
-    {
-      distance = 'euclidean',
-      k = 3,
-      maxIteration = 300,
-      randomState = 0
-    }: KMeansOptions = {
+    { distance = 'euclidean', k = 3, maxIteration = 300, randomState = 0 }: KMeansOptions = {
       distance: 'euclidean',
       k: 3,
       maxIteration: 300,
-      randomState: 0
-    }
+      randomState: 0,
+    },
   ) {
     this.k = k;
     // Assigning a distance method
@@ -87,11 +82,7 @@ export class KMeans implements IMlModel<number> {
     for (let iter = 0; iter < this.maxIteration && movement; iter++) {
       // find the distance between the point and cluster; choose the nearest centroid
       _.forEach(X, (data, i) => {
-        this.assignment[i] = this.getClosestCentroids(
-          data,
-          this.centroids,
-          this.distance
-        );
+        this.assignment[i] = this.getClosestCentroids(data, this.centroids, this.distance);
       });
 
       // Flag set to false; giving opportunity to stop the loop upon the covergence
@@ -140,7 +131,7 @@ export class KMeans implements IMlModel<number> {
    */
   public predict(X: Type2DMatrix<number> = null): number[] {
     validateMatrix2D(X);
-    return _.map(X, data => {
+    return _.map(X, (data) => {
       return this.getClosestCentroids(data, this.centroids, this.distance);
     });
   }
@@ -157,7 +148,7 @@ export class KMeans implements IMlModel<number> {
     return {
       centroids: this.centroids,
       clusters: this.clusters,
-      k: this.k
+      k: this.k,
     };
   }
 
@@ -170,16 +161,14 @@ export class KMeans implements IMlModel<number> {
   public fromJSON({
     k = null,
     clusters = null,
-    centroids = null
+    centroids = null,
   }: {
     k: number;
     clusters: Type1DMatrix<number>;
     centroids: Type2DMatrix<number>;
   }): void {
     if (!k || !clusters || !centroids) {
-      throw new Error(
-        'You must provide all the parameters include k, clusters and centroids'
-      );
+      throw new Error('You must provide all the parameters include k, clusters and centroids');
     }
     this.k = k;
     this.clusters = clusters;
@@ -214,11 +203,7 @@ export class KMeans implements IMlModel<number> {
    * @param distance
    * @returns {number}
    */
-  private getClosestCentroids(
-    data: Type1DMatrix<number>,
-    centroids: Type2DMatrix<number>,
-    distance
-  ): number {
+  private getClosestCentroids(data: Type1DMatrix<number>, centroids: Type2DMatrix<number>, distance): number {
     let min = Infinity;
     let index = 0;
     _.forEach(centroids, (centroid, i) => {

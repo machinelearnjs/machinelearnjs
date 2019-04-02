@@ -1,9 +1,5 @@
 import * as _ from 'lodash';
-import {
-  accuracyScore,
-  confusion_matrix,
-  zeroOneLoss
-} from '../../src/lib/metrics/classification';
+import { accuracyScore, confusion_matrix, zeroOneLoss } from '../../src/lib/metrics/classification';
 
 describe('classification:accuracy_score', () => {
   const yTrue1 = [0, 1, 2, 3];

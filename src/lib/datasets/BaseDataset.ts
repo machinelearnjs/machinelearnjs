@@ -26,15 +26,15 @@ export class BaseDataset {
       delimiter = ',',
       lastIsTarget = true,
       trainType = 'float',
-      targetType = 'float'
+      targetType = 'float',
     } = {
       // Default object if nothing is provided
       type: 'csv',
       delimiter: ',',
       lastIsTarget: true,
       trainType: 'float',
-      targetType: 'float'
-    }
+      targetType: 'float',
+    },
   ): Promise<{ data; targets; labels }> {
     let data = null;
     for (let i = 0; i < sources.length; i++) {
@@ -50,18 +50,12 @@ export class BaseDataset {
       }
     }
     if (type === 'csv') {
-      return this.processCSV(
-        data,
-        delimiter,
-        lastIsTarget,
-        trainType,
-        targetType
-      );
+      return this.processCSV(data, delimiter, lastIsTarget, trainType, targetType);
     }
     return {
       data: null,
       targets: null,
-      labels: null
+      labels: null,
     };
   }
 
@@ -70,31 +64,17 @@ export class BaseDataset {
    */
   protected async fsLoad(
     type: string,
-    {
-      delimiter = ',',
-      lastIsTarget = true,
-      trainType = 'float',
-      targetType = 'float'
-    } = {
+    { delimiter = ',', lastIsTarget = true, trainType = 'float', targetType = 'float' } = {
       // Default object if nothing is provided
       delimiter: ',',
       lastIsTarget: true,
       trainType: 'float',
-      targetType: 'float'
-    }
+      targetType: 'float',
+    },
   ): Promise<{ data; targets; labels }> {
     // Make sure the actual data is located under data/type
-    const data = fs.readFileSync(
-      path.join(__dirname, `data/${type}/train.csv`),
-      'utf8'
-    );
-    return this.processCSV(
-      data,
-      delimiter,
-      lastIsTarget,
-      trainType,
-      targetType
-    );
+    const data = fs.readFileSync(path.join(__dirname, `data/${type}/train.csv`), 'utf8');
+    return this.processCSV(data, delimiter, lastIsTarget, trainType, targetType);
   }
 
   /**
@@ -110,16 +90,16 @@ export class BaseDataset {
     delimiter = ',',
     lastIsTarget = true,
     trainType = 'float',
-    targetType = 'float'
+    targetType = 'float',
   ): { data; targets; labels } {
     // Split the rows by newlines
     const splitRows = data.split(/\r\n|\n|\r/);
     // Trim any excessive spaces
-    const trimmedRows = splitRows.map(row => row.trim());
+    const trimmedRows = splitRows.map((row) => row.trim());
     // Filtering out any empty rows
-    const filteredRows = trimmedRows.filter(row => row);
+    const filteredRows = trimmedRows.filter((row) => row);
     // Organise training and target data
-    let result = filteredRows.map(row => row.split(delimiter));
+    let result = filteredRows.map((row) => row.split(delimiter));
     if (lastIsTarget) {
       result = result.reduce(
         (sum, curValue) => {
@@ -130,7 +110,7 @@ export class BaseDataset {
           sum[0].push(curValue);
           return sum;
         },
-        [[], []]
+        [[], []],
       );
     }
 
@@ -139,7 +119,7 @@ export class BaseDataset {
     const encoder = new LabelEncoder();
 
     // Get the unique labels
-    const labelX: string[] = uniqBy(rawTest, x => x);
+    const labelX: string[] = uniqBy(rawTest, (x) => x);
     encoder.fit(labelX);
 
     // Encode the test values
@@ -148,9 +128,9 @@ export class BaseDataset {
     // Enforcing data type
     // 1. training data
     if (trainType === 'number') {
-      result[0] = result[0].map(row => row.map(parseInt));
+      result[0] = result[0].map((row) => row.map(parseInt));
     } else if (trainType === 'float') {
-      result[0] = result[0].map(row => row.map(parseFloat));
+      result[0] = result[0].map((row) => row.map(parseFloat));
     }
 
     // 2. target data
@@ -162,7 +142,7 @@ export class BaseDataset {
     return {
       data: result[0],
       targets,
-      labels: result[1]
+      labels: result[1],
     };
   }
 }

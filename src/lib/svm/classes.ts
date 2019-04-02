@@ -1,7 +1,7 @@
 import svmResolver from 'libsvm-js';
 import * as _ from 'lodash';
-import { validateFitInputs, validateMatrix1D, validateMatrix2D } from '../ops';
 import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
+import { validateFitInputs, validateMatrix1D, validateMatrix2D } from '../utils/validation';
 
 export type Type = 'C_SVC' | 'NU_SVC' | 'ONE_CLASS' | 'EPSILON_SVR' | 'NU_SVR';
 
@@ -88,7 +88,7 @@ export class BaseSVM implements IMlModel<number> {
       quiet: _.get(options, 'quiet', true),
       shrinking: _.get(options, 'shrinking', true),
       tolerance: _.get(options, 'tolerance', 0.001),
-      weight: _.get(options, 'weight', null)
+      weight: _.get(options, 'weight', null),
     };
   }
 
@@ -98,21 +98,13 @@ export class BaseSVM implements IMlModel<number> {
    * @param {number[]} y
    * @returns {Promise<void>}
    */
-  public async fit(
-    X: Type2DMatrix<number>,
-    y: Type1DMatrix<number>
-  ): Promise<void> {
+  public async fit(X: Type2DMatrix<number>, y: Type1DMatrix<number>): Promise<void> {
     validateFitInputs(X, y);
     if (!this.type) {
       throw new Error(`SVM type is unspecified ${this.type}`);
     }
     const SVM = await this.loadSVM();
-    const options = this.processOptions(
-      SVM,
-      this.options,
-      this.type,
-      this.options.kernel
-    );
+    const options = this.processOptions(SVM, this.options, this.type, this.options.kernel);
     this.svm = new SVM(options);
     this.svm.train(X, y);
   }
@@ -145,7 +137,7 @@ export class BaseSVM implements IMlModel<number> {
     return {
       svm: this.svm,
       type: this.type,
-      options: this.options
+      options: this.options,
     };
   }
 
@@ -157,9 +149,7 @@ export class BaseSVM implements IMlModel<number> {
    */
   public fromJSON({ svm = null, type = null, options = null }): void {
     if (!svm || !type || !options) {
-      throw new Error(
-        'You must provide svm, type and options to restore the model'
-      );
+      throw new Error('You must provide svm, type and options to restore the model');
     }
 
     this.svm = svm;
@@ -203,21 +193,16 @@ export class BaseSVM implements IMlModel<number> {
    * @param {Kernel} kernel
    * @returns {Object}
    */
-  private processOptions(
-    SVM,
-    options: SVMOptions,
-    type: Type,
-    kernel: Kernel
-  ): object {
+  private processOptions(SVM, options: SVMOptions, type: Type, kernel: Kernel): object {
     return _.flowRight(
-      opts => {
+      (opts) => {
         const foundType = this.getType(SVM, type);
         return _.set(opts, 'type', foundType);
       },
-      opts => {
+      (opts) => {
         const foundKernal = this.getKernel(SVM, kernel);
         return _.set(opts, 'kernel', foundKernal);
-      }
+      },
     )(options);
   }
 }

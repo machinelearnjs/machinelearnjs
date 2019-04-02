@@ -11,8 +11,8 @@ console.log(
   train_test_split(X, y, {
     test_size: 0.33,
     train_size: 0.67,
-    random_state: 42
-  })
+    random_state: 42,
+  }),
 );
 
 const kf = new KFold({ k: 5 });

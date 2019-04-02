@@ -1,7 +1,7 @@
 import * as tf from '@tensorflow/tfjs';
 import { isEqual } from 'lodash';
-import { inferShape } from '../ops';
 import { Type1DMatrix, Type2DMatrix } from '../types';
+import { inferShape } from '../utils/tensors';
 
 /**
  * Mean absolute error regression loss
@@ -21,23 +21,19 @@ export function mean_absolute_error(
   y_pred: Type1DMatrix<number> | Type2DMatrix<number> = null,
   // Options
   {
-    sample_weight = null
+    sample_weight = null,
   }: {
     sample_weight: Type1DMatrix<number>;
   } = {
-    sample_weight: null
-  }
+    sample_weight: null,
+  },
 ): number {
   const yTrueShape = inferShape(y_true);
   const yPredShape = inferShape(y_pred);
 
   // Validation 1: empty array check
   if (yTrueShape[0] === 0 || yPredShape[0] === 0) {
-    throw new TypeError(
-      `y_true ${JSON.stringify(y_true)} and y_pred ${JSON.stringify(
-        y_pred
-      )} cannot be empty`
-    );
+    throw new TypeError(`y_true ${JSON.stringify(y_true)} and y_pred ${JSON.stringify(y_pred)} cannot be empty`);
   }
 
   if (sample_weight !== null) {
@@ -51,9 +47,7 @@ export function mean_absolute_error(
   // Validation 2: Same shape
   if (!isEqual(yTrueShape, yPredShape)) {
     throw new TypeError(
-      `The shapes of y_true ${JSON.stringify(
-        yTrueShape
-      )} and y_pred ${JSON.stringify(yPredShape)} should be equal`
+      `The shapes of y_true ${JSON.stringify(yTrueShape)} and y_pred ${JSON.stringify(yPredShape)} should be equal`,
     );
   }
 
@@ -68,11 +62,7 @@ export function mean_absolute_error(
    * @param w - An array of weights associated with the values in a. Each value in a contributes to the average according to its associated weight. The weights array can either be 1-D (in which case its length must be the size of a along the given axis) or of the same shape as a. If weights=None, then all data in a are assumed to have a weight equal to one.
    * @ignore
    */
-  const average = (
-    X: tf.Tensor,
-    axis: number = 0,
-    w: Type1DMatrix<number> | null = null
-  ): tf.Tensor => {
+  const average = (X: tf.Tensor, axis: number = 0, w: Type1DMatrix<number> | null = null): tf.Tensor => {
     if (w !== null) {
       const wgt = tf.tensor1d(w);
       const scl = wgt.sum(axis);
@@ -119,35 +109,27 @@ export function mean_squared_error(
     /**
      * Sample weights.
      */
-    sample_weight = null
+    sample_weight = null,
   }: {
     sample_weight: number;
   } = {
-    sample_weight: null
-  }
+    sample_weight: null,
+  },
 ): number {
   const yTrueShape = inferShape(y_true);
   const yPredShape = inferShape(y_pred);
 
   // Validation 1: empty array check
   if (yTrueShape[0] === 0 || yPredShape[0] === 0) {
-    throw new TypeError(
-      `y_true ${JSON.stringify(y_true)} and y_pred ${JSON.stringify(
-        y_pred
-      )} cannot be empty`
-    );
+    throw new TypeError(`y_true ${JSON.stringify(y_true)} and y_pred ${JSON.stringify(y_pred)} cannot be empty`);
   }
 
   // Validation 2: Same shape
   if (!isEqual(yTrueShape, yPredShape)) {
     throw new TypeError(
-      `Shapes of y_true ${JSON.stringify(
-        yTrueShape
-      )} and y_pred ${JSON.stringify(yPredShape)} should be equal`
+      `Shapes of y_true ${JSON.stringify(yTrueShape)} and y_pred ${JSON.stringify(yPredShape)} should be equal`,
     );
   }
 
-  return tf.losses
-    .meanSquaredError(y_true, y_pred, sample_weight)
-    .dataSync()[0];
+  return tf.losses.meanSquaredError(y_true, y_pred, sample_weight).dataSync()[0];
 }

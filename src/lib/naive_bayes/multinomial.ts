@@ -1,7 +1,8 @@
 import * as tf from '@tensorflow/tfjs';
 import { countBy, isEmpty, zip } from 'lodash';
-import { reshape, validateFitInputs, validateMatrix2D } from '../ops';
 import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
+import { reshape } from '../utils/tensors';
+import { validateFitInputs, validateMatrix2D } from '../utils/validation';
 
 /**
  * Multinomial naive bayes machine learning algorithm
@@ -20,8 +21,7 @@ import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
  * nb.predict({ X: [[1, 20]] }); // returns [ 1 ]
  *
  */
-export class MultinomialNB<T extends number | string = number>
-  implements IMlModel<T> {
+export class MultinomialNB<T extends number | string = number> implements IMlModel<T> {
   /**
    * List of classes
    * @example
@@ -47,11 +47,7 @@ export class MultinomialNB<T extends number | string = number>
    */
   public fit(X: Type2DMatrix<number> = null, y: Type1DMatrix<T> = null): void {
     validateFitInputs(X, y);
-    const {
-      classCategories,
-      multinomialDist,
-      priorProbability
-    } = this.fitModel(X, y);
+    const { classCategories, multinomialDist, priorProbability } = this.fitModel(X, y);
     this.classCategories = classCategories as T[];
     this.multinomialDist = multinomialDist;
     this.priorProbability = priorProbability;
@@ -65,16 +61,10 @@ export class MultinomialNB<T extends number | string = number>
    */
   public predict(X: Type2DMatrix<number> = null): T[] {
     validateMatrix2D(X);
-    if (
-      isEmpty(this.classCategories) ||
-      isEmpty(this.multinomialDist) ||
-      isEmpty(this.priorProbability)
-    ) {
-      throw new TypeError(
-        'You should fit the model first before running the predict!'
-      );
+    if (isEmpty(this.classCategories) || isEmpty(this.multinomialDist) || isEmpty(this.priorProbability)) {
+      throw new TypeError('You should fit the model first before running the predict!');
     }
-    return X.map(x => this.singlePredict(x));
+    return X.map((x) => this.singlePredict(x));
   }
 
   /**
@@ -99,10 +89,9 @@ export class MultinomialNB<T extends number | string = number>
     return {
       classCategories: Array.from(this.classCategories),
       priorProbability: Array.from(this.priorProbability.dataSync()),
-      multinomialDist: reshape(
-        Array.from(this.multinomialDist.dataSync()),
-        this.multinomialDist.shape
-      ) as Type2DMatrix<number>
+      multinomialDist: reshape(Array.from(this.multinomialDist.dataSync()), this.multinomialDist.shape) as Type2DMatrix<
+        number
+      >,
     };
   }
   /**
@@ -115,7 +104,7 @@ export class MultinomialNB<T extends number | string = number>
     {
       multinomialDist = null,
       priorProbability = null,
-      classCategories = null
+      classCategories = null,
     }: {
       multinomialDist: Type2DMatrix<number>;
       priorProbability: Type1DMatrix<number>;
@@ -123,8 +112,8 @@ export class MultinomialNB<T extends number | string = number>
     } = {
       multinomialDist: null,
       priorProbability: null,
-      classCategories: null
-    }
+      classCategories: null,
+    },
   ): void {
     this.classCategories = classCategories;
     this.priorProbability = tf.tensor1d(priorProbability);
@@ -145,9 +134,7 @@ export class MultinomialNB<T extends number | string = number>
     // Comparing input and summary shapes
     if (numFeatures !== summaryLength) {
       throw new Error(
-        `Prediction input ${
-          matrixX.shape[0]
-        } length must be equal or less than summary length ${summaryLength}`
+        `Prediction input ${matrixX.shape[0]} length must be equal or less than summary length ${summaryLength}`,
       );
     }
 
@@ -155,14 +142,10 @@ export class MultinomialNB<T extends number | string = number>
     // The multinomial naive Bayes classifier becomes a linear
     // classifier when expressed in log-space
     // const priorProbability = Math.log(1 / classCount);
-    const fitProbabilites = this.multinomialDist
-      .clone()
-      .mul(matrixX as tf.Tensor);
+    const fitProbabilites = this.multinomialDist.clone().mul(matrixX as tf.Tensor);
 
     // sum(1) is summing columns
-    const allProbabilities = fitProbabilites
-      .sum(1)
-      .add(this.priorProbability as tf.Tensor);
+    const allProbabilities = fitProbabilites.sum(1).add(this.priorProbability as tf.Tensor);
 
     const selectionIndex = allProbabilities.argMax().dataSync()[0];
     allProbabilities.dispose();
@@ -178,7 +161,7 @@ export class MultinomialNB<T extends number | string = number>
    */
   private fitModel(
     X: Type2DMatrix<number>,
-    y: ReadonlyArray<T>
+    y: ReadonlyArray<T>,
   ): {
     classCategories: T[];
     multinomialDist: tf.Tensor2D;
@@ -187,51 +170,37 @@ export class MultinomialNB<T extends number | string = number>
     const classCounts = countBy<T>(y);
     const classCategories = Array.from(new Set(y));
     const numFeatures = X[0].length;
-    const separatedByCategory = zip<ReadonlyArray<number>, T>(X, y).reduce(
-      (groups, [row, category]) => {
-        if (!(category.toString() in groups)) {
-          groups[category.toString()] = [];
-        }
-        groups[category.toString()].push(
-          tf.tensor1d(row as number[], 'float32')
-        );
+    const separatedByCategory = zip<ReadonlyArray<number>, T>(X, y).reduce((groups, [row, category]) => {
+      if (!(category.toString() in groups)) {
+        groups[category.toString()] = [];
+      }
+      groups[category.toString()].push(tf.tensor1d(row as number[], 'float32'));
 
-        return groups;
-      },
-      {}
-    );
+      return groups;
+    }, {});
     const frequencySumByClass = tf.stack(
-      classCategories.map((category: T) =>
-        tf.addN(separatedByCategory[category.toString()])
-      )
+      classCategories.map((category: T) => tf.addN(separatedByCategory[category.toString()])),
     );
     const productReducedRow = Array.from(frequencySumByClass.sum(1).dataSync());
 
     // A class's prior may be calculated by assuming equiprobable classes
     // (i.e., priors = (number of samples in the class) / (total number of samples))
     const priorProbability: tf.Tensor1D = tf
-      .tensor1d(
-        classCategories.map(c => classCounts[c.toString()] / y.length),
-        'float32'
-      )
+      .tensor1d(classCategories.map((c) => classCounts[c.toString()] / y.length), 'float32')
       .log();
     // log transform to use linear multinomial forumla
     const multinomialDist: tf.Tensor2D = frequencySumByClass
       .add(tf.scalar(this.alpha) as tf.Tensor)
       .div(
         tf
-          .tensor2d(
-            productReducedRow as number[],
-            [frequencySumByClass.shape[0], 1],
-            'float32'
-          )
-          .add(tf.scalar(numFeatures * this.alpha) as tf.Tensor)
+          .tensor2d(productReducedRow as number[], [frequencySumByClass.shape[0], 1], 'float32')
+          .add(tf.scalar(numFeatures * this.alpha) as tf.Tensor),
       )
       .log() as tf.Tensor2D;
     return {
       classCategories,
       multinomialDist,
-      priorProbability
+      priorProbability,
     };
   }
 }

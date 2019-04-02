@@ -2,10 +2,15 @@ image:
   - Ubuntu
   - Visual Studio 2015
 
+branches:
+  only:
+    - master
+
 environment:
   matrix:
     - nodejs_version: '8'
     - nodejs_version: '10'
+    - nodejs_version: '11'
 
 # Fail on first error
 matrix:
@@ -30,7 +35,9 @@ install:
   # Install specified version of Node.JS (cross platform capable way)
   - cmd: powershell Install-Product node $env:nodejs_version
   - sh: nvm install $nodejs_version
-
+  # Initiating a git repository in the current project
+  - sh: git init
+  - cmd: git init
   # Set execution flag on script that runs inside docker
   - sh: chmod +x ./scripts/build-prod.sh
 

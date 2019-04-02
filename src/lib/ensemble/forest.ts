@@ -1,19 +1,7 @@
-import {
-  concat,
-  countBy,
-  find,
-  head,
-  isEqual,
-  keys,
-  map,
-  maxBy,
-  range,
-  reduce,
-  values
-} from 'lodash';
-import { validateFitInputs, validateMatrix2D } from '../ops';
+import { concat, countBy, find, head, isEqual, keys, map, maxBy, range, reduce, values } from 'lodash';
 import { DecisionTreeClassifier } from '../tree';
 import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
+import { validateFitInputs, validateMatrix2D } from '../utils/validation';
 
 /**
  * Base RandomForest implementation used by both classifier and regressor
@@ -33,7 +21,7 @@ export class BaseRandomForest implements IMlModel<number> {
     {
       // Each object param default value
       nEstimator = 10,
-      random_state = null
+      random_state = null,
     }: {
       // Param types
       nEstimator?: number;
@@ -41,8 +29,8 @@ export class BaseRandomForest implements IMlModel<number> {
     } = {
       // Default value on empty constructor
       nEstimator: 10,
-      random_state: null
-    }
+      random_state: null,
+    },
   ) {
     this.nEstimator = nEstimator;
     this.randomState = random_state;
@@ -54,22 +42,19 @@ export class BaseRandomForest implements IMlModel<number> {
    * @param {Array} y - array-like, shape = [n_samples] or [n_samples, n_outputs]
    * @returns void
    */
-  public fit(
-    X: Type2DMatrix<number> = null,
-    y: Type1DMatrix<number> = null
-  ): void {
+  public fit(X: Type2DMatrix<number> = null, y: Type1DMatrix<number> = null): void {
     validateFitInputs(X, y);
     this.trees = reduce(
       range(0, this.nEstimator),
-      sum => {
+      (sum) => {
         const tree = new DecisionTreeClassifier({
           featureLabels: null,
-          random_state: this.randomState
+          random_state: this.randomState,
         });
         tree.fit(X, y);
         return concat(sum, [tree]);
       },
-      []
+      [],
     );
   }
 
@@ -84,7 +69,7 @@ export class BaseRandomForest implements IMlModel<number> {
     trees: any[];
   } {
     return {
-      trees: this.trees
+      trees: this.trees,
     };
   }
 
@@ -152,7 +137,7 @@ export class RandomForestClassifier extends BaseRandomForest {
    * @returns {string[]}
    */
   private votePredictions(predictions: Type2DMatrix<number>): number[] {
-    const counts = countBy(predictions, x => x);
+    const counts = countBy(predictions, (x) => x);
     const countsArray = reduce(
       keys(counts),
       (sum, k) => {
@@ -160,12 +145,12 @@ export class RandomForestClassifier extends BaseRandomForest {
         returning[k] = counts[k];
         return concat(sum, returning);
       },
-      []
+      [],
     );
-    const max = maxBy(countsArray, x => head(values(x)));
+    const max = maxBy(countsArray, (x) => head(values(x)));
     const key = head(keys(max));
     // Find the actual class values from the predictions
-    return find(predictions, pred => {
+    return find(predictions, (pred) => {
       return isEqual(pred.join(','), key);
     });
   }

@@ -20,9 +20,7 @@ export abstract class IMlModel<T> {
   /**
    * Predict multiple rows. Each row has a feature data for a prediction
    */
-  public abstract predict(
-    X: Type2DMatrix<T | number> | Type1DMatrix<T>
-  ): T[] | T[][];
+  public abstract predict(X: Type2DMatrix<T | number> | Type1DMatrix<T>): T[] | T[][];
 
   /**
    * Restores model from a checkpoint

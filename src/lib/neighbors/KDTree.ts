@@ -69,7 +69,7 @@ export default class KDTree {
     const dimensions = this.dimensions;
     let i;
 
-    const bestNodes = new BinaryHeap(e => -e[1]);
+    const bestNodes = new BinaryHeap((e) => -e[1]);
 
     function nearestSearch(node) {
       const dimension = dimensions[node.dimension];

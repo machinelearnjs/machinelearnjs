@@ -11,7 +11,7 @@ describe('naive_bayes:MultinomialNB', () => {
     [[1, 9], '1'],
     [[9, 9], '2'],
     [[90, 9], '3'],
-    [[1, 90], '1']
+    [[1, 90], '1'],
   ];
   const X2 = [[6, 9], [5, 5], [9, 5], [9, 6]];
   const y2 = ['1', '2', '3', '3'];
@@ -22,13 +22,13 @@ describe('naive_bayes:MultinomialNB', () => {
     [[1, 9], '1'],
     [[9, 9], '3'],
     [[90, 9], '3'],
-    [[1, 90], '1']
+    [[1, 90], '1'],
   ];
   it('Should fit X1 and y1', () => {
     const nb = new MultinomialNB<string>();
     nb.fit(X1, y1);
 
-    expectedTests.forEach(expectedTest => {
+    expectedTests.forEach((expectedTest) => {
       const [test, expected] = expectedTest;
       const result = nb.predict([test]);
       expect(result).toEqual([expected]);
@@ -42,9 +42,9 @@ describe('naive_bayes:MultinomialNB', () => {
   });
   it('Should fit X1 and y1 as number', () => {
     const nb = new MultinomialNB();
-    nb.fit(X1, y1.map(y => +y));
+    nb.fit(X1, y1.map((y) => +y));
 
-    expectedTests.forEach(expectedTest => {
+    expectedTests.forEach((expectedTest) => {
       const [test, expected] = expectedTest;
       const result = nb.predict([test]);
       expect(result).toEqual([+expected]);
@@ -58,7 +58,7 @@ describe('naive_bayes:MultinomialNB', () => {
     const nb = new MultinomialNB<string>();
     nb.fit(X2, y2);
 
-    expectedTests2.forEach(expectedTest => {
+    expectedTests2.forEach((expectedTest) => {
       const [test, expected] = expectedTest;
       const result = nb.predict([test]);
       expect(result).toEqual([expected]);

@@ -15,7 +15,7 @@ export async function getIris(): Promise<{
   const { xTest, xTrain, yTest, yTrain } = train_test_split(data, targets, {
     test_size: 0.33,
     train_size: 0.67,
-    random_state: 42
+    random_state: 42,
   });
   return { xTest, xTrain, yTest, yTrain };
 }

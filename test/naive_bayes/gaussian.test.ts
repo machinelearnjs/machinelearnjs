@@ -2,15 +2,7 @@ import { GaussianNB } from '../../src/lib/naive_bayes';
 import { matchExceptionWithSnapshot } from '../util_testing';
 
 describe('naive_bayes:GaussianNB', () => {
-  const X1 = [
-    [1, 20],
-    [20, 210],
-    [3, 22],
-    [40, 220],
-    [6, 10],
-    [7, 11],
-    [7, 11]
-  ];
+  const X1 = [[1, 20], [20, 210], [3, 22], [40, 220], [6, 10], [7, 11], [7, 11]];
   const y1 = [1, 0, 1, 0, 2, 2, 2];
   it('Should fit X1 and y1', () => {
     const nb = new GaussianNB();
@@ -86,8 +78,7 @@ describe('naive_bayes:GaussianNB', () => {
   it('should not prediction attributes are greater than summary length', () => {
     const nb = new GaussianNB();
     nb.fit(X1, y1);
-    const tooManyPredAttrs =
-      'Prediction input 4 length must be equal or less than summary length 2';
+    const tooManyPredAttrs = 'Prediction input 4 length must be equal or less than summary length 2';
     expect(() => nb.predict([[1, 20, 11, 2]])).toThrow(tooManyPredAttrs);
   });
 });

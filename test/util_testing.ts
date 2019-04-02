@@ -4,11 +4,7 @@
  * @param actual
  * @param precision
  */
-const assertArrayAlmostEqual = (
-  desired: number[],
-  actual: number[],
-  precision: number = 6
-): number => {
+const assertArrayAlmostEqual = (desired: number[], actual: number[], precision: number = 6): number => {
   const results = [];
   for (let i = 0; i < desired.length; i++) {
     const d = desired[i];
@@ -17,13 +13,10 @@ const assertArrayAlmostEqual = (
     results.push(calc);
   }
   const numTrues = results.reduce((sum, cur) => (cur ? sum + 1 : sum), 0);
-  return (numTrues / results.length) * 100;
+  return numTrues / results.length * 100;
 };
 
-const matchExceptionWithSnapshot = (
-  method: (...x) => any,
-  args: any[]
-): void => {
+const matchExceptionWithSnapshot = (method: (...x) => any, args: any[]): void => {
   try {
     method(...args);
   } catch (e) {

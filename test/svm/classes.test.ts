@@ -3,7 +3,7 @@ import { NuSVC, NuSVR, OneClassSVM, SVC, SVR } from '../../src/lib/svm';
 jest.mock('libsvm-js', () => () => ({
   predict: (X: number[][]) => X[0],
   predictOne: (X: number[]) => X[0],
-  train: (X, y) => ({ X, y })
+  train: (X, y) => ({ X, y }),
 }));
 
 describe('svm:classes', () => {
