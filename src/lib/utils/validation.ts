@@ -71,7 +71,7 @@ export function validateMatrixType(X: TypeMatrix<any>, targetTypes: string[]): v
 }
 
 /**
- * Validate typical X and y train data and check they are 2D and 1D shaped respectively
+ * Check that X and y have the same size across the first axis
  *
  * @example
  * validateTrainInputs([ [1, 2], [3, 4] ], [ 1, 2 ]) // No errors
@@ -81,11 +81,11 @@ export function validateMatrixType(X: TypeMatrix<any>, targetTypes: string[]): v
  * @param y
  * @ignore
  */
-export function validateFitInputs(X: Type2DMatrix<any>, y: Type1DMatrix<any>): void {
+export function validateFitInputs(X: Type2DMatrix<any> | Type1DMatrix<any>, y: Type1DMatrix<any>): void {
   // Check X is always a matrix
-  const sampleShape = inferShape(validateMatrix2D(X));
+  const sampleShape = inferShape(X);
   // Check y is always a vector
-  const targetShape = inferShape(validateMatrix1D(y));
+  const targetShape = inferShape(y);
   if (sampleShape[0] !== targetShape[0]) {
     throw new TypeError(`Number of labels=${targetShape[0]} does not math number of samples=${sampleShape[0]}`);
   }

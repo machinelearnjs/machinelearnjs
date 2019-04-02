@@ -11,7 +11,7 @@ import {
 } from '@tensorflow/tfjs';
 import { Type1DMatrix, Type2DMatrix } from '../types';
 import { ensure2DMatrix, inferShape } from '../utils/tensors';
-import { checkNumFeatures } from '../utils/validation';
+import { checkNumFeatures, validateFitInputs } from '../utils/validation';
 
 export class LogisticRegression {
   private weights: Tensor1D;
@@ -27,6 +27,7 @@ export class LogisticRegression {
     numIterations = 4000
   ): void {
     const xWrapped: Type2DMatrix<number> = ensure2DMatrix(X);
+    validateFitInputs(xWrapped, y);
     this.initWeights(xWrapped);
     const tensorX = tensor2d(xWrapped);
     const tensorY = tensor1d(y);

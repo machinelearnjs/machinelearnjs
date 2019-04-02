@@ -28,6 +28,15 @@ describe('linear_model:LogisticRegression', () => {
       expect(predictions).toEqual(expected);
     });
 
+    it('Should throw error when number of training samples in X and y does not match', () => {
+      const X = [[1], [2]]
+      const y = [1]
+
+      const lr: LogisticRegression = new LogisticRegression();
+
+      expect(() => lr.fit(X, y)).toThrowError('Number of labels=1 does not math number of samples=2')
+    })
+
     it('Should throw error when X test has incorrect number of features', () => {
       const xTrain = [[1, 2, 3], [4, 5, 6]];
       const yTrain = [1, 1];
@@ -90,5 +99,14 @@ describe('linear_model:LogisticRegression', () => {
 
       expect(predictions).toEqual(expected);
     });
+
+    it('Should throw error when number of training samples in X and y does not match', () => {
+      const X = [1, 2]
+      const y = [1]
+
+      const lr: LogisticRegression = new LogisticRegression();
+
+      expect(() => lr.fit(X, y)).toThrowError('Number of labels=1 does not math number of samples=2')
+    }
   });
 });
