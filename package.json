@@ -68,14 +68,12 @@
   },
   "dependencies": {
     "@tensorflow/tfjs": "0.13.3",
-    "build": "^0.1.4",
     "isomorphic-fetch": "2.2.1",
     "libsvm-js": "0.2.0",
-    "lodash": "4.17.10",
+    "lodash": "4.17.11",
     "numeric": "1.2.6",
     "random-js": "1.0.8",
-    "stopword": "0.1.10",
-    "yarn": "^1.15.2"
+    "stopword": "0.1.10"
   },
   "devDependencies": {
     "@types/es6-promise": "3.3.0",
