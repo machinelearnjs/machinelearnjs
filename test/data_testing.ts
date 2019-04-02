@@ -1,14 +1,15 @@
 import { HeartDisease, Iris } from '../src/lib/datasets';
 import { train_test_split } from '../src/lib/model_selection';
+import { Type1DMatrix, Type2DMatrix } from '../src/lib/types';
 
 /**
  * Retrieves Iris dummy data for testing
  */
 export async function getIris(): Promise<{
-  xTest: number[][];
-  xTrain: number[][];
-  yTest: number[];
-  yTrain: number[];
+  xTest: Type2DMatrix<number>; 
+  xTrain: Type2DMatrix<number>;
+  yTest: Type1DMatrix<number>;
+  yTrain: Type1DMatrix<number>;
 }> {
   const iris = new Iris();
   const { data, targets } = await iris.load();
@@ -21,10 +22,10 @@ export async function getIris(): Promise<{
 }
 
 export async function getHeartDisease(): Promise<{
-  xTest: number[][];
-  xTrain: number[][];
-  yTest: number[];
-  yTrain: number[];
+  xTest: Type2DMatrix<number>;
+  xTrain: Type2DMatrix<number>;
+  yTest: Type1DMatrix<number>;
+  yTrain: Type1DMatrix<number>
 }> {
   const heartDisease = new HeartDisease();
   const { data, targets } = await heartDisease.load();
