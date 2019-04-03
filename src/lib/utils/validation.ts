@@ -139,7 +139,7 @@ export const checkNumFeatures = <T>(X: Type2DMatrix<T> | Type1DMatrix<T>, refere
   const xNumFeatures = xShape.length === 1 ? 1 : xShape[1];
   const referenceNumFeatures = referenceShape[0];
   if (xNumFeatures !== referenceNumFeatures) {
-    throw new Error(
+    throw new ValidationError(
       `Provided X has incorrect number of features. Should have: ${referenceNumFeatures}, got: ${xNumFeatures}`,
     );
   }
