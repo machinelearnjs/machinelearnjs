@@ -3,6 +3,9 @@ import { Type1DMatrix, Type2DMatrix } from '../types';
 import { ensure2DMatrix, inferShape } from '../utils/tensors';
 import { checkNumFeatures, validateFitInputs } from '../utils/validation';
 
+/**
+ * Logistic Regression (aka logit, MaxEnt) classifier.
+ */
 export class LogisticRegression {
   private weights: tf.Tensor1D;
   private learningRate: number;
@@ -19,6 +22,12 @@ export class LogisticRegression {
     this.learningRate = learning_rate;
   }
 
+  /**
+   * Fit the model according to the given training data.
+   * @param X - A matrix of samples
+   * @param y - A matriix of targets
+   * @param numIterations
+   */
   public fit(X: Type2DMatrix<number> | Type1DMatrix<number>, y: Type1DMatrix<number>, numIterations = 4000): void {
     const xWrapped: Type2DMatrix<number> = ensure2DMatrix(X);
     validateFitInputs(xWrapped, y);
@@ -34,6 +43,10 @@ export class LogisticRegression {
     }
   }
 
+  /**
+   * Predict class labels for samples in X.
+   * @param X - A matrix of test data
+   */
   public predict(X: Type2DMatrix<number> | Type1DMatrix<number>): number[] {
     checkNumFeatures(X, this.weights.arraySync());
 

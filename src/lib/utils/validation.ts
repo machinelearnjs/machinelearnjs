@@ -132,6 +132,7 @@ export function validateMatrix2D(X: unknown): number[][] {
  * @param X - matrix to check
  * @param reference - reference matrix
  * @throws Error - in case number of features doesn't match
+ * @ignore
  */
 export const checkNumFeatures = <T>(X: Type2DMatrix<T> | Type1DMatrix<T>, reference: Type1DMatrix<T>): void => {
   const xShape: number[] = inferShape(X);
