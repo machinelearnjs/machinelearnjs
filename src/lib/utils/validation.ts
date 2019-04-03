@@ -133,17 +133,14 @@ export function validateMatrix2D(X: unknown): number[][] {
  * @param reference - reference matrix
  * @throws Error - in case number of features doesn't match
  */
-export const checkNumFeatures = <T>(
-  X: Type2DMatrix<T> | Type1DMatrix<T>,
-  reference: Type1DMatrix<T>
-): void => {
+export const checkNumFeatures = <T>(X: Type2DMatrix<T> | Type1DMatrix<T>, reference: Type1DMatrix<T>): void => {
   const xShape: number[] = inferShape(X);
   const referenceShape: number[] = inferShape(reference);
   const xNumFeatures = xShape.length === 1 ? 1 : xShape[1];
-  const referenceNumFeatures = referenceShape[0]
+  const referenceNumFeatures = referenceShape[0];
   if (xNumFeatures !== referenceNumFeatures) {
     throw new Error(
-      `Provided X has incorrect number of features. Should have: ${referenceNumFeatures}, got: ${xNumFeatures}`
+      `Provided X has incorrect number of features. Should have: ${referenceNumFeatures}, got: ${xNumFeatures}`,
     );
   }
 };

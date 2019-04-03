@@ -11,7 +11,7 @@ export class HeartDisease extends BaseDataset {
     return {
       data,
       targets,
-      labels
+      labels,
     };
   }
 }

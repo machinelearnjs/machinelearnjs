@@ -82,11 +82,7 @@ export function reshape<T>(array: TypeMatrix<T>, sizes: number[]): TypeMatrix<T>
  * If passed a two dimensional matrix, does nothing
  * @param X - target matrix
  */
-export const ensure2DMatrix = (
-  X: Type2DMatrix<number> | Type1DMatrix<number>
-): Type2DMatrix<number> => {
+export const ensure2DMatrix = (X: Type2DMatrix<number> | Type1DMatrix<number>): Type2DMatrix<number> => {
   const shape: number[] = inferShape(X);
-  return shape.length === 2
-    ? (X as Type2DMatrix<number>)
-    : (_.map(X, x => [x]) as Type2DMatrix<number>);
+  return shape.length === 2 ? (X as Type2DMatrix<number>) : (_.map(X, (x) => [x]) as Type2DMatrix<number>);
 };
