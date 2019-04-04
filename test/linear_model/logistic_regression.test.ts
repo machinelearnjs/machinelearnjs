@@ -29,13 +29,13 @@ describe('linear_model:LogisticRegression', () => {
     });
 
     it('Should throw error when number of training samples in X and y does not match', () => {
-      const X = [[1], [2]]
-      const y = [1]
+      const X = [[1], [2]];
+      const y = [1];
 
       const lr: LogisticRegression = new LogisticRegression();
 
-      expect(() => lr.fit(X, y)).toThrowError('Number of labels=1 does not math number of samples=2')
-    })
+      expect(() => lr.fit(X, y)).toThrowError('Number of labels=1 does not math number of samples=2');
+    });
 
     it('Should throw error when X test has incorrect number of features', () => {
       const xTrain = [[1, 2, 3], [4, 5, 6]];
@@ -46,7 +46,7 @@ describe('linear_model:LogisticRegression', () => {
 
       const xTest = [[1, 2], [4, 5]];
       expect(() => lr.predict(xTest)).toThrowError(
-        'Provided X has incorrect number of features. Should have: 3, got: 2'
+        'Provided X has incorrect number of features. Should have: 3, got: 2',
       );
     });
 
@@ -63,7 +63,7 @@ describe('linear_model:LogisticRegression', () => {
     });
 
     it('Should train on heart disease dataset and have at least 50% accuracy', async () => {
-      const { xTest, xTrain, yTest, yTrain } = await getHeartDisease();
+      const { xTest, yTest } = await getHeartDisease();
 
       const lr = new LogisticRegression();
       lr.fit(xTest, yTest);
@@ -101,12 +101,12 @@ describe('linear_model:LogisticRegression', () => {
     });
 
     it('Should throw error when number of training samples in X and y does not match', () => {
-      const X = [1, 2]
-      const y = [1]
+      const X = [1, 2];
+      const y = [1];
 
       const lr: LogisticRegression = new LogisticRegression();
 
-      expect(() => lr.fit(X, y)).toThrowError('Number of labels=1 does not math number of samples=2')
-    }
+      expect(() => lr.fit(X, y)).toThrowError('Number of labels=1 does not math number of samples=2');
+    });
   });
 });
