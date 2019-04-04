@@ -25,8 +25,8 @@ export class LogisticRegression {
   /**
    * Fit the model according to the given training data.
    * @param X - A matrix of samples
-   * @param y - A matriix of targets
-   * @param numIterations
+   * @param y - A matrix of targets
+   * @param numIterations - Number of iterations to run gradient descent for
    */
   public fit(X: Type2DMatrix<number> | Type1DMatrix<number>, y: Type1DMatrix<number>, numIterations = 4000): void {
     const xWrapped: Type2DMatrix<number> = ensure2DMatrix(X);
@@ -46,6 +46,7 @@ export class LogisticRegression {
   /**
    * Predict class labels for samples in X.
    * @param X - A matrix of test data
+   * @returns An array of predicted classes
    */
   public predict(X: Type2DMatrix<number> | Type1DMatrix<number>): number[] {
     checkNumFeatures(X, this.weights.arraySync());
@@ -55,6 +56,9 @@ export class LogisticRegression {
     return tf.round(tf.sigmoid(tf.tensor2d(xWrapped).dot(this.weights))).arraySync() as number[];
   }
 
+  /**
+   * Get the model details in JSON format
+   */
   public toJSON(): {
     weights: number[];
     learningRate: number;
@@ -65,6 +69,9 @@ export class LogisticRegression {
     };
   }
 
+  /**
+   * Restore the model from a checkpoint
+   */
   public fromJSON({ weights, learningRate }: { weights: number[]; learningRate: number }): void {
     this.weights = tf.tensor1d(weights);
     this.learningRate = learningRate;
