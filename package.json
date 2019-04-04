@@ -103,6 +103,9 @@
     "vuepress": "0.12.0",
     "watch": "1.0.2"
   },
+  "resolutions": {
+    "webpack-dev-middleware": "3.6.0"
+  },
   "jest": {
     "moduleFileExtensions": [
       "ts",
