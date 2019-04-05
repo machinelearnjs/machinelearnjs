@@ -1,7 +1,23 @@
+
+export default class BaseError extends Error {
+  message: string;
+
+  constructor(messageOrError?: string | Error) {
+    let message: string;
+    if (messageOrError instanceof Error) {
+      message = messageOrError.message;
+    } else {
+      message = messageOrError;
+    }
+    super(message);
+    this.message = message;
+  }
+}
+
 /**
  * @ignore
  */
-export class ValidationError extends Error {}
+export class ValidationError extends BaseError {}
 
 /**
  * @ignore

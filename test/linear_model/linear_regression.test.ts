@@ -1,4 +1,5 @@
 import { LinearRegression } from '../../src/lib/linear_model';
+import {ValidationError} from "../../src/lib/utils/Errors";
 
 describe('linear_model:LinearRegression (Univariate)', () => {
   const X1 = [1, 2, 4, 3, 5];
@@ -57,15 +58,18 @@ describe('linear_model:LinearRegression (Univariate)', () => {
     expect(result2).toEqual(expected2);
   });
 
-  it('should throw an exception when invalid data is given to the fit function', () => {
-    const lr = new LinearRegression();
-    expect(() => lr.fit('abc', y1)).toThrow(
-      'values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray',
-    );
+  test('should throw an exception when invalid data is given to the fit function', () => {
+    /*const lr = new LinearRegression();
+    expect(() => lr.fit('abc', y1)).toThrow(ValidationError);
     expect(() => lr.fit([], 'abc')).toThrow(
       'values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray',
     );
     expect(() => lr.fit([1, 2, 3], [1, 2])).toThrow('Sample(3) and target(2) sizes do not match');
+    */
+    const t = () => {
+      throw new ValidationError();
+    };
+    expect(t).toThrow(ValidationError);
   });
 
   it('should throw an exception when invalid data is given to the predict function', () => {

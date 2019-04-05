@@ -10,6 +10,7 @@ import math from '../utils/MathExtra';
 import { reshape } from '../utils/tensors';
 import { inferShape } from '../utils/tensors';
 import { validateMatrix2D } from '../utils/validation';
+import {ValidationError} from "../utils/Errors";
 
 /**
  * Type of Linear Regression
@@ -56,6 +57,12 @@ export class LinearRegression {
     X: Type1DMatrix<number> | Type2DMatrix<number> = null,
     y: Type1DMatrix<number> | Type2DMatrix<number> = null,
   ): void {
+    if (!Array.isArray(X)) {
+      throw new ValidationError('Received a non-array argument for X');
+    }
+    if (!Array.isArray(X) || !Array.isArray(y)) {
+      throw new ValidationError('Received a non-array argument for y');
+    }
     const xShape = inferShape(X);
     const yShape = inferShape(y);
     if (xShape.length === 1 && yShape.length === 1 && xShape[0] === yShape[0]) {
