@@ -1,3 +1,4 @@
+import { ValidationError, ValidationInconsistentShape } from '../../src/lib/utils/Errors';
 import { inferShape, reshape } from '../../src/lib/utils/tensors';
 
 describe('inferShape', () => {
@@ -18,9 +19,11 @@ describe('inferShape', () => {
     expect(shape).toEqual(expected);
   });
   it('should throw an error if a 2D matrix is incorrectly shaped', () => {
-    expect(() => inferShape([[2, 3], [1, 2], [4]])).toThrow(
-      'Element arr[2] should have 2 elements, but has 1 elements',
-    );
+    try {
+      inferShape([[2, 3], [1, 2], [4]]);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationInconsistentShape);
+    }
   });
 
   it('should infer a shape of a 3D matrix', () => {
@@ -30,9 +33,11 @@ describe('inferShape', () => {
   });
 
   it('should throw an error if a 3D matrix is incorrectly shaped', () => {
-    expect(() => inferShape([[[1, 2], [3, 4]], [[5, 6], [7]]])).toThrow(
-      'Element arr[1][1] should have 2 elements, but has 1 elements',
-    );
+    try {
+      inferShape([[[1, 2], [3, 4]], [[5, 6], [7]]]);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationInconsistentShape);
+    }
   });
 
   it('should infer a shape of a 4D matrix', () => {
@@ -41,9 +46,11 @@ describe('inferShape', () => {
     expect(shape).toEqual(expected);
   });
   it('should throw an error if a 4D matrix is incorrectly shaped', () => {
-    expect(() => inferShape([[[[1, 2], [1, 2]], [[1, 2], [1, 2]]], [[[1, 2], [1, 2]], [[1, 2], [1]]]])).toThrow(
-      'Element arr[1][1][1] should have 2 elements, but has 1 elements',
-    );
+    try {
+      inferShape([[[[1, 2], [1, 2]], [[1, 2], [1, 2]]], [[[1, 2], [1, 2]], [[1, 2], [1]]]]);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationInconsistentShape);
+    }
   });
 
   it('should infer a shape of a 5D matrix', () => {
@@ -56,12 +63,14 @@ describe('inferShape', () => {
   });
 
   it('should throw an error if a 5D matrix is incorrectly shaped', () => {
-    expect(() =>
+    try {
       inferShape([
         [[[[1, 2], [1, 2]], [[1, 2], [1, 2]]], [[[1, 2], [1, 2]], [[1, 2], [1, 2]]]],
         [[[[1, 2], [1, 2]], [[1, 2], [1, 2]]], [[[1, 2], [1, 2]], [[1, 2], [1]]]],
-      ]),
-    ).toThrow('Element arr[1][1][1][1] should have 2 elements, but has 1 elements');
+      ]);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationInconsistentShape);
+    }
   });
 });
 
@@ -88,9 +97,25 @@ describe('reshape', () => {
   });
 
   it('should not reshape invalid inputs', () => {
-    expect(() => reshape(null, [1])).toThrow('The input array must be an array!');
-    expect(() => reshape([], [1])).toThrow('Target array shape [0] cannot be reshaped into 1');
-    expect(() => reshape([[1, 2, 3]], null)).toThrow('The sizes must be an array!');
-    expect(() => reshape([[1, 2, 3]], 1)).toThrow('The sizes must be an array!');
+    try {
+      reshape(null, [1]);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      reshape([], [1]);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      reshape([[1, 2, 3]], null);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      reshape([[1, 2, 3]], 1);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 });

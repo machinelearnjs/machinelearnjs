@@ -1,7 +1,7 @@
 import * as tf from '@tensorflow/tfjs';
 import * as _ from 'lodash';
 import { Type1DMatrix, Type2DMatrix } from '../types';
-import { ValidationError, ValidationKeyNotFoundError } from '../utils/Errors';
+import { ConstructionError, ValidationError, ValidationKeyNotFoundError } from '../utils/Errors';
 import math from '../utils/MathExtra';
 import { combinationsWithReplacement } from '../utils/permutations';
 import { inferShape, reshape } from '../utils/tensors';
@@ -429,6 +429,9 @@ export class MinMaxScaler {
    * @param {number[]} X - Array or sparse-matrix data input
    */
   public fit(X: Type1DMatrix<number> | Type2DMatrix<number> = null): void {
+    if (!Array.isArray(X)) {
+      throw new ValidationError('MinMaxScaler received a non-array input for X');
+    }
     let rowMax = tf.tensor(X);
     let rowMin = tf.tensor(X);
     const xShape = inferShape(X);
@@ -539,7 +542,7 @@ export class Binarizer {
    */
   public fit(X: Type2DMatrix<number> = null): void {
     if (Array.isArray(X) && X.length === 0) {
-      throw new TypeError('X cannot be empty');
+      throw new ValidationError('X should be an array and cannot be empty');
     }
     validateMatrix2D(X);
     console.info("Currently Bianrizer's fit is designed to do nothing");
@@ -559,7 +562,7 @@ export class Binarizer {
   public transform(X: Type2DMatrix<number> = null): any[] {
     const _X = this.copy ? _.clone(X) : X;
     if (Array.isArray(_X) && _X.length === 0) {
-      throw new TypeError('X cannot be empty');
+      throw new ValidationError('X should be an array and cannot be empty');
     }
     validateMatrix2D(_X);
     for (let row = 0; row < _.size(X); row++) {
@@ -614,7 +617,7 @@ export class PolynomialFeatures {
   ) {
     // Constructor variables validation
     if (!Number.isInteger(degree)) {
-      throw new Error('Degree must be a number');
+      throw new ConstructionError('Degree must be a number');
     }
     this.degree = degree;
   }
@@ -625,7 +628,7 @@ export class PolynomialFeatures {
    */
   public transform(X: Type2DMatrix<number> = null): number[][] {
     if (Array.isArray(X) && X.length === 0) {
-      throw new TypeError('X cannot be empty');
+      throw new ValidationError('X cannot be empty');
     }
     validateMatrix2D(X);
     const matrix = tf.tensor2d(X);
@@ -705,7 +708,7 @@ export function normalize(
   },
 ): number[][] {
   if (Array.isArray(X) && X.length === 0) {
-    throw new TypeError('X cannot be empty');
+    throw new ValidationError('X cannot be empty');
   }
   validateMatrix2D(X);
   const normalizedMatrix = [];
@@ -725,7 +728,7 @@ export function normalize(
       proportion = row.reduce((accum: any, r) => accum + Math.pow(r, 2), 0);
       proportion = Math.sqrt(proportion);
     } else {
-      throw new Error(`${norm} is not a recognised normalization method`);
+      throw new ValidationError(`${norm} is not a recognised normalization method`);
     }
 
     // Finally applying a cubic root to the total value

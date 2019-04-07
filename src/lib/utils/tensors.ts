@@ -1,7 +1,7 @@
 import * as tf from '@tensorflow/tfjs';
 import * as _ from 'lodash';
 import { Type1DMatrix, Type2DMatrix, TypeMatrix } from '../types';
-import { ValidationInconsistentShape } from './Errors';
+import { ValidationError, ValidationInconsistentShape } from './Errors';
 import { validateMatrix1D, validateMatrix2D } from './validation';
 
 /**
@@ -46,11 +46,11 @@ export function inferShape(X: TypeMatrix<any>): number[] {
 export function reshape<T>(array: TypeMatrix<T>, sizes: number[]): TypeMatrix<T> {
   // Initial validations
   if (!Array.isArray(array)) {
-    throw new TypeError('The input array must be an array!');
+    throw new ValidationError('The input array must be an array!');
   }
 
   if (!Array.isArray(sizes)) {
-    throw new TypeError('The sizes must be an array!');
+    throw new ValidationError('The sizes must be an array!');
   }
 
   const deepFlatArray = _.flattenDeep<T>(array);
@@ -58,7 +58,7 @@ export function reshape<T>(array: TypeMatrix<T>, sizes: number[]): TypeMatrix<T>
   if (sizes.length === 1 && deepFlatArray.length === sizes[0]) {
     return deepFlatArray;
   } else if (sizes.length === 1 && deepFlatArray.length !== sizes[0]) {
-    throw new TypeError(`Target array shape [${deepFlatArray.length}] cannot be reshaped into ${sizes}`);
+    throw new ValidationError(`Target array shape [${deepFlatArray.length}] cannot be reshaped into ${sizes}`);
   }
 
   // testing if there are enough elements for the requested shape

@@ -1,5 +1,5 @@
 import { Lasso, Ridge } from '../../src/lib/linear_model';
-import { ValidationError } from '../../src/lib/utils/Errors';
+import { ConstructionError, ValidationError } from '../../src/lib/utils/Errors';
 import { getIris } from '../data_testing';
 import { assertArrayAlmostEqual } from '../util_testing';
 import { lasso_l2_snap, ridge_l1_snap } from './__snapshots__/manual_cd_regressor.snap';
@@ -36,7 +36,7 @@ describe('linear_model:Ridge', () => {
       const reg = new Ridge({ l2: null } as any);
       reg.fit();
     } catch (err) {
-      expect(err).toBeInstanceOf(ValidationError);
+      expect(err).toBeInstanceOf(ConstructionError);
     }
   });
 });
@@ -73,13 +73,13 @@ describe('linear_model:Lasso', () => {
       const reg = new Lasso({ l1: null } as any);
       reg.fit();
     } catch (err) {
-      expect(err).toBeInstanceOf(ValidationError);
+      expect(err).toBeInstanceOf(ConstructionError);
     }
     try {
       const reg = new Lasso({ degree: null } as any);
       reg.fit();
     } catch (err) {
-      expect(err).toBeInstanceOf(ValidationError);
+      expect(err).toBeInstanceOf(ConstructionError);
     }
   });
 });

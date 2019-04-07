@@ -1,5 +1,6 @@
 import * as tf from '@tensorflow/tfjs';
 import * as _ from 'lodash';
+import { ValidationError, ValidationInconsistentShape } from '../../src/lib/utils/Errors';
 import math from '../../src/lib/utils/MathExtra';
 
 describe('math.size', () => {
@@ -17,24 +18,30 @@ describe('math.size', () => {
 
   it('should throw an error because X is null', () => {
     const testX = null;
-    expect(() => {
+    try {
       math.size(testX, 1);
-    }).toThrow('Invalid input array of size 0!');
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 
   it('should throw an error because X is an empty array', () => {
     const testX = [];
-    expect(() => {
+    try {
       math.size(testX, 1);
-    }).toThrow('Invalid input array of size 0!');
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 
   it('should throw an error because axis is invalid', () => {
     const testX = [[1, 2], [2, 3]];
     const axis = 12;
-    expect(() => {
+    try {
       math.size(testX, axis);
-    }).toThrow(`Invalid axis value ${axis} was given`);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 });
 
@@ -52,7 +59,11 @@ describe('math.range', () => {
   });
 
   it('should throw an invalid error', () => {
-    expect(() => math.range('test', 2)).toThrow('start and stop arguments need to be numbers');
+    try {
+      math.range('test', 2);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 });
 
@@ -68,9 +79,11 @@ describe('math.isMatrixOf', () => {
   });
 
   it('should fail to valid []', () => {
-    expect(() => {
+    try {
       math.isMatrixOf([], 'number');
-    }).toThrow('Cannot perform isMatrixOf number unless the data is matrix');
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 });
 
@@ -108,9 +121,11 @@ describe('math.isArrayOf', () => {
   });
 
   it('should throw an exception if type is abcd', () => {
-    expect(() => {
+    try {
       math.isArrayOf(['a', 'b'], 'abcd');
-    }).toThrow('Failed to check the array content of type abcd');
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 });
 
@@ -138,9 +153,11 @@ describe('math.covariance', () => {
   });
 
   it('should throw an error when x and y are different in sizes', () => {
-    expect(() => {
+    try {
       math.covariance(X2, 1, y2, 2);
-    }).toThrow('X and y should match in size');
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 
   it('should calculate large numbers', () => {
@@ -167,9 +184,11 @@ describe('math.variance', () => {
   });
 
   it('should throw an error when x is not an array', () => {
-    expect(() => {
+    try {
       math.variance(X2, 1);
-    }).toThrow('X must be an array');
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 
   it('should calculate large numbers', () => {
@@ -208,9 +227,16 @@ describe('math.hstack', () => {
   });
 
   it('should not hstack an invalid input', () => {
-    const expectedError = 'Input should be either matrix or Arrays';
-    expect(() => math.hstack(true, true)).toThrow(expectedError);
-    expect(() => math.hstack(1, 2)).toThrow(expectedError);
+    try {
+      math.hstack(true, true);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      math.hstack(1, 2);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 });
 
@@ -244,20 +270,29 @@ describe('math.inner', () => {
   it('should throw an error if non number or vector is given for the left input', () => {
     const a = null;
     const b = [2, 2, 2];
-    const error = `Cannot process with the invalid inputs ${a} and ${b}`;
-    expect(() => math.inner(a, b)).toThrow(error);
+    try {
+      math.inner(a, b);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
   it('should throw an error if non number or vector is given for the right input', () => {
     const a = [2, 2, 2];
     const b = null;
-    const error = `Cannot process with the invalid inputs ${a} and ${b}`;
-    expect(() => math.inner(a, b)).toThrow(error);
+    try {
+      math.inner(a, b);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
   it('should throw an error if two vectors are not same in size', () => {
     const a = [1, 2, 3];
     const b = [1, 2];
-    const error = `Dimensions (${a.length},) and (${b.length},) are not aligned`;
-    expect(() => math.inner(a, b)).toThrow(error);
+    try {
+      math.inner(a, b);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationInconsistentShape);
+    }
   });
 });
 

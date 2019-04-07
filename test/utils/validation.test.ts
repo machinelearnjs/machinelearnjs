@@ -1,4 +1,5 @@
 import { Iris } from '../../src/lib/datasets';
+import { ValidationClassMismatch } from '../../src/lib/utils/Errors';
 import {
   checkArray,
   validateFitInputs,
@@ -57,13 +58,19 @@ describe('MatrixValidations', () => {
     });
 
     it('should throw an error if the train input X is 3D', () => {
-      expect(() => validateFitInputs(X2, y2)).toThrow(
-        'The matrix is not 2D shaped: [[[1,2],[3,4],[5,6]],[[1,2],[3,4],[5,6]]] of [2,3,2]',
-      );
+      try {
+        validateFitInputs(X2, y2);
+      } catch (err) {
+        expect(err).toBeInstanceOf(ValidationClassMismatch);
+      }
     });
 
     it('should throw an error if train input y is 2D', () => {
-      expect(() => validateFitInputs(X1, X1)).toThrow('The matrix is not 1D shaped: [[1,2],[3,4],[5,6]] of [3,2]');
+      try {
+        validateFitInputs(X1, X1);
+      } catch (err) {
+        expect(err).toBeInstanceOf(ValidationClassMismatch);
+      }
     });
 
     it('should validate Iris dataset', () => {

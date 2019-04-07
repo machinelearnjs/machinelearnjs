@@ -1,4 +1,5 @@
 import { isEqual } from 'lodash';
+import { ValidationError } from '../../src/lib/utils/Errors';
 import { WordTokenizer } from '../../src/lib/utils/nlp';
 
 describe('nlp:WordTokenizer', () => {
@@ -10,11 +11,26 @@ describe('nlp:WordTokenizer', () => {
     expect(isEqual(expected, result)).toBe(true);
   });
   it('should not tokenize a non string value', () => {
-    const expectedError = 'Cannot process a non string value';
     const { tokenize } = tokenizer;
-    expect(() => tokenize(null)).toThrow(expectedError);
-    expect(() => tokenize(1)).toThrow(expectedError);
-    expect(() => tokenize(NaN)).toThrow(expectedError);
-    expect(() => tokenize([])).toThrow(expectedError);
+    try {
+      tokenize(null);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      tokenize(1);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      tokenize(NaN);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      tokenize([]);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 });
