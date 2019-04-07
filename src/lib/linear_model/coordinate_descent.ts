@@ -1,5 +1,6 @@
 import { normalize, PolynomialFeatures } from '../preprocessing';
 import { Type1DMatrix, Type2DMatrix } from '../types';
+import { ValidationError } from '../utils/Errors';
 import { SGDRegressor, TypeLoss } from './stochastic_gradient';
 
 /**
@@ -53,7 +54,7 @@ export class Ridge extends SGDRegressor {
     },
   ) {
     if (l2 === null) {
-      throw TypeError('Ridge cannot be initiated with null l2');
+      throw new ValidationError('Ridge cannot be initiated with null l2');
     }
 
     super({
@@ -118,10 +119,10 @@ export class Lasso extends SGDRegressor {
     },
   ) {
     if (l1 === null) {
-      throw TypeError('Lasso cannot be initiated with null l1');
+      throw new ValidationError('Lasso cannot be initiated with null l1');
     }
     if (degree === null) {
-      throw TypeError('Lasso cannot be initiated with null degree');
+      throw new ValidationError('Lasso cannot be initiated with null degree');
     }
     super({
       reg_factor: { l1 },

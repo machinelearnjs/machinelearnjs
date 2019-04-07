@@ -8,15 +8,13 @@ import {
   OneHotEncoder,
   PolynomialFeatures,
 } from '../../src/lib/preprocessing';
+import { ValidationError } from '../../src/lib/utils/Errors';
 import {
   matrixEmptyErrorMessage,
   tensorCreationErrorMessage,
   validate1DMatrixErrorMessage,
   validate2DMatrixErrorMessage,
 } from '../Errors';
-
-// Constant error messages
-const tensorErr = 'values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray';
 
 describe('data:add_dummy_feature', () => {
   const X1 = [[0, 1], [1, 0]];
@@ -41,10 +39,26 @@ describe('data:add_dummy_feature', () => {
   });
 
   it('should throw error when invalid data is given', () => {
-    expect(() => add_dummy_feature(true)).toThrow(validate2DMatrixErrorMessage);
-    expect(() => add_dummy_feature(1)).toThrow(validate2DMatrixErrorMessage);
-    expect(() => add_dummy_feature(null)).toThrow(validate2DMatrixErrorMessage);
-    expect(() => add_dummy_feature(undefined)).toThrow(validate2DMatrixErrorMessage);
+    try {
+      add_dummy_feature(true as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      add_dummy_feature(1 as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      add_dummy_feature(null);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      add_dummy_feature(undefined);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 });
 
@@ -80,22 +94,26 @@ describe('data:OneHotEncoder', () => {
 
   it("Invalid data key 'values' should throw an Error", () => {
     const enc = new OneHotEncoder();
-    expect(() => {
+    try {
       enc.encode(planetList, {
         dataKeys: ['values'],
         labelKeys: ['planet'],
       });
-    }).toThrow('Cannot find values from data');
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 
   it("Invalid label key 'planot' should throw an Error", () => {
     const enc = new OneHotEncoder();
-    expect(() => {
+    try {
       enc.encode(planetList, {
         dataKeys: ['value'],
         labelKeys: ['planot'],
       });
-    }).toThrow('Cannot find planot from labels');
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 });
 
@@ -257,6 +275,6 @@ describe('data:normalize', () => {
   it('should throw an error if the input is invalid', () => {
     expect(() => normalize(null, { norm: 'l1' })).toThrow(validate2DMatrixErrorMessage);
     expect(() => normalize([], { norm: 'l1' })).toThrow('X cannot be empty');
-    expect(() => normalize('aisjd', { norm: 'l1' })).toThrow(validate2DMatrixErrorMessage);
+    expect(() => normalize('aisjd' as any, { norm: 'l1' })).toThrow(validate2DMatrixErrorMessage);
   });
 });

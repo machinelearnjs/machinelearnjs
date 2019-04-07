@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { Imputer } from '../../src/lib/preprocessing/Imputer';
-import { validate2DMatrixErrorMessage } from '../Errors';
+import { ValidationError } from '../../src/lib/utils/Errors';
 
 describe('Imputer', () => {
   it('fit [[1, 2], [null, 3], [7, 6]] and transform [[null, 2], [6, null], [7, 6]]', () => {
@@ -23,28 +23,38 @@ describe('Imputer', () => {
 
   it('fitting invalid data type should throw an error', () => {
     // String
-    expect(() => {
-      new Imputer({ missingValues: null, axis: 0 }).fit('asofjasof');
-    }).toThrow(validate2DMatrixErrorMessage);
+    try {
+      new Imputer({ missingValues: null, axis: 0 }).fit('asofjasof' as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
 
     // Int
-    expect(() => {
-      new Imputer({ missingValues: null, axis: 0 }).fit(123);
-    }).toThrow(validate2DMatrixErrorMessage);
+    try {
+      new Imputer({ missingValues: null, axis: 0 }).fit(123 as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
 
     // Boolean
-    expect(() => {
-      new Imputer({ missingValues: null, axis: 0 }).fit(true);
-    }).toThrow(validate2DMatrixErrorMessage);
+    try {
+      new Imputer({ missingValues: null, axis: 0 }).fit(true as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
 
     // Null
-    expect(() => {
+    try {
       new Imputer({ missingValues: null, axis: 0 }).fit(null);
-    }).toThrow(validate2DMatrixErrorMessage);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
 
     // undefined
-    expect(() => {
+    try {
       new Imputer({ missingValues: null, axis: 0 }).fit(undefined);
-    }).toThrow(validate2DMatrixErrorMessage);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 });

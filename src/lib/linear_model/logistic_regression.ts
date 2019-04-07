@@ -1,7 +1,7 @@
 import * as tf from '@tensorflow/tfjs';
 import { Type1DMatrix, Type2DMatrix } from '../types';
 import { ensure2DMatrix, inferShape } from '../utils/tensors';
-import { checkNumFeatures, validateFitInputs } from '../utils/validation';
+import { validateFeaturesConsistency, validateFitInputs } from '../utils/validation';
 
 /**
  * Logistic Regression (aka logit, MaxEnt) classifier.
@@ -29,7 +29,7 @@ export class LogisticRegression {
    * @param numIterations - Number of iterations to run gradient descent for
    */
   public fit(X: Type2DMatrix<number> | Type1DMatrix<number>, y: Type1DMatrix<number>, numIterations = 4000): void {
-    const xWrapped: Type2DMatrix<number> = ensure2DMatrix(X);
+    const xWrapped = ensure2DMatrix(X);
     validateFitInputs(xWrapped, y);
     this.initWeights(xWrapped);
     const tensorX = tf.tensor2d(xWrapped);
@@ -49,7 +49,7 @@ export class LogisticRegression {
    * @returns An array of predicted classes
    */
   public predict(X: Type2DMatrix<number> | Type1DMatrix<number>): number[] {
-    checkNumFeatures(X, this.weights.arraySync());
+    validateFeaturesConsistency(X, this.weights.arraySync());
 
     const xWrapped: Type2DMatrix<number> = ensure2DMatrix(X);
 

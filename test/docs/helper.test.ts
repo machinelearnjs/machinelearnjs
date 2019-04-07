@@ -380,7 +380,7 @@ describe('docs:helper', () => {
 
     it('should not clean invalid values', () => {
       expect(() => cleanHyperLink(null)).toThrow('Should not clean values other than strings');
-      expect(() => cleanHyperLink(123)).toThrow('Should not clean values other than strings');
+      expect(() => cleanHyperLink(123 as any)).toThrow('Should not clean values other than strings');
       expect(() => cleanHyperLink(undefined)).toThrow('Should not clean values other than strings');
     });
   });

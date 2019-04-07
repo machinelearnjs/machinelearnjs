@@ -87,7 +87,7 @@
     "fs-extra": "7.0.0",
     "handlebars": "4.0.11",
     "husky": "1.1.2",
-    "jest": "22.4.3",
+    "jest": "24.7.1",
     "jest-fetch-mock": "1.6.5",
     "ncp": "2.0.0",
     "prettier": "1.10.2",

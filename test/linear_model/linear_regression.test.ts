@@ -1,5 +1,5 @@
 import { LinearRegression } from '../../src/lib/linear_model';
-import {ValidationError} from "../../src/lib/utils/Errors";
+import { ValidationError } from '../../src/lib/utils/Errors';
 
 describe('linear_model:LinearRegression (Univariate)', () => {
   const X1 = [1, 2, 4, 3, 5];
@@ -58,26 +58,44 @@ describe('linear_model:LinearRegression (Univariate)', () => {
     expect(result2).toEqual(expected2);
   });
 
-  test('should throw an exception when invalid data is given to the fit function', () => {
-    /*const lr = new LinearRegression();
-    expect(() => lr.fit('abc', y1)).toThrow(ValidationError);
-    expect(() => lr.fit([], 'abc')).toThrow(
-      'values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray',
-    );
-    expect(() => lr.fit([1, 2, 3], [1, 2])).toThrow('Sample(3) and target(2) sizes do not match');
-    */
-    const t = () => {
-      throw new ValidationError();
-    };
-    expect(t).toThrow(ValidationError);
+  it('should throw an exception when invalid data is given to the fit function', () => {
+    const lr = new LinearRegression();
+
+    try {
+      lr.fit('abc' as any, y1);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      lr.fit([], 'abc' as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      lr.fit([1, 2, 3], [1, 2]);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 
   it('should throw an exception when invalid data is given to the predict function', () => {
     const lr = new LinearRegression();
-    const err = 'values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray';
-    expect(() => lr.predict([])).toThrow('The matrix is incorrectly shaped: while X is 1, type is multivariate');
-    expect(() => lr.predict('test')).toThrow(err);
-    expect(() => lr.predict(null)).toThrow(err);
+
+    try {
+      lr.predict([]);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      lr.predict('test' as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      lr.predict(null as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 });
 
@@ -127,23 +145,42 @@ describe('linear_model:LinearRegression (Multivariate)', () => {
 
   it('should throw an exception when X and y sample sizes do not match', () => {
     const lr = new LinearRegression();
-    expect(() => lr.fit([[1, 2], [3, 4]], [1])).toThrow('Sample(2) and target(1) sizes do not match');
+
+    try {
+      lr.fit([[1, 2], [3, 4]], [1]);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 
   it('should throw an example when invalid inputs are given to fit', () => {
     const lr = new LinearRegression();
-    expect(() => lr.fit(null, [1])).toThrow(
-      'values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray',
-    );
-    expect(() => lr.fit([[1]], null)).toThrow(
-      'values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray',
-    );
+
+    try {
+      lr.fit(null, [1]);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      lr.fit([[1]], null);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 
   it('should throw an exception when invalid data is given to the predict function', () => {
     const lr = new LinearRegression();
     lr.fit(X1, y1);
-    expect(() => lr.predict([1])).toThrow('The matrix is incorrectly shaped: while X is 1, type is multivariate');
-    expect(() => lr.predict([])).toThrow('The matrix is incorrectly shaped: while X is 1, type is multivariate');
+
+    try {
+      lr.predict([1]);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      lr.predict([]);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 });

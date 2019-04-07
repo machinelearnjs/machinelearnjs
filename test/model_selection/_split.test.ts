@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import { KFold, train_test_split } from '../../src/lib/model_selection/_split';
+import { ValidationError } from '../../src/lib/utils/Errors';
 
 describe('_split:KFold', () => {
   const X1 = [[1], [2], [3], [4], [5], [6], [7], [8], [9], [10]];
@@ -67,27 +68,40 @@ describe('_split:KFold', () => {
 
   it('should k=50 of sample type 2 throw an k=50- greater than number of sample=10 error', () => {
     const kf = new KFold({ k: 50 });
-    expect(() => {
+
+    try {
       kf.split(X2, y2);
-    }).toThrow('Cannot have number of splits k=50 greater than the number of samples: 10');
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 
   it('should k=50 of sample type 2 throw an k=50- greater than number of sample=10 error', () => {
     const kf = new KFold({ k: 50 });
-    expect(() => {
+
+    try {
       kf.split(X2, y2);
-    }).toThrow('Cannot have number of splits k=50 greater than the number of samples: 10');
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 
   it('X and y size mismatch', () => {
     const kf = new KFold({ k: 50 });
-    expect(() => {
+    try {
       kf.split([1, 2, 3, 4, 5, 6, 7], [1, 2, 3]);
-    }).toThrow('X and y must have an identical size');
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 
   it('Should throw an error if K is less than 2', () => {
-    expect(() => new KFold({ k: 1 })).toThrow('Number of folds cannot be less than 2');
+    try {
+      const kf = new KFold({ k: 1 });
+      kf.split();
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 });
 
@@ -134,13 +148,15 @@ describe('_split:train_test_split', () => {
   });
 
   it('Should sum of test_size and train_size attempting to match the input size throw an error', () => {
-    expect(() => {
+    try {
       train_test_split(X1, y1, {
         random_state: 10,
         test_size: 0.11,
         train_size: 0.12,
       });
-    }).toThrow('Sum of test_size and train_size does not equal 1');
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 
   it('Should split X2 y2 with random_state: 42 test_size: .33 and train_size: .67', () => {

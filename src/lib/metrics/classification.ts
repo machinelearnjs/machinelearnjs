@@ -1,6 +1,7 @@
 import * as tf from '@tensorflow/tfjs';
 import * as _ from 'lodash';
 import { Type1DMatrix } from '../types';
+import { ValidationClassMismatch, ValidationError } from '../utils/Errors';
 import { reshape } from '../utils/tensors';
 import { checkArray } from '../utils/validation';
 
@@ -38,21 +39,21 @@ export const validateInitialInputs = (y_true, y_pred, labels, options = {}) => {
   if (checkMultiClass) {
     // TODO: Multi label
     if (checkArray(y_true).multiclass || checkArray(y_pred).multiclass) {
-      throw new Error('Multiclass is not supported yet!');
+      throw new ValidationError('Multiclass is not supported yet!');
     }
   }
 
   // Checking nullity or empty
   if (!y_true || _.isEmpty(y_true)) {
-    throw new Error('y_true cannot be null or empty');
+    throw new ValidationError('y_true cannot be null or empty');
   }
   if (!y_pred || _.isEmpty(y_pred)) {
-    throw new Error('y_pred cannot be null or empty');
+    throw new ValidationError('y_pred cannot be null or empty');
   }
 
   // Checking the size equality
   if (_.size(y_true) !== _.size(y_pred)) {
-    throw new Error('y_true and y_pred are not equal in size!');
+    throw new ValidationError('y_true and y_pred are not equal in size!');
   }
 
   // Checking labels equal to both y_true and y_pred classes
@@ -64,7 +65,7 @@ export const validateInitialInputs = (y_true, y_pred, labels, options = {}) => {
 
     const sortedLabels = _.sortBy(labels, (x) => x);
     if (!_.isEqual(sortedLabels, yTrueCls) || !_.isEqual(sortedLabels, yPredCls)) {
-      throw new Error('Labels must match the classes');
+      throw new ValidationClassMismatch('Labels must match the classes');
     }
   }
 };

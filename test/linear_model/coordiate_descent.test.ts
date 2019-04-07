@@ -1,4 +1,5 @@
 import { Lasso, Ridge } from '../../src/lib/linear_model';
+import { ValidationError } from '../../src/lib/utils/Errors';
 import { getIris } from '../data_testing';
 import { assertArrayAlmostEqual } from '../util_testing';
 import { lasso_l2_snap, ridge_l1_snap } from './__snapshots__/manual_cd_regressor.snap';
@@ -31,7 +32,12 @@ describe('linear_model:Ridge', () => {
   });
 
   it('should throw an error if l1 is null', () => {
-    expect(() => new Ridge({ l2: null })).toThrow('Ridge cannot be initiated with null l2');
+    try {
+      const reg = new Ridge({ l2: null } as any);
+      reg.fit();
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 });
 
@@ -63,7 +69,17 @@ describe('linear_model:Lasso', () => {
     assertArrayAlmostEqual(result, lasso_l2_snap, 2);
   });
   it('should throw an error if degree or l1 is not provided', () => {
-    expect(() => new Lasso({ l1: null })).toThrow('Lasso cannot be initiated with null l1');
-    expect(() => new Lasso({ degree: null })).toThrow('Lasso cannot be initiated with null degree');
+    try {
+      const reg = new Lasso({ l1: null } as any);
+      reg.fit();
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      const reg = new Lasso({ degree: null } as any);
+      reg.fit();
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 });

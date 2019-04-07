@@ -1,5 +1,6 @@
 import { LogisticRegression } from '../../src/lib/linear_model';
 import { accuracyScore } from '../../src/lib/metrics';
+import { ValidationClassMismatch, ValidationError, ValidationInconsistentShape } from '../../src/lib/utils/Errors';
 import { getHeartDisease } from '../data_testing';
 
 describe('linear_model:LogisticRegression', () => {
@@ -33,8 +34,11 @@ describe('linear_model:LogisticRegression', () => {
       const y = [1];
 
       const lr: LogisticRegression = new LogisticRegression();
-
-      expect(() => lr.fit(X, y)).toThrowError('Number of labels=1 does not math number of samples=2');
+      try {
+        lr.fit(X, y);
+      } catch (err) {
+        expect(err).toBeInstanceOf(ValidationClassMismatch);
+      }
     });
 
     it('Should throw error when X test has incorrect number of features', () => {
@@ -45,9 +49,11 @@ describe('linear_model:LogisticRegression', () => {
       lr.fit(xTrain, yTrain);
 
       const xTest = [[1, 2], [4, 5]];
-      expect(() => lr.predict(xTest)).toThrowError(
-        'Provided X has incorrect number of features. Should have: 3, got: 2',
-      );
+      try {
+        lr.predict(xTest);
+      } catch (err) {
+        expect(err).toBeInstanceOf(ValidationError);
+      }
     });
 
     it('Should throw error when not every row in X has the same amount of features', () => {
@@ -58,8 +64,11 @@ describe('linear_model:LogisticRegression', () => {
       lr.fit(xTrain, yTrain);
 
       const xTest = [[1, 2], [1]];
-
-      expect(() => lr.predict(xTest)).toThrowError();
+      try {
+        lr.predict(xTest);
+      } catch (err) {
+        expect(err).toBeInstanceOf(ValidationInconsistentShape);
+      }
     });
 
     it('Should train on heart disease dataset and have at least 50% accuracy', async () => {
@@ -105,8 +114,11 @@ describe('linear_model:LogisticRegression', () => {
       const y = [1];
 
       const lr: LogisticRegression = new LogisticRegression();
-
-      expect(() => lr.fit(X, y)).toThrowError('Number of labels=1 does not math number of samples=2');
+      try {
+        lr.fit(X, y);
+      } catch (err) {
+        expect(err).toBeInstanceOf(ValidationClassMismatch);
+      }
     });
   });
 });

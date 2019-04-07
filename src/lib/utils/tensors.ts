@@ -1,6 +1,8 @@
 import * as tf from '@tensorflow/tfjs';
 import * as _ from 'lodash';
 import { Type1DMatrix, Type2DMatrix, TypeMatrix } from '../types';
+import { ValidationInconsistentShape } from './Errors';
+import { validateMatrix1D, validateMatrix2D } from './validation';
 
 /**
  * Infers shape of a tensor using TF
@@ -15,7 +17,11 @@ import { Type1DMatrix, Type2DMatrix, TypeMatrix } from '../types';
  * @ignore
  */
 export function inferShape(X: TypeMatrix<any>): number[] {
-  return tf.tensor(X).shape;
+  try {
+    return tf.tensor(X).shape;
+  } catch (e) {
+    throw new ValidationInconsistentShape(e);
+  }
 }
 
 /**
@@ -84,5 +90,9 @@ export function reshape<T>(array: TypeMatrix<T>, sizes: number[]): TypeMatrix<T>
  */
 export const ensure2DMatrix = (X: Type2DMatrix<number> | Type1DMatrix<number>): Type2DMatrix<number> => {
   const shape: number[] = inferShape(X);
-  return shape.length === 2 ? (X as Type2DMatrix<number>) : (_.map(X, (x) => [x]) as Type2DMatrix<number>);
+  if (shape.length === 2) {
+    return validateMatrix2D(X);
+  }
+  const matrix1D = validateMatrix1D(X);
+  return _.map(matrix1D, (o) => [o]);
 };

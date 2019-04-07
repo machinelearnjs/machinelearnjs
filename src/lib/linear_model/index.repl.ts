@@ -70,3 +70,11 @@ import { Lasso } from '.';
 const reg1 = new Lasso({ degree: 2, l1: 1 });
 reg1.fit([[0, 0], [1, 1]], [0, 1]);
 console.log('lasso', reg1.predict([[1, 1], [2, 3]]));
+
+import { LogisticRegression } from '.';
+
+const X5 = [[1], [2]];
+const y5 = [1];
+
+const logisticRegression: LogisticRegression = new LogisticRegression();
+logisticRegression.fit(X5, y5);

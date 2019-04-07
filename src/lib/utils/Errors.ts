@@ -1,30 +1,64 @@
-
-export default class BaseError extends Error {
-  message: string;
-
-  constructor(messageOrError?: string | Error) {
-    let message: string;
-    if (messageOrError instanceof Error) {
-      message = messageOrError.message;
-    } else {
-      message = messageOrError;
-    }
-    super(message);
-    this.message = message;
-  }
-}
+// NOTE: Below custom errors are hack because Jest has a bug with asserting error types
 
 /**
  * @ignore
  */
-export class ValidationError extends BaseError {}
+export const ValidationError = function(message) {
+  Error.captureStackTrace(this, this.constructor);
+  this.name = this.constructor.name;
+  this.message = message;
+};
 
 /**
  * @ignore
  */
-export class Validation1DMatrixError extends ValidationError {}
+export const Validation1DMatrixError = function(message) {
+  Error.captureStackTrace(this, this.constructor);
+  this.name = this.constructor.name;
+  this.message = message;
+};
 
 /**
  * @ignore
  */
-export class Validation2DMatrixError extends ValidationError {}
+export const Validation2DMatrixError = function(message) {
+  Error.captureStackTrace(this, this.constructor);
+  this.name = this.constructor.name;
+  this.message = message;
+};
+
+/**
+ * @ignore
+ */
+export const ValidationMatrixTypeError = function(message) {
+  Error.captureStackTrace(this, this.constructor);
+  this.name = this.constructor.name;
+  this.message = message;
+};
+
+/**
+ * @ignore
+ */
+export const ValidationClassMismatch = function(message) {
+  Error.captureStackTrace(this, this.constructor);
+  this.name = this.constructor.name;
+  this.message = message;
+};
+
+/**
+ * @ignore
+ */
+export const ValidationKeyNotFoundError = function(message) {
+  Error.captureStackTrace(this, this.constructor);
+  this.name = this.constructor.name;
+  this.message = message;
+};
+
+/**
+ * @ignore
+ */
+export const ValidationInconsistentShape = function(message) {
+  Error.captureStackTrace(this, this.constructor);
+  this.name = this.constructor.name;
+  this.message = message;
+};

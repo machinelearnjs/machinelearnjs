@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import { KNeighborsClassifier } from '../../src/lib/neighbors';
+import { ValidationInconsistentShape } from '../../src/lib/utils/Errors';
 import { matchExceptionWithSnapshot } from '../util_testing';
 
 describe('classification:KNeighborsClassifier', () => {
@@ -42,9 +43,11 @@ describe('classification:KNeighborsClassifier', () => {
 
   it('should predict [ 1, 0, 1 ] for [ [1, 2, 4], [0], [9, 5] ] against the sample 1', () => {
     const knn = new KNeighborsClassifier();
-    expect(() => knn.predict([[1, 2, 4], [0], [9, 5]])).toThrow(
-      'Element arr[1] should have 3 elements, but has 1 elements',
-    );
+    try {
+      knn.predict([[1, 2, 4], [0], [9, 5]]);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationInconsistentShape);
+    }
   });
 
   it('should throw an error if X is not a matrix', () => {

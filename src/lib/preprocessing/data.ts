@@ -1,7 +1,7 @@
 import * as tf from '@tensorflow/tfjs';
 import * as _ from 'lodash';
 import { Type1DMatrix, Type2DMatrix } from '../types';
-import { ValidationError } from '../utils/Errors';
+import { ValidationError, ValidationKeyNotFoundError } from '../utils/Errors';
 import math from '../utils/MathExtra';
 import { combinationsWithReplacement } from '../utils/permutations';
 import { inferShape, reshape } from '../utils/tensors';
@@ -136,14 +136,14 @@ export class OneHotEncoder {
     const _dataKeys = dataKeys ? dataKeys : _.keys(data[0]);
     // validations
     if (_.size(data) < 1) {
-      throw Error('data cannot be empty!');
+      throw ValidationError('data cannot be empty!');
     }
     // data keys
     _.forEach(_dataKeys, (dataKey) => {
       // TODO: it's only checking data[0] -> It should also check all the others
       if (!_.has(data[0], dataKey)) {
         // TODO: Find the correct error to throw
-        throw Error(`Cannot find ${dataKey} from data`);
+        throw new ValidationKeyNotFoundError(`Cannot find ${dataKey} from data`);
       }
     });
 
@@ -152,7 +152,7 @@ export class OneHotEncoder {
       // TODO: it's only checking data[0] -> It should also check all the others
       if (!_.has(data[0], labelKey)) {
         // TODO Find the correct error to throw
-        throw Error(`Cannot find ${labelKey} from labels`);
+        throw new ValidationKeyNotFoundError(`Cannot find ${labelKey} from labels`);
       }
     });
 
