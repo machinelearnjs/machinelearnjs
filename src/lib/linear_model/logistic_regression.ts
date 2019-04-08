@@ -6,6 +6,7 @@ import { validateFeaturesConsistency, validateFitInputs } from '../utils/validat
 /**
  * Logistic Regression (aka logit, MaxEnt) classifier.
  *
+ *
  * Logistic regression is named for the function used at the core of the method, the logistic function.
  * The logistic function, also called the sigmoid function was developed by statisticians to describe properties of
  * population growth in ecology, rising quickly and maxing out at the carrying capacity of the environment.
