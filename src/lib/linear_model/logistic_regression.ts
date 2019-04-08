@@ -1,7 +1,7 @@
 import * as tf from '@tensorflow/tfjs';
 import { Type1DMatrix, Type2DMatrix } from '../types';
 import { ensure2DMatrix, inferShape } from '../utils/tensors';
-import { validateFeaturesConsistency, validateFitInputs } from '../utils/validation';
+import {validateFeaturesConsistency, validateFitInputs, validateMatrix1D} from '../utils/validation';
 
 /**
  * Logistic Regression (aka logit, MaxEnt) classifier.
@@ -84,7 +84,8 @@ export class LogisticRegression {
 
     const xWrapped: Type2DMatrix<number> = ensure2DMatrix(X);
 
-    return tf.round(tf.sigmoid(tf.tensor2d(xWrapped).dot(this.weights))).arraySync() as number[];
+    const syncResult = tf.round(tf.sigmoid(tf.tensor2d(xWrapped).dot(this.weights))).arraySync();
+    return validateMatrix1D(syncResult);
   }
 
   /**
