@@ -14,7 +14,6 @@ import {
   ValidationError,
   ValidationKeyNotFoundError,
 } from '../../src/lib/utils/Errors';
-import { validate2DMatrixErrorMessage } from '../Errors';
 
 describe('data:add_dummy_feature', () => {
   const X1 = [[0, 1], [1, 0]];
