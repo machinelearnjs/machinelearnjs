@@ -5,11 +5,37 @@ import { validateFeaturesConsistency, validateFitInputs } from '../utils/validat
 
 /**
  * Logistic Regression (aka logit, MaxEnt) classifier.
+ *
+ * Logistic regression is named for the function used at the core of the method, the logistic function.
+ * The logistic function, also called the sigmoid function was developed by statisticians to describe properties of
+ * population growth in ecology, rising quickly and maxing out at the carrying capacity of the environment.
+ * It’s an S-shaped curve that can take any real-valued number and map it into a value between 0 and 1,
+ * but never exactly at those limits.
+ *
+ * 1 / (1 + e^-value)
+ *
+ * @example
+ * import { LogisticRegression } from 'machinelearn/linear_model';
+ * import { HeartDisease } from 'machinelearn/datasets';
+ *
+ * (async function() {
+ *   const { data, targets } = await heartDisease.load();
+ *   const { xTest, xTrain, yTest } = train_test_split(data, targets);
+ *
+ *   const lr = new LogisticRegression();
+ *   lr.fit(xTrain, yTrain);
+ *
+ *   lr.predict(yTest);
+ * });
+ *
  */
 export class LogisticRegression {
   private weights: tf.Tensor1D;
   private learningRate: number;
 
+  /**
+   * @param learning_rate - Model learning rate
+   */
   constructor(
     {
       learning_rate = 0.001,
@@ -28,7 +54,11 @@ export class LogisticRegression {
    * @param y - A matrix of targets
    * @param numIterations - Number of iterations to run gradient descent for
    */
-  public fit(X: Type2DMatrix<number> | Type1DMatrix<number>, y: Type1DMatrix<number>, numIterations = 4000): void {
+  public fit(
+    X: Type2DMatrix<number> | Type1DMatrix<number> = null,
+    y: Type1DMatrix<number> = null,
+    numIterations = 4000,
+  ): void {
     const xWrapped = ensure2DMatrix(X);
     validateFitInputs(xWrapped, y);
     this.initWeights(xWrapped);
@@ -48,7 +78,7 @@ export class LogisticRegression {
    * @param X - A matrix of test data
    * @returns An array of predicted classes
    */
-  public predict(X: Type2DMatrix<number> | Type1DMatrix<number>): number[] {
+  public predict(X: Type2DMatrix<number> | Type1DMatrix<number> = null): number[] {
     validateFeaturesConsistency(X, this.weights.arraySync());
 
     const xWrapped: Type2DMatrix<number> = ensure2DMatrix(X);
@@ -60,21 +90,44 @@ export class LogisticRegression {
    * Get the model details in JSON format
    */
   public toJSON(): {
+    /**
+     * Model training weights
+     */
     weights: number[];
-    learningRate: number;
+    /**
+     * Model learning rate
+     */
+    learning_rate: number;
   } {
     return {
       weights: this.weights.arraySync(),
-      learningRate: this.learningRate,
+      learning_rate: this.learningRate,
     };
   }
 
   /**
    * Restore the model from a checkpoint
    */
-  public fromJSON({ weights, learningRate }: { weights: number[]; learningRate: number }): void {
+  public fromJSON(
+    {
+      /**
+       * Model training weights
+       */
+      weights = null,
+      /**
+       * Model learning rate
+       */
+      learning_rate = null,
+    }: {
+      weights: number[];
+      learning_rate: number;
+    } = {
+      weights: null,
+      learning_rate: 0.001,
+    },
+  ): void {
     this.weights = tf.tensor1d(weights);
-    this.learningRate = learningRate;
+    this.learningRate = learning_rate;
   }
 
   private initWeights(X: Type2DMatrix<number> | Type1DMatrix<number>): void {
