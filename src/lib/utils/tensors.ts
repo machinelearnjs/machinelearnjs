@@ -87,6 +87,7 @@ export function reshape<T>(array: TypeMatrix<T>, sizes: number[]): TypeMatrix<T>
  * If passed a one dimensional matrix, transforms it into a two dimensional matrix by turning each element into a row with 1 element
  * If passed a two dimensional matrix, does nothing
  * @param X - target matrix
+ * @ignore
  */
 export const ensure2DMatrix = (X: Type2DMatrix<number> | Type1DMatrix<number>): Type2DMatrix<number> => {
   const shape: number[] = inferShape(X);
