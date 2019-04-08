@@ -32,10 +32,11 @@ describe('integration:require', () => {
   });
 
   it('should require linear_model', () => {
-    const { LinearRegression, SGDClassifier, SGDRegressor } = require('machinelearn/linear_model');
+    const { LinearRegression, SGDClassifier, SGDRegressor, LogisticRegression } = require('machinelearn/linear_model');
     expect(!!LinearRegression).toBe(true);
     expect(!!SGDRegressor).toBe(true);
     expect(!!SGDClassifier).toBe(true);
+    expect(!!LogisticRegression).toBe(true);
   });
 
   it('should require metrics', () => {
