@@ -1,7 +1,7 @@
 import * as tf from '@tensorflow/tfjs';
 import { Type1DMatrix, Type2DMatrix } from '../types';
 import { ensure2DMatrix, inferShape } from '../utils/tensors';
-import {validateFeaturesConsistency, validateFitInputs, validateMatrix1D} from '../utils/validation';
+import { validateFeaturesConsistency, validateFitInputs, validateMatrix1D } from '../utils/validation';
 
 /**
  * Logistic Regression (aka logit, MaxEnt) classifier.
@@ -33,40 +33,41 @@ import {validateFeaturesConsistency, validateFitInputs, validateMatrix1D} from '
 export class LogisticRegression {
   private weights: tf.Tensor1D;
   private learningRate: number;
+  private numIterations: number;
 
   /**
    * @param learning_rate - Model learning rate
+   * @param num_iterations - Number of iterations to run gradient descent fo
    */
   constructor(
     {
       learning_rate = 0.001,
+      num_iterations = 4000,
     }: {
-      learning_rate: number;
+      learning_rate?: number;
+      num_iterations?: number;
     } = {
       learning_rate: 0.001,
+      num_iterations: 4000,
     },
   ) {
     this.learningRate = learning_rate;
+    this.numIterations = num_iterations;
   }
 
   /**
    * Fit the model according to the given training data.
    * @param X - A matrix of samples
    * @param y - A matrix of targets
-   * @param numIterations - Number of iterations to run gradient descent for
    */
-  public fit(
-    X: Type2DMatrix<number> | Type1DMatrix<number> = null,
-    y: Type1DMatrix<number> = null,
-    numIterations = 4000,
-  ): void {
+  public fit(X: Type2DMatrix<number> | Type1DMatrix<number> = null, y: Type1DMatrix<number> = null): void {
     const xWrapped = ensure2DMatrix(X);
     validateFitInputs(xWrapped, y);
     this.initWeights(xWrapped);
     const tensorX = tf.tensor2d(xWrapped);
     const tensorY = tf.tensor1d(y);
 
-    for (let i = 0; i < numIterations; ++i) {
+    for (let i = 0; i < this.numIterations; ++i) {
       const predictions: tf.Tensor<tf.Rank> = tf.sigmoid(tensorX.dot(this.weights));
 
       const gradient: tf.Tensor<tf.Rank> = tf.mul(tensorY.sub(predictions).dot(tensorX), -1);
