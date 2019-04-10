@@ -1,17 +1,52 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`naive_bayes:MultinomialNB should not fit invalid inputs 1`] = `[Error: validateMatrix2D has received a non-array argument]`;
+exports[`naive_bayes:MultinomialNB should not fit invalid inputs 1`] = `
+Object {
+  "message": "validateFitInputs received a non-array input X",
+  "name": "",
+}
+`;
 
-exports[`naive_bayes:MultinomialNB should not fit invalid inputs 2`] = `[TypeError: Number of labels=1 does not math number of samples=2]`;
+exports[`naive_bayes:MultinomialNB should not fit invalid inputs 2`] = `
+Object {
+  "message": "Number of labels=1 does not math number of samples=2",
+  "name": "",
+}
+`;
 
-exports[`naive_bayes:MultinomialNB should not fit invalid inputs 3`] = `[Error: The matrix is not 2D shaped: [] of [0]]`;
+exports[`naive_bayes:MultinomialNB should not fit invalid inputs 3`] = `
+Object {
+  "message": "Number of labels=1 does not math number of samples=0",
+  "name": "",
+}
+`;
 
 exports[`naive_bayes:MultinomialNB should not predict if the model is not trained yet 1`] = `[TypeError: Cannot read property 'classCategories' of undefined]`;
 
-exports[`naive_bayes:MultinomialNB should not predict invalid inputs 1`] = `[Error: validateMatrix2D has received a non-array argument]`;
+exports[`naive_bayes:MultinomialNB should not predict invalid inputs 1`] = `
+Object {
+  "message": "validateMatrix2D has received a non-array argument",
+  "name": "",
+}
+`;
 
-exports[`naive_bayes:MultinomialNB should not predict invalid inputs 2`] = `[Error: validateMatrix2D has received a non-array argument]`;
+exports[`naive_bayes:MultinomialNB should not predict invalid inputs 2`] = `
+Object {
+  "message": "validateMatrix2D has received a non-array argument",
+  "name": "",
+}
+`;
 
-exports[`naive_bayes:MultinomialNB should not predict invalid inputs 3`] = `[Error: validateMatrix2D has received a non-array argument]`;
+exports[`naive_bayes:MultinomialNB should not predict invalid inputs 3`] = `
+Object {
+  "message": "validateMatrix2D has received a non-array argument",
+  "name": "",
+}
+`;
 
-exports[`naive_bayes:MultinomialNB should not predict invalid inputs 4`] = `[Error: The matrix is not 2D shaped: [1,2] of [2]]`;
+exports[`naive_bayes:MultinomialNB should not predict invalid inputs 4`] = `
+Object {
+  "message": "The matrix is not 2D shaped: [1,2] of [2]",
+  "name": "",
+}
+`;

@@ -1,24 +1,69 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`tree:DecisionTreeClassifier Should not fit if invalid data is given 1`] = `[Error: validateMatrix2D has received a non-array argument]`;
+exports[`tree:DecisionTreeClassifier Should not fit if invalid data is given 1`] = `
+Object {
+  "message": "validateFitInputs received a non-array input X",
+  "name": "",
+}
+`;
 
-exports[`tree:DecisionTreeClassifier Should not fit if invalid data is given 2`] = `[Error: validateMatrix2D has received a non-array argument]`;
+exports[`tree:DecisionTreeClassifier Should not fit if invalid data is given 2`] = `
+Object {
+  "message": "validateFitInputs received a non-array input X",
+  "name": "",
+}
+`;
 
-exports[`tree:DecisionTreeClassifier Should not fit if invalid data is given 3`] = `[Error: validateMatrix2D has received a non-array argument]`;
+exports[`tree:DecisionTreeClassifier Should not fit if invalid data is given 3`] = `
+Object {
+  "message": "validateFitInputs received a non-array input X",
+  "name": "",
+}
+`;
 
-exports[`tree:DecisionTreeClassifier Should not fit if invalid data is given 4`] = `[Error: The matrix is not 2D shaped: [] of [0]]`;
+exports[`tree:DecisionTreeClassifier Should not fit if invalid data is given 4`] = `[TypeError: Cannot read property 'buildTree' of undefined]`;
 
-exports[`tree:DecisionTreeClassifier Should not fit if invalid data is given 5`] = `[Error: validateMatrix2D has received a non-array argument]`;
+exports[`tree:DecisionTreeClassifier Should not fit if invalid data is given 5`] = `
+Object {
+  "message": "validateFitInputs received a non-array input X",
+  "name": "",
+}
+`;
 
-exports[`tree:DecisionTreeClassifier should not predict if invalid data is given 1`] = `[Error: validateMatrix2D has received a non-array argument]`;
+exports[`tree:DecisionTreeClassifier should not predict if invalid data is given 1`] = `
+Object {
+  "message": "validateMatrix2D has received a non-array argument",
+  "name": "",
+}
+`;
 
-exports[`tree:DecisionTreeClassifier should not predict if invalid data is given 2`] = `[Error: validateMatrix2D has received a non-array argument]`;
+exports[`tree:DecisionTreeClassifier should not predict if invalid data is given 2`] = `
+Object {
+  "message": "validateMatrix2D has received a non-array argument",
+  "name": "",
+}
+`;
 
-exports[`tree:DecisionTreeClassifier should not predict if invalid data is given 3`] = `[Error: validateMatrix2D has received a non-array argument]`;
+exports[`tree:DecisionTreeClassifier should not predict if invalid data is given 3`] = `
+Object {
+  "message": "validateMatrix2D has received a non-array argument",
+  "name": "",
+}
+`;
 
-exports[`tree:DecisionTreeClassifier should not predict if invalid data is given 4`] = `[Error: The matrix is not 2D shaped: [] of [0]]`;
+exports[`tree:DecisionTreeClassifier should not predict if invalid data is given 4`] = `
+Object {
+  "message": "The matrix is not 2D shaped: [] of [0]",
+  "name": "",
+}
+`;
 
-exports[`tree:DecisionTreeClassifier should not predict if invalid data is given 5`] = `[Error: validateMatrix2D has received a non-array argument]`;
+exports[`tree:DecisionTreeClassifier should not predict if invalid data is given 5`] = `
+Object {
+  "message": "validateMatrix2D has received a non-array argument",
+  "name": "",
+}
+`;
 
 exports[`tree:DecisionTreeClassifier should return a correct class counts for fruitY 1`] = `
 Object {

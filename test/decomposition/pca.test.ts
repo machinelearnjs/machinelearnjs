@@ -1,4 +1,5 @@
 import { PCA } from '../../src/lib/decomposition';
+import { Validation2DMatrixError, ValidationMatrixTypeError } from '../../src/lib/utils/Errors';
 
 describe('decomposition:pca', () => {
   const sample1 = [[1, 2], [3, 4], [5, 6]];
@@ -25,13 +26,21 @@ describe('decomposition:pca', () => {
 
   it('should throw an error when the given matrix is empty', () => {
     const pca = new PCA();
-    expect(() => pca.fit([])).toThrow('The matrix is not 2D shaped: [] of [0]');
+
+    try {
+      pca.fit([]);
+    } catch (err) {
+      expect(err).toBeInstanceOf(Validation2DMatrixError);
+    }
   });
 
   it('should throw an error when the given matrix is not all numbers', () => {
     const pca = new PCA();
-    expect(() => pca.fit(sample3)).toThrow(
-      'Input matrix type of ["string"] does not match with the target types ["number"]',
-    );
+
+    try {
+      pca.fit(sample3 as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationMatrixTypeError);
+    }
   });
 });

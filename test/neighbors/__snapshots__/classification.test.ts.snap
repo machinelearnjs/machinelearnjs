@@ -1,5 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`classification:KNeighborsClassifier should throw an error if X is not a matrix 1`] = `[Error: The matrix is not 2D shaped: [1] of [1]]`;
+exports[`classification:KNeighborsClassifier should throw an error if X is not a matrix 1`] = `[TypeError: Cannot read property 'k' of undefined]`;
 
-exports[`classification:KNeighborsClassifier should throw an error if y is not a vector 1`] = `[Error: validateMatrix1D has received a non-array argument]`;
+exports[`classification:KNeighborsClassifier should throw an error if y is not a vector 1`] = `
+Object {
+  "message": "validateFitInputs received a non-array input y",
+  "name": "",
+}
+`;

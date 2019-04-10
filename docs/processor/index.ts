@@ -198,7 +198,7 @@ export function getText(param): string | undefined {
  */
 export function constructParamTable(parameters): string {
   // Param table characters blacklist
-  const paramTableCharsBlackList = [/\n/g, /\r\n/g, '_'];
+  const paramTableCharsBlackList = [/\n/g, /\r\n/g];
 
   /**
    * Generic clean function before displaying it on the table parameters
@@ -238,7 +238,6 @@ export function constructParamTable(parameters): string {
    */
   const buildParamsFromReference = (param, sum, typeId, preprend = 'options') => {
     const foundRef = searchInterface(docsJson, typeId);
-    // console.log(foundRef);
     if (_.isEmpty(foundRef)) {
       // Handling the TS native references
       _.forEach(param.type.typeArguments, (prop) => {
@@ -305,7 +304,6 @@ export function constructParamTable(parameters): string {
         // e.g. x: { test1, test2 }
         _.forEach(param.type.declaration.children, (namedParam) => {
           // const foundRef = searchInterface(docsJson, namedParam.type.id);
-          // console.log('param type type', namedParam.type.name, namedParam.type.type);
           if (consts.paramTypeReference === namedParam.type.type) {
             // If the reflection is actually a reference, such as ENUM, then buildParamFromReference
             buildParamsFromReference(namedParam, sum, namedParam.type.id);

@@ -1,4 +1,5 @@
 import * as _ from 'lodash';
+import { ValidationError, ValidationInconsistentShape } from './Errors';
 
 /**
  * Return the number of elements along a given axis.
@@ -9,14 +10,14 @@ import * as _ from 'lodash';
 const size = (X, axis = 0) => {
   const rows = _.size(X);
   if (rows === 0) {
-    throw new Error('Invalid input array of size 0!');
+    throw new ValidationError('Invalid input array of size 0!');
   }
   if (axis === 0) {
     return rows;
   } else if (axis === 1) {
     return _.flowRight(_.size, (a) => _.get(a, '[0]'))(X);
   }
-  throw new Error(`Invalid axis value ${axis} was given`);
+  throw new ValidationError(`Invalid axis value ${axis} was given`);
 };
 
 /**
@@ -64,7 +65,7 @@ const subset = (X, rowsRange: number[], colsRange: number[], replacement = null)
  */
 const range = (start: number, stop: number) => {
   if (!_.isNumber(start) || !_.isNumber(stop)) {
-    throw new Error('start and stop arguments need to be numbers');
+    throw new ValidationError('start and stop arguments need to be numbers');
   }
   return _.range(start, stop);
 };
@@ -78,7 +79,7 @@ const range = (start: number, stop: number) => {
  */
 const isMatrixOf = (matrix, _type = 'number') => {
   if (!isMatrix(matrix)) {
-    throw Error(`Cannot perform isMatrixOf ${_type} unless the data is matrix`);
+    throw new ValidationError(`Cannot perform isMatrixOf ${_type} unless the data is matrix`);
   }
   // Checking each elements inside the matrix is not number
   // Returns an array of result per row
@@ -126,7 +127,7 @@ const isArrayOf = (arr, _type = 'number') => {
   } else if (_type === 'string') {
     return !arr.some((x) => !_.isString(x));
   }
-  throw Error(`Failed to check the array content of type ${_type}`);
+  throw new ValidationError(`Failed to check the array content of type ${_type}`);
 };
 
 /**
@@ -207,7 +208,7 @@ const subtract = (X, y) => {
  */
 const covariance = (X, xMean, y, yMean) => {
   if (_.size(X) !== _.size(y)) {
-    throw new Error('X and y should match in size');
+    throw new ValidationError('X and y should match in size');
   }
   let covar = 0.0;
   for (let i = 0; i < _.size(X); i++) {
@@ -226,7 +227,7 @@ const covariance = (X, xMean, y, yMean) => {
  */
 const variance = (X, mean) => {
   if (!Array.isArray(X)) {
-    throw new Error('X must be an array');
+    throw new ValidationError('X must be an array');
   }
   let result = 0.0;
   for (let i = 0; i < _.size(X); i++) {
@@ -259,7 +260,7 @@ const hstack = (X, y) => {
     stack = _.concat(X, y);
     stack = _.flatten(stack);
   } else {
-    throw Error('Input should be either matrix or Arrays');
+    throw new ValidationError('Input should be either matrix or Arrays');
   }
   return stack;
 };
@@ -309,10 +310,10 @@ const inner = (a, b) => {
     }
     return result;
   } else if (Array.isArray(a) && Array.isArray(b) && a.length !== b.length) {
-    throw new Error(`Dimensions (${a.length},) and (${b.length},) are not aligned`);
+    throw new ValidationInconsistentShape(`Dimensions (${a.length},) and (${b.length},) are not aligned`);
   }
 
-  throw new Error(`Cannot process with the invalid inputs ${a} and ${b}`);
+  throw new ValidationError(`Cannot process with the invalid inputs ${a} and ${b}`);
 };
 
 const math = {

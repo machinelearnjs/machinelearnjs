@@ -1,20 +1,50 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ensemble:forest RandomForest should throw an exception if incorrect inputs for fit function are given 1`] = `[Error: The matrix is not 2D shaped: [] of [0]]`;
+exports[`ensemble:forest RandomForest should throw an exception if incorrect inputs for fit function are given 1`] = `[TypeError: Cannot read property 'nEstimator' of undefined]`;
 
-exports[`ensemble:forest RandomForest should throw an exception if incorrect inputs for fit function are given 2`] = `[Error: validateMatrix2D has received a non-array argument]`;
+exports[`ensemble:forest RandomForest should throw an exception if incorrect inputs for fit function are given 2`] = `
+Object {
+  "message": "validateFitInputs received a non-array input X",
+  "name": "",
+}
+`;
 
-exports[`ensemble:forest RandomForest should throw an exception if incorrect inputs for fit function are given 3`] = `[Error: The matrix is not 2D shaped: [1,2] of [2]]`;
+exports[`ensemble:forest RandomForest should throw an exception if incorrect inputs for fit function are given 3`] = `[TypeError: Cannot read property 'nEstimator' of undefined]`;
 
-exports[`ensemble:forest RandomForest should throw an exception if incorrect inputs for fit function are given 4`] = `[Error: The matrix is not 1D shaped: [] of [0]]`;
+exports[`ensemble:forest RandomForest should throw an exception if incorrect inputs for fit function are given 4`] = `
+Object {
+  "message": "Number of labels=0 does not math number of samples=2",
+  "name": "",
+}
+`;
 
-exports[`ensemble:forest RandomForest should throw an exception if incorrect inputs for fit function are given 5`] = `[TypeError: Number of labels=1 does not math number of samples=2]`;
+exports[`ensemble:forest RandomForest should throw an exception if incorrect inputs for fit function are given 5`] = `
+Object {
+  "message": "Number of labels=1 does not math number of samples=2",
+  "name": "",
+}
+`;
 
-exports[`ensemble:forest RandomForest should throw an exception if incorrect inputs for predict function are given 1`] = `[Error: The matrix is not 2D shaped: [] of [0]]`;
+exports[`ensemble:forest RandomForest should throw an exception if incorrect inputs for predict function are given 1`] = `
+Object {
+  "message": "The matrix is not 2D shaped: [] of [0]",
+  "name": "",
+}
+`;
 
-exports[`ensemble:forest RandomForest should throw an exception if incorrect inputs for predict function are given 2`] = `[Error: validateMatrix2D has received a non-array argument]`;
+exports[`ensemble:forest RandomForest should throw an exception if incorrect inputs for predict function are given 2`] = `
+Object {
+  "message": "validateMatrix2D has received a non-array argument",
+  "name": "",
+}
+`;
 
-exports[`ensemble:forest RandomForest should throw an exception if incorrect inputs for predict function are given 3`] = `[Error: The matrix is not 2D shaped: [1,2] of [2]]`;
+exports[`ensemble:forest RandomForest should throw an exception if incorrect inputs for predict function are given 3`] = `
+Object {
+  "message": "The matrix is not 2D shaped: [1,2] of [2]",
+  "name": "",
+}
+`;
 
 exports[`ensemble:forest RandomForest should throw an exception if incorrect inputs for predict function are given 4`] = `[TypeError: Cannot read property 'trees' of undefined]`;
 

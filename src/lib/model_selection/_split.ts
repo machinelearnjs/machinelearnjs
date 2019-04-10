@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import * as Random from 'random-js';
 import { Type1DMatrix, Type2DMatrix } from '../types';
+import { ValidationError } from '../utils/Errors';
 import { inferShape } from '../utils/tensors';
 import { validateFitInputs } from '../utils/validation';
 
@@ -41,7 +42,7 @@ export class KFold {
    */
   constructor({ k = 2, shuffle = false }) {
     if (k < 2) {
-      throw Error('Number of folds cannot be less than 2');
+      throw new ValidationError('Number of folds cannot be less than 2');
     }
     this.k = k;
     this.shuffle = shuffle;
@@ -57,11 +58,13 @@ export class KFold {
     const xShape = inferShape(X);
     const yShape = inferShape(y);
     if (xShape.length > 0 && yShape.length > 0 && xShape[0] !== yShape[0]) {
-      throw Error('X and y must have an identical size');
+      throw new ValidationError('X and y must have an identical size');
     }
 
     if (this.k > X.length || this.k > y.length) {
-      throw Error(`Cannot have number of splits k=${this.k} greater than the number of samples: ${_.size(X)}`);
+      throw new ValidationError(
+        `Cannot have number of splits k=${this.k} greater than the number of samples: ${_.size(X)}`,
+      );
     }
 
     const binSize = _.floor(_.size(X) / this.k);
@@ -151,7 +154,7 @@ export function train_test_split(
   const _y = clone ? _.cloneDeep(y) : y;
   // Checking if either of these params is not array
   if (!_.isArray(_X) || !_.isArray(_y) || _X.length === 0 || _y.length === 0) {
-    throw Error('X and y must be array and cannot be empty');
+    throw new ValidationError('X and y must be array and cannot be empty');
   }
 
   validateFitInputs(_X, _y);
@@ -160,7 +163,7 @@ export function train_test_split(
   const testSizeLength: number = _.round(test_size * _X.length);
 
   if (_.round(test_size + train_size) !== 1) {
-    throw Error('Sum of test_size and train_size does not equal 1');
+    throw new ValidationError('Sum of test_size and train_size does not equal 1');
   }
   // Initiate Random engine
   const randomEngine = Random.engines.mt19937();

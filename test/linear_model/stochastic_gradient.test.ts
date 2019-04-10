@@ -1,7 +1,7 @@
 import { SGDClassifier, SGDRegressor, TypeLoss } from '../../src/lib/linear_model';
 import { accuracyScore } from '../../src/lib/metrics';
+import { ValidationError } from '../../src/lib/utils/Errors';
 import { getIris } from '../data_testing';
-import { validate1DMatrixErrorMessage, validate2DMatrixErrorMessage } from '../Errors';
 import { assertArrayAlmostEqual } from '../util_testing';
 import { reg_l12_snap, reg_l1_snap, reg_l2_snap } from './__snapshots__/manual_sgd_regressor.snap';
 
@@ -97,22 +97,58 @@ describe('linear_model:SGDClassifier', () => {
   it('Should throw exceptions on fit with invalid inputs', () => {
     const clf = new SGDClassifier();
     // X
-    expect(() => clf.fit(null, y1)).toThrow(validate2DMatrixErrorMessage);
-    expect(() => clf.fit(1, y1)).toThrow(validate2DMatrixErrorMessage);
-    expect(() => clf.fit('test', y1)).toThrow(validate2DMatrixErrorMessage);
+    try {
+      clf.fit(null, y1);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      clf.fit(1 as any, y1);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      clf.fit('test' as any, y1);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
 
     // y
-    expect(() => clf.fit(X1, null)).toThrow(validate1DMatrixErrorMessage);
-    expect(() => clf.fit(X1, 1)).toThrow(validate1DMatrixErrorMessage);
-    expect(() => clf.fit(X1, 'test')).toThrow(validate1DMatrixErrorMessage);
+    try {
+      clf.fit(X1, null);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      clf.fit(X1, 1 as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      clf.fit(X1, 'test' as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 
   it('Should throw exceptions on predict with invalid inputs', () => {
     const clf = new SGDClassifier();
     // X
-    expect(() => clf.predict(null)).toThrow(validate2DMatrixErrorMessage);
-    expect(() => clf.predict(1)).toThrow(validate2DMatrixErrorMessage);
-    expect(() => clf.predict({})).toThrow(validate2DMatrixErrorMessage);
+    try {
+      clf.predict(null);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      clf.predict(1 as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      clf.predict({} as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 });
 
@@ -187,21 +223,57 @@ describe('linear_model:SGDRegressor', () => {
     const clf = new SGDRegressor();
 
     // X
-    expect(() => clf.fit(null, y1)).toThrow(validate2DMatrixErrorMessage);
-    expect(() => clf.fit(1, y1)).toThrow(validate2DMatrixErrorMessage);
-    expect(() => clf.fit('test', y1)).toThrow(validate2DMatrixErrorMessage);
+    try {
+      clf.fit(null, y1);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      clf.fit(1 as any, y1);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      clf.fit('test' as any, y1);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
 
     // y
-    expect(() => clf.fit(X1, null)).toThrowError(validate1DMatrixErrorMessage);
-    expect(() => clf.fit(X1, 1)).toThrowError(validate1DMatrixErrorMessage);
-    expect(() => clf.fit(X1, 'test')).toThrowError(validate1DMatrixErrorMessage);
+    try {
+      clf.fit(X1, null);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      clf.fit(X1, 1 as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      clf.fit(X1, 'test' as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 
   it('Should throw exceptions on predict with invalid inputs', () => {
     const clf = new SGDRegressor();
     // X
-    expect(() => clf.predict(null)).toThrow(validate2DMatrixErrorMessage);
-    expect(() => clf.predict(1)).toThrow(validate2DMatrixErrorMessage);
-    expect(() => clf.predict({})).toThrow(validate2DMatrixErrorMessage);
+    try {
+      clf.predict(null);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      clf.predict(1 as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      clf.predict({} as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 });

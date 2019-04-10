@@ -70,3 +70,23 @@ import { Lasso } from '.';
 const reg1 = new Lasso({ degree: 2, l1: 1 });
 reg1.fit([[0, 0], [1, 1]], [0, 1]);
 console.log('lasso', reg1.predict([[1, 1], [2, 3]]));
+
+import { LogisticRegression } from '.';
+import { HeartDisease } from '../datasets';
+import { train_test_split } from '../model_selection';
+import { accuracyScore } from '../metrics';
+
+const heartDisease = new HeartDisease();
+heartDisease.load().then(({ data, targets }) => {
+  const { xTrain, yTrain, xTest, yTest } = train_test_split(data, targets);
+
+  const logisticRegression: LogisticRegression = new LogisticRegression({
+    learning_rate: 0.0001,
+    num_iterations: 100000,
+  });
+  logisticRegression.fit(xTrain, yTrain);
+
+  const pred = logisticRegression.predict(xTest);
+  console.log(pred);
+  console.log('acc', accuracyScore(yTest, pred));
+});

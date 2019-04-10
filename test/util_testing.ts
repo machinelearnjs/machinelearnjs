@@ -1,3 +1,5 @@
+import * as _ from 'lodash';
+
 /**
  * Raises an AssertionError if two objects are not equal up to desired precision.
  * @param desired

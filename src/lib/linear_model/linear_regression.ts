@@ -6,6 +6,7 @@ import * as tf from '@tensorflow/tfjs';
 import { size } from 'lodash';
 import * as numeric from 'numeric';
 import { Type1DMatrix, Type2DMatrix } from '../types';
+import { ValidationError } from '../utils/Errors';
 import math from '../utils/MathExtra';
 import { reshape } from '../utils/tensors';
 import { inferShape } from '../utils/tensors';
@@ -56,8 +57,16 @@ export class LinearRegression {
     X: Type1DMatrix<number> | Type2DMatrix<number> = null,
     y: Type1DMatrix<number> | Type2DMatrix<number> = null,
   ): void {
+    if (!Array.isArray(X)) {
+      throw new ValidationError('Received a non-array argument for X');
+    }
+    if (!Array.isArray(X) || !Array.isArray(y)) {
+      throw new ValidationError('Received a non-array argument for y');
+    }
+
     const xShape = inferShape(X);
     const yShape = inferShape(y);
+
     if (xShape.length === 1 && yShape.length === 1 && xShape[0] === yShape[0]) {
       // Univariate linear regression
       this.type = TypeLinearReg.UNIVARIATE;
@@ -66,7 +75,7 @@ export class LinearRegression {
       this.type = TypeLinearReg.MULTIVARIATE;
       this.weights = this.calculateMultiVariateCoeff(X, y);
     } else {
-      throw new Error(`Sample(${xShape[0]}) and target(${yShape[0]}) sizes do not match`);
+      throw new ValidationError(`Sample(${xShape[0]}) and target(${yShape[0]}) sizes do not match`);
     }
   }
   /**
@@ -75,13 +84,18 @@ export class LinearRegression {
    * @returns {number}
    */
   public predict(X: Type1DMatrix<number> | Type2DMatrix<number> = null): number[] {
+    if (!Array.isArray(X)) {
+      throw new ValidationError('Received a non-array argument for y');
+    }
+
     const xShape = inferShape(X);
+
     if (xShape.length === 1 && this.type.toString() === TypeLinearReg.UNIVARIATE.toString()) {
       return this.univariatePredict(X as Type1DMatrix<number>);
     } else if (xShape.length === 2 && this.type.toString() === TypeLinearReg.MULTIVARIATE.toString()) {
       return this.multivariatePredict(X as Type2DMatrix<number>);
     } else {
-      throw new TypeError(
+      throw new ValidationError(
         `The matrix is incorrectly shaped: while X is ${xShape.length}, type is ${this.type.toString().toLowerCase()}`,
       );
     }

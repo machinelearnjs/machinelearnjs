@@ -3,7 +3,7 @@
   "extends": ["tslint:recommended", "tslint-config-prettier"],
   "jsRules": {},
   "rules": {
-    "variable-name": [true, "allow-leading-underscore", "allow-snake-case"],
+    "variable-name": [true, "allow-leading-underscore", "allow-snake-case", "allow-pascal-case"],
     "prefer-for-of": false,
     "no-console": [true, "log"],
     "member-ordering": false,
