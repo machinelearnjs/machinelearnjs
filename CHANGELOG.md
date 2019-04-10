@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.0.3]
+
+:rocket: New API! :rocket:
+
+- **feature:** Logistic Regression by @OlegStotsky
+- **enhance:** Various internal code enhancement
+
 ## [2.0.2]
 
 :bug: API consistency update :bug:
