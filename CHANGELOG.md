@@ -2,7 +2,7 @@
 
 All notable changes to this project will be documented in this file.
 
-## [2.0.3]
+## [2.1.0]
 
 :rocket: New API! :rocket:
 
