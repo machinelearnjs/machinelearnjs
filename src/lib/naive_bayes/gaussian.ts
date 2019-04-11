@@ -1,6 +1,7 @@
 import * as tf from '@tensorflow/tfjs';
 import { zip } from 'lodash';
 import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
+import { ValidationError } from '../utils/Errors';
 import { reshape } from '../utils/tensors';
 import { validateFitInputs, validateMatrix2D } from '../utils/validation';
 
@@ -110,7 +111,7 @@ export class GaussianNB<T extends number | string = number> implements IMlModel<
     // Comparing input and summary shapes
     const summaryLength = this.mean.shape[1];
     if (numFeatures !== summaryLength) {
-      throw new Error(
+      throw new ValidationError(
         `Prediction input ${matrixX.shape[0]} length must be equal or less than summary length ${summaryLength}`,
       );
     }

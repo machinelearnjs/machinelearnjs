@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.0]
+
+:rocket: New API! :rocket:
+
+- **feature:** Logistic Regression by @OlegStotsky
+- **feature:** Heart Disease dataset by @OlegStotsky
+- **enhance:** Various internal code enhancement
+
 ## [2.0.2]
 
 :bug: API consistency update :bug:

@@ -1,6 +1,8 @@
 import * as tf from '@tensorflow/tfjs';
 import * as _ from 'lodash';
-import { TypeMatrix } from '../types';
+import { Type1DMatrix, Type2DMatrix, TypeMatrix } from '../types';
+import { ValidationError, ValidationInconsistentShape } from './Errors';
+import { validateMatrix1D, validateMatrix2D } from './validation';
 
 /**
  * Infers shape of a tensor using TF
@@ -15,7 +17,11 @@ import { TypeMatrix } from '../types';
  * @ignore
  */
 export function inferShape(X: TypeMatrix<any>): number[] {
-  return tf.tensor(X).shape;
+  try {
+    return tf.tensor(X).shape;
+  } catch (e) {
+    throw new ValidationInconsistentShape(e);
+  }
 }
 
 /**
@@ -40,11 +46,11 @@ export function inferShape(X: TypeMatrix<any>): number[] {
 export function reshape<T>(array: TypeMatrix<T>, sizes: number[]): TypeMatrix<T> {
   // Initial validations
   if (!Array.isArray(array)) {
-    throw new TypeError('The input array must be an array!');
+    throw new ValidationError('The input array must be an array!');
   }
 
   if (!Array.isArray(sizes)) {
-    throw new TypeError('The sizes must be an array!');
+    throw new ValidationError('The sizes must be an array!');
   }
 
   const deepFlatArray = _.flattenDeep<T>(array);
@@ -52,7 +58,7 @@ export function reshape<T>(array: TypeMatrix<T>, sizes: number[]): TypeMatrix<T>
   if (sizes.length === 1 && deepFlatArray.length === sizes[0]) {
     return deepFlatArray;
   } else if (sizes.length === 1 && deepFlatArray.length !== sizes[0]) {
-    throw new TypeError(`Target array shape [${deepFlatArray.length}] cannot be reshaped into ${sizes}`);
+    throw new ValidationError(`Target array shape [${deepFlatArray.length}] cannot be reshaped into ${sizes}`);
   }
 
   // testing if there are enough elements for the requested shape
@@ -75,3 +81,19 @@ export function reshape<T>(array: TypeMatrix<T>, sizes: number[]): TypeMatrix<T>
 
   return tmpArray;
 }
+
+/**
+ * Ensures that matrix passed in is two dimensional
+ * If passed a one dimensional matrix, transforms it into a two dimensional matrix by turning each element into a row with 1 element
+ * If passed a two dimensional matrix, does nothing
+ * @param X - target matrix
+ * @ignore
+ */
+export const ensure2DMatrix = (X: Type2DMatrix<number> | Type1DMatrix<number>): Type2DMatrix<number> => {
+  const shape: number[] = inferShape(X);
+  if (shape.length === 2) {
+    return validateMatrix2D(X);
+  }
+  const matrix1D = validateMatrix1D(X);
+  return _.map(matrix1D, (o) => [o]);
+};

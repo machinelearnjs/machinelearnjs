@@ -1,4 +1,5 @@
-import { isString } from 'lodash';
+import * as _ from 'lodash';
+import { ValidationError } from './Errors';
 
 /**
  * @ignore
@@ -13,8 +14,8 @@ export class WordTokenizer {
    * @returns {string[]}
    */
   public tokenize(text): string[] {
-    if (!isString(text)) {
-      throw new Error('Cannot process a non string value');
+    if (!_.isString(text)) {
+      throw new ValidationError('Cannot process a non string value');
     }
     const regex = /[^A-Za-zА-Яа-я0-9_]+/g;
     return text.split(regex);

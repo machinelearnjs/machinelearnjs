@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { KMeans } from '../../src/lib/cluster';
-import { validate2DMatrixErrorMessage } from '../Errors';
+import { Validation2DMatrixError, ValidationError } from '../../src/lib/utils/Errors';
 
 // TODO: Improve on kmeans cluster testing
 describe('clusters:k_means', () => {
@@ -72,8 +72,17 @@ describe('clusters:k_means', () => {
 
   it('should not fit none 2D matrix', () => {
     const kmean = new KMeans({ k: 2 });
-    expect(() => kmean.fit([1, 2])).toThrow('The matrix is not 2D shaped: [1,2] of [2]');
-    expect(() => kmean.fit(null)).toThrow(validate2DMatrixErrorMessage);
+
+    try {
+      kmean.fit([1, 2] as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(Validation2DMatrixError);
+    }
+    try {
+      kmean.fit(null as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
     // TODO: implement datatype check to the validation method
     // expect(() => kmean.fit([["aa", "bb"]])).toThrow('The matrix is not 2D shaped: [1,2] of [2]');
   });

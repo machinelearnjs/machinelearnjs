@@ -1,5 +1,6 @@
 import * as _ from 'lodash';
 import { accuracyScore, confusion_matrix, zeroOneLoss } from '../../src/lib/metrics/classification';
+import { ValidationError } from '../../src/lib/utils/Errors';
 
 describe('classification:accuracy_score', () => {
   const yTrue1 = [0, 1, 2, 3];
@@ -33,21 +34,27 @@ describe('classification:accuracy_score', () => {
   });
 
   it('should throw not equal in size exception', () => {
-    expect(() => {
+    try {
       accuracyScore(yPred2, [1], { normalize: false });
-    }).toThrow('y_true and y_pred are not equal in size!');
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 
   it('should y_true non-array should throw an error', () => {
-    expect(() => {
-      accuracyScore(true, yPred2, { normalize: false });
-    }).toThrow('y_true cannot be null or empty');
+    try {
+      accuracyScore(true as any, yPred2, { normalize: false });
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 
   it('should y_pred non-array should throw an error', () => {
-    expect(() => {
-      accuracyScore(yTrue2, 1, { normalize: false });
-    }).toThrow('y_pred cannot be null or empty');
+    try {
+      accuracyScore(yTrue2);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 });
 
@@ -70,21 +77,27 @@ describe('classification:zeroOneLoss', () => {
   });
 
   it('should y_pred [1] and yTrue2 throw not equal size exception', () => {
-    expect(() => {
+    try {
       zeroOneLoss([1], yTrue2);
-    }).toThrow('y_true and y_pred are not equal in size!');
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 
   it('should y_true non-array should throw an error', () => {
-    expect(() => {
-      accuracyScore(true, yPred2, { normalize: false });
-    }).toThrow('y_true cannot be null or empty');
+    try {
+      accuracyScore(true as any, yPred2, { normalize: false });
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 
   it('should y_pred non-array should throw an error', () => {
-    expect(() => {
-      accuracyScore(yTrue2, 1, { normalize: false });
-    }).toThrow('y_pred cannot be null or empty');
+    try {
+      accuracyScore(yTrue2, 1 as any, { normalize: false });
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 });
 
@@ -115,14 +128,18 @@ describe('classification:confusion_matrix', () => {
   });
 
   it('should throw an y_true empty exception', () => {
-    expect(() => {
+    try {
       confusion_matrix([], []);
-    }).toThrow('y_true cannot be null or empty');
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 
   it('should throw y_pred empty exception', () => {
-    expect(() => {
+    try {
       confusion_matrix(yTrue2, []);
-    }).toThrow('y_pred cannot be null or empty');
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 });

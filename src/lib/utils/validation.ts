@@ -1,7 +1,13 @@
 import * as _ from 'lodash';
 import { isArray } from 'util';
 import { Type1DMatrix, Type2DMatrix, TypeMatrix } from '../types';
-import { Validation1DMatrixError, Validation2DMatrixError, ValidationError } from './Errors';
+import {
+  Validation1DMatrixError,
+  Validation2DMatrixError,
+  ValidationClassMismatch,
+  ValidationError,
+  ValidationMatrixTypeError,
+} from './Errors';
 import { inferShape } from './tensors';
 
 /**
@@ -62,7 +68,7 @@ export function validateMatrixType(X: TypeMatrix<any>, targetTypes: string[]): v
   const sortedXTypes = _.sortBy(xTypes, (x) => x);
   const sortedTargetTypes = _.sortBy(targetTypes, (x) => x);
   if (!_.isEqual(sortedXTypes, sortedTargetTypes)) {
-    throw new TypeError(
+    throw new ValidationMatrixTypeError(
       `Input matrix type of ${JSON.stringify(sortedXTypes)} does not match with the target types ${JSON.stringify(
         sortedTargetTypes,
       )}`,
@@ -71,7 +77,7 @@ export function validateMatrixType(X: TypeMatrix<any>, targetTypes: string[]): v
 }
 
 /**
- * Validate typical X and y train data and check they are 2D and 1D shaped respectively
+ * Check that X and y have the same size across the first axis
  *
  * @example
  * validateTrainInputs([ [1, 2], [3, 4] ], [ 1, 2 ]) // No errors
@@ -81,13 +87,23 @@ export function validateMatrixType(X: TypeMatrix<any>, targetTypes: string[]): v
  * @param y
  * @ignore
  */
-export function validateFitInputs(X: Type2DMatrix<any>, y: Type1DMatrix<any>): void {
+export function validateFitInputs(X: Type2DMatrix<any> | Type1DMatrix<any>, y: Type1DMatrix<any>): void {
+  if (!Array.isArray(X)) {
+    throw new ValidationError('validateFitInputs received a non-array input X');
+  }
+  if (!Array.isArray(y)) {
+    throw new ValidationError('validateFitInputs received a non-array input y');
+  }
+
   // Check X is always a matrix
-  const sampleShape = inferShape(validateMatrix2D(X));
+  const sampleShape = inferShape(X);
   // Check y is always a vector
-  const targetShape = inferShape(validateMatrix1D(y));
+  const targetShape = inferShape(y);
+
   if (sampleShape[0] !== targetShape[0]) {
-    throw new TypeError(`Number of labels=${targetShape[0]} does not math number of samples=${sampleShape[0]}`);
+    throw new ValidationClassMismatch(
+      `Number of labels=${targetShape[0]} does not math number of samples=${sampleShape[0]}`,
+    );
   }
 }
 
@@ -126,3 +142,25 @@ export function validateMatrix2D(X: unknown): number[][] {
   }
   return X;
 }
+
+/**
+ * Checks that provided X matrix has the same number of features as model matrix
+ * @param X - matrix to check
+ * @param reference - reference matrix
+ * @throws ValidationError - in case number of features doesn't match
+ * @ignore
+ */
+export const validateFeaturesConsistency = <T>(
+  X: Type2DMatrix<T> | Type1DMatrix<T>,
+  reference: Type1DMatrix<T>,
+): void => {
+  const xShape: number[] = inferShape(X);
+  const referenceShape: number[] = inferShape(reference);
+  const xNumFeatures = xShape.length === 1 ? 1 : xShape[1];
+  const referenceNumFeatures = referenceShape[0];
+  if (xNumFeatures !== referenceNumFeatures) {
+    throw new ValidationError(
+      `Provided X has incorrect number of features. Should have: ${referenceNumFeatures}, got: ${xNumFeatures}`,
+    );
+  }
+};

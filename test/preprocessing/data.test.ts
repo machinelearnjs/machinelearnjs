@@ -9,14 +9,11 @@ import {
   PolynomialFeatures,
 } from '../../src/lib/preprocessing';
 import {
-  matrixEmptyErrorMessage,
-  tensorCreationErrorMessage,
-  validate1DMatrixErrorMessage,
-  validate2DMatrixErrorMessage,
-} from '../Errors';
-
-// Constant error messages
-const tensorErr = 'values passed to tensor(values) must be an array of numbers or booleans, or a TypedArray';
+  ConstructionError,
+  Validation1DMatrixError,
+  ValidationError,
+  ValidationKeyNotFoundError,
+} from '../../src/lib/utils/Errors';
 
 describe('data:add_dummy_feature', () => {
   const X1 = [[0, 1], [1, 0]];
@@ -41,10 +38,26 @@ describe('data:add_dummy_feature', () => {
   });
 
   it('should throw error when invalid data is given', () => {
-    expect(() => add_dummy_feature(true)).toThrow(validate2DMatrixErrorMessage);
-    expect(() => add_dummy_feature(1)).toThrow(validate2DMatrixErrorMessage);
-    expect(() => add_dummy_feature(null)).toThrow(validate2DMatrixErrorMessage);
-    expect(() => add_dummy_feature(undefined)).toThrow(validate2DMatrixErrorMessage);
+    try {
+      add_dummy_feature(true as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      add_dummy_feature(1 as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      add_dummy_feature(null);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      add_dummy_feature(undefined);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 });
 
@@ -80,22 +93,26 @@ describe('data:OneHotEncoder', () => {
 
   it("Invalid data key 'values' should throw an Error", () => {
     const enc = new OneHotEncoder();
-    expect(() => {
+    try {
       enc.encode(planetList, {
         dataKeys: ['values'],
         labelKeys: ['planet'],
       });
-    }).toThrow('Cannot find values from data');
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationKeyNotFoundError);
+    }
   });
 
   it("Invalid label key 'planot' should throw an Error", () => {
     const enc = new OneHotEncoder();
-    expect(() => {
+    try {
       enc.encode(planetList, {
         dataKeys: ['value'],
         labelKeys: ['planot'],
       });
-    }).toThrow('Cannot find planot from labels');
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationKeyNotFoundError);
+    }
   });
 });
 
@@ -150,21 +167,57 @@ describe('data:MinMaxScaler', () => {
   });
   it('should not fit invalid inputs', () => {
     const scaler = new MinMaxScaler({ featureRange: [0, 1] });
-    expect(() => scaler.fit('?')).toThrow(tensorCreationErrorMessage);
-    expect(() => scaler.fit(1)).toThrow(matrixEmptyErrorMessage);
-    expect(() => scaler.fit([])).toThrow(matrixEmptyErrorMessage);
+    try {
+      scaler.fit('?' as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      scaler.fit(1 as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      scaler.fit([] as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
   it('should not fit_transform invalid inputs', () => {
     const scaler = new MinMaxScaler({ featureRange: [0, 1] });
-    expect(() => scaler.fit_transform('?')).toThrow(tensorCreationErrorMessage);
-    expect(() => scaler.fit_transform(1)).toThrow(matrixEmptyErrorMessage);
-    expect(() => scaler.fit_transform([])).toThrow(matrixEmptyErrorMessage);
+    try {
+      scaler.fit_transform('?' as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      scaler.fit_transform(1 as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      scaler.fit_transform([] as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
   it('should not inverse_transform invalid inputs', () => {
     const scaler = new MinMaxScaler({ featureRange: [0, 1] });
-    expect(() => scaler.inverse_transform('?')).toThrow(validate1DMatrixErrorMessage);
-    expect(() => scaler.inverse_transform(1)).toThrow(validate1DMatrixErrorMessage);
-    expect(() => scaler.inverse_transform([])).toThrow('The matrix is not 1D shaped: [] of [0]');
+    try {
+      scaler.inverse_transform('?' as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      scaler.inverse_transform(1 as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      scaler.inverse_transform([] as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(Validation1DMatrixError);
+    }
   });
 });
 
@@ -178,15 +231,39 @@ describe('data:Binarizer', () => {
   });
   it('should not fit invalid data', () => {
     const newBin = new Binarizer({ threshold: 0 });
-    expect(() => newBin.fit([])).toThrow('X cannot be empty');
-    expect(() => newBin.fit('?')).toThrow(validate2DMatrixErrorMessage);
-    expect(() => newBin.fit(null)).toThrow(validate2DMatrixErrorMessage);
+    try {
+      newBin.fit([]);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      newBin.fit('?' as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      newBin.fit(null);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
   it('should not transform invalid data', () => {
     const newBin = new Binarizer({ threshold: 0 });
-    expect(() => newBin.transform([])).toThrow('X cannot be empty');
-    expect(() => newBin.transform('?')).toThrow(validate2DMatrixErrorMessage);
-    expect(() => newBin.transform(null)).toThrow(validate2DMatrixErrorMessage);
+    try {
+      newBin.transform([]);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      newBin.transform('?' as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      newBin.transform(null);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 });
 
@@ -214,23 +291,53 @@ describe('data:PolynomialFeatures', () => {
   // Exceptions
   it('should not transform when invalid values are given', () => {
     const poly = new PolynomialFeatures();
-    expect(() => poly.transform(null)).toThrow(validate2DMatrixErrorMessage);
-    expect(() => poly.transform([])).toThrow('X cannot be empty');
-    expect(() => poly.transform(1)).toThrow(validate2DMatrixErrorMessage);
-    expect(() => poly.transform('string')).toThrow(validate2DMatrixErrorMessage);
+    try {
+      poly.transform(null);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      poly.transform([]);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      poly.transform(1 as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      poly.transform('string' as any);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
   // TODO: Implement matrix data type check in validateMatrixXX and reimplement the test
-  /* it('should not transform when matrix with non numberic value is given', () => {
+  /* it('should not transform when matrix with non numeric value is given', () => {
     const poly = new PolynomialFeatures();
     const X = [[1, 2, true], [2, 1, 'string'], [null, null, null]];
     console.log(poly.transform(X));
     expect(() => poly.transform(X)).toThrow('X has to be a matrix of numbers');
   }); */
   it('should not initiate the class if an invalid degree value is given', () => {
-    const expected = 'Degree must be a number';
-    expect(() => new PolynomialFeatures({ degree: null })).toThrow(expected);
-    expect(() => new PolynomialFeatures({ degree: 'string' })).toThrow(expected);
-    expect(() => new PolynomialFeatures({ degree: [] })).toThrow(expected);
+    try {
+      const poly = new PolynomialFeatures({ degree: null });
+      poly.transform();
+    } catch (err) {
+      expect(err).toBeInstanceOf(ConstructionError);
+    }
+    try {
+      const poly = new PolynomialFeatures({ degree: 'string' });
+      poly.transform();
+    } catch (err) {
+      expect(err).toBeInstanceOf(ConstructionError);
+    }
+    try {
+      const poly = new PolynomialFeatures({ degree: [] });
+      poly.transform();
+    } catch (err) {
+      expect(err).toBeInstanceOf(ConstructionError);
+    }
   });
 });
 
@@ -251,12 +358,27 @@ describe('data:normalize', () => {
     expect(result).toEqual(expected);
   });
   it('should throw an error if unrecognised norm is passed in', () => {
-    const expected = 'test is not a recognised normalization method';
-    expect(() => normalize(X1, { norm: 'test' })).toThrow(expected);
+    try {
+      normalize(X1, { norm: 'test' });
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
   it('should throw an error if the input is invalid', () => {
-    expect(() => normalize(null, { norm: 'l1' })).toThrow(validate2DMatrixErrorMessage);
-    expect(() => normalize([], { norm: 'l1' })).toThrow('X cannot be empty');
-    expect(() => normalize('aisjd', { norm: 'l1' })).toThrow(validate2DMatrixErrorMessage);
+    try {
+      normalize(null, { norm: 'l1' });
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      normalize([], { norm: 'l1' });
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
+    try {
+      normalize('string' as any, { norm: 'l1' });
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 });

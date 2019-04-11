@@ -1,7 +1,6 @@
 import * as tf from '@tensorflow/tfjs';
 import * as numeric from 'numeric';
 import { IMlModel, Type2DMatrix } from '../types';
-import { reshape } from '../utils/tensors';
 import { validateMatrix2D, validateMatrixType } from '../utils/validation';
 
 /**
@@ -56,7 +55,7 @@ export class PCA implements IMlModel<number> {
 
     const M = tf.mean(AT, 1);
     const rawC = tf.sub(A, M);
-    const C: any = reshape([...rawC.dataSync()], rawC.shape);
+    const C = validateMatrix2D(rawC.arraySync());
     const svd = numeric.svd(C);
     this.components = svd.V;
     this.explained_variance = numeric.div(numeric.pow(svd.U, 1), nSamples - 1);

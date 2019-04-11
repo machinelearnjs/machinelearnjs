@@ -67,7 +67,7 @@
     "node": ">=8.11.0"
   },
   "dependencies": {
-    "@tensorflow/tfjs": "0.13.3",
+    "@tensorflow/tfjs": "0.15.1",
     "isomorphic-fetch": "2.2.1",
     "libsvm-js": "0.2.0",
     "lodash": "4.17.11",
@@ -87,7 +87,7 @@
     "fs-extra": "7.0.0",
     "handlebars": "4.0.11",
     "husky": "1.1.2",
-    "jest": "22.4.3",
+    "jest": "24.7.1",
     "jest-fetch-mock": "1.6.5",
     "ncp": "2.0.0",
     "prettier": "1.10.2",
@@ -102,6 +102,9 @@
     "typescript": "3.4.1",
     "vuepress": "0.12.0",
     "watch": "1.0.2"
+  },
+  "resolutions": {
+    "webpack-dev-middleware": "3.6.0"
   },
   "jest": {
     "moduleFileExtensions": [

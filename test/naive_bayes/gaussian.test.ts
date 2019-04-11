@@ -1,4 +1,5 @@
 import { GaussianNB } from '../../src/lib/naive_bayes';
+import { ValidationError } from '../../src/lib/utils/Errors';
 import { matchExceptionWithSnapshot } from '../util_testing';
 
 describe('naive_bayes:GaussianNB', () => {
@@ -78,7 +79,11 @@ describe('naive_bayes:GaussianNB', () => {
   it('should not prediction attributes are greater than summary length', () => {
     const nb = new GaussianNB();
     nb.fit(X1, y1);
-    const tooManyPredAttrs = 'Prediction input 4 length must be equal or less than summary length 2';
-    expect(() => nb.predict([[1, 20, 11, 2]])).toThrow(tooManyPredAttrs);
+
+    try {
+      nb.predict([[1, 20, 11, 2]]);
+    } catch (err) {
+      expect(err).toBeInstanceOf(ValidationError);
+    }
   });
 });
