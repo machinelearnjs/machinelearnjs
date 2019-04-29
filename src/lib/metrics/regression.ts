@@ -115,7 +115,7 @@ export function mean_squared_error(
  * Mean squared error regression loss
  *
  * @example
- * import { mean_squared_error } from 'machinelearn/metrics';
+ * import { mean_squared_log_error } from 'machinelearn/metrics';
  *
  * const y_true = [3, 0.5, 2, 7];
  * const y_pred = [2.5, 0.0, 2, 8];
