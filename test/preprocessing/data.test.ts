@@ -7,7 +7,7 @@ import {
   normalize,
   OneHotEncoder,
   PolynomialFeatures,
-} from '../../src/lib/preprocessing';
+} from '../../src/lib/preprocessing/index';
 import {
   ConstructionError,
   Validation1DMatrixError,

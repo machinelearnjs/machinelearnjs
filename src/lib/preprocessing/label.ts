@@ -22,7 +22,7 @@ export class LabelEncoder {
    * Fit label encoder
    * @param {any[]} X - Input data in array or matrix
    */
-  public fit(X: Type1DMatrix<string> = null): void {
+  public fit(X: Type1DMatrix<any> = null): void {
     validateMatrix1D(X);
     this.classes = uniq(X);
   }
@@ -37,7 +37,7 @@ export class LabelEncoder {
    * Into [2, 2, 1]
    * @param X - Input data to transform according to the fitted state
    */
-  public transform(X: Type1DMatrix<string> = null): any[] {
+  public transform(X: Type1DMatrix<any> = null): any[] {
     validateMatrix1D(X);
     return map(X, (item) => {
       return findIndex(this.classes, (cur) => cur === item);
