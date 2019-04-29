@@ -97,3 +97,27 @@ export const ensure2DMatrix = (X: Type2DMatrix<number> | Type1DMatrix<number>): 
   const matrix1D = validateMatrix1D(X);
   return _.map(matrix1D, (o) => [o]);
 };
+
+export function checkCompareShapesAndConvert(
+  y_true: Type1DMatrix<number> | Type2DMatrix<number> = null,
+  y_pred: Type1DMatrix<number> | Type2DMatrix<number> = null,
+): tf.Tensor[] {
+  const yTrueTensor = tf.tensor(y_true);
+  const yPredTensor = tf.tensor(y_pred);
+  const yTrueShape = inferShape(y_true);
+  const yPredShape = inferShape(y_pred);
+
+  // Validation 1: empty array check
+  if (yTrueShape[0] === 0 || yPredShape[0] === 0) {
+    throw new TypeError(`y_true ${JSON.stringify(y_true)} and y_pred ${JSON.stringify(y_pred)} cannot be empty`);
+  }
+
+  // Validation 2: Same shape
+  if (!_.isEqual(yTrueShape, yPredShape)) {
+    throw new TypeError(
+      `Shapes of y_true ${JSON.stringify(yTrueShape)} and y_pred ${JSON.stringify(yPredShape)} should be equal`,
+    );
+  }
+
+  return [yTrueTensor, yPredTensor];
+}

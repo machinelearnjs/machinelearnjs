@@ -1,7 +1,7 @@
 import * as tf from '@tensorflow/tfjs';
 import { isEqual } from 'lodash';
 import { Type1DMatrix, Type2DMatrix } from '../types';
-import { inferShape } from '../utils/tensors';
+import { checkCompareShapesAndConvert, inferShape } from '../utils/tensors';
 
 /**
  * Mean absolute error regression loss
@@ -29,12 +29,9 @@ export function mean_absolute_error(
   },
 ): number {
   const yTrueShape = inferShape(y_true);
-  const yPredShape = inferShape(y_pred);
 
   // Validation 1: empty array check
-  if (yTrueShape[0] === 0 || yPredShape[0] === 0) {
-    throw new TypeError(`y_true ${JSON.stringify(y_true)} and y_pred ${JSON.stringify(y_pred)} cannot be empty`);
-  }
+  const [yTrueTensor, yPredTensor]: tf.Tensor[] = checkCompareShapesAndConvert(y_true, y_pred);
 
   if (sample_weight !== null) {
     const weightShape = inferShape(sample_weight);
@@ -42,13 +39,6 @@ export function mean_absolute_error(
       throw new TypeError(`The shape of ${JSON.stringify(weightShape)}
        does not match with the sample size ${JSON.stringify(yTrueShape)}`);
     }
-  }
-
-  // Validation 2: Same shape
-  if (!isEqual(yTrueShape, yPredShape)) {
-    throw new TypeError(
-      `The shapes of y_true ${JSON.stringify(yTrueShape)} and y_pred ${JSON.stringify(yPredShape)} should be equal`,
-    );
   }
 
   /**
@@ -75,7 +65,7 @@ export function mean_absolute_error(
       return tf.div(tf.sum(X), tf.scalar(sample_size));
     }
   };
-  const output_errors = tf.abs(tf.sub(y_true, y_pred));
+  const output_errors = yTrueTensor.sub(yPredTensor).abs();
   const avg_errors = average(output_errors, 0, sample_weight);
   return average(avg_errors).dataSync()[0];
 }
@@ -116,20 +106,67 @@ export function mean_squared_error(
     sample_weight: null,
   },
 ): number {
-  const yTrueShape = inferShape(y_true);
-  const yPredShape = inferShape(y_pred);
+  const [yTrueTensor, yPredTensor] = checkCompareShapesAndConvert(y_true, y_pred);
 
-  // Validation 1: empty array check
-  if (yTrueShape[0] === 0 || yPredShape[0] === 0) {
-    throw new TypeError(`y_true ${JSON.stringify(y_true)} and y_pred ${JSON.stringify(y_pred)} cannot be empty`);
+  return tf.losses.meanSquaredError(yTrueTensor, yPredTensor, sample_weight).dataSync()[0];
+}
+
+/**
+ * Mean squared error regression loss
+ *
+ * @example
+ * import { mean_squared_error } from 'machinelearn/metrics';
+ *
+ * const y_true = [3, 0.5, 2, 7];
+ * const y_pred = [2.5, 0.0, 2, 8];
+ *
+ * console.log(mean_squared_error(y_true, y_pred));
+ * // result: 0.04902636259794235
+ *
+ * const y_true1 = [[0.5, 1], [1, 1], [7, 6]];
+ * const y_pred1 = [[0, 2], [1, 2], [8, 5]];
+ *
+ * console.log(mean_squared_error(y_true1, y_pred1));
+ * // result: 0.08847352117300034
+ *
+ * @param y_true - Ground truth (correct) target values.
+ * @param y_pred - Estimated target values.
+ */
+export function mean_squared_log_error(
+  y_true: Type1DMatrix<number> | Type2DMatrix<number> = null,
+  y_pred: Type1DMatrix<number> | Type2DMatrix<number> = null,
+  // Options
+  {
+    /**
+     * Sample weights.
+     */
+    sample_weight = null,
+  }: {
+    sample_weight: number;
+  } = {
+    sample_weight: null,
+  },
+): number {
+  const [yTrueTensor, yPredTensor] = checkCompareShapesAndConvert(y_true, y_pred);
+
+  const error = (y) => new TypeError(`None of the values of ${JSON.stringify(y)} can be less than 0`);
+  if (
+    yTrueTensor
+      .flatten()
+      .arraySync()
+      .filter((a) => a < 0).length > 0
+  ) {
+    throw error(y_true);
   }
 
-  // Validation 2: Same shape
-  if (!isEqual(yTrueShape, yPredShape)) {
-    throw new TypeError(
-      `Shapes of y_true ${JSON.stringify(yTrueShape)} and y_pred ${JSON.stringify(yPredShape)} should be equal`,
-    );
+  if (
+    yPredTensor
+      .flatten()
+      .arraySync()
+      .filter((a) => a < 0).length > 0
+  ) {
+    throw error(y_pred);
   }
 
-  return tf.losses.meanSquaredError(y_true, y_pred, sample_weight).dataSync()[0];
+  return tf.losses.meanSquaredError(yTrueTensor.log1p(), yPredTensor.log1p(), sample_weight).dataSync()[0];
 }

@@ -1,4 +1,4 @@
-import { mean_absolute_error, mean_squared_error } from '../../src/lib/metrics';
+import { mean_absolute_error, mean_squared_error, mean_squared_log_error } from '../../src/lib/metrics';
 import { matchExceptionWithSnapshot } from '../util_testing';
 
 describe('metrics:mean_absolute_error', () => {
@@ -52,5 +52,31 @@ describe('metrics:mean_squared_error', () => {
     matchExceptionWithSnapshot(mean_squared_error, [[1, 2], yTrue2]);
     matchExceptionWithSnapshot(mean_squared_error, [yTrue1, yTrue2]);
     matchExceptionWithSnapshot(mean_squared_error, [null, null]);
+  });
+});
+
+describe('metrics:mean_squared_log_error', () => {
+  const yTrue1 = [3, 0.5, 2, 7];
+  const yPred1 = [2.5, 0.0, 2, 8];
+  const yTrue2 = [[0.5, 1], [-1, 1], [7, -6]];
+  const yPred2 = [[0, 2], [-1, 2], [8, -5]];
+  const yTrue3 = [[0.5, 1], [1, 1], [7, 6]];
+  const yPred3 = [[0, 2], [1, 2], [8, 5]];
+  it('should calculate MSE of yTrue1 and yPred1 then return 0.04902636259794235', () => {
+    const error = mean_squared_log_error(yTrue1, yPred1);
+    expect(error).toBe(0.04902636259794235);
+  });
+
+  it('should calculate MSE of yTrue3 and yPred3 then return 0.08847352117300034', () => {
+    const error = mean_squared_log_error(yTrue3, yPred3);
+    expect(error).toBe(0.08847352117300034);
+  });
+
+  it("should throw an exception if inputs' shapes are different", () => {
+    matchExceptionWithSnapshot(mean_squared_log_error, [yTrue2, [1, 2]]);
+    matchExceptionWithSnapshot(mean_squared_log_error, [[1, 2], yTrue2]);
+    matchExceptionWithSnapshot(mean_squared_log_error, [yTrue1, yTrue2]);
+    matchExceptionWithSnapshot(mean_squared_log_error, [yTrue2, yPred2]);
+    matchExceptionWithSnapshot(mean_squared_log_error, [null, null]);
   });
 });
