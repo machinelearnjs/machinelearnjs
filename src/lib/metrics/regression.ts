@@ -1,7 +1,7 @@
 import * as tf from '@tensorflow/tfjs';
 import { isEqual } from 'lodash';
 import { Type1DMatrix, Type2DMatrix } from '../types';
-import { checkCompareShapesAndConvert, inferShape } from '../utils/tensors';
+import { compareShapesAndConvert, inferShape } from '../utils/tensors';
 
 /**
  * Mean absolute error regression loss
@@ -31,7 +31,7 @@ export function mean_absolute_error(
   const yTrueShape = inferShape(y_true);
 
   // Validation 1: empty array check
-  const [yTrueTensor, yPredTensor]: tf.Tensor[] = checkCompareShapesAndConvert(y_true, y_pred);
+  const [yTrueTensor, yPredTensor]: tf.Tensor[] = compareShapesAndConvert(y_true, y_pred);
 
   if (sample_weight !== null) {
     const weightShape = inferShape(sample_weight);
@@ -106,7 +106,7 @@ export function mean_squared_error(
     sample_weight: null,
   },
 ): number {
-  const [yTrueTensor, yPredTensor] = checkCompareShapesAndConvert(y_true, y_pred);
+  const [yTrueTensor, yPredTensor] = compareShapesAndConvert(y_true, y_pred);
 
   return tf.losses.meanSquaredError(yTrueTensor, yPredTensor, sample_weight).dataSync()[0];
 }
@@ -129,8 +129,8 @@ export function mean_squared_error(
  * console.log(mean_squared_error(y_true1, y_pred1));
  * // result: 0.08847352117300034
  *
- * @param y_true - Ground truth (correct) target values.
- * @param y_pred - Estimated target values.
+ * @param y_true - Ground truth (correct) target values(should be positive).
+ * @param y_pred - Estimated target values(should be positive).
  */
 export function mean_squared_log_error(
   y_true: Type1DMatrix<number> | Type2DMatrix<number> = null,
@@ -147,7 +147,7 @@ export function mean_squared_log_error(
     sample_weight: null,
   },
 ): number {
-  const [yTrueTensor, yPredTensor] = checkCompareShapesAndConvert(y_true, y_pred);
+  const [yTrueTensor, yPredTensor] = compareShapesAndConvert(y_true, y_pred);
 
   const error = (y) => new TypeError(`None of the values of ${JSON.stringify(y)} can be less than 0`);
   if (

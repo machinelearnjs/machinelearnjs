@@ -98,7 +98,7 @@ export const ensure2DMatrix = (X: Type2DMatrix<number> | Type1DMatrix<number>): 
   return _.map(matrix1D, (o) => [o]);
 };
 
-export function checkCompareShapesAndConvert(
+export function compareShapesAndConvert(
   y_true: Type1DMatrix<number> | Type2DMatrix<number> = null,
   y_pred: Type1DMatrix<number> | Type2DMatrix<number> = null,
 ): tf.Tensor[] {
