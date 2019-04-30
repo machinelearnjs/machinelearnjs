@@ -21,23 +21,26 @@ export function mean_absolute_error(
   y_pred: Type1DMatrix<number> | Type2DMatrix<number> = null,
   // Options
   {
-    sample_weight = null,
+    sample_weight = null
   }: {
     sample_weight: Type1DMatrix<number>;
   } = {
-    sample_weight: null,
-  },
+    sample_weight: null
+  }
 ): number {
-  const yTrueShape = inferShape(y_true);
-
   // Validation 1: empty array check
-  const [yTrueTensor, yPredTensor]: tf.Tensor[] = compareShapesAndConvert(y_true, y_pred);
+  const [yTrueTensor, yPredTensor]: tf.Tensor[] = compareShapesAndConvert(
+    y_true,
+    y_pred
+  );
 
   if (sample_weight !== null) {
     const weightShape = inferShape(sample_weight);
-    if (!isEqual(yTrueShape, weightShape)) {
+    if (!isEqual(yTrueTensor.shape, weightShape)) {
       throw new TypeError(`The shape of ${JSON.stringify(weightShape)}
-       does not match with the sample size ${JSON.stringify(yTrueShape)}`);
+       does not match with the sample size ${JSON.stringify(
+         yTrueTensor.shape
+       )}`);
     }
   }
 
@@ -52,7 +55,11 @@ export function mean_absolute_error(
    * @param w - An array of weights associated with the values in a. Each value in a contributes to the average according to its associated weight. The weights array can either be 1-D (in which case its length must be the size of a along the given axis) or of the same shape as a. If weights=None, then all data in a are assumed to have a weight equal to one.
    * @ignore
    */
-  const average = (X: tf.Tensor, axis: number = 0, w: Type1DMatrix<number> | null = null): tf.Tensor => {
+  const average = (
+    X: tf.Tensor,
+    axis: number = 0,
+    w: Type1DMatrix<number> | null = null
+  ): tf.Tensor => {
     if (w !== null) {
       const wgt = tf.tensor1d(w);
       const scl = wgt.sum(axis);
@@ -99,16 +106,18 @@ export function mean_squared_error(
     /**
      * Sample weights.
      */
-    sample_weight = null,
+    sample_weight = null
   }: {
     sample_weight: number;
   } = {
-    sample_weight: null,
-  },
+    sample_weight: null
+  }
 ): number {
   const [yTrueTensor, yPredTensor] = compareShapesAndConvert(y_true, y_pred);
 
-  return tf.losses.meanSquaredError(yTrueTensor, yPredTensor, sample_weight).dataSync()[0];
+  return tf.losses
+    .meanSquaredError(yTrueTensor, yPredTensor, sample_weight)
+    .dataSync()[0];
 }
 
 /**
@@ -140,21 +149,24 @@ export function mean_squared_log_error(
     /**
      * Sample weights.
      */
-    sample_weight = null,
+    sample_weight = null
   }: {
     sample_weight: number;
   } = {
-    sample_weight: null,
-  },
+    sample_weight: null
+  }
 ): number {
   const [yTrueTensor, yPredTensor] = compareShapesAndConvert(y_true, y_pred);
 
-  const error = (y) => new TypeError(`None of the values of ${JSON.stringify(y)} can be less than 0`);
+  const error = y =>
+    new TypeError(
+      `None of the values of ${JSON.stringify(y)} can be less than 0`
+    );
   if (
     yTrueTensor
       .flatten()
       .arraySync()
-      .filter((a) => a < 0).length > 0
+      .filter(a => a < 0).length > 0
   ) {
     throw error(y_true);
   }
@@ -163,10 +175,12 @@ export function mean_squared_log_error(
     yPredTensor
       .flatten()
       .arraySync()
-      .filter((a) => a < 0).length > 0
+      .filter(a => a < 0).length > 0
   ) {
     throw error(y_pred);
   }
 
-  return tf.losses.meanSquaredError(yTrueTensor.log1p(), yPredTensor.log1p(), sample_weight).dataSync()[0];
+  return tf.losses
+    .meanSquaredError(yTrueTensor.log1p(), yPredTensor.log1p(), sample_weight)
+    .dataSync()[0];
 }

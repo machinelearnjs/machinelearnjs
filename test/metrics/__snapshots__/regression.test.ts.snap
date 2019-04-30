@@ -1,11 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`metrics:mean_absolute_error should reject invalid inputs 1`] = `
-Object {
-  "message": [Error: values passed to tensor(values) must be a number/boolean/string or an array of numbers/booleans/strings, or a TypedArray],
-  "name": "",
-}
-`;
+exports[`metrics:mean_absolute_error should reject invalid inputs 1`] = `[Error: values passed to tensor(values) must be a number/boolean/string or an array of numbers/booleans/strings, or a TypedArray]`;
 
 exports[`metrics:mean_absolute_error should reject invalid inputs 2`] = `[Error: Argument 'a' passed to 'sub' must be numeric tensor, but got string tensor]`;
 
@@ -22,12 +17,7 @@ exports[`metrics:mean_squared_error should throw an exception if inputs' shapes 
 
 exports[`metrics:mean_squared_error should throw an exception if inputs' shapes are different 3`] = `[TypeError: Shapes of y_true [4] and y_pred [3,2] should be equal]`;
 
-exports[`metrics:mean_squared_error should throw an exception if inputs' shapes are different 4`] = `
-Object {
-  "message": [Error: values passed to tensor(values) must be a number/boolean/string or an array of numbers/booleans/strings, or a TypedArray],
-  "name": "",
-}
-`;
+exports[`metrics:mean_squared_error should throw an exception if inputs' shapes are different 4`] = `[Error: values passed to tensor(values) must be a number/boolean/string or an array of numbers/booleans/strings, or a TypedArray]`;
 
 exports[`metrics:mean_squared_log_error should throw an exception if inputs' shapes are different 1`] = `[TypeError: Shapes of y_true [3,2] and y_pred [2] should be equal]`;
 
@@ -37,9 +27,4 @@ exports[`metrics:mean_squared_log_error should throw an exception if inputs' sha
 
 exports[`metrics:mean_squared_log_error should throw an exception if inputs' shapes are different 4`] = `[TypeError: None of the values of [[0.5,1],[-1,1],[7,-6]] can be less than 0]`;
 
-exports[`metrics:mean_squared_log_error should throw an exception if inputs' shapes are different 5`] = `
-Object {
-  "message": [Error: values passed to tensor(values) must be a number/boolean/string or an array of numbers/booleans/strings, or a TypedArray],
-  "name": "",
-}
-`;
+exports[`metrics:mean_squared_log_error should throw an exception if inputs' shapes are different 5`] = `[Error: values passed to tensor(values) must be a number/boolean/string or an array of numbers/booleans/strings, or a TypedArray]`;
