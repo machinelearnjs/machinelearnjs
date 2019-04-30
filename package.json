@@ -1,6 +1,6 @@
 {
   "name": "machinelearn",
-  "version": "2.0.2",
+  "version": "2.1.0",
   "description": "Machine Learning library for the web and Node",
   "main": "index.js",
   "typings": "index.d.ts",
@@ -39,7 +39,7 @@
     "build:main": "npx tsc -p tsconfig.json && npx ncp package.json ./build/lib/package.json && npx ncp README.md ./build/lib/README.md && npx ncp .npmignore ./build/lib/.npmignore",
     "build:module": "npx tsc -p tsconfig.module.json",
     "build:web": "npx tsc -p tsconfig.json --module amd --out build/lib/machinelearn.web.js",
-    "lint": "npx tslint -t verbose 'test/**/*.ts' 'src/**/*.ts' 'docs/**/*.ts'",
+    "lint": "npx tslint -t verbose 'test/**/*.ts' 'src/**/*.ts' 'docs/**/*.ts' && npx prettier \"src/**/*.ts\" \"test/**/*.ts\" \"docs/**/*.ts\" --config ./.prettierrc.json --list-different",
     "build:datasets": "npx ncp src/lib/datasets/data build/lib/datasets/data",
     "fix": "yarn fix:tslint",
     "pretty:fix": "npx prettier \"src/**/*.ts\" \"test/**/*.ts\" \"docs/**/*.ts\" --config ./.prettierrc.json --write",
