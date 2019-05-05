@@ -1,4 +1,5 @@
 import { mean_absolute_error, mean_squared_error, mean_squared_log_error } from '../../src/lib/metrics';
+import { ValidationError } from '../../src/lib/utils/Errors';
 import { matchExceptionWithSnapshot } from '../util_testing';
 
 describe('metrics:mean_absolute_error', () => {

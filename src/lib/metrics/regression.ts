@@ -1,7 +1,8 @@
 import * as tf from '@tensorflow/tfjs';
-import { isEqual } from 'lodash';
+import { flatten, isEqual } from 'lodash';
 import { Type1DMatrix, Type2DMatrix } from '../types';
-import { compareShapesAndConvert, inferShape } from '../utils/tensors';
+import { inferShape } from '../utils/tensors';
+import { validateShapesEqual } from '../utils/validation';
 
 /**
  * Mean absolute error regression loss
@@ -29,7 +30,7 @@ export function mean_absolute_error(
   },
 ): number {
   // Validation 1: empty array check
-  const [yTrueTensor, yPredTensor]: tf.Tensor[] = compareShapesAndConvert(y_true, y_pred);
+  const [yTrueTensor, yPredTensor]: tf.Tensor[] = validateShapesEqual(y_true, y_pred);
 
   if (sample_weight !== null) {
     const weightShape = inferShape(sample_weight);
@@ -104,7 +105,7 @@ export function mean_squared_error(
     sample_weight: null,
   },
 ): number {
-  const [yTrueTensor, yPredTensor] = compareShapesAndConvert(y_true, y_pred);
+  const [yTrueTensor, yPredTensor] = validateShapesEqual(y_true, y_pred);
 
   return tf.losses.meanSquaredError(yTrueTensor, yPredTensor, sample_weight).dataSync()[0];
 }
@@ -145,22 +146,18 @@ export function mean_squared_log_error(
     sample_weight: null,
   },
 ): number {
-  const [yTrueTensor, yPredTensor] = compareShapesAndConvert(y_true, y_pred);
+  const [yTrueTensor, yPredTensor] = validateShapesEqual(y_true, y_pred);
 
   const error = (y) => new TypeError(`None of the values of ${JSON.stringify(y)} can be less than 0`);
   if (
-    yTrueTensor
-      .flatten()
-      .arraySync()
+    flatten(y_true)
       .filter((a) => a < 0).length > 0
   ) {
     throw error(y_true);
   }
 
   if (
-    yPredTensor
-      .flatten()
-      .arraySync()
+    flatten(y_pred)
       .filter((a) => a < 0).length > 0
   ) {
     throw error(y_pred);
