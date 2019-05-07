@@ -15,7 +15,7 @@ const size = (X, axis = 0) => {
   if (axis === 0) {
     return rows;
   } else if (axis === 1) {
-    return _.flowRight(_.size, (a) => _.get(a, '[0]'))(X);
+    return _.flowRight(_.size, a => _.get(a, '[0]'))(X);
   }
   throw new ValidationError(`Invalid axis value ${axis} was given`);
 };
@@ -30,13 +30,18 @@ const size = (X, axis = 0) => {
  * @param colsRange
  * @ignore
  */
-const subset = (X, rowsRange: number[], colsRange: number[], replacement = null): any[][] => {
+const subset = (
+  X,
+  rowsRange: number[],
+  colsRange: number[],
+  replacement = null
+): any[][] => {
   // console.log('checking subset', X, rowsRange, colsRange, replacement);
   if (replacement) {
     const _X = _.cloneDeep(X);
     for (let i = 0; i < rowsRange.length; i++) {
       const rowIndex = rowsRange[i];
-      colsRange.forEach((col) => {
+      colsRange.forEach(col => {
         _X[rowIndex][col] = replacement[i];
       });
     }
@@ -47,7 +52,7 @@ const subset = (X, rowsRange: number[], colsRange: number[], replacement = null)
     for (let i = 0; i < rowsRange.length; i++) {
       const rowIndex = rowsRange[i];
       const subSection = [];
-      colsRange.forEach((col) => {
+      colsRange.forEach(col => {
         subSection.push(X[rowIndex][col]);
       });
       // result.push([X[rowIndex][col]]);
@@ -79,19 +84,21 @@ const range = (start: number, stop: number) => {
  */
 const isMatrixOf = (matrix, _type = 'number') => {
   if (!isMatrix(matrix)) {
-    throw new ValidationError(`Cannot perform isMatrixOf ${_type} unless the data is matrix`);
+    throw new ValidationError(
+      `Cannot perform isMatrixOf ${_type} unless the data is matrix`
+    );
   }
   // Checking each elements inside the matrix is not number
   // Returns an array of result per row
-  const vectorChecks = matrix.map((arr) =>
-    arr.some((x) => {
+  const vectorChecks = matrix.map(arr =>
+    arr.some(x => {
       // Checking type of each element
       if (_type === 'number') {
         return !_.isNumber(x);
       } else {
         throw Error('Cannot check matrix of an unknown type');
       }
-    }),
+    })
   );
   // All should be false
   return vectorChecks.indexOf(true) === -1;
@@ -103,14 +110,14 @@ const isMatrixOf = (matrix, _type = 'number') => {
  * @returns {boolean}
  * @ignore
  */
-const isMatrix = (matrix) => {
+const isMatrix = matrix => {
   if (!Array.isArray(matrix)) {
     return false;
   }
   if (_.size(matrix) === 0) {
     return false;
   }
-  const isAllArray = matrix.map((arr) => _.isArray(arr));
+  const isAllArray = matrix.map(arr => _.isArray(arr));
   return isAllArray.indexOf(false) === -1;
 };
 
@@ -125,9 +132,11 @@ const isArrayOf = (arr, _type = 'number') => {
   if (_type === 'number') {
     return !arr.some(isNaN);
   } else if (_type === 'string') {
-    return !arr.some((x) => !_.isString(x));
+    return !arr.some(x => !_.isString(x));
   }
-  throw new ValidationError(`Failed to check the array content of type ${_type}`);
+  throw new ValidationError(
+    `Failed to check the array content of type ${_type}`
+  );
 };
 
 /**
@@ -145,7 +154,7 @@ const euclideanDistance = (v1: number[], v2: number[]): number => {
     (sum, i) => {
       return sum + Math.pow(v2[i] - v1[i], 2);
     },
-    initialTotal,
+    initialTotal
   );
 
   return Math.sqrt(total);
@@ -166,7 +175,7 @@ const manhattanDistance = (v1: number[], v2: number[]): number => {
     (total, i) => {
       return total + Math.abs(v2[i] - v1[i]);
     },
-    initialTotal,
+    initialTotal
   );
 };
 
@@ -190,7 +199,9 @@ const subtract = (X, y) => {
         const subs = y[colIndex];
         _X[rowIndex][colIndex] = column - subs;
       } else {
-        throw Error(`Dimension of y ${y.length} and row ${row.length} are not compatible`);
+        throw Error(
+          `Dimension of y ${y.length} and row ${row.length} are not compatible`
+        );
       }
     }
   }
@@ -294,12 +305,12 @@ const inner = (a, b) => {
 
   // If a is a vector and b is a pure number
   if (isArrayNumPair(a, b)) {
-    return a.map((x) => x * b);
+    return a.map(x => x * b);
   }
 
   // If b is a vector and a is a pure number
   if (isArrayNumPair(b, a)) {
-    return b.map((x) => x * a);
+    return b.map(x => x * a);
   }
 
   // If a and b are both vectors with an identical size
@@ -310,15 +321,62 @@ const inner = (a, b) => {
     }
     return result;
   } else if (Array.isArray(a) && Array.isArray(b) && a.length !== b.length) {
-    throw new ValidationInconsistentShape(`Dimensions (${a.length},) and (${b.length},) are not aligned`);
+    throw new ValidationInconsistentShape(
+      `Dimensions (${a.length},) and (${b.length},) are not aligned`
+    );
   }
 
-  throw new ValidationError(`Cannot process with the invalid inputs ${a} and ${b}`);
+  throw new ValidationError(
+    `Cannot process with the invalid inputs ${a} and ${b}`
+  );
+};
+
+const generateRandomSubset = (
+  setSize: number,
+  maxSamples: number,
+  bootstrap: boolean
+): number[] => {
+  if (
+    Number.isInteger(maxSamples) &&
+    (maxSamples > setSize || maxSamples < 0)
+  ) {
+    throw new ValidationError('maxSamples must be in [0, n_samples]');
+  }
+  if (!Number.isInteger(maxSamples) && (maxSamples < 0 || maxSamples > 1)) {
+    throw new ValidationError('float maxSamples param must be in [0, 1]');
+  }
+  const sampleSize = Number.isInteger(maxSamples)
+    ? maxSamples
+    : Math.floor(setSize * maxSamples);
+  const indices = [];
+  const genRandomIndex = () => Math.floor(Math.random() * setSize);
+
+  if (bootstrap) {
+    for (let i = 0; i < sampleSize; ++i) {
+      indices.push(genRandomIndex());
+    }
+  } else {
+    // Non-bootstrap sampling means sampling without replacement
+    // Therefore we need to check each index for uniqueness before adding it to sample
+    const usedIndices = new Set();
+    for (let i = 0; i < sampleSize; ++i) {
+      let index = genRandomIndex();
+      while (usedIndices.has(index)) {
+        index = genRandomIndex();
+      }
+
+      usedIndices.add(index);
+      indices.push(index);
+    }
+  }
+
+  return indices;
 };
 
 const math = {
   covariance,
   euclideanDistance,
+  generateRandomSubset,
   hstack,
   isArrayOf,
   inner,
@@ -329,7 +387,7 @@ const math = {
   subset,
   size,
   subtract,
-  variance,
+  variance
 };
 
 export default math;

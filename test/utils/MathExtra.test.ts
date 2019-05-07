@@ -1,6 +1,9 @@
 import * as tf from '@tensorflow/tfjs';
 import * as _ from 'lodash';
-import { ValidationError, ValidationInconsistentShape } from '../../src/lib/utils/Errors';
+import {
+  ValidationError,
+  ValidationInconsistentShape
+} from '../../src/lib/utils/Errors';
 import math from '../../src/lib/utils/MathExtra';
 
 describe('math.size', () => {
@@ -301,7 +304,7 @@ describe('math.subset', () => {
   const X2 = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
   ];
   it('should get subset of X1', () => {
     const result = math.subset(X1, [1], [0]);
@@ -318,7 +321,137 @@ describe('math.subset', () => {
     expect(result).toEqual([
       [7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
       [7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      [7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+      [7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     ]);
+  });
+});
+
+describe('math.generateRandomSubset', () => {
+  describe('when max samples is integer and bootstrap is false', () => {
+    describe('when max samples is in [0, setLength-1] range', () => {
+      const set = [1, 2, 3, 4, 5, 6, 7];
+      const subset = math.generateRandomSubset(set.length, 4, false);
+
+      it('should generate subset of size 4', () => {
+        expect(subset.length).toEqual(4);
+      });
+
+      it('should have unique elements', () => {
+        const s = new Set<number>();
+        subset.forEach(x => {
+          expect(s.has(x)).toBeFalsy();
+          s.add(x);
+        });
+      });
+
+      it('should have elements in [0, setLength-1] range', () => {
+        expect(subset.every(x => x >= 0 && x < set.length)).toBeTruthy();
+      });
+    });
+
+    describe('when max samples is bigger than setLength - 1', () => {
+      it('fails with ValidationError', () => {
+        try {
+          const set = [1, 2, 3, 4, 5, 6, 7];
+          const subset = math.generateRandomSubset(
+            set.length,
+            set.length + 1,
+            false
+          );
+        } catch (err) {
+          expect(err).toBeInstanceOf(ValidationError);
+          expect(err.message).toEqual('maxSamples must be in [0, n_samples]');
+        }
+      });
+    });
+
+    describe('when max samples is negative', () => {
+      it('fails with ValidationError', () => {
+        try {
+          const set = [1, 2, 3, 4, 5, 6, 7];
+          const subset = math.generateRandomSubset(set.length, -1, false);
+        } catch (err) {
+          expect(err).toBeInstanceOf(ValidationError);
+          expect(err.message).toEqual('maxSamples must be in [0, n_samples]');
+        }
+      });
+    });
+  });
+
+  describe('when max samples is integer and bootstrap is true', () => {
+    const set = [1, 2, 3, 4, 5];
+    const subset = math.generateRandomSubset(set.length, 4, true);
+
+    it('should generate subset of size 4', () => {
+      expect(subset.length).toEqual(4);
+    });
+
+    it('should have elements in [0, setLength-1] range', () => {
+      expect(subset.every(x => x >= 0 && x < set.length)).toBeTruthy();
+    });
+  });
+
+  describe('when max samples is float and bootstrap is false', () => {
+    describe('when max samples is in [0, 1]', () => {
+      const set = [1, 2, 3, 4, 5];
+      const subset = math.generateRandomSubset(set.length, 0.5, false);
+
+      it('should generate a subset of size set_size*max_samples', () => {
+        expect(subset.length).toEqual(Math.floor(set.length * 0.5));
+      });
+
+      it('should have unique elements', () => {
+        const s = new Set<number>();
+        subset.forEach(x => {
+          expect(s.has(x)).toBeFalsy();
+          s.add(x);
+        });
+      });
+
+      it('should have elements in [0, setLength-1] range', () => {
+        expect(subset.every(x => x >= 0 && x < set.length)).toBeTruthy();
+      });
+    });
+
+    describe('when max samples is < 0', () => {
+      it('should fail with ValidationError', () => {
+        try {
+          const set = [1, 2, 3, 4, 5];
+          const subset = math.generateRandomSubset(set.length, -1.2, false);
+        } catch (err) {
+          expect(err).toBeInstanceOf(ValidationError);
+          expect(err.message).toEqual(
+            'float maxSamples param must be in [0, 1]'
+          );
+        }
+      });
+    });
+
+    describe('when max samples is > 1', () => {
+      it('should fail with ValidationError', () => {
+        try {
+          const set = [1, 2, 3, 4, 5];
+          const subset = math.generateRandomSubset(set.length, 1.2, false);
+        } catch (err) {
+          expect(err).toBeInstanceOf(ValidationError);
+          expect(err.message).toEqual(
+            'float maxSamples param must be in [0, 1]'
+          );
+        }
+      });
+    });
+  });
+
+  describe('when max samples is integer and bootstrap is true', () => {
+    const set = [1, 2, 3, 4, 5];
+    const subset = math.generateRandomSubset(set.length, 0.3, true);
+
+    it('should generate subset of size floor(setSize*0.3)', () => {
+      expect(subset.length).toEqual(Math.floor(set.length * 0.3));
+    });
+
+    it('should have elements in [0, setLength-1] range', () => {
+      expect(subset.every(x => x >= 0 && x < set.length)).toBeTruthy();
+    });
   });
 });
