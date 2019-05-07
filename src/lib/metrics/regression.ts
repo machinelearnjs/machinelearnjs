@@ -1,6 +1,7 @@
 import * as tf from '@tensorflow/tfjs';
 import { flatten, isEqual } from 'lodash';
 import { Type1DMatrix, Type2DMatrix } from '../types';
+import { ValidationError } from '../utils/Errors';
 import { inferShape } from '../utils/tensors';
 import { validateShapesEqual } from '../utils/validation';
 
@@ -148,7 +149,7 @@ export function mean_squared_log_error(
 ): number {
   const [yTrueTensor, yPredTensor] = validateShapesEqual(y_true, y_pred);
 
-  const error = (y) => new TypeError(`None of the values of ${JSON.stringify(y)} can be less than 0`);
+  const error = (y) => new ValidationError(`None of the values of ${JSON.stringify(y)} can be less than 0`, );
   if (
     flatten(y_true)
       .filter((a) => a < 0).length > 0

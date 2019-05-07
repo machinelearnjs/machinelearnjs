@@ -74,10 +74,21 @@ describe('metrics:mean_squared_log_error', () => {
   });
 
   it("should throw an exception if inputs' shapes are different", () => {
-    matchExceptionWithSnapshot(mean_squared_log_error, [yTrue2, [1, 2]]);
-    matchExceptionWithSnapshot(mean_squared_log_error, [[1, 2], yTrue2]);
-    matchExceptionWithSnapshot(mean_squared_log_error, [yTrue1, yTrue2]);
-    matchExceptionWithSnapshot(mean_squared_log_error, [yTrue2, yPred2]);
-    matchExceptionWithSnapshot(mean_squared_log_error, [null, null]);
+    [[yTrue2, [1, 2]], [[1, 2], yTrue2], [yTrue1, yTrue2], [yTrue2, yPred2]].forEach(
+      ([val1, val2]) => { 
+        try{
+          mean_squared_log_error(val1, val2);
+        }catch(error) {
+          // tslint:disable-next-line
+          console.log(error);
+          expect(error).toBeInstanceOf(ValidationError);
+        }
+      });
+
+      try{
+        mean_squared_error(null, null)
+      } catch(e){
+        expect(e).toBeInstanceOf(Error);
+      }
   });
 });
