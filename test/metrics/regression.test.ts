@@ -74,21 +74,18 @@ describe('metrics:mean_squared_log_error', () => {
   });
 
   it("should throw an exception if inputs' shapes are different", () => {
-    [[yTrue2, [1, 2]], [[1, 2], yTrue2], [yTrue1, yTrue2], [yTrue2, yPred2]].forEach(
-      ([val1, val2]) => { 
-        try{
-          mean_squared_log_error(val1, val2);
-        }catch(error) {
-          // tslint:disable-next-line
-          console.log(error);
-          expect(error).toBeInstanceOf(ValidationError);
-        }
-      });
-
-      try{
-        mean_squared_error(null, null)
-      } catch(e){
-        expect(e).toBeInstanceOf(Error);
+    [[yTrue2, [1, 2]], [[1, 2], yTrue2], [yTrue1, yTrue2], [yTrue2, yPred2]].forEach((arr) => {
+      try {
+        mean_squared_log_error(arr[0], arr[1]);
+      } catch (error) {
+        expect(error).toBeInstanceOf(ValidationError);
       }
+    });
+
+    try {
+      mean_squared_error(null, null);
+    } catch (e) {
+      expect(e).toBeInstanceOf(Error);
+    }
   });
 });

@@ -180,12 +180,12 @@ export function validateShapesEqual(
 ): tf.Tensor[] {
   const yTrueTensor = tf.tensor(y_true);
   const yPredTensor = tf.tensor(y_pred);
-  const yTrueShape = inferShape(y_true);
-  const yPredShape = inferShape(y_pred);
+  const yTrueShape = yTrueTensor.shape;
+  const yPredShape = yPredTensor.shape;
 
   // Validation 1: empty array check
   if (yTrueShape[0] === 0 || yPredShape[0] === 0) {
-    throw new ValidationError(`y_true ${JSON.stringify(y_true)} and y_pred ${JSON.stringify(y_pred)} cannot be empty`,);
+    throw new ValidationError(`y_true ${JSON.stringify(y_true)} and y_pred ${JSON.stringify(y_pred)} cannot be empty`);
   }
 
   // Validation 2: Same shape

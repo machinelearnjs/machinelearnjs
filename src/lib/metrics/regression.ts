@@ -149,18 +149,12 @@ export function mean_squared_log_error(
 ): number {
   const [yTrueTensor, yPredTensor] = validateShapesEqual(y_true, y_pred);
 
-  const error = (y) => new ValidationError(`None of the values of ${JSON.stringify(y)} can be less than 0`, );
-  if (
-    flatten(y_true)
-      .filter((a) => a < 0).length > 0
-  ) {
+  const error = (y) => new ValidationError(`None of the values of ${JSON.stringify(y)} can be less than 0`);
+  if (flatten(y_true).filter((a) => a < 0).length > 0) {
     throw error(y_true);
   }
 
-  if (
-    flatten(y_pred)
-      .filter((a) => a < 0).length > 0
-  ) {
+  if (flatten(y_pred).filter((a) => a < 0).length > 0) {
     throw error(y_pred);
   }
 
