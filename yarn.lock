@@ -6600,9 +6600,10 @@ levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
-libsvm-js@0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/libsvm-js/-/libsvm-js-0.2.0.tgz#582749861cb7581bb4e1eba656e46ed8699218a8"
+libsvm-ts@0.0.4:
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/libsvm-ts/-/libsvm-ts-0.0.4.tgz#5a5adf27c0dbd81805f812c5ba60f6df47774a9e"
+  integrity sha512-VRvnV6K/5AtcFQe7TFiqDnLX7iYq1BsMbdzf3ZABVeinpE7bHeWHtR/62HA4XE08IKke4On/jzjuavcaGoKvaQ==
 
 linkify-it@^2.0.0:
   version "2.1.0"
