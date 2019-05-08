@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.1]
+
+:rocket: new API! :rocket:
+
+- **feature:** mean_squared_log_error by @VariableVasasMT thanks!
+- **enhance:** Enhanced CI using AzurePipelines
+
 ## [2.1.0]
 
 :rocket: New API! :rocket:
