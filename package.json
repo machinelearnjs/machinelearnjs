@@ -39,9 +39,9 @@
     "build:main": "npx tsc -p tsconfig.json && npx ncp package.json ./build/lib/package.json && npx ncp README.md ./build/lib/README.md && npx ncp .npmignore ./build/lib/.npmignore",
     "build:module": "npx tsc -p tsconfig.module.json",
     "build:web": "npx tsc -p tsconfig.json --module amd --out build/lib/machinelearn.web.js",
-    "lint": "npx tslint -t verbose 'test/**/*.ts' 'src/**/*.ts' 'docs/**/*.ts' && npx prettier \"src/**/*.ts\" \"test/**/*.ts\" \"docs/**/*.ts\" --config ./.prettierrc.json --list-different",
+    "lint": "npx tslint -t verbose 'test/**/*.ts' 'src/**/*.ts' 'docs/**/*.ts'",
     "build:datasets": "npx ncp src/lib/datasets/data build/lib/datasets/data",
-    "fix": "yarn fix:tslint",
+    "fix": "yarn lint:fix && yarn pretty:fix",
     "pretty:fix": "npx prettier \"src/**/*.ts\" \"test/**/*.ts\" \"docs/**/*.ts\" --config ./.prettierrc.json --write",
     "lint:fix": "npx tslint --fix --force -t verbose 'test/**/*.ts' 'src/**/*.ts' 'docs/**/*.ts'",
     "test": "yarn build && yarn lint && yarn doc && yarn test:unit && yarn test:integration",
@@ -61,7 +61,7 @@
     "release:patch": "./scripts/releases/release-it.sh -v patch",
     "contributors:add": "npx all-contributors add",
     "contributors:generate": "npx all-contributors generate",
-    "precommit": "yarn run lint && yarn run build"
+    "precommit": "yarn run lint && yarn run build && pretty-quick --staged"
   },
   "engines": {
     "node": ">=8.11.0"
@@ -91,12 +91,12 @@
     "jest-fetch-mock": "1.6.5",
     "ncp": "2.0.0",
     "prettier": "1.10.2",
+    "pretty-quick": "1.10.0",
     "release-it": "7.4.8",
     "standard-version": "4.0.0",
     "ts-jest": "22.4.5",
     "tslint": "5.4.3",
     "tslint-config-prettier": "1.8.0",
-    "tslint-immutable": "4.5.1",
     "typedoc": "0.14.2",
     "typedoc-plugin-markdown": "1.1.27",
     "typescript": "3.4.1",
@@ -123,8 +123,5 @@
     "ignore": [
       "@types/node"
     ]
-  },
-  "prettier": {
-    "singleQuote": true
   }
 }
