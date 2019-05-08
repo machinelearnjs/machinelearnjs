@@ -9816,10 +9816,6 @@ tslint-config-prettier@1.8.0:
   version "1.8.0"
   resolved "https://registry.yarnpkg.com/tslint-config-prettier/-/tslint-config-prettier-1.8.0.tgz#707c25b01b5984c60a4e971400b0485077ca21f6"
 
-tslint-immutable@4.5.1:
-  version "4.5.1"
-  resolved "https://registry.yarnpkg.com/tslint-immutable/-/tslint-immutable-4.5.1.tgz#85cf4366ae60acb341ebdd3e1ea8b670d6cf2a11"
-
 tslint@5.4.3:
   version "5.4.3"
   resolved "https://registry.yarnpkg.com/tslint/-/tslint-5.4.3.tgz#761c8402b80e347b7733a04390a757b253580467"
