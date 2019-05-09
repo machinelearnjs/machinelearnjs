@@ -1,5 +1,7 @@
 import { DecisionTreeClassifier } from '../tree';
 import { Type1DMatrix, Type2DMatrix } from '../types';
+import { ValidationError } from '../utils/Errors';
+import math from '../utils/MathExtra';
 import { ensure2DMatrix, inferShape } from '../utils/tensors';
 import { validateFitInputs } from '../utils/validation';
 
@@ -10,20 +12,23 @@ export class BaggingClassifier {
   private options: any;
   private maxSamples: number;
   private estimators: any[] = [];
-  
+
   constructor({
-    baseEstimator=DecisionTreeClassifier,
-    numEstimators=10,
-    bootstrap=true,
+    baseEstimator = DecisionTreeClassifier,
+    numEstimators = 10,
+    bootstrap = true,
     maxSamples,
-    options
+    options,
   }: {
-    baseEstimator: any,
-    numEstimators: number,
-    maxSamples: number,
-    bootstrap: boolean,
-    options: any
+    baseEstimator: any;
+    numEstimators: number;
+    maxSamples: number;
+    bootstrap: boolean;
+    options: any;
   }) {
+    if (!Number.isInteger(maxSamples) && !this.maxSamplesIsInValidRange(maxSamples)) {
+      throw new ValidationError('float maxSamples param must be in [0, 1]');
+    }
     this.baseEstimator = baseEstimator;
     this.numEstimators = numEstimators;
     this.bootstrap = bootstrap;
@@ -32,14 +37,17 @@ export class BaggingClassifier {
   }
 
   public fit(X: Type2DMatrix<number>, y: Type1DMatrix<number>): void {
-    const xShape = inferShape(X);
+    const [numRows] = inferShape(X);
     const xWrapped = ensure2DMatrix(X);
     validateFitInputs(xWrapped, y);
+    if (Number.isInteger(this.maxSamples) && this.maxSamples > numRows) {
+      throw new ValidationError('maxSamples must be in [0, n_samples]');
+    }
 
     for (let i = 0; i < this.numEstimators; ++i) {
-      const sampleIndices = this.genRandomSubset(xShape[0]);
-      const sampleX = sampleIndices.map(ind => X[ind]);
-      const sampleY = sampleIndices.map(ind => y[ind]);
+      const sampleIndices = math.generateRandomSubset(numRows, this.maxSamples, this.bootstrap);
+      const sampleX = sampleIndices.map((ind) => X[ind]);
+      const sampleY = sampleIndices.map((ind) => y[ind]);
       const estimator = new this.baseEstimator(this.options);
       estimator.fit(sampleX, sampleY);
       this.estimators.push(estimator);
@@ -47,46 +55,28 @@ export class BaggingClassifier {
   }
 
   public predict(X: Type2DMatrix<number>): number[] {
-    const predictions = this.estimators.map(estimator => estimator.predict(X));
+    const predictions = this.estimators.map((estimator) => estimator.predict(X));
     const result = [];
 
     for (let i = 0; i < predictions[0].length; ++i) {
       const votes = new Map();
       for (let j = 0; j < predictions.length; ++j) {
-        const cnt = votes.get(predictions[j][i]) || 0
+        const cnt = votes.get(predictions[j][i]) || 0;
         votes.set(predictions[j][i], cnt + 1);
       }
 
-      const resultingVote = [...votes.keys()].sort((x, y) => votes.get(x) - votes.get(y))[0];
+      const resultingVote = this.getBiggestVote(votes);
       result.push(resultingVote);
     }
 
     return result;
   }
 
-  private genRandomSubset(n: number): number[] {
-    const sampleSize = Math.min(this.maxSamples, n);
-    const indices = [];
-    const genRandomIndex = () => Math.floor(Math.random() * n);
-
-    if (this.bootstrap) {
-      for (let i = 0; i < sampleSize; ++i) {
-        indices.push(genRandomIndex());
-      }
-    } else {
-      // Non-bootstrap sampling means sampling without replacement
-      // Therefore we need to check each index for uniqueness before adding it to sample
-      const usedIndices = new Set();
-      for (let i = 0; i < sampleSize; ++i) {
-        let index = genRandomIndex();
-        while (usedIndices.has(index)) {
-          index = genRandomIndex();
-        }
-
-        indices.push(index)
-      }
-    }
-
-    return indices;
+  private getBiggestVote<T>(votes: Map<T, number>): T {
+    return [...votes.keys()].sort((x, y) => votes.get(x) - votes.get(y))[0];
   }
-} 
+
+  private maxSamplesIsInValidRange(maxSamples: number) {
+    return maxSamples >= 0 && maxSamples <= 1;
+  }
+}
