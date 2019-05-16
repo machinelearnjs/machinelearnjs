@@ -1,10 +1,8 @@
 import * as tf from '@tensorflow/tfjs';
 import * as _ from 'lodash';
-import {
-  ValidationError,
-  ValidationInconsistentShape
-} from '../../src/lib/utils/Errors';
+import { ValidationError, ValidationInconsistentShape } from '../../src/lib/utils/Errors';
 import math from '../../src/lib/utils/MathExtra';
+import { inferShape } from '../../src/lib/utils/tensors';
 
 describe('math.size', () => {
   it('should return correct x axis length', () => {
@@ -304,7 +302,7 @@ describe('math.subset', () => {
   const X2 = [
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
   ];
   it('should get subset of X1', () => {
     const result = math.subset(X1, [1], [0]);
@@ -321,7 +319,7 @@ describe('math.subset', () => {
     expect(result).toEqual([
       [7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
       [7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
-      [7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+      [7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
     ]);
   });
 });
@@ -338,14 +336,14 @@ describe('math.generateRandomSubset', () => {
 
       it('should have unique elements', () => {
         const s = new Set<number>();
-        subset.forEach(x => {
+        subset.forEach((x) => {
           expect(s.has(x)).toBeFalsy();
           s.add(x);
         });
       });
 
       it('should have elements in [0, setLength-1] range', () => {
-        expect(subset.every(x => x >= 0 && x < set.length)).toBeTruthy();
+        expect(subset.every((x) => x >= 0 && x < set.length)).toBeTruthy();
       });
     });
 
@@ -353,11 +351,7 @@ describe('math.generateRandomSubset', () => {
       it('fails with ValidationError', () => {
         try {
           const set = [1, 2, 3, 4, 5, 6, 7];
-          const subset = math.generateRandomSubset(
-            set.length,
-            set.length + 1,
-            false
-          );
+          const subset = math.generateRandomSubset(set.length, set.length + 1, false);
         } catch (err) {
           expect(err).toBeInstanceOf(ValidationError);
           expect(err.message).toEqual('maxSamples must be in [0, n_samples]');
@@ -387,7 +381,7 @@ describe('math.generateRandomSubset', () => {
     });
 
     it('should have elements in [0, setLength-1] range', () => {
-      expect(subset.every(x => x >= 0 && x < set.length)).toBeTruthy();
+      expect(subset.every((x) => x >= 0 && x < set.length)).toBeTruthy();
     });
   });
 
@@ -402,14 +396,14 @@ describe('math.generateRandomSubset', () => {
 
       it('should have unique elements', () => {
         const s = new Set<number>();
-        subset.forEach(x => {
+        subset.forEach((x) => {
           expect(s.has(x)).toBeFalsy();
           s.add(x);
         });
       });
 
       it('should have elements in [0, setLength-1] range', () => {
-        expect(subset.every(x => x >= 0 && x < set.length)).toBeTruthy();
+        expect(subset.every((x) => x >= 0 && x < set.length)).toBeTruthy();
       });
     });
 
@@ -420,9 +414,7 @@ describe('math.generateRandomSubset', () => {
           const subset = math.generateRandomSubset(set.length, -1.2, false);
         } catch (err) {
           expect(err).toBeInstanceOf(ValidationError);
-          expect(err.message).toEqual(
-            'float maxSamples param must be in [0, 1]'
-          );
+          expect(err.message).toEqual('float maxSamples param must be in [0, 1]');
         }
       });
     });
@@ -434,9 +426,7 @@ describe('math.generateRandomSubset', () => {
           const subset = math.generateRandomSubset(set.length, 1.2, false);
         } catch (err) {
           expect(err).toBeInstanceOf(ValidationError);
-          expect(err.message).toEqual(
-            'float maxSamples param must be in [0, 1]'
-          );
+          expect(err.message).toEqual('float maxSamples param must be in [0, 1]');
         }
       });
     });
@@ -451,7 +441,35 @@ describe('math.generateRandomSubset', () => {
     });
 
     it('should have elements in [0, setLength-1] range', () => {
-      expect(subset.every(x => x >= 0 && x < set.length)).toBeTruthy();
+      expect(subset.every((x) => x >= 0 && x < set.length)).toBeTruthy();
+    });
+  });
+});
+
+describe('math.generateRandomSubsetOfMatrix', () => {
+  describe('When maxSamples is equal to 4, maxFeatures is equal to 2', () => {
+    const X = [[1, 2, 3, 4, 5], [4, 4, 3, 2, 1], [1, 1, 1, 1, 2], [4, 4, 3, 5, 15], [5, 100, 2, 3, 5]];
+    const [numRows, numColumns] = inferShape(X);
+    const [xSubset, rowIndices, columnIndices] = math.generateRandomSubsetOfMatrix(X, 4, 2, true, true);
+
+    it('Should have 4 rows', () => {
+      expect(xSubset.length).toEqual(4);
+    });
+
+    it('Should have 2 columns', () => {
+      expect(xSubset.every((row) => row.length === 2)).toBeTruthy();
+    });
+
+    it('Should have elements from the corresponding row', () => {
+      expect(xSubset.every((row, idx) => row.every((elem) => X[idx].includes(elem))));
+    });
+
+    it('Should have rowIndices in [0, numRows] range', () => {
+      expect(rowIndices.every((ind) => ind >= 0 && ind < numRows)).toBeTruthy();
+    });
+
+    it('Should have columnIndices in [0, numColumns] range', () => {
+      expect(columnIndices.every((ind) => ind >= 0 && ind < numColumns)).toBeTruthy();
     });
   });
 });
