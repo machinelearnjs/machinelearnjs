@@ -371,11 +371,12 @@ const generateRandomSubset = (
   return indices;
 };
 
-export const genRandomIndex = (upperBound) => Math.floor(Math.random() * upperBound);
+const genRandomIndex = (upperBound) => Math.floor(Math.random() * upperBound);
 
 const math = {
   covariance,
   euclideanDistance,
+  genRandomIndex,
   generateRandomSubset,
   hstack,
   isArrayOf,
