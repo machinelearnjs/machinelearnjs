@@ -345,33 +345,33 @@ const generateRandomSubset = (
   if (!Number.isInteger(maxSamples) && (maxSamples < 0 || maxSamples > 1)) {
     throw new ValidationError('float maxSamples param must be in [0, 1]');
   }
+
   const sampleSize = Number.isInteger(maxSamples)
     ? maxSamples
     : Math.floor(setSize * maxSamples);
   const indices = [];
-  const genRandomIndex = () => Math.floor(Math.random() * setSize);
 
   if (bootstrap) {
     for (let i = 0; i < sampleSize; ++i) {
-      indices.push(genRandomIndex());
+      indices.push(genRandomIndex(setSize));
     }
   } else {
-    // Non-bootstrap sampling means sampling without replacement
-    // Therefore we need to check each index for uniqueness before adding it to sample
-    const usedIndices = new Set();
+    // O(n) algorithm for non-bootstrap sampling as described in this paper
+    // https://sci-hub.se/10.1080/00207168208803304
+    const nums = range(0, setSize);
     for (let i = 0; i < sampleSize; ++i) {
-      let index = genRandomIndex();
-      while (usedIndices.has(index)) {
-        index = genRandomIndex();
-      }
-
-      usedIndices.add(index);
-      indices.push(index);
+      const index = genRandomIndex(setSize-i);
+      indices.push(nums[index]);
+      const tmp = nums[index];
+      nums[index] = nums[setSize-i-1];
+      nums[setSize-i-1] = tmp;
     }
   }
 
   return indices;
 };
+
+export const genRandomIndex = (upperBound) => Math.floor(Math.random() * upperBound);
 
 const math = {
   covariance,
