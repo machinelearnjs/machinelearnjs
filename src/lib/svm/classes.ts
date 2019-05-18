@@ -1,4 +1,4 @@
-import SVM, { KernelTypes, SVMTypes } from 'libsvm-ts';
+import { SVM } from 'libsvm-ts';
 import * as _ from 'lodash';
 import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
 import { validateFitInputs, validateMatrix1D, validateMatrix2D } from '../utils/validation';
@@ -15,7 +15,11 @@ export interface SVMOptions {
   /**
    * Type of Kernel
    */
-  kernel?: KernelTypes;
+  kernel?: string;
+  /**
+   * Type of SVM
+   */
+  type?: string;
   /**
    * Gamma parameter of the RBF, Polynomial and Sigmoid kernels. Default value is 1/num_features
    */
@@ -69,7 +73,6 @@ export interface SVMOptions {
  */
 export class BaseSVM implements IMlModel<number> {
   protected svm: SVM;
-  protected type: SVMTypes;
   protected options: SVMOptions;
 
   constructor(options?: SVMOptions) {
@@ -80,18 +83,16 @@ export class BaseSVM implements IMlModel<number> {
       degree: _.get(options, 'degree', 3),
       epsilon: _.get(options, 'epsilon', 0.1),
       gamma: _.get(options, 'gamma', null),
-      kernel: _.get(options, 'kernel', KernelTypes.RBF),
+      kernel: _.get(options, 'kernel', 'RBF'),
+      type: _.get(options, 'type', 'C_SVC'),
       nu: _.get(options, 'nu', 0.5),
       probabilityEstimates: _.get(options, 'probabilityEstimates', false),
       quiet: _.get(options, 'quiet', true),
       shrinking: _.get(options, 'shrinking', true),
       tolerance: _.get(options, 'tolerance', 0.001),
-      weight: _.get(options, 'weight', null),
+      weight: _.get(options, 'weight', undefined),
     };
-    this.svm = new SVM({
-      ...options,
-      type: this.type,
-    });
+    this.svm = new SVM(this.options);
   }
 
   /**
@@ -108,7 +109,7 @@ export class BaseSVM implements IMlModel<number> {
    * Loads a ASM version of SVM. The method returns the instance of itself as a promise result.
    */
   public loadASM(): Promise<BaseSVM> {
-    return this.svm.loadWASM().then((asmSVM) => {
+    return this.svm.loadASM().then((asmSVM) => {
       this.svm = asmSVM;
       return Promise.resolve(this);
     });
@@ -143,36 +144,33 @@ export class BaseSVM implements IMlModel<number> {
    * @param {number[]} X
    * @returns {number}
    */
-  public predictOne(X: Type1DMatrix<number>): number[] {
+  public predictOne(X: Type1DMatrix<number>): number {
     validateMatrix1D(X);
     return this.svm.predictOne({ sample: X });
   }
 
   /**
    * Saves the current SVM as a JSON object
-   * @returns {{svm: any; type: Type; options: SVMOptions}}
+   * @returns {{svm: SVM; options: SVMOptions}}
    */
-  public toJSON(): { svm: any; type: SVMTypes; options: SVMOptions } {
+  public toJSON(): { svm: SVM; options: SVMOptions } {
     return {
       svm: this.svm,
-      type: this.type,
       options: this.options,
     };
   }
 
   /**
    * Restores the model from a JSON checkpoint
-   * @param {any} svm
-   * @param {any} type
+   * @param {SVM} svm
    * @param {any} options
    */
-  public fromJSON({ svm = null, type = null, options = null }): void {
-    if (!svm || !type || !options) {
+  public fromJSON({ svm = null, options = null }): void {
+    if (!svm || !options) {
       throw new Error('You must provide svm, type and options to restore the model');
     }
 
     this.svm = svm;
-    this.type = type;
     this.options = options;
   }
 }
@@ -192,8 +190,10 @@ export class BaseSVM implements IMlModel<number> {
  */
 export class SVC extends BaseSVM {
   constructor(options?: SVMOptions) {
-    super(options);
-    this.type = SVMTypes.C_SVC;
+    super({
+      ...options,
+      type: 'C_SVC',
+    });
   }
 }
 
@@ -208,8 +208,10 @@ export class SVC extends BaseSVM {
  */
 export class SVR extends BaseSVM {
   constructor(options?: SVMOptions) {
-    super(options);
-    this.type = SVMTypes.EPSILON_SVR;
+    super({
+      ...options,
+      type: 'EPSILON_SVR',
+    });
   }
 }
 
@@ -222,8 +224,10 @@ export class SVR extends BaseSVM {
  */
 export class OneClassSVM extends BaseSVM {
   constructor(options?: SVMOptions) {
-    super(options);
-    this.type = SVMTypes.ONE_CLASS;
+    super({
+      ...options,
+      type: 'ONE_CLASS',
+    });
   }
 }
 
@@ -236,8 +240,10 @@ export class OneClassSVM extends BaseSVM {
  */
 export class NuSVC extends BaseSVM {
   constructor(options?: SVMOptions) {
-    super(options);
-    this.type = SVMTypes.NU_SVC;
+    super({
+      ...options,
+      type: 'NU_SVC',
+    });
   }
 }
 
@@ -252,7 +258,9 @@ export class NuSVC extends BaseSVM {
  */
 export class NuSVR extends BaseSVM {
   constructor(options?: SVMOptions) {
-    super(options);
-    this.type = SVMTypes.NU_SVR;
+    super({
+      ...options,
+      type: 'NU_SVR',
+    });
   }
 }

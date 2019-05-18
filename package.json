@@ -69,7 +69,7 @@
   "dependencies": {
     "@tensorflow/tfjs": "0.15.1",
     "isomorphic-fetch": "2.2.1",
-    "libsvm-ts": "0.0.4",
+    "libsvm-ts": "0.0.8",
     "lodash": "4.17.11",
     "numeric": "1.2.6",
     "random-js": "1.0.8",
@@ -94,6 +94,7 @@
     "release-it": "7.4.8",
     "standard-version": "4.0.0",
     "ts-jest": "22.4.5",
+    "ts-node": "8.1.0",
     "tslint": "5.4.3",
     "tslint-config-prettier": "1.8.0",
     "tslint-immutable": "4.5.1",
