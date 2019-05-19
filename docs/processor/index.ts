@@ -419,6 +419,9 @@ export function renderMethodReturnType(type): any {
         // If it's a reflection type, an object, then render a table
         result = ':metal: Promise\n';
         result += constructReturnTable(typeArg);
+      } else if (typeArg.type === consts.returnTypeReference) {
+        result = ':metal: Promise';
+        result += '<self>';
       }
       return result;
     });
