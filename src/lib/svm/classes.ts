@@ -69,7 +69,8 @@ export interface SVMOptions {
 }
 
 /**
- * BaseSVM class used by all parent SVM classes that are based on libsvm
+ * BaseSVM class used by all parent SVM classes that are based on libsvm.
+ * You may still use this to use the underlying libsvm-ts more flexibly.
  */
 export class BaseSVM implements IMlModel<number> {
   protected svm: SVM;
