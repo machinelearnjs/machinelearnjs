@@ -1,11 +1,7 @@
-import svmResolver from 'libsvm-js';
+import { SVM } from 'libsvm-ts';
 import * as _ from 'lodash';
 import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
 import { validateFitInputs, validateMatrix1D, validateMatrix2D } from '../utils/validation';
-
-export type Type = 'C_SVC' | 'NU_SVC' | 'ONE_CLASS' | 'EPSILON_SVR' | 'NU_SVR';
-
-export type Kernel = 'LINEAR' | 'POLYNOMIAL' | 'RBF' | 'SIGMOID';
 
 /**
  * Options used by sub classes
@@ -19,7 +15,11 @@ export interface SVMOptions {
   /**
    * Type of Kernel
    */
-  kernel?: Kernel;
+  kernel?: string;
+  /**
+   * Type of SVM
+   */
+  type?: string;
   /**
    * Gamma parameter of the RBF, Polynomial and Sigmoid kernels. Default value is 1/num_features
    */
@@ -59,7 +59,9 @@ export interface SVMOptions {
   /**
    * Set weight for each possible class
    */
-  weight?: object | null;
+  weight?: {
+    [n: number]: number;
+  };
   /**
    * Print info during training if false (aka verbose)
    */
@@ -67,11 +69,11 @@ export interface SVMOptions {
 }
 
 /**
- * BaseSVM class used by all parent SVM classes that are based on libsvm
+ * BaseSVM class used by all parent SVM classes that are based on libsvm.
+ * You may still use this to use the underlying libsvm-ts more flexibly.
  */
 export class BaseSVM implements IMlModel<number> {
-  protected svm: any;
-  protected type: Type;
+  protected svm: SVM;
   protected options: SVMOptions;
 
   constructor(options?: SVMOptions) {
@@ -83,13 +85,35 @@ export class BaseSVM implements IMlModel<number> {
       epsilon: _.get(options, 'epsilon', 0.1),
       gamma: _.get(options, 'gamma', null),
       kernel: _.get(options, 'kernel', 'RBF'),
+      type: _.get(options, 'type', 'C_SVC'),
       nu: _.get(options, 'nu', 0.5),
       probabilityEstimates: _.get(options, 'probabilityEstimates', false),
       quiet: _.get(options, 'quiet', true),
       shrinking: _.get(options, 'shrinking', true),
       tolerance: _.get(options, 'tolerance', 0.001),
-      weight: _.get(options, 'weight', null),
+      weight: _.get(options, 'weight', undefined),
     };
+    this.svm = new SVM(this.options);
+  }
+
+  /**
+   * Loads a WASM version of SVM. The method returns the instance of itself as a promise result.
+   */
+  public loadWASM(): Promise<BaseSVM> {
+    return this.svm.loadWASM().then((wasmSVM) => {
+      this.svm = wasmSVM;
+      return Promise.resolve(this);
+    });
+  }
+
+  /**
+   * Loads a ASM version of SVM. The method returns the instance of itself as a promise result.
+   */
+  public loadASM(): Promise<BaseSVM> {
+    return this.svm.loadASM().then((asmSVM) => {
+      this.svm = asmSVM;
+      return Promise.resolve(this);
+    });
   }
 
   /**
@@ -98,15 +122,12 @@ export class BaseSVM implements IMlModel<number> {
    * @param {number[]} y
    * @returns {Promise<void>}
    */
-  public async fit(X: Type2DMatrix<number>, y: Type1DMatrix<number>): Promise<void> {
+  public fit(X: Type2DMatrix<number>, y: Type1DMatrix<number>): void {
     validateFitInputs(X, y);
-    if (!this.type) {
-      throw new Error(`SVM type is unspecified ${this.type}`);
-    }
-    const SVM = await this.loadSVM();
-    const options = this.processOptions(SVM, this.options, this.type, this.options.kernel);
-    this.svm = new SVM(options);
-    this.svm.train(X, y);
+    this.svm.train({
+      samples: X,
+      labels: y,
+    });
   }
 
   /**
@@ -116,7 +137,7 @@ export class BaseSVM implements IMlModel<number> {
    */
   public predict(X: Type2DMatrix<number>): number[] {
     validateMatrix2D(X);
-    return this.svm.predict(X);
+    return this.svm.predict({ samples: X });
   }
 
   /**
@@ -124,86 +145,34 @@ export class BaseSVM implements IMlModel<number> {
    * @param {number[]} X
    * @returns {number}
    */
-  public predictOne(X: Type1DMatrix<number>): number[] {
+  public predictOne(X: Type1DMatrix<number>): number {
     validateMatrix1D(X);
-    return this.svm.predictOne(X);
+    return this.svm.predictOne({ sample: X });
   }
 
   /**
    * Saves the current SVM as a JSON object
-   * @returns {{svm: any; type: Type; options: SVMOptions}}
+   * @returns {{svm: SVM; options: SVMOptions}}
    */
-  public toJSON(): { svm: any; type: Type; options: SVMOptions } {
+  public toJSON(): { svm: SVM; options: SVMOptions } {
     return {
       svm: this.svm,
-      type: this.type,
       options: this.options,
     };
   }
 
   /**
    * Restores the model from a JSON checkpoint
-   * @param {any} svm
-   * @param {any} type
+   * @param {SVM} svm
    * @param {any} options
    */
-  public fromJSON({ svm = null, type = null, options = null }): void {
-    if (!svm || !type || !options) {
+  public fromJSON({ svm = null, options = null }): void {
+    if (!svm || !options) {
       throw new Error('You must provide svm, type and options to restore the model');
     }
 
     this.svm = svm;
-    this.type = type;
     this.options = options;
-  }
-
-  /**
-   * Load SVM object by resolving the default promise
-   * @returns {Promise<any>}
-   */
-  private async loadSVM(): Promise<any> {
-    return svmResolver;
-  }
-
-  /**
-   * Get Kernel name type using string Kernel name
-   * @param SVM
-   * @param {string} name
-   * @returns {number}
-   */
-  private getKernel(SVM, name: string): number {
-    return _.get(SVM.KERNEL_TYPES, name);
-  }
-
-  /**
-   * Get Kernel type using string type name
-   * @param SVM
-   * @param {string} name
-   * @returns {number}
-   */
-  private getType(SVM, name: string): number {
-    return _.get(SVM.SVM_TYPES, name);
-  }
-
-  /**
-   * Get a consolidated options including type and Kernel
-   * @param SVM
-   * @param {Options} options
-   * @param {Type} type
-   * @param {Kernel} kernel
-   * @returns {Object}
-   */
-  private processOptions(SVM, options: SVMOptions, type: Type, kernel: Kernel): object {
-    return _.flowRight(
-      (opts) => {
-        const foundType = this.getType(SVM, type);
-        return _.set(opts, 'type', foundType);
-      },
-      (opts) => {
-        const foundKernal = this.getKernel(SVM, kernel);
-        return _.set(opts, 'kernel', foundKernal);
-      },
-    )(options);
   }
 }
 
@@ -219,11 +188,22 @@ export class BaseSVM implements IMlModel<number> {
  * For details on the precise mathematical formulation of the provided kernel
  * functions and how gamma, coef0 and degree affect each other, see the corresponding
  * section in the narrative documentation: Kernel functions.
+ *
+ * @example
+ * import { SVC } from 'machinelearn/svm';
+ *
+ * const svm = new SVC();
+ * svm.loadASM().then((loadedSVM) => {
+ *   loadedSVM.fit([[0, 0], [1, 1]], [0, 1]);
+ *   loadedSVM.predict([[1, 1]]);   // [1]
+ * });
  */
 export class SVC extends BaseSVM {
   constructor(options?: SVMOptions) {
-    super(options);
-    this.type = 'C_SVC';
+    super({
+      ...options,
+      type: 'C_SVC',
+    });
   }
 }
 
@@ -235,11 +215,22 @@ export class SVC extends BaseSVM {
  * penalties and loss functions and should scale better to large numbers of samples.
  *
  * This class supports both dense and sparse input.
+ *
+ * @example
+ * import { SVR } from 'machinelearn/svm';
+ *
+ * const svm = new SVR();
+ * svm.loadASM().then((loadedSVM) => {
+ *   loadedSVM.fit([[0, 0], [1, 1]], [0, 1]);
+ *   loadedSVM.predict([[1, 1]]);   // [0.9000000057898799]
+ * });
  */
 export class SVR extends BaseSVM {
   constructor(options?: SVMOptions) {
-    super(options);
-    this.type = 'EPSILON_SVR';
+    super({
+      ...options,
+      type: 'EPSILON_SVR',
+    });
   }
 }
 
@@ -249,11 +240,22 @@ export class SVR extends BaseSVM {
  * Estimate the support of a high-dimensional distribution.
  *
  * The implementation is based on libsvm.
+ *
+ * @example
+ * import { OneClassSVM } from 'machinelearn/svm';
+ *
+ * const svm = new OneClassSVM();
+ * svm.loadASM().then((loadedSVM) => {
+ *   loadedSVM.fit([[0, 0], [1, 1]], [0, 1]);
+ *   loadedSVM.predict([[1, 1]]);   // [-1]
+ * });
  */
 export class OneClassSVM extends BaseSVM {
   constructor(options?: SVMOptions) {
-    super(options);
-    this.type = 'ONE_CLASS';
+    super({
+      ...options,
+      type: 'ONE_CLASS',
+    });
   }
 }
 
@@ -263,11 +265,22 @@ export class OneClassSVM extends BaseSVM {
  * Similar to SVC but uses a parameter to control the number of support vectors.
  *
  * The implementation is based on libsvm.
+ *
+ * @example
+ * import { NuSVC } from 'machinelearn/svm';
+ *
+ * const svm = new NuSVC();
+ * svm.loadASM().then((loadedSVM) => {
+ *   loadedSVM.fit([[0, 0], [1, 1]], [0, 1]);
+ *   loadedSVM.predict([[1, 1]]);   // [1]
+ * });
  */
 export class NuSVC extends BaseSVM {
   constructor(options?: SVMOptions) {
-    super(options);
-    this.type = 'NU_SVC';
+    super({
+      ...options,
+      type: 'NU_SVC',
+    });
   }
 }
 
@@ -279,10 +292,21 @@ export class NuSVC extends BaseSVM {
  * replaces the parameter epsilon of epsilon-SVR.
  *
  * The implementation is based on libsvm.
+ *
+ * @example
+ * import { NuSVR } from 'machinelearn/svm';
+ *
+ * const svm = new NuSVR();
+ * svm.loadASM().then((loadedSVM) => {
+ *   loadedSVM.fit([[0, 0], [1, 1]], [0, 1]);
+ *   loadedSVM.predict([[1, 1]]);   // [0.9000000057898799]
+ * });
  */
 export class NuSVR extends BaseSVM {
   constructor(options?: SVMOptions) {
-    super(options);
-    this.type = 'NU_SVR';
+    super({
+      ...options,
+      type: 'NU_SVR',
+    });
   }
 }
