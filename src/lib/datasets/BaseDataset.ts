@@ -1,4 +1,4 @@
-import * as fs from 'fs-extra';
+import * as fs from 'fs';
 import 'isomorphic-fetch';
 import { parseInt, uniqBy } from 'lodash';
 import * as path from 'path';

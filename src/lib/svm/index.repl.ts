@@ -1,40 +1,24 @@
 /* tslint:disable */
 import { SVC, SVR } from './classes';
 
-console.log('running xor example');
-
-async function svcTest() {
-  console.log('inside svctest');
-  const svc2 = new SVC();
+const svc = new SVC();
+svc.loadWASM().then((loadedSVC) => {
   const X = [[-1, -1], [-2, -1], [1, 1], [2, 1]];
   const y = [-1, 1, 2, 2];
-  const err = await svc2.fit(X, y);
-  console.log('result ', err);
-  try {
-    console.log('svc2 pred ', svc2.predict([[-0.8, -1]]));
-  } catch (e) {
-    console.log('err', e);
-  }
-}
+  // TODO: fix where it checks !== -1
+  loadedSVC.fit(X, y);
+  console.log('svc pred: ', loadedSVC.predict([[-0.8, -1]]));
 
-svcTest().then(() => console.log('svc2 test finished'));
+  const xorFeatures = [[0, 0], [1, 1]];
+  const xorLabels = [0, 1];
+  loadedSVC.fit(xorFeatures, xorLabels);
+  console.log('SVC xor: ', loadedSVC.predict([[2, 2]]));
+});
 
-async function xor() {
-  const svc = new SVC();
-  const features = [[0, 0], [1, 1]];
-  const labels = [0, 1];
-  await svc.fit(features, labels);
-  console.log('SVC predict result', svc.predictOne([2, 2]));
-}
-
-xor().then(() => console.log('finished SVC'));
-
-async function xor2() {
-  const svr = new SVR();
+const svr = new SVR();
+svr.loadWASM().then((loadedSVR) => {
   const features = [[0, 0], [2, 2]];
   const labels = [0.5, 2.5];
-  await svr.fit(features, labels);
-  console.log('SVR predict result', svr.predict([[1, 1]]));
-}
-
-xor2().then(() => console.log('finished SVR'));
+  loadedSVR.fit(features, labels);
+  console.log('SVR predict result', loadedSVR.predict([[1, 1]]));
+});
