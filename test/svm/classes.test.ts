@@ -59,7 +59,7 @@ describe('svm', () => {
     });
   });
 
-  describe('NuSVC', () => {
+  describe('NuSVR', () => {
     const xorExpected = [0.8160602794142788];
     it('should fit and predict XOR', () => {
       const svm = new NuSVR();

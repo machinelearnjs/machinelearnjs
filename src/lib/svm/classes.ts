@@ -187,6 +187,15 @@ export class BaseSVM implements IMlModel<number> {
  * For details on the precise mathematical formulation of the provided kernel
  * functions and how gamma, coef0 and degree affect each other, see the corresponding
  * section in the narrative documentation: Kernel functions.
+ *
+ * @example
+ * import { SVC } from 'machinelearn/svm';
+ *
+ * const svm = new SVC();
+ * svm.loadASM().then((loadedSVM) => {
+ *   loadedSVM.fit([[0, 0], [1, 1]], [0, 1]);
+ *   loadedSVM.predict([[1, 1]]);   // [1]
+ * });
  */
 export class SVC extends BaseSVM {
   constructor(options?: SVMOptions) {
@@ -205,6 +214,15 @@ export class SVC extends BaseSVM {
  * penalties and loss functions and should scale better to large numbers of samples.
  *
  * This class supports both dense and sparse input.
+ *
+ * @example
+ * import { SVR } from 'machinelearn/svm';
+ *
+ * const svm = new SVR();
+ * svm.loadASM().then((loadedSVM) => {
+ *   loadedSVM.fit([[0, 0], [1, 1]], [0, 1]);
+ *   loadedSVM.predict([[1, 1]]);   // [0.9000000057898799]
+ * });
  */
 export class SVR extends BaseSVM {
   constructor(options?: SVMOptions) {
@@ -221,6 +239,15 @@ export class SVR extends BaseSVM {
  * Estimate the support of a high-dimensional distribution.
  *
  * The implementation is based on libsvm.
+ *
+ * @example
+ * import { OneClassSVM } from 'machinelearn/svm';
+ *
+ * const svm = new OneClassSVM();
+ * svm.loadASM().then((loadedSVM) => {
+ *   loadedSVM.fit([[0, 0], [1, 1]], [0, 1]);
+ *   loadedSVM.predict([[1, 1]]);   // [-1]
+ * });
  */
 export class OneClassSVM extends BaseSVM {
   constructor(options?: SVMOptions) {
@@ -237,6 +264,15 @@ export class OneClassSVM extends BaseSVM {
  * Similar to SVC but uses a parameter to control the number of support vectors.
  *
  * The implementation is based on libsvm.
+ *
+ * @example
+ * import { NuSVC } from 'machinelearn/svm';
+ *
+ * const svm = new NuSVC();
+ * svm.loadASM().then((loadedSVM) => {
+ *   loadedSVM.fit([[0, 0], [1, 1]], [0, 1]);
+ *   loadedSVM.predict([[1, 1]]);   // [1]
+ * });
  */
 export class NuSVC extends BaseSVM {
   constructor(options?: SVMOptions) {
@@ -255,6 +291,15 @@ export class NuSVC extends BaseSVM {
  * replaces the parameter epsilon of epsilon-SVR.
  *
  * The implementation is based on libsvm.
+ *
+ * @example
+ * import { NuSVR } from 'machinelearn/svm';
+ *
+ * const svm = new NuSVR();
+ * svm.loadASM().then((loadedSVM) => {
+ *   loadedSVM.fit([[0, 0], [1, 1]], [0, 1]);
+ *   loadedSVM.predict([[1, 1]]);   // [0.9000000057898799]
+ * });
  */
 export class NuSVR extends BaseSVM {
   constructor(options?: SVMOptions) {
