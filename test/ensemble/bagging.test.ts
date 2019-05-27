@@ -1,6 +1,8 @@
 import { BaggingClassifier } from '../../src/lib/ensemble';
 import { LogisticRegression } from '../../src/lib/linear_model';
+import { accuracyScore } from '../../src/lib/metrics';
 import { ValidationError } from '../../src/lib/utils/Errors';
+import { getHeartDisease } from '../data_testing';
 
 describe('ensemble:BaggingClassifier', () => {
   it('Fais with ValidationError when maxSamples is float and is not in [0, 1] range', () => {
@@ -13,6 +15,7 @@ describe('ensemble:BaggingClassifier', () => {
       expect(err.message).toEqual('float maxSamples param must be in [0, 1]');
     }
   });
+
   it('Fails with ValidationError when maxSamples is integer and is bigger than number of samples', () => {
     const classifier = new BaggingClassifier({
       maxSamples: 3,
@@ -39,4 +42,20 @@ describe('ensemble:BaggingClassifier', () => {
     const predictions = classifier.predict(X);
     expect(predictions).toEqual(expected);
   });
+
+  it('Should train on heart disease dataset with logistic regression as base estimator', async () => {
+    const { xTest, yTest } = await getHeartDisease();
+    
+    const classifier = new BaggingClassifier({
+      baseEstimator: LogisticRegression,
+      maxSamples: 0.9 
+    });
+
+    classifier.fit(xTest, yTest);
+
+    const result = classifier.predict(xTest);
+    const accuracy = accuracyScore(yTest, result);
+
+    expect(accuracy).toBeGreaterThan(0.5);
+  })
 });
