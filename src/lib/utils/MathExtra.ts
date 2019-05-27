@@ -318,15 +318,23 @@ const inner = (a, b) => {
   throw new ValidationError(`Cannot process with the invalid inputs ${a} and ${b}`);
 };
 
-const generateRandomSubset = (setSize: number, maxSamples: number, bootstrap: boolean): number[] => {
-  if (Number.isInteger(maxSamples) && (maxSamples > setSize || maxSamples < 0)) {
+const generateRandomSubset = (
+  setSize: number,
+  maxSamples: number,
+  bootstrap: boolean,
+  maxSamplesIsFloat: boolean = true,
+): number[] => {
+  if (maxSamples < 0) {
+    throw new ValidationError("maxSamples can't be negative");
+  }
+  if (!maxSamplesIsFloat && (maxSamples > setSize)) {
     throw new ValidationError('maxSamples must be in [0, n_samples]');
   }
-  if (!Number.isInteger(maxSamples) && (maxSamples < 0 || maxSamples > 1)) {
-    throw new ValidationError('float maxSamples param must be in [0, 1]');
+  if (maxSamplesIsFloat && (maxSamples > 1)) {
+    throw new ValidationError('maxSamplesIsFloat is true but number bigger than 1 was passed');
   }
-
-  const sampleSize = Number.isInteger(maxSamples) ? maxSamples : Math.floor(setSize * maxSamples);
+  
+  const sampleSize = maxSamplesIsFloat ? Math.floor(setSize * maxSamples) : Math.floor(maxSamples);
   const indices = [];
 
   if (bootstrap) {
@@ -351,14 +359,16 @@ const generateRandomSubset = (setSize: number, maxSamples: number, bootstrap: bo
 
 const generateRandomSubsetOfMatrix = <T>(
   X: Type2DMatrix<T>,
-  maxSamples: number,
-  maxFeatures: number,
+  maxSamples: number = 1.0,
+  maxFeatures: number = 1.0,
   bootstrapSamples: boolean,
   bootstrapFeatures: boolean,
+  maxSamplesIsFloating: boolean = true,
+  maxFeaturesIsFloating: boolean = true,
 ): [Type2DMatrix<T>, number[], number[]] => {
   const [numRows, numColumns] = inferShape(X);
-  const rowIndices = generateRandomSubset(numRows, maxSamples, bootstrapSamples);
-  const columnIndices = generateRandomSubset(numColumns, maxFeatures, bootstrapFeatures);
+  const rowIndices = generateRandomSubset(numRows, maxSamples, bootstrapSamples, maxSamplesIsFloating);
+  const columnIndices = generateRandomSubset(numColumns, maxFeatures, bootstrapFeatures, maxFeaturesIsFloating);
 
   const result = [];
   rowIndices.forEach((i) => {
