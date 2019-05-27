@@ -101,7 +101,16 @@ export class BaggingClassifier {
   }
 
   private getBiggestVote<T>(votes: Map<T, number>): T {
-    return [...votes.keys()].sort((x, y) => votes.get(x) - votes.get(y))[0];
+    let maxValue = -1;
+    let maxKey;
+    for (const [k, v] of votes.entries()) {
+      if (v > maxValue) {
+        maxValue = v;
+        maxKey = k;
+      }
+    }
+
+    return maxKey;
   }
 
   private maxSamplesIsInValidRange(maxSamples: number) {
