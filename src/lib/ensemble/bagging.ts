@@ -1,39 +1,48 @@
 import { DecisionTreeClassifier } from '../tree';
-import { Type1DMatrix, Type2DMatrix } from '../types';
+import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
 import { ValidationError } from '../utils/Errors';
 import math from '../utils/MathExtra';
 import { ensure2DMatrix, inferShape } from '../utils/tensors';
 import { validateFitInputs } from '../utils/validation';
 
 export class BaggingClassifier {
-  private baseEstimator: any;
+  private BaseEstimator: any;
   private numEstimators: number;
-  private bootstrap: boolean;
-  private options: any;
+  private estimatorOptions: any;
   private maxSamples: number;
+  private maxFeatures: number;
+  private bootstrapSamples: boolean;
+  private bootstrapFeatures: boolean;
   private estimators: any[] = [];
+  private estimatorsFeatures: number[][] = [];
 
   constructor({
-    baseEstimator = DecisionTreeClassifier,
+    BaseEstimator = DecisionTreeClassifier,
     numEstimators = 10,
-    bootstrap = true,
     maxSamples,
-    options,
+    maxFeatures,
+    bootstrapSamples,
+    bootstrapFeatures,
+    estimatorOptions,
   }: {
-    baseEstimator: any;
+    BaseEstimator: any;
     numEstimators: number;
     maxSamples: number;
-    bootstrap: boolean;
-    options: any;
+    maxFeatures: number;
+    bootstrapSamples: boolean;
+    bootstrapFeatures: boolean;
+    estimatorOptions: any;
   }) {
     if (!Number.isInteger(maxSamples) && !this.maxSamplesIsInValidRange(maxSamples)) {
       throw new ValidationError('float maxSamples param must be in [0, 1]');
     }
-    this.baseEstimator = baseEstimator;
+    this.BaseEstimator = BaseEstimator;
     this.numEstimators = numEstimators;
-    this.bootstrap = bootstrap;
-    this.options = options;
+    this.estimatorOptions = estimatorOptions;
     this.maxSamples = maxSamples;
+    this.maxFeatures = maxFeatures;
+    this.bootstrapSamples = bootstrapSamples;
+    this.bootstrapFeatures = bootstrapFeatures;
   }
 
   public fit(X: Type2DMatrix<number>, y: Type1DMatrix<number>): void {
@@ -45,17 +54,26 @@ export class BaggingClassifier {
     }
 
     for (let i = 0; i < this.numEstimators; ++i) {
-      const sampleIndices = math.generateRandomSubset(numRows, this.maxSamples, this.bootstrap);
-      const sampleX = sampleIndices.map((ind) => X[ind]);
-      const sampleY = sampleIndices.map((ind) => y[ind]);
-      const estimator = new this.baseEstimator(this.options);
+      const [sampleX, rowIndices, columnIndices] = math.generateRandomSubsetOfMatrix(
+        X,
+        this.maxSamples,
+        this.maxFeatures,
+        this.bootstrapSamples,
+        this.bootstrapFeatures,
+      );
+      const sampleY = rowIndices.map((ind) => y[ind]);
+      const estimator = new this.BaseEstimator(this.estimatorOptions);
+      this.estimatorsFeatures.push(columnIndices);
       estimator.fit(sampleX, sampleY);
       this.estimators.push(estimator);
     }
   }
 
   public predict(X: Type2DMatrix<number>): number[] {
-    const predictions = this.estimators.map((estimator) => estimator.predict(X));
+    const [numRows] = inferShape(X);
+    const predictions = this.estimators.map((estimator, i) =>
+      estimator.predict(math.subset(X, [...Array(numRows).keys()], this.estimatorsFeatures[i])),
+    );
     const result = [];
 
     for (let i = 0; i < predictions[0].length; ++i) {
