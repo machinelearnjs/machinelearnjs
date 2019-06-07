@@ -16,9 +16,24 @@ import { validateMatrix1D, validateMatrix2D } from './validation';
  * @param X
  * @ignore
  */
-export function inferShape(X: TypeMatrix<any>): number[] {
+export function inferShape(X: TypeMatrix<any> | tf.Tensor): number[] {
   try {
+    if (X instanceof tf.Tensor) {
+      return X.shape;
+    }
     return tf.tensor(X).shape;
+  } catch (e) {
+    throw new ValidationInconsistentShape(e);
+  }
+}
+
+/**
+ *
+ * @param array 1D and 2D
+ */
+export function convertToTensor(array: TypeMatrix<any>): tf.Tensor {
+  try {
+    return tf.tensor(array);
   } catch (e) {
     throw new ValidationInconsistentShape(e);
   }
