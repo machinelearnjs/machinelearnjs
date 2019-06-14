@@ -426,7 +426,7 @@ describe('math.generateRandomSubset', () => {
           const subset = math.generateRandomSubset(set.length, 1.2, false, true);
         } catch (err) {
           expect(err).toBeInstanceOf(ValidationError);
-          expect(err.message).toEqual("maxSamplesIsFloat is true but number bigger than 1 was passed");
+          expect(err.message).toEqual('maxSamplesIsFloat is true but number bigger than 1 was passed');
         }
       });
     });
