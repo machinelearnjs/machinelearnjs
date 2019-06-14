@@ -318,6 +318,19 @@ const inner = (a, b) => {
   throw new ValidationError(`Cannot process with the invalid inputs ${a} and ${b}`);
 };
 
+/**
+ * Generates a random set of indices of a set of a given size.
+ * @param setSize - Size of set we are generating subset for
+ * @param maxSamples - Controls the size of the subset.
+ *  Is used in conjunction with @param maxSamplesIsFloat
+ *  If @param maxSamplesIsFloat is true, the size of the subset is equal to
+ *  floor(maxSamples*setSize).
+ *  If @param maxSamplesIsFloat is false, the size of the subset is equal to
+ *  floor(maxSamples).
+ * @param bootstrap - Whether samples are drawn with replacement
+ * @returns Returns an array of numbers in [0, setSize) range
+ *   with size calculated according to an algorithm described above
+ */
 const generateRandomSubset = (
   setSize: number,
   maxSamples: number,
@@ -327,13 +340,13 @@ const generateRandomSubset = (
   if (maxSamples < 0) {
     throw new ValidationError("maxSamples can't be negative");
   }
-  if (!maxSamplesIsFloat && (maxSamples > setSize)) {
+  if (!maxSamplesIsFloat && maxSamples > setSize) {
     throw new ValidationError('maxSamples must be in [0, n_samples]');
   }
-  if (maxSamplesIsFloat && (maxSamples > 1)) {
+  if (maxSamplesIsFloat && maxSamples > 1) {
     throw new ValidationError('maxSamplesIsFloat is true but number bigger than 1 was passed');
   }
-  
+
   const sampleSize = maxSamplesIsFloat ? Math.floor(setSize * maxSamples) : Math.floor(maxSamples);
   const indices = [];
 
@@ -357,6 +370,20 @@ const generateRandomSubset = (
   return indices;
 };
 
+/**
+ * Generates a random subset of a given matrix.
+ * @param X - source matrix
+ * @param maxSamples - The number of samples to draw from X to train each base estimator.
+ *  Is used in conjunction with @param maxSamplesIsFloating.
+ *  If @param maxSamplesIsFloating is false, then draw maxSamples samples.
+ *  If @param maxSamplesIsFloating is true, then draw max_samples * shape(X)[0] samples.
+ * @param maxFeatures - The number of features to draw from X to train each base estimator.
+ *  Is used in conjunction with @param maxFeaturesIsFloating
+ *  If @param maxFeaturesIsFloating is false, then draw max_features features.
+ *  If @param maxFeaturesIsFloating is true, then draw max_features * shape(X)[1] features.
+ * @param bootstrapSamples - Whether samples are drawn with replacement. If false, sampling without replacement is performed.
+ * @param bootstrapFeatures - Whether features are drawn with replacement.
+ */
 const generateRandomSubsetOfMatrix = <T>(
   X: Type2DMatrix<T>,
   maxSamples: number = 1.0,
@@ -384,7 +411,10 @@ const generateRandomSubsetOfMatrix = <T>(
   return [result, rowIndices, columnIndices];
 };
 
-const genRandomIndex = (upperBound) => Math.floor(Math.random() * upperBound);
+/**
+ * Generates a random integer in [0, upperBound) range.
+ */
+const genRandomIndex = (upperBound: number): number => Math.floor(Math.random() * upperBound);
 
 const math = {
   covariance,
