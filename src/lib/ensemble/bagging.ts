@@ -1,6 +1,5 @@
 import { DecisionTreeClassifier } from '../tree';
 import { Type1DMatrix, Type2DMatrix } from '../types';
-import { ValidationError } from '../utils/Errors';
 import math from '../utils/MathExtra';
 import { ensure2DMatrix, inferShape } from '../utils/tensors';
 import { validateFitInputs } from '../utils/validation';
@@ -39,9 +38,6 @@ export class BaggingClassifier {
     maxSamplesIsFloat: boolean;
     maxFeaturesIsFloat: boolean;
   }) {
-    if (!Number.isInteger(maxSamples) && !this.maxSamplesIsInValidRange(maxSamples)) {
-      throw new ValidationError('float maxSamples param must be in [0, 1]');
-    }
     this.BaseEstimator = BaseEstimator;
     this.numEstimators = numEstimators;
     this.estimatorOptions = estimatorOptions;
@@ -54,12 +50,8 @@ export class BaggingClassifier {
   }
 
   public fit(X: Type2DMatrix<number>, y: Type1DMatrix<number>): void {
-    const [numRows] = inferShape(X);
     const xWrapped = ensure2DMatrix(X);
     validateFitInputs(xWrapped, y);
-    if (Number.isInteger(this.maxSamples) && this.maxSamples > numRows) {
-      throw new ValidationError('maxSamples must be in [0, n_samples]');
-    }
 
     for (let i = 0; i < this.numEstimators; ++i) {
       const [sampleX, rowIndices, columnIndices] = math.generateRandomSubsetOfMatrix(
@@ -111,9 +103,5 @@ export class BaggingClassifier {
     }
 
     return maxKey;
-  }
-
-  private maxSamplesIsInValidRange(maxSamples: number) {
-    return maxSamples >= 0 && maxSamples <= 1;
   }
 }

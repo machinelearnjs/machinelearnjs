@@ -10,9 +10,10 @@ describe('ensemble:BaggingClassifier', () => {
       const classifier = new BaggingClassifier({
         maxSamples: 1.1,
       });
+      classifier.fit([1, 2, 3], [1, 1, 1]);
     } catch (err) {
       expect(err).toBeInstanceOf(ValidationError);
-      expect(err.message).toEqual('float maxSamples param must be in [0, 1]');
+      expect(err.message).toEqual('maxSamplesIsFloat is true but number bigger than 1 was passed');
     }
   });
 
@@ -24,7 +25,7 @@ describe('ensemble:BaggingClassifier', () => {
       classifier.fit([[0], [1]], [1, 1]);
     } catch (err) {
       expect(err).toBeInstanceOf(ValidationError);
-      expect(err.message).toEqual('maxSamples must be in [0, n_samples]');
+      expect(err.message).toEqual('maxSamplesIsFloat is true but number bigger than 1 was passed');
     }
   });
 
@@ -45,10 +46,10 @@ describe('ensemble:BaggingClassifier', () => {
 
   it('Should train on heart disease dataset with logistic regression as base estimator', async () => {
     const { xTest, yTest } = await getHeartDisease();
-    
+
     const classifier = new BaggingClassifier({
       baseEstimator: LogisticRegression,
-      maxSamples: 0.9 
+      maxSamples: 0.9,
     });
 
     classifier.fit(xTest, yTest);
@@ -57,5 +58,5 @@ describe('ensemble:BaggingClassifier', () => {
     const accuracy = accuracyScore(yTest, result);
 
     expect(accuracy).toBeGreaterThan(0.5);
-  })
+  });
 });
