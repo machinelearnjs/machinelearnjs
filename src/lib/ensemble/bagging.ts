@@ -140,6 +140,58 @@ export class BaggingClassifier {
     return result;
   }
 
+  /**
+   * Get the model details in JSON format
+   */
+  public toJSON(): {
+    BaseEstimator: any;
+    numEstimators: number;
+    maxSamples: number;
+    maxFeatures: number;
+    bootstrapSamples: boolean;
+    bootstrapFeatures: boolean;
+    estimatorOptions: any;
+    maxSamplesIsFloating: boolean;
+    maxFeaturesIsFloating: boolean;
+    estimators: any[];
+    estimatorsFeatures: number[][];
+  } {
+    return {
+      BaseEstimator: this.BaseEstimator,
+      numEstimators: this.numEstimators,
+      maxSamples: this.maxSamples,
+      maxFeatures: this.maxFeatures,
+      bootstrapSamples: this.bootstrapSamples,
+      bootstrapFeatures: this.bootstrapFeatures,
+      estimatorOptions: this.estimatorOptions,
+      maxSamplesIsFloating: this.maxSamplesIsFloating,
+      maxFeaturesIsFloating: this.maxFeaturesIsFloating,
+      estimators: this.estimators,
+      estimatorsFeatures: this.estimatorsFeatures,
+    };
+  }
+
+  /**
+   * Restore the model from a checkpoint
+   */
+  public fromJSON(checkPoint: {
+    BaseEstimator: any;
+    numEstimators: number;
+    maxSamples: number;
+    maxFeatures: number;
+    bootstrapSamples: boolean;
+    bootstrapFeatures: boolean;
+    estimatorOptions: any;
+    maxSamplesIsFloating: boolean;
+    maxFeaturesIsFloating: boolean;
+    estimators: any[];
+    estimatorsFeatures: number[][];
+  }): void {
+    for (const [k, v] of Object.entries(checkPoint)) {
+      this[k] = v;
+    }
+  }
+
   private getBiggestVote<T>(votes: Map<T, number>): T {
     let maxValue = -1;
     let maxKey;
