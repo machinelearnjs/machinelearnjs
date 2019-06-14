@@ -24,7 +24,7 @@ import { validateFitInputs } from '../utils/validation';
  * classifier.predict(X);
  */
 export class BaggingClassifier {
-  private BaseEstimator: any;
+  private baseEstimator: any;
   private numEstimators: number;
   private estimatorOptions: any;
   private maxSamples: number;
@@ -53,7 +53,7 @@ export class BaggingClassifier {
    */
 
   constructor({
-    BaseEstimator = DecisionTreeClassifier,
+    baseEstimator = DecisionTreeClassifier,
     numEstimators = 10,
     maxSamples = 1.0,
     maxFeatures = 1.0,
@@ -63,17 +63,17 @@ export class BaggingClassifier {
     maxSamplesIsFloating = true,
     maxFeaturesIsFloating = true,
   }: {
-    BaseEstimator: any;
-    numEstimators: number;
-    maxSamples: number;
-    maxFeatures: number;
-    bootstrapSamples: boolean;
-    bootstrapFeatures: boolean;
-    estimatorOptions: any;
-    maxSamplesIsFloating: boolean;
-    maxFeaturesIsFloating: boolean;
+    baseEstimator?: any;
+    numEstimators?: number;
+    maxSamples?: number;
+    maxFeatures?: number;
+    bootstrapSamples?: boolean;
+    bootstrapFeatures?: boolean;
+    estimatorOptions?: any;
+    maxSamplesIsFloating?: boolean;
+    maxFeaturesIsFloating?: boolean;
   }) {
-    this.BaseEstimator = BaseEstimator;
+    this.baseEstimator = baseEstimator;
     this.numEstimators = numEstimators;
     this.estimatorOptions = estimatorOptions;
     this.maxSamples = maxSamples;
@@ -105,7 +105,7 @@ export class BaggingClassifier {
         this.maxFeaturesIsFloating,
       );
       const sampleY = rowIndices.map((ind) => y[ind]);
-      const estimator = new this.BaseEstimator(this.estimatorOptions);
+      const estimator = new this.baseEstimator(this.estimatorOptions);
       this.estimatorsFeatures.push(columnIndices);
       estimator.fit(sampleX, sampleY);
       this.estimators.push(estimator);
@@ -157,7 +157,7 @@ export class BaggingClassifier {
     estimatorsFeatures: number[][];
   } {
     return {
-      BaseEstimator: this.BaseEstimator,
+      BaseEstimator: this.baseEstimator,
       numEstimators: this.numEstimators,
       maxSamples: this.maxSamples,
       maxFeatures: this.maxFeatures,
