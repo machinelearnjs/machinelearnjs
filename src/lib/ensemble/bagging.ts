@@ -38,7 +38,7 @@ export class BaggingClassifier {
   private maxFeaturesIsFloating: boolean = true;
 
   /**
-   * @param BaseEstimator - The model that will be used as a basis of ensemble.
+   * @param baseEstimator - The model that will be used as a basis of ensemble.
    * @param numEstimators - The number of estimators that will be used in ensemble.
    * @param maxSamples - The number of samples to draw from X to train each base estimator.
    *  Is used in conjunction with maxSamplesIsFloating.
