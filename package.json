@@ -1,6 +1,6 @@
 {
   "name": "machinelearn",
-  "version": "2.1.2",
+  "version": "2.1.3",
   "description": "Machine Learning library for the web and Node",
   "main": "index.js",
   "typings": "index.d.ts",
