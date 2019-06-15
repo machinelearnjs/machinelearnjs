@@ -55,27 +55,39 @@ export class BaggingClassifier {
    * @param maxFeaturesIsFloating - if true, draw maxFeatures samples
    */
 
-  constructor({
-    baseEstimator = DecisionTreeClassifier,
-    numEstimators = 10,
-    maxSamples = 1.0,
-    maxFeatures = 1.0,
-    bootstrapSamples = false,
-    bootstrapFeatures = false,
-    estimatorOptions = {},
-    maxSamplesIsFloating = true,
-    maxFeaturesIsFloating = true,
-  }: {
-    baseEstimator?: any;
-    numEstimators?: number;
-    maxSamples?: number;
-    maxFeatures?: number;
-    bootstrapSamples?: boolean;
-    bootstrapFeatures?: boolean;
-    estimatorOptions?: any;
-    maxSamplesIsFloating?: boolean;
-    maxFeaturesIsFloating?: boolean;
-  }) {
+  constructor(
+    {
+      baseEstimator = DecisionTreeClassifier,
+      numEstimators = 10,
+      maxSamples = 1.0,
+      maxFeatures = 1.0,
+      bootstrapSamples = false,
+      bootstrapFeatures = false,
+      estimatorOptions = {},
+      maxSamplesIsFloating = true,
+      maxFeaturesIsFloating = true,
+    }: {
+      baseEstimator?: any;
+      numEstimators?: number;
+      maxSamples?: number;
+      maxFeatures?: number;
+      bootstrapSamples?: boolean;
+      bootstrapFeatures?: boolean;
+      estimatorOptions?: any;
+      maxSamplesIsFloating?: boolean;
+      maxFeaturesIsFloating?: boolean;
+    } = {
+      baseEstimator: DecisionTreeClassifier,
+      numEstimators: 10,
+      maxSamples: 1.0,
+      maxFeatures: 1.0,
+      bootstrapSamples: false,
+      bootstrapFeatures: false,
+      estimatorOptions: {},
+      maxSamplesIsFloating: true,
+      maxFeaturesIsFloating: true,
+    },
+  ) {
     this.baseEstimator = baseEstimator;
     this.numEstimators = numEstimators;
     this.estimatorOptions = estimatorOptions;

@@ -5,7 +5,7 @@ import { ValidationError } from '../../src/lib/utils/Errors';
 import { getHeartDisease } from '../data_testing';
 
 describe('ensemble:BaggingClassifier', () => {
-  it('Fais with ValidationError when maxSamples is float and is not in [0, 1] range', () => {
+  it('Fails with ValidationError when maxSamples is float and is not in [0, 1] range', () => {
     try {
       const classifier = new BaggingClassifier({
         maxSamples: 1.1,
@@ -55,6 +55,25 @@ describe('ensemble:BaggingClassifier', () => {
     classifier.fit(xTest, yTest);
 
     const result = classifier.predict(xTest);
+    const accuracy = accuracyScore(yTest, result);
+
+    expect(accuracy).toBeGreaterThan(0.5);
+  });
+
+  it('should save and reload checkpoint, and still results same predictions', async () => {
+    const { xTest, yTest } = await getHeartDisease();
+
+    const cls1 = new BaggingClassifier({
+      baseEstimator: LogisticRegression,
+      maxSamples: 0.9,
+    });
+    cls1.fit(xTest, yTest);
+    const checkpoint = cls1.toJSON();
+
+    const cls2 = new BaggingClassifier();
+    cls2.fromJSON(checkpoint);
+
+    const result = cls2.predict(xTest);
     const accuracy = accuracyScore(yTest, result);
 
     expect(accuracy).toBeGreaterThan(0.5);
