@@ -351,7 +351,7 @@ describe('math.generateRandomSubset', () => {
       it('fails with ValidationError', () => {
         try {
           const set = [1, 2, 3, 4, 5, 6, 7];
-          const subset = math.generateRandomSubset(set.length, set.length + 1, false, false);
+          math.generateRandomSubset(set.length, set.length + 1, false, false);
         } catch (err) {
           expect(err).toBeInstanceOf(ValidationError);
           expect(err.message).toEqual('maxSamples must be in [0, n_samples]');
@@ -363,7 +363,7 @@ describe('math.generateRandomSubset', () => {
       it('fails with ValidationError', () => {
         try {
           const set = [1, 2, 3, 4, 5, 6, 7];
-          const subset = math.generateRandomSubset(set.length, -1, false);
+          math.generateRandomSubset(set.length, -1, false);
         } catch (err) {
           expect(err).toBeInstanceOf(ValidationError);
           expect(err.message).toEqual("maxSamples can't be negative");
@@ -411,7 +411,7 @@ describe('math.generateRandomSubset', () => {
       it('should fail with ValidationError', () => {
         try {
           const set = [1, 2, 3, 4, 5];
-          const subset = math.generateRandomSubset(set.length, -1.2, false, true);
+          math.generateRandomSubset(set.length, -1.2, false, true);
         } catch (err) {
           expect(err).toBeInstanceOf(ValidationError);
           expect(err.message).toEqual("maxSamples can't be negative");
@@ -423,7 +423,7 @@ describe('math.generateRandomSubset', () => {
       it('should fail with ValidationError', () => {
         try {
           const set = [1, 2, 3, 4, 5];
-          const subset = math.generateRandomSubset(set.length, 1.2, false, true);
+          math.generateRandomSubset(set.length, 1.2, false, true);
         } catch (err) {
           expect(err).toBeInstanceOf(ValidationError);
           expect(err.message).toEqual('maxSamplesIsFloat is true but number bigger than 1 was passed');
