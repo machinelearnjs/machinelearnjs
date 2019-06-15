@@ -1,5 +1,7 @@
 import * as _ from 'lodash';
+import { Type2DMatrix } from '../types';
 import { ValidationError, ValidationInconsistentShape } from './Errors';
+import { inferShape } from './tensors';
 
 /**
  * Return the number of elements along a given axis.
@@ -316,9 +318,112 @@ const inner = (a, b) => {
   throw new ValidationError(`Cannot process with the invalid inputs ${a} and ${b}`);
 };
 
+/**
+ * Generates a random set of indices of a set of a given size.
+ * @param setSize - Size of set we are generating subset for
+ * @param maxSamples - Controls the size of the subset.
+ *  Is used in conjunction with @param maxSamplesIsFloat
+ *  If @param maxSamplesIsFloat is true, the size of the subset is equal to
+ *  floor(maxSamples*setSize).
+ *  If @param maxSamplesIsFloat is false, the size of the subset is equal to
+ *  floor(maxSamples).
+ * @param bootstrap - Whether samples are drawn with replacement
+ * @returns Returns an array of numbers in [0, setSize) range
+ *   with size calculated according to an algorithm described above
+ * @ignore
+ */
+const generateRandomSubset = (
+  setSize: number,
+  maxSamples: number,
+  bootstrap: boolean,
+  maxSamplesIsFloat: boolean = true,
+): number[] => {
+  if (maxSamples < 0) {
+    throw new ValidationError("maxSamples can't be negative");
+  }
+  if (!maxSamplesIsFloat && maxSamples > setSize) {
+    throw new ValidationError('maxSamples must be in [0, n_samples]');
+  }
+  if (maxSamplesIsFloat && maxSamples > 1) {
+    throw new ValidationError('maxSamplesIsFloat is true but number bigger than 1 was passed');
+  }
+
+  const sampleSize = maxSamplesIsFloat ? Math.floor(setSize * maxSamples) : Math.floor(maxSamples);
+  const indices = [];
+
+  if (bootstrap) {
+    for (let i = 0; i < sampleSize; ++i) {
+      indices.push(genRandomIndex(setSize));
+    }
+  } else {
+    // O(n) algorithm for non-bootstrap sampling as described in this paper
+    // https://sci-hub.se/10.1080/00207168208803304
+    const nums = range(0, setSize);
+    for (let i = 0; i < sampleSize; ++i) {
+      const index = genRandomIndex(setSize - i);
+      indices.push(nums[index]);
+      const tmp = nums[index];
+      nums[index] = nums[setSize - i - 1];
+      nums[setSize - i - 1] = tmp;
+    }
+  }
+
+  return indices;
+};
+
+/**
+ * Generates a random subset of a given matrix.
+ * @param X - source matrix
+ * @param maxSamples - The number of samples to draw from X to train each base estimator.
+ *  Is used in conjunction with @param maxSamplesIsFloating.
+ *  If @param maxSamplesIsFloating is false, then draw maxSamples samples.
+ *  If @param maxSamplesIsFloating is true, then draw max_samples * shape(X)[0] samples.
+ * @param maxFeatures - The number of features to draw from X to train each base estimator.
+ *  Is used in conjunction with @param maxFeaturesIsFloating
+ *  If @param maxFeaturesIsFloating is false, then draw max_features features.
+ *  If @param maxFeaturesIsFloating is true, then draw max_features * shape(X)[1] features.
+ * @param bootstrapSamples - Whether samples are drawn with replacement. If false, sampling without replacement is performed.
+ * @param bootstrapFeatures - Whether features are drawn with replacement.
+ * @ignore
+ */
+const generateRandomSubsetOfMatrix = <T>(
+  X: Type2DMatrix<T>,
+  maxSamples: number = 1.0,
+  maxFeatures: number = 1.0,
+  bootstrapSamples: boolean,
+  bootstrapFeatures: boolean,
+  maxSamplesIsFloating: boolean = true,
+  maxFeaturesIsFloating: boolean = true,
+): [Type2DMatrix<T>, number[], number[]] => {
+  const [numRows, numColumns] = inferShape(X);
+  const rowIndices = generateRandomSubset(numRows, maxSamples, bootstrapSamples, maxSamplesIsFloating);
+  const columnIndices = generateRandomSubset(numColumns, maxFeatures, bootstrapFeatures, maxFeaturesIsFloating);
+
+  const result = [];
+  rowIndices.forEach((i) => {
+    const curRow = [];
+
+    columnIndices.forEach((j) => {
+      curRow.push(X[i][j]);
+    });
+
+    result.push(curRow);
+  });
+
+  return [result, rowIndices, columnIndices];
+};
+
+/**
+ * Generates a random integer in [0, upperBound) range.
+ */
+const genRandomIndex = (upperBound: number): number => Math.floor(Math.random() * upperBound);
+
 const math = {
   covariance,
   euclideanDistance,
+  genRandomIndex,
+  generateRandomSubset,
+  generateRandomSubsetOfMatrix,
   hstack,
   isArrayOf,
   inner,
