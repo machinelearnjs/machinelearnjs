@@ -330,6 +330,7 @@ const inner = (a, b) => {
  * @param bootstrap - Whether samples are drawn with replacement
  * @returns Returns an array of numbers in [0, setSize) range
  *   with size calculated according to an algorithm described above
+ * @ignore
  */
 const generateRandomSubset = (
   setSize: number,
@@ -383,6 +384,7 @@ const generateRandomSubset = (
  *  If @param maxFeaturesIsFloating is true, then draw max_features * shape(X)[1] features.
  * @param bootstrapSamples - Whether samples are drawn with replacement. If false, sampling without replacement is performed.
  * @param bootstrapFeatures - Whether features are drawn with replacement.
+ * @ignore
  */
 const generateRandomSubsetOfMatrix = <T>(
   X: Type2DMatrix<T>,
