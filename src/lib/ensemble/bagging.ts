@@ -51,7 +51,8 @@ export class BaggingClassifier {
    * @param bootstrapSamples - Whether samples are drawn with replacement. If false, sampling without replacement is performed.
    * @param bootstrapFeatures - Whether features are drawn with replacement.
    * @param estimatorOptions - constructor options for BaseEstimator.
-   * @param maxSamplesIsFloating -
+   * @param maxSamplesIsFloating - if true, draw maxSamples samples
+   * @param maxFeaturesIsFloating - if true, draw maxFeatures samples
    */
 
   constructor({
@@ -92,7 +93,7 @@ export class BaggingClassifier {
    * @param {Array} y - array-like, shape = [n_samples]
    * @returns void
    */
-  public fit(X: Type2DMatrix<number>, y: Type1DMatrix<number>): void {
+  public fit(X: Type2DMatrix<number> = null, y: Type1DMatrix<number> = null): void {
     const xWrapped = ensure2DMatrix(X);
     validateFitInputs(xWrapped, y);
 
@@ -121,7 +122,7 @@ export class BaggingClassifier {
    * @param {Array} X - array-like or sparse matrix of shape = [n_samples, n_features]
    * @returns {Array} - array of shape [n_samples] that contains predicted class for each point X
    */
-  public predict(X: Type2DMatrix<number>): number[] {
+  public predict(X: Type2DMatrix<number> = null): number[] {
     const [numRows] = inferShape(X);
     const predictions = this.estimators.map((estimator, i) =>
       estimator.predict(math.subset(X, [...Array(numRows).keys()], this.estimatorsFeatures[i])),
