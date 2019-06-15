@@ -415,6 +415,7 @@ const generateRandomSubsetOfMatrix = <T>(
 
 /**
  * Generates a random integer in [0, upperBound) range.
+ * @ignore
  */
 const genRandomIndex = (upperBound: number): number => Math.floor(Math.random() * upperBound);
 
