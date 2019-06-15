@@ -51,6 +51,7 @@ export class BaggingClassifier {
    * @param bootstrapSamples - Whether samples are drawn with replacement. If false, sampling without replacement is performed.
    * @param bootstrapFeatures - Whether features are drawn with replacement.
    * @param estimatorOptions - constructor options for BaseEstimator.
+   * @param maxSamplesIsFloating -
    */
 
   constructor({
@@ -145,7 +146,7 @@ export class BaggingClassifier {
    * Get the model details in JSON format
    */
   public toJSON(): {
-    BaseEstimator: any;
+    baseEstimator: any;
     numEstimators: number;
     maxSamples: number;
     maxFeatures: number;
@@ -158,7 +159,7 @@ export class BaggingClassifier {
     estimatorsFeatures: number[][];
   } {
     return {
-      BaseEstimator: this.baseEstimator,
+      baseEstimator: this.baseEstimator,
       numEstimators: this.numEstimators,
       maxSamples: this.maxSamples,
       maxFeatures: this.maxFeatures,
@@ -177,7 +178,7 @@ export class BaggingClassifier {
    * @param checkPoint
    */
   public fromJSON(checkPoint: {
-    BaseEstimator: any;
+    baseEstimator: any;
     numEstimators: number;
     maxSamples: number;
     maxFeatures: number;
