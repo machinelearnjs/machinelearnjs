@@ -13,6 +13,7 @@ import { validateFitInputs } from '../utils/validation';
  * base classifiers each on random subsets of the original dataset
  * and then aggregate their individual predictions by voting
  * to form a final prediction
+ *
  * @example
  * const classifier = new BaggingClassifier({
  *  baseEstimator: LogisticRegression,
@@ -40,13 +41,13 @@ export class BaggingClassifier {
    * @param BaseEstimator - The model that will be used as a basis of ensemble.
    * @param numEstimators - The number of estimators that will be used in ensemble.
    * @param maxSamples - The number of samples to draw from X to train each base estimator.
-   *  Is used in conjunction with @param maxSamplesIsFloating.
+   *  Is used in conjunction with maxSamplesIsFloating.
    *  If @param maxSamplesIsFloating is false, then draw maxSamples samples.
    *  If @param maxSamplesIsFloating is true, then draw max_samples * shape(X)[0] samples.
    * @param maxFeatures - The number of features to draw from X to train each base estimator.
    *  Is used in conjunction with @param maxFeaturesIsFloating
-   *  If @param maxFeaturesIsFloating is false, then draw max_features features.
-   *  If @param maxFeaturesIsFloating is true, then draw max_features * shape(X)[1] features.
+   *  If maxFeaturesIsFloating is false, then draw max_features features.
+   *  If maxFeaturesIsFloating is true, then draw max_features * shape(X)[1] features.
    * @param bootstrapSamples - Whether samples are drawn with replacement. If false, sampling without replacement is performed.
    * @param bootstrapFeatures - Whether features are drawn with replacement.
    * @param estimatorOptions - constructor options for BaseEstimator.
@@ -173,6 +174,7 @@ export class BaggingClassifier {
 
   /**
    * Restore the model from a checkpoint
+   * @param checkPoint
    */
   public fromJSON(checkPoint: {
     BaseEstimator: any;
@@ -192,6 +194,10 @@ export class BaggingClassifier {
     }
   }
 
+  /**
+   * Retrieves the biggest vote from the votes map
+   * @param votes
+   */
   private getBiggestVote<T>(votes: Map<T, number>): T {
     let maxValue = -1;
     let maxKey;
