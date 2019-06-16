@@ -121,4 +121,23 @@ describe('linear_model:LogisticRegression', () => {
       }
     });
   });
+
+  describe('Async', () => {
+    it('Should train on heart disease dataset and have the same accuracy as sync model', async () => {
+      const { xTest, yTest } = await getHeartDisease();
+
+      const syncLR = new LogisticRegression();
+      syncLR.fit(xTest, yTest);
+
+      const syncLRResult = syncLR.predict(xTest);
+      const syncLRAccuracy = accuracyScore(yTest, syncLRResult);
+
+      const asyncLR = new LogisticRegression();
+      await asyncLR.fitAsync(xTest, yTest);
+      const asyncLRResult = await asyncLR.predictAsync(xTest);
+      const asyncLRAccuracy = accuracyScore(yTest, asyncLRResult);
+
+      expect(Math.abs(syncLRAccuracy - asyncLRAccuracy)).toBeCloseTo(0.0, 1);
+    });
+  });
 });

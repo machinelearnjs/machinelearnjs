@@ -31,7 +31,8 @@ import { validateFeaturesConsistency, validateFitInputs, validateMatrix1D } from
  *
  */
 export class LogisticRegression {
-  private weights: tf.Tensor1D;
+  private weightsTensor: tf.Tensor1D;
+  private weightsArray: number[];
   private learningRate: number;
   private numIterations: number;
 
@@ -68,11 +69,31 @@ export class LogisticRegression {
     const tensorY = tf.tensor1d(y);
 
     for (let i = 0; i < this.numIterations; ++i) {
-      const predictions: tf.Tensor<tf.Rank> = tf.sigmoid(tensorX.dot(this.weights));
+      const predictions: tf.Tensor<tf.Rank> = tf.sigmoid(tensorX.dot(this.weightsTensor));
 
       const gradient: tf.Tensor<tf.Rank> = tf.mul(tensorY.sub(predictions).dot(tensorX), -1);
-      this.weights = this.weights.sub(tf.mul(this.learningRate, gradient));
+      this.weightsTensor = this.weightsTensor.sub(tf.mul(this.learningRate, gradient));
     }
+  }
+
+  public async fitAsync(
+    X: Type2DMatrix<number> | Type1DMatrix<number> = null,
+    y: Type1DMatrix<number> = null,
+  ): Promise<void> {
+    const xWrapped = ensure2DMatrix(X);
+    validateFitInputs(xWrapped, y);
+    this.initWeights(xWrapped);
+    const tensorX = tf.tensor2d(xWrapped);
+    const tensorY = tf.tensor1d(y);
+
+    for (let i = 0; i < this.numIterations; ++i) {
+      const predictions: tf.Tensor<tf.Rank> = tf.sigmoid(tensorX.dot(this.weightsTensor));
+
+      const gradient: tf.Tensor<tf.Rank> = tf.mul(tensorY.sub(predictions).dot(tensorX), -1);
+      this.weightsTensor = this.weightsTensor.sub(tf.mul(this.learningRate, gradient));
+    }
+
+    this.weightsArray = await this.weightsTensor.array();
   }
 
   /**
@@ -81,12 +102,21 @@ export class LogisticRegression {
    * @returns An array of predicted classes
    */
   public predict(X: Type2DMatrix<number> | Type1DMatrix<number> = null): number[] {
-    validateFeaturesConsistency(X, this.weights.arraySync());
+    validateFeaturesConsistency(X, this.weightsTensor.arraySync());
 
     const xWrapped: Type2DMatrix<number> = ensure2DMatrix(X);
 
-    const syncResult = tf.round(tf.sigmoid(tf.tensor2d(xWrapped).dot(this.weights))).arraySync();
+    const syncResult = tf.round(tf.sigmoid(tf.tensor2d(xWrapped).dot(this.weightsTensor))).arraySync();
     return validateMatrix1D(syncResult);
+  }
+
+  public async predictAsync(X: Type2DMatrix<number> | Type1DMatrix<number> = null): Promise<number[]> {
+    validateFeaturesConsistency(X, this.weightsArray);
+
+    const xWrapped: Type2DMatrix<number> = ensure2DMatrix(X);
+
+    const result = await tf.round(tf.sigmoid(tf.tensor2d(xWrapped).dot(this.weightsTensor))).array();
+    return validateMatrix1D(result);
   }
 
   /**
@@ -94,7 +124,7 @@ export class LogisticRegression {
    */
   public toJSON(): {
     /**
-     * Model training weights
+     * Model training weightsTensor
      */
     weights: number[];
     /**
@@ -103,7 +133,7 @@ export class LogisticRegression {
     learning_rate: number;
   } {
     return {
-      weights: this.weights.arraySync(),
+      weights: this.weightsTensor.arraySync(),
       learning_rate: this.learningRate,
     };
   }
@@ -114,7 +144,7 @@ export class LogisticRegression {
   public fromJSON(
     {
       /**
-       * Model training weights
+       * Model training weightsTensor
        */
       weights = null,
       /**
@@ -129,7 +159,7 @@ export class LogisticRegression {
       learning_rate: 0.001,
     },
   ): void {
-    this.weights = tf.tensor1d(weights);
+    this.weightsTensor = tf.tensor1d(weights);
     this.learningRate = learning_rate;
   }
 
@@ -137,6 +167,6 @@ export class LogisticRegression {
     const shape: number[] = inferShape(X);
     const numFeatures: number = shape[1];
     const limit: number = 1 / Math.sqrt(numFeatures);
-    this.weights = tf.randomUniform([numFeatures], -limit, limit);
+    this.weightsTensor = tf.randomUniform([numFeatures], -limit, limit);
   }
 }
