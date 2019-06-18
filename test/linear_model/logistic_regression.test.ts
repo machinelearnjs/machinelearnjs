@@ -128,7 +128,6 @@ describe('linear_model:LogisticRegression', () => {
 
       const syncLR = new LogisticRegression();
       syncLR.fit(xTest, yTest);
-
       const syncLRResult = syncLR.predict(xTest);
       const syncLRAccuracy = accuracyScore(yTest, syncLRResult);
 
