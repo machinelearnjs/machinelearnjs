@@ -61,39 +61,25 @@ export class LogisticRegression {
    * @param X - A matrix of samples
    * @param y - A matrix of targets
    */
-  public fit(X: Type2DMatrix<number> | Type1DMatrix<number> = null, y: Type1DMatrix<number> = null): void {
-    const xWrapped = ensure2DMatrix(X);
-    validateFitInputs(xWrapped, y);
-    this.initWeights(xWrapped);
-    const tensorX = tf.tensor2d(xWrapped);
-    const tensorY = tf.tensor1d(y);
+  public fit(
+    X: Type2DMatrix<number> | Type1DMatrix<number> = null,
+    y: Type1DMatrix<number> = null,
+  ): tf.Tensor<tf.Rank> {
+    this.fitInternal(X, y);
 
-    for (let i = 0; i < this.numIterations; ++i) {
-      const predictions: tf.Tensor<tf.Rank> = tf.sigmoid(tensorX.dot(this.weightsTensor));
+    this.weightsArray = this.weightsTensor.arraySync();
 
-      const gradient: tf.Tensor<tf.Rank> = tf.mul(tensorY.sub(predictions).dot(tensorX), -1);
-      this.weightsTensor = this.weightsTensor.sub(tf.mul(this.learningRate, gradient));
-    }
+    return this.weightsTensor;
   }
 
   public async fitAsync(
     X: Type2DMatrix<number> | Type1DMatrix<number> = null,
     y: Type1DMatrix<number> = null,
-  ): Promise<void> {
-    const xWrapped = ensure2DMatrix(X);
-    validateFitInputs(xWrapped, y);
-    this.initWeights(xWrapped);
-    const tensorX = tf.tensor2d(xWrapped);
-    const tensorY = tf.tensor1d(y);
-
-    for (let i = 0; i < this.numIterations; ++i) {
-      const predictions: tf.Tensor<tf.Rank> = tf.sigmoid(tensorX.dot(this.weightsTensor));
-
-      const gradient: tf.Tensor<tf.Rank> = tf.mul(tensorY.sub(predictions).dot(tensorX), -1);
-      this.weightsTensor = this.weightsTensor.sub(tf.mul(this.learningRate, gradient));
-    }
-
+  ): Promise<tf.Tensor<tf.Rank>> {
+    this.fitInternal(X, y);
     this.weightsArray = await this.weightsTensor.array();
+
+    return this.weightsTensor;
   }
 
   /**
@@ -102,12 +88,13 @@ export class LogisticRegression {
    * @returns An array of predicted classes
    */
   public predict(X: Type2DMatrix<number> | Type1DMatrix<number> = null): number[] {
-    validateFeaturesConsistency(X, this.weightsTensor.arraySync());
+    validateFeaturesConsistency(X, this.weightsArray);
 
     const xWrapped: Type2DMatrix<number> = ensure2DMatrix(X);
 
-    const syncResult = tf.round(tf.sigmoid(tf.tensor2d(xWrapped).dot(this.weightsTensor))).arraySync();
-    return validateMatrix1D(syncResult);
+    const result = this.getPredictionTensor(tf.tensor2d(xWrapped), this.weightsTensor).arraySync();
+
+    return validateMatrix1D(result);
   }
 
   public async predictAsync(X: Type2DMatrix<number> | Type1DMatrix<number> = null): Promise<number[]> {
@@ -115,8 +102,13 @@ export class LogisticRegression {
 
     const xWrapped: Type2DMatrix<number> = ensure2DMatrix(X);
 
-    const result = await tf.round(tf.sigmoid(tf.tensor2d(xWrapped).dot(this.weightsTensor))).array();
+    const result = await this.getPredictionTensor(tf.tensor2d(xWrapped), this.weightsTensor).array();
+
     return validateMatrix1D(result);
+  }
+
+  public getPredictionTensor(X: tf.Tensor<tf.Rank>, weightsTensor: tf.Tensor<tf.Rank>) {
+    return tf.round(tf.sigmoid(X.dot(weightsTensor)));
   }
 
   /**
@@ -168,5 +160,20 @@ export class LogisticRegression {
     const numFeatures: number = shape[1];
     const limit: number = 1 / Math.sqrt(numFeatures);
     this.weightsTensor = tf.randomUniform([numFeatures], -limit, limit);
+  }
+
+  private fitInternal(X: Type2DMatrix<number> | Type1DMatrix<number> = null, y: Type1DMatrix<number> = null): void {
+    const xWrapped = ensure2DMatrix(X);
+    validateFitInputs(xWrapped, y);
+    this.initWeights(xWrapped);
+    const tensorX = tf.tensor2d(xWrapped);
+    const tensorY = tf.tensor1d(y);
+
+    for (let i = 0; i < this.numIterations; ++i) {
+      const predictions: tf.Tensor<tf.Rank> = tf.sigmoid(tensorX.dot(this.weightsTensor));
+
+      const gradient: tf.Tensor<tf.Rank> = tf.mul(tensorY.sub(predictions).dot(tensorX), -1);
+      this.weightsTensor = this.weightsTensor.sub(tf.mul(this.learningRate, gradient));
+    }
   }
 }
