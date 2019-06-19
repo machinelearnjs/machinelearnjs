@@ -57,9 +57,10 @@ export class LogisticRegression {
   }
 
   /**
-   * Fit the model according to the given training data.
+   * Fit the model synchronously according to the given training data.
    * @param X - A matrix of samples
    * @param y - A matrix of targets
+   * @returns Tensor of the underlying model.
    */
   public fit(
     X: Type2DMatrix<number> | Type1DMatrix<number> = null,
@@ -72,18 +73,26 @@ export class LogisticRegression {
     return this.weightsTensor;
   }
 
+  /**
+   * Fit the model asynchronously according to the given training data.
+   * @param X - A matrix of samples
+   * @param y - A matrix of targets
+   * @returns Promise that resolves to tensor of the underlying model.
+   *  predict or predictAsync should be called only after the returned promise is resolved.
+   */
   public async fitAsync(
     X: Type2DMatrix<number> | Type1DMatrix<number> = null,
     y: Type1DMatrix<number> = null,
   ): Promise<tf.Tensor<tf.Rank>> {
     this.fitInternal(X, y);
+
     this.weightsArray = await this.weightsTensor.array();
 
     return this.weightsTensor;
   }
 
   /**
-   * Predict class labels for samples in X.
+   * Synchronously predict class labels for samples in X.
    * @param X - A matrix of test data
    * @returns An array of predicted classes
    */
@@ -97,6 +106,11 @@ export class LogisticRegression {
     return validateMatrix1D(result);
   }
 
+  /**
+   * Asynchronously predict class labels for samples in X.
+   * @param X - A matrix of test data
+   * @returns Promise of an array of predicted classes
+   */
   public async predictAsync(X: Type2DMatrix<number> | Type1DMatrix<number> = null): Promise<number[]> {
     validateFeaturesConsistency(X, this.weightsArray);
 
@@ -118,14 +132,19 @@ export class LogisticRegression {
     /**
      * Model training weightsTensor
      */
-    weights: number[];
+    weightsTensor: tf.Tensor<tf.Rank>;
+    /**
+     * Model training weightsArray
+     */
+    weightsArray: number[];
     /**
      * Model learning rate
      */
     learning_rate: number;
   } {
     return {
-      weights: this.weightsTensor.arraySync(),
+      weightsTensor: this.weightsTensor,
+      weightsArray: this.weightsArray,
       learning_rate: this.learningRate,
     };
   }
@@ -138,20 +157,27 @@ export class LogisticRegression {
       /**
        * Model training weightsTensor
        */
-      weights = null,
+      weightsTensor = null,
+      /**
+       * Model training weightsArray
+       */
+      weightsArray = null,
       /**
        * Model learning rate
        */
       learning_rate = null,
     }: {
-      weights: number[];
+      weightsTensor: tf.Tensor<tf.Rank.R1>;
+      weightsArray: number[];
       learning_rate: number;
     } = {
-      weights: null,
+      weightsTensor: null,
+      weightsArray: null,
       learning_rate: 0.001,
     },
   ): void {
-    this.weightsTensor = tf.tensor1d(weights);
+    this.weightsTensor = weightsTensor;
+    this.weightsArray = weightsArray;
     this.learningRate = learning_rate;
   }
 
