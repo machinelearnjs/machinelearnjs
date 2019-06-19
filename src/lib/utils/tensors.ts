@@ -97,3 +97,21 @@ export const ensure2DMatrix = (X: Type2DMatrix<number> | Type1DMatrix<number>): 
   const matrix1D = validateMatrix1D(X);
   return _.map(matrix1D, (o) => [o]);
 };
+
+export const covariance = (
+  X: tf.Tensor<tf.Rank.R1>,
+  xMean: tf.Scalar,
+  Y: tf.Tensor<tf.Rank.R1>,
+  yMean: tf.Scalar,
+): tf.Scalar => {
+  return X.sub(xMean)
+    .dot(Y.sub(yMean))
+    .cumsum()
+    .dot(tf.scalar(1 / X.shape[0]))
+    .asScalar();
+};
+
+export const variance = (X: tf.Tensor<tf.Rank.R1>, xMean: tf.Scalar): tf.Scalar => {
+  const tmp = X.sub(xMean);
+  return tmp.dot(tmp).cumsum();
+};
