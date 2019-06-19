@@ -121,6 +121,11 @@ export class LogisticRegression {
     return validateMatrix1D(result);
   }
 
+  /**
+   * Directly retrieves the prediction tensor
+   * @param X
+   * @param weightsTensor
+   */
   public getPredictionTensor(X: tf.Tensor<tf.Rank>, weightsTensor: tf.Tensor<tf.Rank>) {
     return tf.round(tf.sigmoid(X.dot(weightsTensor)));
   }
