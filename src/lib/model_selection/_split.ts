@@ -1,12 +1,12 @@
-import { Tensor } from '@tensorflow/tfjs';
+import * as tf from '@tensorflow/tfjs';
 import * as _ from 'lodash';
 import * as Random from 'random-js';
 import { Type1DMatrix, Type2DMatrix } from '../types';
 import { ValidationError } from '../utils/Errors';
-import { convertToTensor, inferShape } from '../utils/tensors';
-import { _num_samples, validateFitInputs } from '../utils/validation';
+import { arraySplit, convertToTensor, countBin, inferShape, invidualize } from '../utils/tensors';
+import { numSamples, validateFitInputs } from '../utils/validation';
 
-const testShapes = (X: Type1DMatrix<any> | Type2DMatrix<any> | Tensor = null, y: Type1DMatrix<any> | Tensor = null) => {
+const testShapes = (X: Type1DMatrix<any> | Type2DMatrix<any>, y: Type1DMatrix<any>) => {
   const xShape = inferShape(X);
   const yShape = inferShape(y);
   if (xShape.length > 0 && yShape.length > 0 && xShape[0] !== yShape[0]) {
@@ -218,114 +218,62 @@ const testRangeValidationError = (test_size, n_samples) => rangeValidationError(
 
 const trainRangeValidationError = (test_size, n_samples) => rangeValidationError('test_size', test_size, n_samples);
 
-function uniq(array: Type1DMatrix<any> = null): Type2DMatrix<number> {
-  const uniqArray = _.uniq(_.flatten(array)).sort();
-  let min = Number.MAX_VALUE;
-  let max = Number.MIN_VALUE;
-
-  const valueCount = {};
-  const uniqIndexMap = uniqArray.reduce((acc, ele, i) => {
-    if (min > ele) {
-      min = ele;
-    }
-
-    if (max < ele) {
-      max = ele;
-    }
-
-    return {
-      ...acc,
-      [ele]: i,
-    };
-  }, {});
-
-  const indexMap = array.map((ele) => {
-    if (valueCount[ele]) {
-      valueCount[ele] += 1;
-    } else {
-      valueCount[ele] = 1;
-    }
-    return uniqIndexMap[ele];
-  });
-
-  return [uniqArray, indexMap];
-}
-
-function binCount(array: number[]) {
-  const min: number = _.min(array);
-  const max: number = _.max(array);
-
-  const arrToObj = array.reduce(
-    (acc, ele, i) => ({
-      ...acc,
-      [ele]: i,
-    }),
-    {},
-  );
-  const retArray = Array(max - min).fill(0);
-  for (let i = 0; i < retArray.length; i++) {
-    if (arrToObj[i + min]) {
-      retArray[i] = arrToObj[i + min];
-    }
-  }
-
-  return retArray;
-}
 export class StratifiedShuffleSplit {
   // private n_splits: number;
-  private test_size: number;
-  private train_size: number;
-  // private random_state: number;
-  private default_test_size: number = 0.1;
+  private testSize: number;
+  private trainSize: number;
+  // private seed: number;
+  private defaultTestSize: number = 0.1;
   constructor(
     // n_splits: number = 10,
-    test_size: number = null,
-    train_size: number = null,
-    // random_state: number = null
+    testSize: number = null,
+    trainSize: number = null,
+    // seed: number = null,
   ) {
     // this.n_splits = n_splits;
-    this.test_size = test_size;
-    this.train_size = train_size;
-    // this.random_state = random_state;
+    this.testSize = testSize;
+    this.trainSize = trainSize;
+    // this.seed = seed;
   }
 
   split = (X: Type1DMatrix<any> | Type2DMatrix<any> = null, y: Type1DMatrix<any> = null): any[] => {
     const XTensor = convertToTensor(X);
     // const yTensor = convertToTensor(y);
-    const n_samples = _num_samples(XTensor);
+    const nSamples = numSamples(XTensor);
 
-    const [n_test, n_train] = validate_shuffle_split(
-      n_samples,
-      this.test_size,
-      this.train_size,
-      this.default_test_size,
-    );
+    const [nTest, nTrain] = validateShuffleSplit(nSamples, this.testSize, this.trainSize, this.defaultTestSize);
 
-    const [classes, y_indices] = uniq(y);
-    const n_classes = classes.length;
-    const class_counts = binCount(y_indices);
+    const [classes, yIndices] = invidualize(y);
+    const nClasses = classes.length;
+    const classCounts = countBin(yIndices);
 
-    if (_.min(class_counts) < 2) {
+    if (_.min(classCounts) < 2) {
       throw new Error(
         `The least populated class in y=${y} has only 1 member, which is too few. The minimum number of groups for any class cannot be less than 2.`,
       );
     }
 
-    if (n_train < n_classes) {
-      throw new Error(`The train_size = ${n_train} should be greater or equal to the number of classes = ${n_classes}`);
+    if (nTrain < nClasses) {
+      throw new Error(`The train_size = ${nTrain} should be greater or equal to the number of classes = ${nClasses}`);
     }
 
-    if (n_test < n_classes) {
-      throw new Error(`The test_size = ${n_test} should be greater or equal to the number of classes = ${n_classes}`);
+    if (nTest < nClasses) {
+      throw new Error(`The test_size = ${nTest} should be greater or equal to the number of classes = ${nClasses}`);
     }
 
+    const cumsumClassCounts: tf.Tensor1D = tf.cumsum(classCounts);
+    // const classIndices = arraySplit(
+    //   yIndices.sort(),
+    //   cumsumClassCounts.slice(0, cumsumClassCounts.shape[0] - 1).arraySync(),
+    // );
+    arraySplit(yIndices.sort(), cumsumClassCounts.slice(0, cumsumClassCounts.shape[0] - 1).arraySync());
     return [];
   };
 
   private;
 }
 
-function validate_shuffle_split(
+function validateShuffleSplit(
   n_samples: number,
   test_size: number,
   train_size: number,

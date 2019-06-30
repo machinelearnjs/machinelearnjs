@@ -202,7 +202,7 @@ export function validateShapesEqual(
  * get number of samples from an array
  * @param array - type matrix or tensor
  */
-export function _num_samples(array: TypeMatrix<any> | tf.Tensor = null): number {
+export function numSamples(array: TypeMatrix<any> | tf.Tensor = null): number {
   if (!array) {
     throw new ValidationError(`array cant be null`);
   }

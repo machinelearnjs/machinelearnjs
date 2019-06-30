@@ -1,4 +1,5 @@
 import * as tf from '@tensorflow/tfjs';
+import { isInt } from '@tensorflow/tfjs-core/dist/util';
 import * as _ from 'lodash';
 import { Type1DMatrix, Type2DMatrix, TypeMatrix } from '../types';
 import { ValidationError, ValidationInconsistentShape } from './Errors';
@@ -16,11 +17,8 @@ import { validateMatrix1D, validateMatrix2D } from './validation';
  * @param X
  * @ignore
  */
-export function inferShape(X: TypeMatrix<any> | tf.Tensor): number[] {
+export function inferShape(X: TypeMatrix<any>): number[] {
   try {
-    if (X instanceof tf.Tensor) {
-      return X.shape;
-    }
     return tf.tensor(X).shape;
   } catch (e) {
     throw new ValidationInconsistentShape(e);
@@ -112,3 +110,120 @@ export const ensure2DMatrix = (X: Type2DMatrix<number> | Type1DMatrix<number>): 
   const matrix1D = validateMatrix1D(X);
   return _.map(matrix1D, (o) => [o]);
 };
+
+/**
+ *
+ * @param array - target matrix
+ * @ignore
+ */
+export function invidualize(array: Type1DMatrix<number> = null): Type2DMatrix<number> {
+  const uniqArray = _.uniq(_.flatten(array)).sort();
+  let min = Number.MAX_VALUE;
+  let max = Number.MIN_VALUE;
+
+  const valueCount = {};
+  const uniqIndexMap = uniqArray.reduce((acc, ele, i) => {
+    if (min > ele) {
+      min = ele;
+    }
+
+    if (max < ele) {
+      max = ele;
+    }
+
+    return {
+      ...acc,
+      [ele]: i,
+    };
+  }, {});
+
+  const indexMap = array.map((ele) => {
+    if (valueCount[ele]) {
+      valueCount[ele] += 1;
+    } else {
+      valueCount[ele] = 1;
+    }
+    return uniqIndexMap[ele];
+  });
+
+  return [uniqArray, indexMap];
+}
+
+/**
+ *
+ * Count number of occurrences of each value in array of non-negative ints.
+ * countBin([0, 1, 1, 3, 2, 1, 7]) = [1, 3, 1, 1, 0, 0, 0, 1]
+ * countBin([0, 1, 1, 2, 2, 2], [0.3, 0.5, 0.2, 0.7, 1., -0.6]) = [ 0.3,  0.7,  1.1]
+ * countBin([7]) = [0, 0, 0, 0, 0, 0, 0, 1]
+ * @param array
+ */
+export function countBin(array: Type1DMatrix<number>, weights?: Type1DMatrix<number>): Type1DMatrix<number> {
+  if (weights && array.length !== weights.length) {
+    throw Error(`weights=${weights} and targetArray=${array} should be of same length.`);
+  }
+  const min: number = _.min(array);
+  const max: number = _.max(array);
+
+  const retArray = Array(max - min + 1).fill(0);
+  if (!weights) {
+    weights = Array(array.length).fill(1);
+  }
+
+  const arrToObj = array.reduce((acc, ele, i) => {
+    if (!isInt(ele)) {
+      throw Error(`Only integer values are acceptable in the values of ${array}`);
+    }
+    return {
+      ...acc,
+      [ele]: (acc[ele] || 0) + weights[i],
+    };
+  }, {});
+
+  for (let i = 0; i < retArray.length; i++) {
+    if (arrToObj[i + min]) {
+      retArray[i] = arrToObj[i + min];
+    }
+  }
+
+  return [...Array(min).fill(0), ...retArray];
+}
+
+/**
+ * Split an array into multiple sub-arrays.
+ * @param array
+ * @param indices_or_sections
+ */
+
+export function arraySplit(
+  array: Type1DMatrix<any>,
+  indices_or_sections: number | Type1DMatrix<number>,
+): Type2DMatrix<any> {
+  const nTotal: number = array.length;
+  let nSections: number = null;
+  let divPoints: tf.Tensor1D = null;
+  if (indices_or_sections instanceof Array) {
+    nSections = indices_or_sections.length + 1;
+    divPoints = tf.tensor([0, ...indices_or_sections, nTotal]);
+  } else {
+    if (indices_or_sections <= 0) {
+      throw Error('The number of sections can not be less than one');
+    }
+    nSections = Math.floor(indices_or_sections);
+    const nEachSection = Math.floor(nTotal / nSections);
+    const extras = nTotal % nSections;
+    divPoints = tf.cumsum([
+      0,
+      ...Array(extras).fill(nEachSection + 1),
+      ...Array(nSections - extras).fill(nEachSection),
+    ]);
+  }
+
+  const subArrays: Type2DMatrix<any> = [];
+  for (let i = 0; i < nSections; i++) {
+    const st = divPoints.get(i);
+    const end = divPoints.get(i + 1);
+    subArrays.push(array.slice(st, end));
+  }
+
+  return subArrays;
+}
