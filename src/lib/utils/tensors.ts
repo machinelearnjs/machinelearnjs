@@ -106,12 +106,14 @@ export const covariance = (
 ): tf.Scalar => {
   return X.sub(xMean)
     .dot(Y.sub(yMean))
-    .cumsum()
-    .dot(tf.scalar(1 / X.shape[0]))
+    .mul(tf.scalar(1 / X.shape[0]))
     .asScalar();
 };
 
 export const variance = (X: tf.Tensor<tf.Rank.R1>, xMean: tf.Scalar): tf.Scalar => {
   const tmp = X.sub(xMean);
-  return tmp.dot(tmp).cumsum();
+  return tmp
+    .dot(tmp)
+    .mul(tf.scalar(1 / X.shape[0]))
+    .asScalar();
 };
