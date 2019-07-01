@@ -1,6 +1,16 @@
 // NOTE: Below custom errors are hack because Jest has a bug with asserting error types
 
 /**
+ * The error is used to indicate that some assertion failed
+ * @ignore
+ */
+export const AssertionError = function(message) {
+  Error.captureStackTrace(this, this.constructor);
+  this.name = this.constructor.name;
+  this.message = message;
+};
+
+/**
  * The error is used for class initiation failures due to invalid arguments.
  * @ignore
  */
