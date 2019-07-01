@@ -220,7 +220,7 @@ export class LinearRegression {
     const b1 = covariance(tf.tensor1d(X), xMean, tf.tensor1d(y), yMean)
       .div(variance(tf.tensor1d(X), xMean))
       .asScalar();
-    const b0 = yMean.sub(b1.dot(xMean)).asScalar();
+    const b0 = yMean.sub(b1.mul(xMean)).asScalar();
 
     return [b0, b1];
   }
