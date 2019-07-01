@@ -1,5 +1,6 @@
 import { LinearRegression } from '../../src/lib/linear_model';
 import { ValidationError } from '../../src/lib/utils/Errors';
+import { assertArrayAlmostEqual } from '../util_testing';
 
 describe('linear_model:LinearRegression (Univariate)', () => {
   const X1 = [1, 2, 4, 3, 5];
@@ -10,7 +11,7 @@ describe('linear_model:LinearRegression (Univariate)', () => {
 
     const result1 = lr.predict([1, 2]);
     const expected1 = [1.1999999523162839, 1.999999952316284];
-    expect(result1).toEqual(expected1);
+    assertArrayAlmostEqual(result1, expected1);
 
     const result2 = lr.predict([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
     const expected2 = [
@@ -25,7 +26,7 @@ describe('linear_model:LinearRegression (Univariate)', () => {
       7.599999952316284,
       8.399999952316284,
     ];
-    expect(result2).toEqual(expected2);
+    assertArrayAlmostEqual(result2, expected2);
   });
 
   it('should reload and predict the same result', () => {
@@ -35,14 +36,14 @@ describe('linear_model:LinearRegression (Univariate)', () => {
 
     // Experimenting before saving the checkpoint
     const result1 = lr.predict([1, 2]);
-    expect(result1).toEqual(expected1);
+    assertArrayAlmostEqual(result1, expected1);
 
     // Experimenting after saving the checkpoint
     const checkpoint = lr.toJSON();
     const lr2 = new LinearRegression();
     lr2.fromJSON(checkpoint);
     const result2 = lr2.predict([1, 2]);
-    expect(result2).toEqual(expected1);
+    assertArrayAlmostEqual(result2, expected1);
   });
 
   it('should test NaNs', () => {
@@ -54,8 +55,8 @@ describe('linear_model:LinearRegression (Univariate)', () => {
     expect(result1).toEqual(expected1);
 
     const result2 = lr.predict([NaN, 123]);
-    const expected2 = [NaN, 98.79999995231628];
-    expect(result2).toEqual(expected2);
+    const expected2 = [NaN, 98.8];
+    assertArrayAlmostEqual(result2, expected2, 4);
   });
 
   it('should throw an exception when invalid data is given to the fit function', () => {
@@ -107,11 +108,11 @@ describe('linear_model:LinearRegression (Multivariate)', () => {
     lr.fit(X1, y1);
     const result1 = lr.predict([[1, 2]]);
     const expected1 = [1.0000001788139343];
-    expect(result1).toEqual(expected1);
+    assertArrayAlmostEqual(result1, expected1);
 
     const result2 = lr.predict([[1, 2], [3, 4], [5, 6], [7, 8]]);
-    const expected = [1.0000001788139343, 3.0000003576278687, 5.000000536441803, 7.000000715255737];
-    expect(result2).toEqual(expected);
+    const expected2 = [1.0000001788139343, 3.0000003576278687, 5.000000536441803, 7.000000715255737];
+    assertArrayAlmostEqual(result2, expected2);
   });
 
   it('should reload and predict the same result', () => {
@@ -121,14 +122,14 @@ describe('linear_model:LinearRegression (Multivariate)', () => {
 
     // Experimenting before saving the checkpoint
     const result1 = lr.predict([[1, 2]]);
-    expect(result1).toEqual(expected1);
+    assertArrayAlmostEqual(result1, expected1);
 
     // Experimenting after saving the checkpoint
     const checkpoint = lr.toJSON();
     const lr2 = new LinearRegression();
     lr2.fromJSON(checkpoint);
     const result2 = lr2.predict([[1, 2]]);
-    expect(result2).toEqual(expected1);
+    assertArrayAlmostEqual(result2, expected1);
   });
 
   it('should test NaNs', () => {
@@ -137,10 +138,11 @@ describe('linear_model:LinearRegression (Multivariate)', () => {
 
     const result1 = lr.predict([[NaN, NaN]]);
     const expected1 = [NaN];
+    assertArrayAlmostEqual(result1, expected1);
     expect(result1).toEqual(expected1);
 
     const result2 = lr.predict([[NaN, 123]]);
-    expect(result2).toEqual(expected1);
+    assertArrayAlmostEqual(result2, expected1);
   });
 
   it('should throw an exception when X and y sample sizes do not match', () => {
