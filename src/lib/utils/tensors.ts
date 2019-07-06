@@ -98,6 +98,14 @@ export const ensure2DMatrix = (X: Type2DMatrix<number> | Type1DMatrix<number>): 
   return _.map(matrix1D, (o) => [o]);
 };
 
+/**
+ * Calculates the covariance
+ * @param X
+ * @param xMean
+ * @param Y
+ * @param yMean
+ * @ignore
+ */
 export const covariance = (
   X: tf.Tensor<tf.Rank.R1>,
   xMean: tf.Scalar,
@@ -110,6 +118,12 @@ export const covariance = (
     .asScalar();
 };
 
+/**
+ * Calculates the variance
+ * @param X
+ * @param xMean
+ * @ignore
+ */
 export const variance = (X: tf.Tensor<tf.Rank.R1>, xMean: tf.Scalar): tf.Scalar => {
   const tmp = X.sub(xMean);
   return tmp
