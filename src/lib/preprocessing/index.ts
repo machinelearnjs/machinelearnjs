@@ -2,4 +2,6 @@ import { add_dummy_feature, Binarizer, MinMaxScaler, normalize, OneHotEncoder, P
 
 import { Imputer } from './Imputer';
 
-export { add_dummy_feature, Binarizer, MinMaxScaler, normalize, OneHotEncoder, PolynomialFeatures, Imputer };
+import { LabelEncoder } from './label';
+
+export { add_dummy_feature, Binarizer, MinMaxScaler, normalize, OneHotEncoder, PolynomialFeatures, Imputer, LabelEncoder };
