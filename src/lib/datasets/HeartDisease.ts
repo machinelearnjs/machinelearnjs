@@ -6,6 +6,8 @@ import { BaseDataset } from './BaseDataset';
  * The "goal" field refers to the presence of heart disease in the patient. It is integer valued from 0 (no presence) to 4.
  * Experiments with the Cleveland database have concentrated on simply attempting to distinguish presence (values 1,2,3,4) from absence (value 0).
  *
+ * Note: This API is not available on the browsers
+ *
  * @example
  * import { HeartDisease } from "machinelearn/datasets";
  *

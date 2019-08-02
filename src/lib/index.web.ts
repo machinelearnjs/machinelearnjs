@@ -12,16 +12,16 @@ import * as tree from './tree';
 // NOTE: For the browser bundling, we will temporarily ignore datasets and SVM API due to a few issues.
 // These APIs won't be available for the browsers until there is a patch.
 
-// prettier-ignore
-export {
-	cluster,
-	decomposition,
-	ensemble,
-	feature_extraction,
-	linear_model,
-	metrics,
-	model_selection,
-	neighbors,
-	preprocessing,
-	tree,
-}
+// @ts-ignore: ml module binding on window
+window.ml = {
+  cluster,
+  decomposition,
+  ensemble,
+  feature_extraction,
+  linear_model,
+  metrics,
+  model_selection,
+  neighbors,
+  preprocessing,
+  tree,
+};
