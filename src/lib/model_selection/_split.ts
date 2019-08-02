@@ -1,9 +1,9 @@
 import * as tf from '@tensorflow/tfjs';
 import * as _ from 'lodash';
-import * as Random from 'random-js';
 import { Type1DMatrix, Type2DMatrix } from '../types';
 import { ValidationError } from '../utils/Errors';
-import { arraySplit, convertToTensor, countBin, inferShape, invidualize } from '../utils/tensors';
+import RandomState, { RandomStateObj } from '../utils/random';
+import { approximateMode, arraySplit, convertToTensor, countBin, inferShape, invidualize } from '../utils/tensors';
 import { numSamples, validateFitInputs } from '../utils/validation';
 
 const testShapes = (X: Type1DMatrix<any> | Type2DMatrix<any>, y: Type1DMatrix<any>) => {
@@ -168,8 +168,7 @@ export function train_test_split(
     throw new ValidationError('Sum of test_size and train_size does not equal 1');
   }
   // Initiate Random engine
-  const randomEngine = Random.engines.mt19937();
-  randomEngine.seed(random_state);
+  const randomEngine: RandomStateObj = new RandomState(random_state);
 
   // split
   const xTrain = [];
@@ -179,7 +178,7 @@ export function train_test_split(
 
   // Getting X_train and y_train
   while (xTrain.length < trainSizeLength && yTrain.length < trainSizeLength) {
-    const index = Random.integer(0, X.length - 1)(randomEngine);
+    const index = randomEngine.rangedInt(0, X.length - 1);
 
     // X_train
     xTrain.push(_X[index]);
@@ -191,7 +190,7 @@ export function train_test_split(
   }
 
   while (xTest.length < testSizeLength) {
-    const index = Random.integer(0, _X.length - 1)(randomEngine);
+    const index = randomEngine.rangedInt(0, _X.length - 1);
     // X test
     xTest.push(_X[index]);
     _X.splice(index, 1);
@@ -219,24 +218,19 @@ const testRangeValidationError = (test_size, n_samples) => rangeValidationError(
 const trainRangeValidationError = (test_size, n_samples) => rangeValidationError('test_size', test_size, n_samples);
 
 export class StratifiedShuffleSplit {
-  // private n_splits: number;
+  private n_splits: number;
   private testSize: number;
   private trainSize: number;
-  // private seed: number;
+  private rng: RandomState;
   private defaultTestSize: number = 0.1;
-  constructor(
-    // n_splits: number = 10,
-    testSize: number = null,
-    trainSize: number = null,
-    // seed: number = null,
-  ) {
-    // this.n_splits = n_splits;
+  constructor(n_splits: number = 10, testSize: number = null, trainSize: number = null, seed: number = null) {
+    this.n_splits = n_splits;
     this.testSize = testSize;
     this.trainSize = trainSize;
-    // this.seed = seed;
+    this.rng = new RandomState(seed);
   }
 
-  split = (X: Type1DMatrix<any> | Type2DMatrix<any> = null, y: Type1DMatrix<any> = null): any[] => {
+  split = (X: Type1DMatrix<any> | Type2DMatrix<any> = null, y: Type1DMatrix<any> = null): Type1DMatrix<any> => {
     const XTensor = convertToTensor(X);
     // const yTensor = convertToTensor(y);
     const nSamples = numSamples(XTensor);
@@ -244,8 +238,8 @@ export class StratifiedShuffleSplit {
     const [nTest, nTrain] = validateShuffleSplit(nSamples, this.testSize, this.trainSize, this.defaultTestSize);
 
     const [classes, yIndices] = invidualize(y);
-    const nClasses = classes.length;
-    const classCounts = countBin(yIndices);
+    const nClasses: number = classes.length;
+    const classCounts: Type1DMatrix<number> = countBin(yIndices);
 
     if (_.min(classCounts) < 2) {
       throw new Error(
@@ -262,15 +256,28 @@ export class StratifiedShuffleSplit {
     }
 
     const cumsumClassCounts: tf.Tensor1D = tf.cumsum(classCounts);
-    // const classIndices = arraySplit(
-    //   yIndices.sort(),
-    //   cumsumClassCounts.slice(0, cumsumClassCounts.shape[0] - 1).arraySync(),
-    // );
-    arraySplit(yIndices.sort(), cumsumClassCounts.slice(0, cumsumClassCounts.shape[0] - 1).arraySync());
-    return [];
-  };
+    const classIndices = arraySplit(
+      yIndices.sort(),
+      cumsumClassCounts.slice(0, cumsumClassCounts.shape[0] - 1).arraySync(),
+    );
 
-  private;
+    const test = [];
+    const train = [];
+    for (let i = 0; i <= this.n_splits; i++) {
+      const n_i: Type1DMatrix<number> = approximateMode(classCounts, nTrain, this.rng);
+      const classCountsRemaining: Type1DMatrix<number> = classCounts.map((item, index) => n_i[index] - item);
+      const t_i: Type1DMatrix<number> = approximateMode(classCountsRemaining, nTest, this.rng);
+
+      for (let j = 0; j <= nClasses; j++) {
+        const permutation: Type1DMatrix<any> = this.rng.permutation(classCounts[i]);
+        const permIndicesClassI = permutation.map((val) => classIndices[j][val]);
+        train.concat(permIndicesClassI.slice(0, n_i[i]));
+        test.concat(permIndicesClassI.slice(n_i[i], n_i[i] + t_i[i]));
+      }
+    }
+
+    return [this.rng.shuffle(train), this.rng.shuffle(test)];
+  };
 }
 
 function validateShuffleSplit(

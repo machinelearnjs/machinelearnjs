@@ -73,6 +73,7 @@
     "lodash": "4.17.11",
     "numeric": "1.2.6",
     "random-js": "1.0.8",
+    "seedrandom": "^3.0.1",
     "stopword": "0.1.10"
   },
   "devDependencies": {

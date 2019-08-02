@@ -1,8 +1,8 @@
 import * as tf from '@tensorflow/tfjs';
-import { isInt } from '@tensorflow/tfjs-core/dist/util';
 import * as _ from 'lodash';
 import { Type1DMatrix, Type2DMatrix, TypeMatrix } from '../types';
 import { ValidationError, ValidationInconsistentShape } from './Errors';
+import { RandomStateObj } from './random';
 import { validateMatrix1D, validateMatrix2D } from './validation';
 
 /**
@@ -170,7 +170,7 @@ export function countBin(array: Type1DMatrix<number>, weights?: Type1DMatrix<num
   }
 
   const arrToObj = array.reduce((acc, ele, i) => {
-    if (!isInt(ele)) {
+    if (Math.floor(ele) !== ele) {
       throw Error(`Only integer values are acceptable in the values of ${array}`);
     }
     return {
@@ -226,4 +226,55 @@ export function arraySplit(
   }
 
   return subArrays;
+}
+
+export function approximateMode(
+  classCounts: Type1DMatrix<number>,
+  nDraws: number,
+  rng: RandomStateObj,
+): Type1DMatrix<number> {
+  // this computes a bad approximation to the mode of the
+  // multivariate hypergeometric given by class_counts and n_draws
+  const countSum = _.sum(classCounts);
+  let flooredSum = 0;
+  // floored means we don't overshoot n_samples, but probably undershoot
+  const { floored, remainder } = classCounts.reduce(
+    (acc, val) => {
+      const value = nDraws * val / countSum;
+      const flooredVal = Math.floor(value);
+      const diff = value - flooredVal;
+      acc.continuous.push(value);
+      acc.floored.push(flooredVal);
+      acc.remainder.push(diff);
+      flooredSum += flooredVal;
+      return acc;
+    },
+    { floored: [], continuous: [], remainder: [] },
+  );
+
+  let needToAdd = Math.floor(nDraws - flooredSum);
+  // we add samples according to how much "left over" probability
+  // they had, until we arrive at n_samples
+  // need_to_add = int(n_draws - floored.sum())
+  if (needToAdd > 0) {
+    const values = _.sortedUniq(remainder);
+    for (let i = 0; i < values.length; i++) {
+      const val = values[i];
+      let inds = remainder.reduce((acc, rval, j) => {
+        if (rval === val) {
+          acc.push(j);
+        }
+        return acc;
+      }, []);
+      const addNow = Math.min(inds.length, needToAdd);
+      inds = rng.choice(inds, addNow);
+      floored[inds] += 1;
+      needToAdd -= addNow;
+      if (needToAdd === 0) {
+        break;
+      }
+    }
+  }
+
+  return floored;
 }
