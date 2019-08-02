@@ -2,7 +2,8 @@ const path = require('path');
 
 module.exports = {
   entry: './src/lib/index.web.ts',
-  devtool: 'inline-source-map',
+  mode: 'production',
+  devtool: 'source-map',
   module: {
     rules: [
       {
@@ -16,7 +17,7 @@ module.exports = {
     extensions: ['.tsx', '.ts', '.js'],
   },
   output: {
-    filename: 'bundle.js',
+    filename: 'machinelearn.min.js',
     path: path.resolve(__dirname, '../../build/lib'),
   },
   node: {

@@ -35,9 +35,8 @@
     "OneHotEncoding"
   ],
   "scripts": {
-    "build": "yarn clean && yarn build:main && yarn build:module && yarn build:web && yarn build:datasets",
+    "build": "yarn clean && yarn build:main && yarn build:web && yarn build:datasets",
     "build:main": "npx tsc -p tsconfig.json && npx ncp package.json ./build/lib/package.json && npx ncp README.md ./build/lib/README.md && npx ncp .npmignore ./build/lib/.npmignore",
-    "build:module": "npx tsc -p tsconfig.module.json",
     "build:web": "npx webpack --config ./scripts/webpack/webpack.config.js",
     "lint": "npx tslint -t verbose 'test/**/*.ts' 'src/**/*.ts' 'docs/**/*.ts'",
     "build:datasets": "npx ncp src/lib/datasets/data build/lib/datasets/data",
