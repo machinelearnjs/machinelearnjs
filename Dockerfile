@@ -16,8 +16,6 @@ COPY ./package.json $CORE
 COPY ./yarn.lock $CORE
 RUN yarn
 
-RUN yarn global add typescript
-
 # Finally add remaining project source code to the docker container
 ADD . $CORE
 

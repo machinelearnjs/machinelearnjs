@@ -14,6 +14,8 @@ import { BaseDataset } from './BaseDataset';
  *
  * It contains 50 samples with 3 classes of 'Setosa', 'versicolor' and 'virginica'
  *
+ * Note: This API is not available on the browsers
+ *
  * @example
  * import { Iris } from 'machinelearn/datasets';
  *

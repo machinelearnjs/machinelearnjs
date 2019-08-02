@@ -5,7 +5,7 @@ import { validateFitInputs, validateMatrix1D, validateMatrix2D } from '../utils/
 
 /**
  * Options used by sub classes
- * Notice type is disabled as they are set statically from children classes
+ * Notice type is disabled as they are set statically from children classes.
  */
 export interface SVMOptions {
   /**
@@ -71,6 +71,8 @@ export interface SVMOptions {
 /**
  * BaseSVM class used by all parent SVM classes that are based on libsvm.
  * You may still use this to use the underlying libsvm-ts more flexibly.
+ *
+ * Note: This API is not available on the browsers
  */
 export class BaseSVM implements IMlModel<number> {
   protected svm: SVM;
@@ -189,6 +191,8 @@ export class BaseSVM implements IMlModel<number> {
  * functions and how gamma, coef0 and degree affect each other, see the corresponding
  * section in the narrative documentation: Kernel functions.
  *
+ * Note: This API is not available on the browsers
+ *
  * @example
  * import { SVC } from 'machinelearn/svm';
  *
@@ -216,6 +220,8 @@ export class SVC extends BaseSVM {
  *
  * This class supports both dense and sparse input.
  *
+ * Note: This API is not available on the browsers
+ *
  * @example
  * import { SVR } from 'machinelearn/svm';
  *
@@ -241,6 +247,8 @@ export class SVR extends BaseSVM {
  *
  * The implementation is based on libsvm.
  *
+ * Note: This API is not available on the browsers
+ *
  * @example
  * import { OneClassSVM } from 'machinelearn/svm';
  *
@@ -265,6 +273,8 @@ export class OneClassSVM extends BaseSVM {
  * Similar to SVC but uses a parameter to control the number of support vectors.
  *
  * The implementation is based on libsvm.
+ *
+ * Note: This API is not available on the browsers
  *
  * @example
  * import { NuSVC } from 'machinelearn/svm';
@@ -292,6 +302,8 @@ export class NuSVC extends BaseSVM {
  * replaces the parameter epsilon of epsilon-SVR.
  *
  * The implementation is based on libsvm.
+ *
+ * Note: This API is not available on the browsers
  *
  * @example
  * import { NuSVR } from 'machinelearn/svm';
