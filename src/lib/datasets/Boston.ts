@@ -16,6 +16,8 @@ import { BaseDataset } from './BaseDataset';
  * The data was originally published by Harrison, D. and Rubinfeld, D.L.
  * `Hedonic prices and the demand for clean air', J. Environ. Economics & Management, vol.5, 81-102, 1978.
  *
+ * Note: This API is not available on the browsers
+ *
  * @example
  * import { Boston } from "machinelearn/datasets";
  *
