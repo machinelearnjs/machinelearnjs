@@ -27,6 +27,8 @@ $ npm install --save machinelearn
 
 On the browsers
 
+We use [jsdeliver](https://www.jsdelivr.com/package/npm/machinelearn) to distribute browser version of machinelearn.js
+
 ```html
 <script src="https://cdn.jsdelivr.net/npm/machinelearn/machinelearn.min.js"></script>
 <script>
@@ -34,6 +36,8 @@ On the browsers
     const cls = new RandomForestClassifier();
 </script>
 ```
+
+Please see [https://www.jsdelivr.com/package/npm/machinelearn](https://www.jsdelivr.com/package/npm/machinelearn) for more details.
 
 # Accelerations
 
