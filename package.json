@@ -38,7 +38,7 @@
     "build": "yarn clean && yarn build:main && yarn build:module && yarn build:web && yarn build:datasets",
     "build:main": "npx tsc -p tsconfig.json && npx ncp package.json ./build/lib/package.json && npx ncp README.md ./build/lib/README.md && npx ncp .npmignore ./build/lib/.npmignore",
     "build:module": "npx tsc -p tsconfig.module.json",
-    "build:web": "npx tsc -p tsconfig.json --module amd --out build/lib/machinelearn.web.js",
+    "build:web": "npx webpack --config ./scripts/webpack/webpack.config.js",
     "lint": "npx tslint -t verbose 'test/**/*.ts' 'src/**/*.ts' 'docs/**/*.ts'",
     "build:datasets": "npx ncp src/lib/datasets/data build/lib/datasets/data",
     "fix": "yarn lint:fix && yarn pretty:fix",
@@ -95,6 +95,7 @@
     "release-it": "7.4.8",
     "standard-version": "4.0.0",
     "ts-jest": "22.4.5",
+    "ts-loader": "6.0.4",
     "ts-node": "8.1.0",
     "tslint": "5.4.3",
     "tslint-config-prettier": "1.8.0",
@@ -102,7 +103,9 @@
     "typedoc-plugin-markdown": "1.1.27",
     "typescript": "3.4.1",
     "vuepress": "0.12.0",
-    "watch": "1.0.2"
+    "watch": "1.0.2",
+    "webpack": "4.39.0",
+    "webpack-cli": "3.3.6"
   },
   "resolutions": {
     "webpack-dev-middleware": "3.6.0"
