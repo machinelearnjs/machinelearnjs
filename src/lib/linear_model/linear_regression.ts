@@ -54,15 +54,13 @@ export class LinearRegression {
   public fit(
     X: Type1DMatrix<number> | Type2DMatrix<number> = null,
     y: Type1DMatrix<number> = null,
-  ): [tf.Scalar, tf.Scalar] | tf.Tensor<tf.Rank.R1> {
+  ): [tf.Scalar, tf.Scalar] | number[] {
     this.fitInternal(X, y);
     if (this.weightsTensor instanceof Array) {
-      this.weightsTensor.forEach((t) => t.arraySync());
+      return this.weightsTensor.map((t) => t.arraySync());
     } else {
-      this.weightsTensor.arraySync();
+      return this.weightsTensor.arraySync();
     }
-
-    return this.weightsTensor;
   }
 
   /**
@@ -73,15 +71,13 @@ export class LinearRegression {
   public async fitAsync(
     X: Type1DMatrix<number> | Type2DMatrix<number> = null,
     y: Type1DMatrix<number> = null,
-  ): Promise<[tf.Scalar, tf.Scalar] | tf.Tensor<tf.Rank.R1>> {
+  ): Promise<[number, number] | number[]> {
     this.fitInternal(X, y);
     if (this.weightsTensor instanceof Array) {
-      await Promise.all(this.weightsTensor.map((t) => t.array()));
+      return await Promise.all(this.weightsTensor.map((t) => t.array()));
     } else {
-      await this.weightsTensor.array();
+      return await this.weightsTensor.array();
     }
-
-    return this.weightsTensor;
   }
 
   private fitInternal(X: Type1DMatrix<number> | Type2DMatrix<number> = null, y: Type1DMatrix<number> = null): void {
@@ -150,14 +146,17 @@ export class LinearRegression {
     /**
      * Coefficients
      */
-    weightsTensor: [tf.Scalar, tf.Scalar] | tf.Tensor<tf.Rank.R1>;
+    weightsTensor: [number, number] | number[];
     /**
      * Type of the linear regression model
      */
     type: TypeLinearReg;
   } {
     return {
-      weightsTensor: this.weightsTensor,
+      weightsTensor:
+        this.weightsTensor instanceof Array
+          ? this.weightsTensor.map((t) => t.arraySync())
+          : this.weightsTensor.arraySync(),
       type: this.type,
     };
   }
@@ -175,13 +174,17 @@ export class LinearRegression {
      */
     type = null,
   }: {
-    weightsTensor: [tf.Scalar, tf.Scalar] | tf.Tensor<tf.Rank.R1>;
+    weightsTensor: [number, number] | number[];
     type: TypeLinearReg;
   }): void {
     if (!weightsTensor || !type) {
       throw new Error('You must provide both weights and type to restore the linear regression model');
     }
-    this.weightsTensor = weightsTensor;
+    if (this.weightsTensor instanceof Array && this.weightsTensor.length === 2) {
+      this.weightsTensor = [tf.scalar(weightsTensor[0]), tf.scalar(weightsTensor[1])];
+    } else {
+      this.weightsTensor = tf.tensor(weightsTensor);
+    }
     this.type = type;
   }
 
@@ -193,7 +196,6 @@ export class LinearRegression {
    */
   private univariatePredict(X: Type1DMatrix<number> = null): tf.Tensor<tf.Rank> {
     const xWrapped = tf.tensor1d(X);
-
     return xWrapped.mul(this.weightsTensor[1]).add(this.weightsTensor[0]);
   }
 

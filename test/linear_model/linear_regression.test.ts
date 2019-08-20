@@ -32,7 +32,9 @@ describe('linear_model:LinearRegression (Univariate)', () => {
   it('should reload and predict the same result', () => {
     const expected1 = [1.1999999523162839, 1.999999952316284];
     const lr = new LinearRegression();
+    console.log('before fit first');
     lr.fit(X1, y1);
+    console.log('after fit first');
 
     // Experimenting before saving the checkpoint
     const result1 = lr.predict([1, 2]);
@@ -40,6 +42,7 @@ describe('linear_model:LinearRegression (Univariate)', () => {
 
     // Experimenting after saving the checkpoint
     const checkpoint = lr.toJSON();
+    console.log('checking checkpoint', checkpoint);
     const lr2 = new LinearRegression();
     lr2.fromJSON(checkpoint);
     const result2 = lr2.predict([1, 2]);
