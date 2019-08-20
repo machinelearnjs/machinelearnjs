@@ -1,4 +1,3 @@
-import * as tf from '@tensorflow/tfjs';
 import * as _ from 'lodash';
 import { ValidationError, ValidationInconsistentShape } from '../../src/lib/utils/Errors';
 import math from '../../src/lib/utils/MathExtra';
@@ -127,75 +126,6 @@ describe('math.isArrayOf', () => {
     } catch (err) {
       expect(err).toBeInstanceOf(ValidationError);
     }
-  });
-});
-
-describe('math.covariance', () => {
-  // Normal arrays
-  const X1 = [1, 2, 4, 3, 5];
-  const y1 = [1, 3, 3, 2, 5];
-
-  const xMean1 = tf.mean(X1).dataSync();
-  const yMean1 = tf.mean(y1).dataSync();
-
-  // Size difference
-  const X2 = [1, 4, 7, 8, 9, 10, 10000000];
-  const y2 = [1, 2];
-
-  // Arrays with large numbers
-  const X3 = [9999999999999, 91284981294, 1912839, 12874991291923919];
-  const y3 = [8287288, 819191929129192, 727, 11];
-  const xMean3 = tf.mean(X3).dataSync();
-  const yMean3 = tf.mean(y3).dataSync();
-
-  it('should calculate covariance against x1 and y1', () => {
-    const result = math.covariance(X1, xMean1, y1, yMean1);
-    expect(result).toBe(8);
-  });
-
-  it('should throw an error when x and y are different in sizes', () => {
-    try {
-      math.covariance(X2, 1, y2, 2);
-    } catch (err) {
-      expect(err).toBeInstanceOf(ValidationError);
-    }
-  });
-
-  it('should calculate large numbers', () => {
-    const result = math.covariance(X3, xMean3, y3, yMean3);
-    expect(result).toMatchSnapshot();
-  });
-});
-
-describe('math.variance', () => {
-  // Normal arrays
-  const X1 = [1, 2, 4, 3, 5];
-  const xMean1 = tf.mean(X1).dataSync();
-
-  // Size difference
-  const X2 = null;
-
-  // Arrays with large numbers
-  const X3 = [9999999999999, 91284981294, 1912839, 12874991291923919];
-  const xMean3 = tf.mean(X3).dataSync();
-
-  it('should calculate variance against x1', () => {
-    const result = math.variance(X1, xMean1);
-    expect(result).toBe(10);
-  });
-
-  it('should throw an error when x is not an array', () => {
-    try {
-      math.variance(X2, 1);
-    } catch (err) {
-      expect(err).toBeInstanceOf(ValidationError);
-    }
-  });
-
-  it('should calculate large numbers', () => {
-    const result = math.variance(X3, xMean3);
-    const expected = 1.2425916250970963e32;
-    expect(expected).toBe(result);
   });
 });
 

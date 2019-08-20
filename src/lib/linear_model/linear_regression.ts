@@ -3,13 +3,11 @@
  * - https://machinelearningmastery.com/implement-simple-linear-regression-scratch-python/
  */
 import * as tf from '@tensorflow/tfjs';
-import { size } from 'lodash';
 import * as numeric from 'numeric';
 import { Type1DMatrix, Type2DMatrix } from '../types';
 import { ValidationError } from '../utils/Errors';
-import math from '../utils/MathExtra';
 import { reshape } from '../utils/tensors';
-import { inferShape } from '../utils/tensors';
+import { covariance, inferShape, variance } from '../utils/tensors';
 import { validateMatrix2D } from '../utils/validation';
 
 /**
@@ -45,18 +43,48 @@ export enum TypeLinearReg {
  * // [1.0000001788139343]
  */
 export class LinearRegression {
-  private weights: number[] = [];
+  private weightsTensor: [tf.Scalar, tf.Scalar] | tf.Tensor<tf.Rank.R1>;
   private type: TypeLinearReg = TypeLinearReg.MULTIVARIATE;
 
   /**
-   * fit linear model
+   * Synchronously fit linear model
    * @param {any} X - training values
    * @param {any} y - target values
    */
   public fit(
     X: Type1DMatrix<number> | Type2DMatrix<number> = null,
-    y: Type1DMatrix<number> | Type2DMatrix<number> = null,
-  ): void {
+    y: Type1DMatrix<number> = null,
+  ): [tf.Scalar, tf.Scalar] | tf.Tensor<tf.Rank.R1> {
+    this.fitInternal(X, y);
+    if (this.weightsTensor instanceof Array) {
+      this.weightsTensor.forEach((t) => t.arraySync());
+    } else {
+      this.weightsTensor.arraySync();
+    }
+
+    return this.weightsTensor;
+  }
+
+  /**
+   * Asynchronously fit linear model
+   * @param {any} X - training values
+   * @param {any} y - target values
+   */
+  public async fitAsync(
+    X: Type1DMatrix<number> | Type2DMatrix<number> = null,
+    y: Type1DMatrix<number> = null,
+  ): Promise<[tf.Scalar, tf.Scalar] | tf.Tensor<tf.Rank.R1>> {
+    this.fitInternal(X, y);
+    if (this.weightsTensor instanceof Array) {
+      await Promise.all(this.weightsTensor.map((t) => t.array()));
+    } else {
+      await this.weightsTensor.array();
+    }
+
+    return this.weightsTensor;
+  }
+
+  private fitInternal(X: Type1DMatrix<number> | Type2DMatrix<number> = null, y: Type1DMatrix<number> = null): void {
     if (!Array.isArray(X)) {
       throw new ValidationError('Received a non-array argument for X');
     }
@@ -70,20 +98,34 @@ export class LinearRegression {
     if (xShape.length === 1 && yShape.length === 1 && xShape[0] === yShape[0]) {
       // Univariate linear regression
       this.type = TypeLinearReg.UNIVARIATE;
-      this.weights = this.calculateUnivariateCoeff(X, y); // getting b0 and b1
+      this.weightsTensor = this.calculateUnivariateCoeff(X as Type1DMatrix<number>, y); // getting b0 and b1
     } else if (xShape.length === 2 && yShape.length === 1 && xShape[0] === yShape[0]) {
       this.type = TypeLinearReg.MULTIVARIATE;
-      this.weights = this.calculateMultiVariateCoeff(X, y);
+      this.weightsTensor = this.calculateMultiVariateCoeff(X as Type2DMatrix<number>, y);
     } else {
       throw new ValidationError(`Sample(${xShape[0]}) and target(${yShape[0]}) sizes do not match`);
     }
   }
+
   /**
-   * Predict using the linear model
+   * Synchronously predict using the linear model
    * @param {number} X - Values to predict.
    * @returns {number}
    */
   public predict(X: Type1DMatrix<number> | Type2DMatrix<number> = null): number[] {
+    return this.predictInternal(X).arraySync() as number[];
+  }
+
+  /**
+   * Asynchronously predict using the linear model
+   * @param {number} X - Values to predict.
+   * @returns {number}
+   */
+  public predictAsync(X: Type1DMatrix<number> | Type2DMatrix<number> = null): Promise<number[]> {
+    return this.predictInternal(X).array() as Promise<number[]>;
+  }
+
+  private predictInternal(X: Type1DMatrix<number> | Type2DMatrix<number> = null): tf.Tensor<tf.Rank> {
     if (!Array.isArray(X)) {
       throw new ValidationError('Received a non-array argument for y');
     }
@@ -100,6 +142,7 @@ export class LinearRegression {
       );
     }
   }
+
   /**
    * Get the model details in JSON format
    */
@@ -107,14 +150,14 @@ export class LinearRegression {
     /**
      * Coefficients
      */
-    weights: number[];
+    weightsTensor: [tf.Scalar, tf.Scalar] | tf.Tensor<tf.Rank.R1>;
     /**
      * Type of the linear regression model
      */
     type: TypeLinearReg;
   } {
     return {
-      weights: this.weights,
+      weightsTensor: this.weightsTensor,
       type: this.type,
     };
   }
@@ -126,19 +169,19 @@ export class LinearRegression {
     /**
      * Model's weights
      */
-    weights = null,
+    weightsTensor = null,
     /**
      * Type of linear regression, it can be either UNIVARIATE or MULTIVARIATE
      */
     type = null,
   }: {
-    weights: number[];
+    weightsTensor: [tf.Scalar, tf.Scalar] | tf.Tensor<tf.Rank.R1>;
     type: TypeLinearReg;
   }): void {
-    if (!weights || !type) {
+    if (!weightsTensor || !type) {
       throw new Error('You must provide both weights and type to restore the linear regression model');
     }
-    this.weights = weights;
+    this.weightsTensor = weightsTensor;
     this.type = type;
   }
 
@@ -148,12 +191,10 @@ export class LinearRegression {
    *
    * @param X
    */
-  private univariatePredict(X: Type1DMatrix<number> = null): number[] {
-    const preds = [];
-    for (let i = 0; i < size(X); i++) {
-      preds.push(this.weights[0] + this.weights[1] * X[i]);
-    }
-    return preds;
+  private univariatePredict(X: Type1DMatrix<number> = null): tf.Tensor<tf.Rank> {
+    const xWrapped = tf.tensor1d(X);
+
+    return xWrapped.mul(this.weightsTensor[1]).add(this.weightsTensor[0]);
   }
 
   /**
@@ -162,17 +203,10 @@ export class LinearRegression {
    *
    * @param X
    */
-  private multivariatePredict(X: Type2DMatrix<number> = null): number[] {
-    const preds = [];
-    for (let i = 0; i < X.length; i++) {
-      const row = X[i];
-      let yPred = 0;
-      for (let j = 0; j < row.length; j++) {
-        yPred += this.weights[j] * row[j];
-      }
-      preds.push(yPred);
-    }
-    return preds;
+  private multivariatePredict(X: Type2DMatrix<number> = null): tf.Tensor<tf.Rank> {
+    const xWrapped = tf.tensor2d(X);
+
+    return xWrapped.dot(this.weightsTensor as tf.Tensor<tf.Rank.R1>);
   }
 
   /**
@@ -180,12 +214,15 @@ export class LinearRegression {
    * @param X - X values
    * @param y - y targets
    */
-  private calculateUnivariateCoeff(X, y): number[] {
-    const xMean: any = tf.mean(X).dataSync();
-    const yMean: any = tf.mean(y).dataSync();
-    const b1 = math.covariance(X, xMean, y, yMean) / math.variance(X, xMean);
-    const b0 = yMean - b1 * xMean;
-    return this.weights.concat([b0, b1]);
+  private calculateUnivariateCoeff(X: Type1DMatrix<number>, y: Type1DMatrix<number>): [tf.Scalar, tf.Scalar] {
+    const xMean = tf.mean(X).asScalar();
+    const yMean = tf.mean(y).asScalar();
+    const b1 = covariance(tf.tensor1d(X), xMean, tf.tensor1d(y), yMean)
+      .div(variance(tf.tensor1d(X), xMean))
+      .asScalar();
+    const b0 = yMean.sub(b1.mul(xMean)).asScalar();
+
+    return [b0, b1];
   }
 
   /**
@@ -193,15 +230,13 @@ export class LinearRegression {
    * @param X
    * @param y
    */
-  private calculateMultiVariateCoeff(X, y): number[] {
+  private calculateMultiVariateCoeff(X: Type2DMatrix<number>, y: Type1DMatrix<number>): tf.Tensor<tf.Rank.R1> {
     const [q, r] = tf.linalg.qr(tf.tensor2d(X));
     const rawR = reshape<number>(Array.from(r.dataSync()), r.shape);
     const validatedR = validateMatrix2D(rawR);
-    const weights = tf
+    return tf
       .tensor(numeric.inv(validatedR))
       .dot(q.transpose())
-      .dot(tf.tensor(y))
-      .dataSync();
-    return Array.from(weights);
+      .dot(tf.tensor(y)) as tf.Tensor<tf.Rank.R1>;
   }
 }

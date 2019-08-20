@@ -200,45 +200,6 @@ const subtract = (X, y) => {
 };
 
 /**
- * Calculates covariance
- * @param X
- * @param xMean
- * @param y
- * @param yMean
- * @returns {number}
- * @ignore
- */
-const covariance = (X, xMean, y, yMean) => {
-  if (_.size(X) !== _.size(y)) {
-    throw new ValidationError('X and y should match in size');
-  }
-  let covar = 0.0;
-  for (let i = 0; i < _.size(X); i++) {
-    covar += (X[i] - xMean) * (y[i] - yMean);
-  }
-  return covar;
-};
-
-/**
- * Calculates the variance
- * needed for linear regression
- * @param X
- * @param mean
- * @returns {number}
- * @ignore
- */
-const variance = (X, mean) => {
-  if (!Array.isArray(X)) {
-    throw new ValidationError('X must be an array');
-  }
-  let result = 0.0;
-  for (let i = 0; i < _.size(X); i++) {
-    result += Math.pow(X[i] - mean, 2);
-  }
-  return result;
-};
-
-/**
  * Stack arrays in sequence horizontally (column wise).
  * This is equivalent to concatenation along the second axis, except for 1-D
  * arrays where it concatenates along the first axis. Rebuilds arrays divided by hsplit.
@@ -420,7 +381,6 @@ const generateRandomSubsetOfMatrix = <T>(
 const genRandomIndex = (upperBound: number): number => Math.floor(Math.random() * upperBound);
 
 const math = {
-  covariance,
   euclideanDistance,
   genRandomIndex,
   generateRandomSubset,
@@ -435,7 +395,6 @@ const math = {
   subset,
   size,
   subtract,
-  variance,
 };
 
 export default math;
