@@ -3,7 +3,29 @@ import seedrandom from 'seedrandom';
 import { isNumber } from 'util';
 import { Type1DMatrix } from '../types';
 
-export default class RandomState {
+/**
+ * instance of RandomState
+ * @ignore
+ */
+export interface RandomStateObj {
+  next(): number;
+  shuffle(array: Type1DMatrix<any>): Type1DMatrix<any>;
+  rangedInt(min: number, max: number): number;
+  choice(
+    choiceArray: number | Type1DMatrix<any>,
+    outputSize: number,
+    probability?: Type1DMatrix<number>,
+  ): Type1DMatrix<any>;
+  permutation(num: number): Type1DMatrix<number>;
+  rangedReal(min: number, max: number): number;
+  real(min: number, max: number): (() => number);
+}
+
+/**
+ * All of Random works lie here
+ * @ignore
+ */
+export default class RandomState implements RandomStateObj {
   private random;
   constructor(seed: string | number = Math.random()) {
     this.random = seedrandom(seed.toString());
@@ -13,8 +35,17 @@ export default class RandomState {
     return this.random();
   }
 
-  rangedInt(min, max): number {
+  rangedInt(min: number, max: number): number {
     return min + Math.floor((max - min) * this.next());
+  }
+
+  rangedReal(min: number, max: number): number {
+    return min + (max - min) * this.next();
+  }
+
+  real(min: number, max: number): (() => number) {
+    const diff = max - min;
+    return () => min + diff * this.next();
   }
   /**
    * shuffles 1D array in place
@@ -24,7 +55,7 @@ export default class RandomState {
    *    random.shuffle([1, 2, 3, 4, 5])
    *    output-1: [5, 3, 4, 1, 2]
    *    output-2: [3, 4, 2, 5, 1]
-   * @param array type: any[]
+   * @param array type: Type1DMatrix<any>
    * @returns shuffled array
    */
   shuffle(array: Type1DMatrix<any>): Type1DMatrix<any> {
@@ -90,5 +121,3 @@ export default class RandomState {
     );
   }
 }
-
-export type RandomStateObj = RandomState;

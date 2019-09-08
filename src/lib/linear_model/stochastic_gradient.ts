@@ -1,7 +1,8 @@
 import * as tf from '@tensorflow/tfjs';
 import { cloneDeep, range } from 'lodash';
-import * as Random from 'random-js';
+// import * as Random from 'random-js';
 import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
+import RandomState, { RandomStateObj } from '../utils/random';
 import { validateFitInputs, validateMatrix2D } from '../utils/validation';
 
 export enum TypeLoss {
@@ -29,7 +30,7 @@ export class BaseSGD implements IMlModel<number> {
   protected regFactor: TypeRegFactor;
   private clone: boolean = true;
   private weights: tf.Tensor<tf.Rank.R1> = null;
-  private randomEngine: Random.MT19937; // Random engine used to
+  private randomEngine: RandomStateObj; // Random engine used to
   private randomState: number;
   /**
    * @param preprocess - preprocess methodology can be either minmax or null. Default is minmax.
@@ -42,7 +43,7 @@ export class BaseSGD implements IMlModel<number> {
       learning_rate = 0.0001,
       epochs = 10000,
       clone = true,
-      random_state = null,
+      random_state,
       loss = TypeLoss.L2,
       reg_factor = null,
     }: {
@@ -56,7 +57,7 @@ export class BaseSGD implements IMlModel<number> {
       learning_rate: 0.0001,
       epochs: 10000,
       clone: true,
-      random_state: null,
+      random_state: undefined,
       loss: TypeLoss.L2,
       reg_factor: null,
     },
@@ -87,11 +88,7 @@ export class BaseSGD implements IMlModel<number> {
     }
 
     // Random Engine
-    if (Number.isInteger(this.randomState)) {
-      this.randomEngine = Random.engines.mt19937().seed(this.randomState);
-    } else {
-      this.randomEngine = Random.engines.mt19937().autoSeed();
-    }
+    this.randomEngine = new RandomState(this.randomState);
   }
 
   /**
@@ -193,9 +190,8 @@ export class BaseSGD implements IMlModel<number> {
    */
   private initializeWeights(nFeatures: number): void {
     const limit = 1 / Math.sqrt(nFeatures);
-    const distribution = Random.real(-limit, limit);
-    const getRand = () => distribution(this.randomEngine);
-    this.weights = tf.tensor1d(range(0, nFeatures).map(() => getRand()));
+    const distribution = this.randomEngine.real(-limit, limit);
+    this.weights = tf.tensor1d(range(0, nFeatures).map(distribution));
   }
 
   /**

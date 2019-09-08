@@ -3,12 +3,12 @@ import * as _ from 'lodash';
 import { Type1DMatrix, Type2DMatrix } from '../types';
 import { ValidationError } from '../utils/Errors';
 import RandomState, { RandomStateObj } from '../utils/random';
-import { approximateMode, arraySplit, convertToTensor, countBin, inferShape, invidualize } from '../utils/tensors';
+import { approximateMode, arraySplit, countBin, inferShape, invidualize } from '../utils/tensors';
 import { numSamples, validateFitInputs } from '../utils/validation';
 
 const testShapes = (X: Type1DMatrix<any> | Type2DMatrix<any>, y: Type1DMatrix<any>) => {
-  const xShape = inferShape(X);
-  const yShape = inferShape(y);
+  const xShape: Type1DMatrix<number> = inferShape(X);
+  const yShape: Type1DMatrix<number> = inferShape(y);
   if (xShape.length > 0 && yShape.length > 0 && xShape[0] !== yShape[0]) {
     throw new ValidationError('X and y must have an identical size');
   }
@@ -217,11 +217,14 @@ const testRangeValidationError = (test_size, n_samples) => rangeValidationError(
 
 const trainRangeValidationError = (test_size, n_samples) => rangeValidationError('test_size', test_size, n_samples);
 
+/**
+ * StratifiedShuffleSplit
+ */
 export class StratifiedShuffleSplit {
   private n_splits: number;
   private testSize: number;
   private trainSize: number;
-  private rng: RandomState;
+  private rng: RandomStateObj;
   private defaultTestSize: number = 0.1;
   constructor(n_splits: number = 10, testSize: number = null, trainSize: number = null, seed: number = null) {
     this.n_splits = n_splits;
@@ -230,8 +233,8 @@ export class StratifiedShuffleSplit {
     this.rng = new RandomState(seed);
   }
 
-  split = (X: Type1DMatrix<any> | Type2DMatrix<any> = null, y: Type1DMatrix<any> = null): Type1DMatrix<any> => {
-    const XTensor = convertToTensor(X);
+  split = (X: Type1DMatrix<any> | Type2DMatrix<any> = null, y: Type1DMatrix<any> = null): Type2DMatrix<any> => {
+    const XTensor = tf.tensor(X);
     // const yTensor = convertToTensor(y);
     const nSamples = numSamples(XTensor);
 
@@ -268,9 +271,10 @@ export class StratifiedShuffleSplit {
       const classCountsRemaining: Type1DMatrix<number> = classCounts.map((item, index) => n_i[index] - item);
       const t_i: Type1DMatrix<number> = approximateMode(classCountsRemaining, nTest, this.rng);
 
-      for (let j = 0; j <= nClasses; j++) {
+      for (let j = 0; j < nClasses; j++) {
         const permutation: Type1DMatrix<any> = this.rng.permutation(classCounts[i]);
         const permIndicesClassI = permutation.map((val) => classIndices[j][val]);
+        console.log(`permIndicesClassI=${JSON.stringify(permIndicesClassI)}`); //tslint:disable-line
         train.concat(permIndicesClassI.slice(0, n_i[i]));
         test.concat(permIndicesClassI.slice(n_i[i], n_i[i] + t_i[i]));
       }
@@ -285,7 +289,7 @@ function validateShuffleSplit(
   test_size: number,
   train_size: number,
   default_test_size: number,
-): number[] {
+): Type1DMatrix<number> {
   let n_train: number;
   let n_test: number;
 

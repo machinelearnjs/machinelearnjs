@@ -1,5 +1,5 @@
 import * as _ from 'lodash';
-import { KFold, train_test_split } from '../../src/lib/model_selection/_split';
+import { KFold, StratifiedShuffleSplit, train_test_split } from '../../src/lib/model_selection/_split';
 import { ValidationError } from '../../src/lib/utils/Errors';
 
 describe('_split:KFold', () => {
@@ -119,10 +119,10 @@ describe('_split:train_test_split', () => {
       train_size: 0.67,
     });
 
-    expect(_.isEqual(xTrain, [[4, 5], [6, 7], [2, 3]])).toBe(true);
-    expect(_.isEqual(yTrain, [2, 3, 1])).toBe(true);
-    expect(_.isEqual(xTest, [[0, 1], [8, 9]])).toBe(true);
-    expect(_.isEqual(yTest, [0, 4])).toBe(true);
+    expect(_.isEqual(xTrain, [[0, 1], [2, 3]])).toBe(true);
+    expect(_.isEqual(yTrain, [0, 1])).toBe(true);
+    expect(_.isEqual(xTest, [[4, 5], [6, 7]])).toBe(true);
+    expect(_.isEqual(yTest, [2, 3])).toBe(true);
   });
 
   it('Should split X1, y1 with random_state 100 test_size: .50 train_size: .50', () => {
@@ -132,19 +132,19 @@ describe('_split:train_test_split', () => {
       train_size: 0.5,
     });
 
-    expect(_.isEqual(xTrain, [[0, 1], [6, 7], [2, 3]])).toBe(true);
-    expect(_.isEqual(yTrain, [0, 3, 1])).toBe(true);
-    expect(_.isEqual(xTest, [[8, 9], [4, 5]])).toBe(true);
-    expect(_.isEqual(yTest, [4, 2])).toBe(true);
+    expect(_.isEqual(xTrain, [[4, 5], [2, 3], [8, 9]])).toBe(true);
+    expect(_.isEqual(yTrain, [2, 1, 4])).toBe(true);
+    expect(_.isEqual(xTest, [[0, 1], [6, 7]])).toBe(true);
+    expect(_.isEqual(yTest, [0, 3])).toBe(true);
   });
 
   it('Should use default test and train sizes', () => {
     const { xTrain, yTrain, xTest, yTest } = train_test_split(X1, y1);
 
-    expect(_.isEqual(xTrain, [[8, 9], [6, 7], [0, 1]])).toBe(true);
-    expect(_.isEqual(yTrain, [4, 3, 0])).toBe(true);
-    expect(_.isEqual(xTest, [[4, 5]])).toBe(true);
-    expect(_.isEqual(yTest, [2])).toBe(true);
+    expect(_.isEqual(xTrain, [[6, 7], [0, 1], [8, 9], [4, 5]])).toBe(true);
+    expect(_.isEqual(yTrain, [3, 0, 4, 2])).toBe(true);
+    expect(_.isEqual(xTest, [[2, 3]])).toBe(true);
+    expect(_.isEqual(yTest, [1])).toBe(true);
   });
 
   it('Should sum of test_size and train_size attempting to match the input size throw an error', () => {
@@ -161,9 +161,20 @@ describe('_split:train_test_split', () => {
 
   it('Should split X2 y2 with random_state: 42 test_size: .33 and train_size: .67', () => {
     const { xTrain, yTrain, xTest, yTest } = train_test_split(X2, y2);
-    expect(_.isEqual(xTrain, [['five'], ['four'], ['one']])).toBe(true);
-    expect(_.isEqual(yTrain, ['e', 'd', 'a'])).toBe(true);
-    expect(_.isEqual(xTest, [['three']])).toBe(true);
-    expect(_.isEqual(yTest, ['c'])).toBe(true);
+
+    expect(_.isEqual(xTrain, [['four'], ['one'], ['five'], ['three']])).toBe(true);
+    expect(_.isEqual(yTrain, ['d', 'a', 'e', 'c'])).toBe(true);
+    expect(_.isEqual(xTest, [['two']])).toBe(true);
+    expect(_.isEqual(yTest, ['b'])).toBe(true);
+  });
+});
+
+describe('_split:StratifiedShuffleSplit', () => {
+  const X = [[1, 2], [3, 4], [1, 2], [3, 4], [1, 2], [3, 4]];
+  const y = [0, 0, 0, 1, 1, 1];
+  const sss = new StratifiedShuffleSplit(5, 0.5, 0.5, 0);
+  it('Should split X2 y2 with random_state: 42 test_size: .33 and train_size: .67', () => {
+    const [train, test] = sss.split(X, y);
+    console.log(train, test); // tslint:disable-line
   });
 });

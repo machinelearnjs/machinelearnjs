@@ -26,18 +26,6 @@ export function inferShape(X: TypeMatrix<any>): number[] {
 }
 
 /**
- *
- * @param array 1D and 2D
- */
-export function convertToTensor(array: TypeMatrix<any>): tf.Tensor {
-  try {
-    return tf.tensor(array);
-  } catch (e) {
-    throw new ValidationInconsistentShape(e);
-  }
-}
-
-/**
  * Reshapes any size of array into a new shape.
  *
  * The code was borrowed from math.js (https://github.com/josdejong/mathjs/blob/5750a1845442946d236822505c607a522be23474/src/utils/array.js#L258),
