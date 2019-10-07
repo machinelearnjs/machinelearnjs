@@ -25,7 +25,6 @@ const testShapes = (X: Type1DMatrix<any> | Type2DMatrix<any>, y: Type1DMatrix<an
  *
  * const kFold = new KFold({ k: 5 });
  * const X1 = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
- * console.log(kFold.split(X1, X1));
  *
  * /* [ { trainIndex: [ 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19 ],
  * *  testIndex: [ 0, 1, 2, 3 ] },
@@ -226,7 +225,7 @@ export class StratifiedShuffleSplit {
   private trainSize: number;
   private rng: RandomStateObj;
   private defaultTestSize: number = 0.1;
-  constructor(n_splits: number = 10, testSize: number = null, trainSize: number = null, seed: number = null) {
+  constructor(n_splits: number = 10, testSize: number = null, trainSize?: number, seed?: number) {
     this.n_splits = n_splits;
     this.testSize = testSize;
     this.trainSize = trainSize;
@@ -243,19 +242,22 @@ export class StratifiedShuffleSplit {
     const [classes, yIndices] = invidualize(y);
     const nClasses: number = classes.length;
     const classCounts: Type1DMatrix<number> = countBin(yIndices);
-
     if (_.min(classCounts) < 2) {
-      throw new Error(
+      throw new ValidationError(
         `The least populated class in y=${y} has only 1 member, which is too few. The minimum number of groups for any class cannot be less than 2.`,
       );
     }
 
     if (nTrain < nClasses) {
-      throw new Error(`The train_size = ${nTrain} should be greater or equal to the number of classes = ${nClasses}`);
+      throw new ValidationError(
+        `The train_size = ${nTrain} should be greater or equal to the number of classes = ${nClasses}`,
+      );
     }
 
     if (nTest < nClasses) {
-      throw new Error(`The test_size = ${nTest} should be greater or equal to the number of classes = ${nClasses}`);
+      throw new ValidationError(
+        `The test_size = ${nTest} should be greater or equal to the number of classes = ${nClasses}`,
+      );
     }
 
     const cumsumClassCounts: tf.Tensor1D = tf.cumsum(classCounts);
@@ -266,21 +268,25 @@ export class StratifiedShuffleSplit {
 
     const test = [];
     const train = [];
-    for (let i = 0; i <= this.n_splits; i++) {
+    for (let i = 0; i < this.n_splits; i++) {
       const n_i: Type1DMatrix<number> = approximateMode(classCounts, nTrain, this.rng);
       const classCountsRemaining: Type1DMatrix<number> = classCounts.map((item, index) => n_i[index] - item);
       const t_i: Type1DMatrix<number> = approximateMode(classCountsRemaining, nTest, this.rng);
 
+      const tempTest = [];
+      const tempTrain = [];
+
       for (let j = 0; j < nClasses; j++) {
-        const permutation: Type1DMatrix<any> = this.rng.permutation(classCounts[i]);
+        const permutation: Type1DMatrix<any> = this.rng.permutation(classCounts[j]);
         const permIndicesClassI = permutation.map((val) => classIndices[j][val]);
-        console.log(`permIndicesClassI=${JSON.stringify(permIndicesClassI)}`); //tslint:disable-line
-        train.concat(permIndicesClassI.slice(0, n_i[i]));
-        test.concat(permIndicesClassI.slice(n_i[i], n_i[i] + t_i[i]));
+        tempTrain.push.apply(tempTrain, permIndicesClassI.slice(0, n_i[j]));
+        tempTest.push.apply(tempTest, permIndicesClassI.slice(n_i[j], n_i[j] + t_i[j]));
       }
+      test.push(this.rng.shuffle(tempTest));
+      train.push(this.rng.shuffle(tempTrain));
     }
 
-    return [this.rng.shuffle(train), this.rng.shuffle(test)];
+    return [train, test];
   };
 }
 
@@ -319,13 +325,13 @@ function validateShuffleSplit(
         throw new ValidationError(trainRangeValidationError(train_size, n_samples));
       }
 
-      n_train = test_size;
+      n_train = train_size;
     } else {
-      if (test_size <= 0 || test_size >= 1) {
+      if (train_size <= 0 || train_size >= 1) {
         throw new ValidationError(trainRangeValidationError(train_size, n_samples));
       }
 
-      n_train = Math.ceil(train_size * n_samples);
+      n_train = Math.floor(train_size * n_samples);
     }
   }
 
@@ -352,5 +358,5 @@ function validateShuffleSplit(
         'aforementioned parameters.',
     );
   }
-  return [Math.round(n_test), Math.round(n_train)];
+  return [Math.floor(n_test), Math.floor(n_train)];
 }

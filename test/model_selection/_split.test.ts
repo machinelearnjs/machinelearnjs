@@ -1,6 +1,7 @@
 import * as _ from 'lodash';
 import { KFold, StratifiedShuffleSplit, train_test_split } from '../../src/lib/model_selection/_split';
 import { ValidationError } from '../../src/lib/utils/Errors';
+// import { x_1, y_1 as ySnap } from './__snapshots__/_split.test';
 
 describe('_split:KFold', () => {
   const X1 = [[1], [2], [3], [4], [5], [6], [7], [8], [9], [10]];
@@ -170,11 +171,67 @@ describe('_split:train_test_split', () => {
 });
 
 describe('_split:StratifiedShuffleSplit', () => {
-  const X = [[1, 2], [3, 4], [1, 2], [3, 4], [1, 2], [3, 4]];
-  const y = [0, 0, 0, 1, 1, 1];
-  const sss = new StratifiedShuffleSplit(5, 0.5, 0.5, 0);
-  it('Should split X2 y2 with random_state: 42 test_size: .33 and train_size: .67', () => {
-    const [train, test] = sss.split(X, y);
-    console.log(train, test); // tslint:disable-line
+  it('Check that error is raised if there is a class with only one sample', () => {
+    const X = [0, 1, 2, 3, 4, 5, 6];
+    const y = [0, 1, 1, 1, 2, 2, 2];
+    const initAndCall = (...values) => {
+      const sss = new StratifiedShuffleSplit(...values);
+      const [train, test] = sss.split(X, y);
+    };
+    expect(() => initAndCall(3, 0.2)).toThrow();
+    expect(() => initAndCall(3, 0.2)).toThrowError(
+      `The least populated class in y=${y} has only 1 member, which is too few. The minimum number of groups for any class cannot be less than 2.`,
+    );
+
+    // expect(() => initAndCall(3, 2)).toThrow();
+    // expect(() => initAndCall(3, 2)).toThrowError(
+    //   `The least populated class in y=${y} has only 1 member, which is too few. The minimum number of groups for any class cannot be less than 2.`,
+    // );
   });
+
+  it('Check that error is raised if the test/train set size is smaller than n_classes', () => {
+    const X = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+    const y = [0, 0, 0, 1, 1, 1, 2, 2, 2];
+    const initAndCall = (...values) => {
+      const sss = new StratifiedShuffleSplit(...values);
+      const [train, test] = sss.split(X, y);
+    };
+    expect(() => initAndCall(3, 2)).toThrow();
+    expect(() => initAndCall(3, 2)).toThrowError(
+      'The test_size = 2 should be greater or equal to the number of classes = 3',
+    );
+
+    expect(() => initAndCall(3, 3, 2)).toThrow();
+    expect(() => initAndCall(3, 3, 2)).toThrowError(
+      'The train_size = 2 should be greater or equal to the number of classes = 3',
+    );
+  });
+
+  it('Test stratified shuffle split respects test size.', () => {
+    const y = [0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0, 1, 2];
+    const testSize = 5;
+    const trainSize = 10;
+    const [trainSet, testSet] = new StratifiedShuffleSplit(6, testSize, trainSize, 0).split(
+      new Array(y.length).fill(1),
+      y,
+    );
+    for (let i = 0; i < trainSet.length; i++) {
+      const train = trainSet[i];
+      const test = testSet[i];
+      expect(train.length).toBe(trainSize);
+      expect(test.length).toBe(testSize);
+      expect(train.length + test.length).toBe(y.length);
+    }
+  });
+
+  // it('Test stratified shuffle split multilabel many labels.', () => {
+  //   const y = ySnap;
+  //   const X = x_1;
+  //   const [trainSet, testSet] = new StratifiedShuffleSplit(6, 0.5, undefined, 0).split(X, y);
+  //   for (let i = 0; i < trainSet.length; i++) {
+  //     const train = trainSet[i];
+  //     const test = testSet[i];
+  //     expect(train.length + test.length).toBe(y.length);
+  //   }
+  // });
 });

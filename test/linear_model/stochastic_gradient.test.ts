@@ -193,6 +193,7 @@ describe('linear_model:SGDRegressor', () => {
     const reg = new SGDRegressor();
     reg.fit(xTrain, yTrain);
     const result = reg.predict(xTest);
+
     const similarity = assertArrayAlmostEqual(reg_l2_snap, result, 1);
     expect(similarity).toBeGreaterThanOrEqual(accuracyExpected1);
 

@@ -161,10 +161,9 @@ export function countBin(array: Type1DMatrix<number>, weights?: Type1DMatrix<num
     if (Math.floor(ele) !== ele) {
       throw Error(`Only integer values are acceptable in the values of ${array}`);
     }
-    return {
-      ...acc,
-      [ele]: (acc[ele] || 0) + weights[i],
-    };
+
+    acc[ele] = (acc[ele] || 0) + weights[i];
+    return acc;
   }, {});
 
   for (let i = 0; i < retArray.length; i++) {
@@ -256,7 +255,10 @@ export function approximateMode(
       }, []);
       const addNow = Math.min(inds.length, needToAdd);
       inds = rng.choice(inds, addNow);
-      floored[inds] += 1;
+      inds.forEach((k) => {
+        floored[k] += 1;
+      });
+
       needToAdd -= addNow;
       if (needToAdd === 0) {
         break;
