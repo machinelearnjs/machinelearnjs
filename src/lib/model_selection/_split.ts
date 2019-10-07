@@ -234,7 +234,6 @@ export class StratifiedShuffleSplit {
 
   split = (X: Type1DMatrix<any> | Type2DMatrix<any> = null, y: Type1DMatrix<any> = null): Type2DMatrix<any> => {
     const XTensor = tf.tensor(X);
-    // const yTensor = convertToTensor(y);
     const nSamples = numSamples(XTensor);
 
     const [nTest, nTrain] = validateShuffleSplit(nSamples, this.testSize, this.trainSize, this.defaultTestSize);
