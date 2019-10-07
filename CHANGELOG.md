@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file.
 
+## [2.1.4]
+
+:bug: Browser bundle fix :bug:
+
+* **fix:** Browser bundle is now correctly working but it now excludes SVM and dataset APIs during the bundling process
+
+## [2.1.3]
+
+:feature: new API! :feature:
+
+* **feature:** BaggingClassifier added by @OlegStotsky congratulations!
+
 ## [2.1.2]
 
 :bug: Installation issues :bug:

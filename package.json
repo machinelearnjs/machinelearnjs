@@ -1,6 +1,6 @@
 {
   "name": "machinelearn",
-  "version": "2.1.2",
+  "version": "2.1.5",
   "description": "Machine Learning library for the web and Node",
   "main": "index.js",
   "typings": "index.d.ts",
@@ -35,10 +35,9 @@
     "OneHotEncoding"
   ],
   "scripts": {
-    "build": "yarn clean && yarn build:main && yarn build:module && yarn build:web && yarn build:datasets",
+    "build": "yarn clean && yarn build:main && yarn build:web && yarn build:datasets",
     "build:main": "npx tsc -p tsconfig.json && npx ncp package.json ./build/lib/package.json && npx ncp README.md ./build/lib/README.md && npx ncp .npmignore ./build/lib/.npmignore",
-    "build:module": "npx tsc -p tsconfig.module.json",
-    "build:web": "npx tsc -p tsconfig.json --module amd --out build/lib/machinelearn.web.js",
+    "build:web": "npx webpack --config ./scripts/webpack/webpack.config.js",
     "lint": "npx tslint -t verbose 'test/**/*.ts' 'src/**/*.ts' 'docs/**/*.ts'",
     "build:datasets": "npx ncp src/lib/datasets/data build/lib/datasets/data",
     "fix": "yarn lint:fix && yarn pretty:fix",
@@ -70,7 +69,7 @@
     "@tensorflow/tfjs": "0.15.1",
     "isomorphic-fetch": "2.2.1",
     "libsvm-ts": "0.0.8",
-    "lodash": "4.17.11",
+    "lodash": "4.17.13",
     "numeric": "1.2.6",
     "random-js": "1.0.8",
     "seedrandom": "^3.0.1",
@@ -86,7 +85,7 @@
     "all-contributors-cli": "5.4.1",
     "del-cli": "1.1.0",
     "fs-extra": "7.0.0",
-    "handlebars": "4.0.11",
+    "handlebars": "4.0.14",
     "husky": "1.1.2",
     "jest": "24.7.1",
     "jest-fetch-mock": "1.6.5",
@@ -96,6 +95,7 @@
     "release-it": "7.4.8",
     "standard-version": "4.0.0",
     "ts-jest": "22.4.5",
+    "ts-loader": "6.0.4",
     "ts-node": "8.1.0",
     "tslint": "5.4.3",
     "tslint-config-prettier": "1.8.0",
@@ -103,7 +103,9 @@
     "typedoc-plugin-markdown": "1.1.27",
     "typescript": "3.4.1",
     "vuepress": "0.12.0",
-    "watch": "1.0.2"
+    "watch": "1.0.2",
+    "webpack": "4.39.0",
+    "webpack-cli": "3.3.6"
   },
   "resolutions": {
     "webpack-dev-middleware": "3.6.0"
