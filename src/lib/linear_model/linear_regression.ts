@@ -34,14 +34,14 @@ export enum TypeLinearReg {
  * const X = [1, 2, 4, 3, 5];
  * const y = [1, 3, 3, 2, 5];
  * linearRegression.fit(X, y);
- * lr.predict([1, 2]);
+ * linearRegression.predict([1, 2]);
  * // [ 1.1999999999999995, 1.9999999999999996 ]
  *
  * const linearRegression2 = new LinearRegression();
  * const X2 = [[1, 1], [1, 2], [2, 2], [2, 3]];
  * const y2 = [1, 1, 2, 2];
  * linearRegression2.fit(X2, y2);
- * lr.predict([[1, 2]]);
+ * linearRegression2.predict([[1, 2]]);
  * // [1.0000001788139343]
  */
 export class LinearRegression {
