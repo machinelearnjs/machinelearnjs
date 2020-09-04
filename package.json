@@ -84,7 +84,7 @@
     "all-contributors-cli": "5.4.1",
     "del-cli": "1.1.0",
     "fs-extra": "7.0.0",
-    "handlebars": "4.0.14",
+    "handlebars": "4.4.5",
     "husky": "1.1.2",
     "jest": "24.7.1",
     "jest-fetch-mock": "1.6.5",
