@@ -1,9 +1,14 @@
 import * as _ from 'lodash';
-import * as sw from 'stopword';
 import { Type1DMatrix } from '../types';
 import { WordTokenizer } from '../utils/nlp';
 import { validateMatrix1D } from '../utils/validation';
 import { ENGLISH_STOP_WORDS } from './stop_words';
+
+function removeStopwords(tokens: string[]) {
+  return tokens.filter(function (value) {
+    return ENGLISH_STOP_WORDS.indexOf(value.toLowerCase()) === -1
+  })
+}
 
 /**
  * The CountVectorizer provides a simple way to both tokenize a collection
@@ -158,7 +163,7 @@ export class CountVectorizer {
     const tokenizer = new WordTokenizer();
     let tokens = text.split(' ');
     if (removeSW) {
-      tokens = sw.removeStopwords(tokens, ENGLISH_STOP_WORDS);
+      tokens = removeStopwords(tokens);
     }
     return tokenizer.tokenize(tokens.join(' '));
   }

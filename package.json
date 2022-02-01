@@ -71,8 +71,7 @@
     "libsvm-ts": "0.0.8",
     "lodash": "4.17.13",
     "numeric": "1.2.6",
-    "random-js": "1.0.8",
-    "stopword": "0.1.10"
+    "random-js": "1.0.8"
   },
   "devDependencies": {
     "@types/es6-promise": "3.3.0",
