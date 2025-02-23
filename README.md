@@ -72,6 +72,9 @@ yarn add machinelearn-gpu
 import 'machinelearn-gpu';
 ```
 
+# Ask AI
+[Machinelearn.js](https://codeparrot.ai/oracle?owner=machinelearnjs&repo=machinelearnjs) Bot will help you understand this repository better. You can ask for code examples, installation guide, debugging help and much more.
+
 # Highlights
 
 * Machine Learning on the browser and Node.js
