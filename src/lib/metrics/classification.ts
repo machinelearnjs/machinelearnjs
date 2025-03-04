@@ -32,7 +32,12 @@ function _weightedSum({
  * @param options
  * @ignore
  */
-export const validateInitialInputs = (y_true, y_pred, labels, options = {}) => {
+export const validateInitialInputs = (
+  y_true: Type1DMatrix<string | number>,
+  y_pred: Type1DMatrix<string | number>,
+  labels,
+  options = {},
+) => {
   const checkMultiClass = _.get(options, 'multiclass');
 
   // Multiclass
@@ -59,9 +64,9 @@ export const validateInitialInputs = (y_true, y_pred, labels, options = {}) => {
   // Checking labels equal to both y_true and y_pred classes
   // Labels is optional
   if (labels) {
-    const yTrueCls = _.flowRight((x) => _.sortBy(x, (y) => y), (x) => _.uniq(x))(y_true);
+    const yTrueCls = _.flowRight((x: Type1DMatrix<string | number>) => _.sortBy(x, (y) => y), (x) => _.uniq(x))(y_true);
 
-    const yPredCls = _.flowRight((x) => _.sortBy(x, (y) => y), (x) => _.uniq(x))(y_pred);
+    const yPredCls = _.flowRight((x: Type1DMatrix<string | number>) => _.sortBy(x, (y) => y), (x) => _.uniq(x))(y_pred);
 
     const sortedLabels = _.sortBy(labels, (x) => x);
     if (!_.isEqual(sortedLabels, yTrueCls) || !_.isEqual(sortedLabels, yPredCls)) {

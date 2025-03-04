@@ -63,10 +63,10 @@
     "precommit": "yarn run lint && yarn run build && pretty-quick --staged"
   },
   "engines": {
-    "node": ">=8.11.0"
+    "node": ">=18"
   },
   "dependencies": {
-    "@tensorflow/tfjs": "0.15.1",
+    "@tensorflow/tfjs": "4.22.0",
     "isomorphic-fetch": "2.2.1",
     "libsvm-ts": "0.0.8",
     "lodash": "4.17.13",
@@ -78,7 +78,7 @@
     "@types/es6-promise": "3.3.0",
     "@types/jest": "24.0.11",
     "@types/lodash": "4.14.108",
-    "@types/node": "8.9.4",
+    "@types/node": "^22.13.9",
     "@types/numeric": "1.2.0",
     "@types/random-js": "1.0.30",
     "all-contributors-cli": "5.4.1",
@@ -86,25 +86,25 @@
     "fs-extra": "7.0.0",
     "handlebars": "4.0.14",
     "husky": "1.1.2",
-    "jest": "24.7.1",
+    "jest": "29.7.0",
     "jest-fetch-mock": "1.6.5",
     "ncp": "2.0.0",
     "prettier": "1.10.2",
     "pretty-quick": "1.10.0",
     "release-it": "7.4.8",
     "standard-version": "4.0.0",
-    "ts-jest": "22.4.5",
+    "ts-jest": "29.2.6",
     "ts-loader": "6.0.4",
     "ts-node": "8.1.0",
     "tslint": "5.4.3",
     "tslint-config-prettier": "1.8.0",
     "typedoc": "0.14.2",
     "typedoc-plugin-markdown": "1.1.27",
-    "typescript": "3.4.1",
+    "typescript": "5.8.2",
     "vuepress": "0.12.0",
     "watch": "1.0.2",
-    "webpack": "4.39.0",
-    "webpack-cli": "3.3.6"
+    "webpack": "^5.98.0",
+    "webpack-cli": "^6.0.1"
   },
   "resolutions": {
     "webpack-dev-middleware": "3.6.0"

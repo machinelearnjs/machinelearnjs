@@ -15,12 +15,12 @@ module.exports = {
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
+    fallback: {
+      fs: false,
+    },
   },
   output: {
     filename: 'machinelearn.min.js',
     path: path.resolve(__dirname, '../../build/lib'),
-  },
-  node: {
-    fs: 'empty',
   },
 };

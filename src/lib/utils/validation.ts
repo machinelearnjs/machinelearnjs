@@ -123,7 +123,7 @@ export function validateMatrix1D(X: unknown): number[] {
   if (shape.length !== 1 || shape[0] === 0) {
     throw new Validation1DMatrixError(`The matrix is not 1D shaped: ${JSON.stringify(X)} of ${JSON.stringify(shape)}`);
   }
-  return X;
+  return X as number[];
 }
 
 /**
