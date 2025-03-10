@@ -177,7 +177,7 @@ export const validateFeaturesConsistency = <T>(
 export function validateShapesEqual(
   y_true: Type1DMatrix<number> | Type2DMatrix<number> = null,
   y_pred: Type1DMatrix<number> | Type2DMatrix<number> = null,
-): tf.Tensor[] {
+): Type1DMatrix<tf.Tensor<tf.Rank>> {
   const yTrueTensor = tf.tensor(y_true);
   const yPredTensor = tf.tensor(y_pred);
   const yTrueShape = yTrueTensor.shape;
@@ -196,4 +196,18 @@ export function validateShapesEqual(
   }
 
   return [yTrueTensor, yPredTensor];
+}
+
+/**
+ * get number of samples from an array
+ * @param array - type matrix or tensor
+ */
+export function numSamples(array: TypeMatrix<any> | tf.Tensor<tf.Rank> = null): number {
+  if (!array) {
+    throw new ValidationError(`array cant be null`);
+  }
+  if (array instanceof tf.Tensor) {
+    return array.shape[0];
+  }
+  return array.length;
 }
