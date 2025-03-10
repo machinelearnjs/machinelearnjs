@@ -4,12 +4,12 @@ import * as path from 'path';
 import { BaseProcesser } from './BaseProcesser';
 
 export class ConfigProcessor extends BaseProcesser {
-  private srcConfigPath = path.join(__dirname, '../config.js');
-  private destConfigPath = path.join(__dirname, '../md_out/.vuepress/config.js');
+  private srcConfigPath = path.join(__dirname, '../config.ts');
+  private destConfigPath = path.join(__dirname, '../md_out/.vuepress/config.ts');
   private srcPublicPath = path.join(__dirname, '../public');
   private destPublicPath = path.join(__dirname, '../md_out/.vuepress/public');
-  private srcOverrideStylePath = path.join(__dirname, '../override.styl');
-  private destOverrideStylePath = path.join(__dirname, '../md_out/.vuepress/override.styl');
+  private srcOverrideStylePath = path.join(__dirname, '../palette.scss');
+  private destOverrideStylePath = path.join(__dirname, '../md_out/.vuepress/styles/palette.scss');
 
   /**
    * Runs the processor
@@ -27,6 +27,7 @@ export class ConfigProcessor extends BaseProcesser {
     fs.copySync(this.srcPublicPath, this.destPublicPath);
 
     // 3. Style
+    fs.mkdirSync(path.dirname(this.destOverrideStylePath), { recursive: true });
     fs.createReadStream(this.srcOverrideStylePath).pipe(fs.createWriteStream(this.destOverrideStylePath));
   }
 

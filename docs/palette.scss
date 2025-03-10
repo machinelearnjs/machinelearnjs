@@ -1,0 +1,22 @@
+:root {
+  --homepage-width: 1200px;
+}
+
+// Homepage
+.features {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+// Applying responsiveness to the hero image
+@media screen and (max-width: 991px) {
+  .features {
+    flex-direction: column;
+  }
+}
+
+#main-title {
+  display: none;
+}

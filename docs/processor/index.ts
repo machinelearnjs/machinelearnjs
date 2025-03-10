@@ -527,6 +527,7 @@ const exampleProcessor = new ExampleProcessor();
 exampleProcessor.run(Handlebars);
 
 const configProcessor = new ConfigProcessor();
+
 configProcessor.run({ apiChildren: apiProcessor.apiChildren });
 
 const redirectProcessor = new RedirectProcessor();

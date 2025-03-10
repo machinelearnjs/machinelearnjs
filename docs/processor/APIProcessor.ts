@@ -24,7 +24,8 @@ export class APIProcessor extends BaseProcesser {
   private srcApiHomeTheme = path.join(this.themePath, this.homePageFile);
   private destApiHomePage = path.join(__dirname, '../md_out/api/README.md');
   private pathDelimeter = '.';
-  private entityKindWhitelist = [consts.kindStringClass, consts.kindStringFunction]; // Whitelisting kinds when grabbing class or method
+  // Class and Function
+  private entityKindWhitelist = [consts.kindNumberClass, consts.kindNumberFunction]; // Whitelisting kinds when grabbing class or method
   private moduleNameBlackList = ['"'];
 
   /**
@@ -128,7 +129,7 @@ export class APIProcessor extends BaseProcesser {
           moduleChild.children,
           (entityList, entityChild) => {
             // Filter by entityKindWhitelist and skips if isIgnore comment is set
-            if (this.entityKindWhitelist.indexOf(entityChild.kindString) !== -1 && !this.isIgnore(entityChild)) {
+            if (this.entityKindWhitelist.indexOf(entityChild.kind) !== -1 && !this.isIgnore(entityChild)) {
               // each function or class name
               const entityName = entityChild.name;
               const fullEntityName = [cleanedModuleName, entityName].join(this.pathDelimeter);
