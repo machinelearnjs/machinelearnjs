@@ -27,30 +27,6 @@ export function ifEquals(children, x, y, options): any {
 }
 
 /**
- * Filters children by a name such as constructor or method
- * @param children
- * @param options
- * @param theName
- * @returns {any}
- */
-/*
-export const filterByName(children, options, theName: string): any {
-  if (children) {
-    const filtered = children.filter((child) => {
-      return child.name === theName;
-    });
-    // Filtering by isProtected = true and any constructors (we always want to display constructors
-    const publicFiltered = filtered.filter((filteredChild) => {
-      return filteredChild.flags.isPublic || filteredChild.kindString === consts.kindStringConst;
-    });
-    return _.isEmpty(publicFiltered) ? options.inverse(children) : options.fn(publicFiltered);
-  } else {
-    return options.inverse(children);
-  }
-}
-*/
-
-/**
  * Filters children by a kind name such as Constructor or Method
  * @param children
  * @param options
@@ -519,16 +495,16 @@ Handlebars.registerHelper('filterConstructor', (children, options) => {
 });
 
 Handlebars.registerHelper('filterMethod', (children, options) =>
-  filterByKind(children, options, consts.kindStringMethod),
+  filterByKind(children, options, consts.kindNumberMethod),
 );
 
 Handlebars.registerHelper('filterProperty', (children, options) =>
-  filterByKind(children, options, consts.kindStringProperty),
+  filterByKind(children, options, consts.kindNumberProperty),
 );
 
-Handlebars.registerHelper('filterTagExample', (children, options) => {
-  return filterByTag(children, options, consts.tagTypeExample);
-});
+Handlebars.registerHelper('filterTagExample', (children, options) =>
+  filterByTag(children, options, consts.tagTypeExample),
+);
 
 Handlebars.registerHelper('constructParamTable', (parameters) => constructParamTable(parameters));
 
