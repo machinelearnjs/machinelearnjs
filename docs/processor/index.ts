@@ -490,9 +490,9 @@ Handlebars.registerHelper('ifEquals', (children, x, y, options) => ifEquals(chil
 
 Handlebars.registerHelper('isSignatureValid', (context, options) => isSignatureValid(context, options));
 
-Handlebars.registerHelper('filterConstructor', (children, options) => {
-  return filterByKind(children, options, consts.kindNumberConstructor);
-});
+Handlebars.registerHelper('filterConstructor', (children, options) =>
+  filterByKind(children, options, consts.kindNumberConstructor),
+);
 
 Handlebars.registerHelper('filterMethod', (children, options) =>
   filterByKind(children, options, consts.kindNumberMethod),
