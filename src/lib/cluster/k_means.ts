@@ -4,13 +4,6 @@ import { IMlModel, Type1DMatrix, Type2DMatrix } from '../types';
 import math from '../utils/MathExtra';
 import { validateMatrix2D } from '../utils/validation';
 
-export interface KMeansOptions {
-  k: number;
-  distance?: 'euclidean' | 'manhattan';
-  maxIteration?: number;
-  randomState?: number;
-}
-
 /**
  * K-Means clustering
  *
@@ -33,14 +26,23 @@ export class KMeans implements IMlModel<number> {
   private maxIteration: number;
 
   /**
-   * Constructor of KMeans cluster
-   * @param {euclidean|manhattan} distance - Choice of distance method. Defaulting to euclidean
-   * @param {number} k - Number of clusters
-   * @param {number} maxIteration - Relative tolerance with regards to inertia to declare convergence
-   * @param {number} randomState - Random state value for sorting centroids during the getInitialCentroid phase
+   * @param distance - Choice of distance method. Defaulting to euclidean
+   * @param k - Number of clusters
+   * @param maxIteration - Relative tolerance with regards to inertia to declare convergence
+   * @param randomState - Random state value for sorting centroids during the getInitialCentroid phase
    */
   constructor(
-    { distance = 'euclidean', k = 3, maxIteration = 300, randomState = 0 }: KMeansOptions = {
+    {
+      distance = 'euclidean',
+      k = 3,
+      maxIteration = 300,
+      randomState = 0,
+    }: {
+      k: number;
+      distance?: 'euclidean' | 'manhattan';
+      maxIteration?: number;
+      randomState?: number;
+    } = {
       distance: 'euclidean',
       k: 3,
       maxIteration: 300,
