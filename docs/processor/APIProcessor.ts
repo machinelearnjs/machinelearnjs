@@ -70,21 +70,21 @@ export class APIProcessor extends BaseProcesser {
       apiChildren,
       (sum, child) => {
         const [module, name] = child.name.split('.');
-        const existingGroupIndex = _.findIndex(sum, (o) => o.title === module);
+        const existingGroupIndex = _.findIndex(sum, (o) => o.text === module);
         if (existingGroupIndex === -1) {
           // If there's no existing module group according to the current child's name
           // create a new definition and append it to the sum
           const newDefinition = {
-            children: [[`./${child.name}`, name]],
-            collapsable: false,
-            title: module,
+            children: [{ link: `/api/${child.name}`, text: name }],
+            collapsable: true,
+            text: module,
           };
           return _.concat(sum, [newDefinition]);
         } else {
           // If there's an existing module definition,
           // then append the current child's definition to the children list
           const existing = sum[existingGroupIndex];
-          const newChildren = _.concat(existing.children, [[`./${child.name}`, name]]);
+          const newChildren = _.concat(existing.children, [{ link: `/api/${child.name}`, text: name }]);
           const updated = _.set(existing, 'children', newChildren);
           return _.set(sum, `[${existingGroupIndex}]`, updated);
         }

@@ -518,6 +518,8 @@ Handlebars.registerHelper('newLine', renderNewLine);
 
 Handlebars.registerHelper('cleanHyperLink', (str) => cleanHyperLink(str));
 
+Handlebars.registerHelper('json', (json) => JSON.stringify(json));
+
 // Processors
 const apiProcessor = new APIProcessor();
 apiProcessor.run(Handlebars);

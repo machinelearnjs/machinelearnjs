@@ -31,9 +31,11 @@ export default defineUserConfig({
       { text: 'Examples', link: '/examples/' },
       { text: 'Github', link: 'https://github.com/machinelearnjs/machinelearnjs' },
     ],
-    sidebar: {
-      '/api/': apiExtra.apiSidebar,
-      '/examples/': exampleExtra.exampleSidebar,
-    },
+    sidebar: [
+      {
+        text: 'API',
+        children: apiExtra.apiSidebar,
+      },
+    ],
   }),
 });

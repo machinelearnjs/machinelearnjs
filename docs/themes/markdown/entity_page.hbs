@@ -3,16 +3,20 @@
 {{{ comment.shortText }}}
 {{{ comment.text }}}
 
-{{#ifEquals this this.variant "zz"}}
+the kind {{ this.kind }}
+{{#ifEquals this this.kind 64}}
     {{#isSignatureValid this}}
-        {{#each this.children}}
+        {{#each this.signatures}}
             {{newLine}}▸ **{{this.name}}**{{methodBracket this.parameters}}
             {{newLine}}{{{this.comment.shortText}}}
             {{newLine}}{{{this.comment.text}}}
-            {{#filterTagExample this.comment.tags}}
+            {{#filterTagExample this.comment.blockTags}}
+
                 {{newLine}}### Usage
                 {{#each this}}
-                    {{newLine}}```javascript{{{this.text}}}```
+                    {{#each this.content}}
+                      {{newLine}}```{{{this.text}}}```
+                    {{/each}}
                 {{/each}}
             {{/filterTagExample}}
         {{/each}}
