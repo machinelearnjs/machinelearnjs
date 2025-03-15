@@ -116,8 +116,9 @@
             {{#isSignatureValid this}}
                 {{#each this.signatures}}
                     {{newLine}}### λ {{this.name}}
-                    {{newLine}}{{ this.comment.shortText }}
-                    {{newLine}}{{ this.comment.text }}
+                    {{#each this.comment.summary}}
+                      {{newLine}}{{ this.text }}
+                    {{/each}}
                 {{/each}}
                 {{newLine}}Defined in {{getSourceLink this.sources}}
                 {{newLine}}{{this.comment.shortText}}

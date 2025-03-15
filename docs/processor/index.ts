@@ -178,12 +178,9 @@ export function getText(param): string | undefined {
   if (_.isEmpty(param)) {
     throw new TypeError('Param should not be null or undefined');
   }
-  const text = _.get(param, 'comment.text');
-  const shortText = _.get(param, 'comment.shortText');
-  if (text) {
-    return text;
-  } else if (shortText) {
-    return shortText;
+
+  if (param.comment && param.comment.summary) {
+    return param.comment.summary.map((summary) => summary.text).join('\n');
   }
   return undefined;
 }
@@ -252,11 +249,11 @@ export function constructParamTable(parameters): string {
         } else {
           args = prop.type;
         }
-        sum.push([`${param.name}`, args, prop.defaultValue, getText(prop)]);
+        sum.push([`${param.name}`, args, prop.defaultValue, getText(param)]);
       });
     } else if (foundRef.kindString === consts.refKindInterface) {
       _.forEach(foundRef.children, (prop) => {
-        sum.push([`${param.name}.${prop.name}`, renderParamType(prop.type), prop.defaultValue, getText(prop)]);
+        sum.push([`${param.name}.${prop.name}`, renderParamType(prop.type), prop.defaultValue, getText(param)]);
       });
     } else if (foundRef.kindString === consts.refKindTypeAlias) {
       // Handling a custom `type` such as Type2DMatrix or Type3DMatrix
@@ -349,6 +346,7 @@ export function constructParamTable(parameters): string {
     },
     [],
   );
+
   // flatten any [ [ [] ] ] 3rd layer arrays
   const tableHeader = '| Param | Type | Default | Description |\n';
   const tableSplit = '| ------ | ------ | ------ | ------ |\n';
