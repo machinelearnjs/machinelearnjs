@@ -3,10 +3,9 @@
 {{{ comment.shortText }}}
 {{{ comment.text }}}
 
-{{#ifEquals this this.kindString "Function"}}
-
+{{#ifEquals this this.variant "zz"}}
     {{#isSignatureValid this}}
-        {{#each this.signatures}}
+        {{#each this.children}}
             {{newLine}}▸ **{{this.name}}**{{methodBracket this.parameters}}
             {{newLine}}{{{this.comment.shortText}}}
             {{newLine}}{{{this.comment.text}}}
@@ -30,13 +29,13 @@
             {{/if}}
         {{/each}}
     {{/isSignatureValid}}
-
 {{else}}
-
-    {{#filterTagExample this.comment.tags}}
+    {{#filterTagExample this.comment.blockTags}}
         {{newLine}}### Usage
         {{#each this}}
-            {{newLine}}```javascript{{{this.text}}}```
+            {{#each this.content}}
+              {{newLine}}```{{{this.text}}}```
+            {{/each}}
         {{/each}}
     {{/filterTagExample}}
 

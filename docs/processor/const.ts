@@ -6,6 +6,7 @@ export const kindStringMethod = 'Method';
 export const kindStringProperty = 'Property';
 export const kindStringEnum = 'Enumeration';
 
+export const kindNumberConstructor = 512;
 export const kindNumberClass = 128;
 export const kindNumberFunction = 64;
 

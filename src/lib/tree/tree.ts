@@ -145,7 +145,6 @@ export class DecisionTreeClassifier implements IMlModel<string | boolean | numbe
   private randomEngine = null;
 
   /**
-   *
    * @param featureLabels - Literal names for each feature to be used while printing the tree out as a string
    * @param verbose - Logs the progress of the tree construction as console.info
    * @param random_state - A seed value for the random engine

@@ -5,6 +5,7 @@ import * as path from 'path';
 import { APIProcessor } from './APIProcessor';
 import { ConfigProcessor } from './ConfigProcessor';
 import * as consts from './const';
+import { kindNumberConstructor } from './const';
 import { ExampleProcessor } from './ExampleProcessor';
 import { PagesProcessor } from './PagesProcessor';
 import { RedirectProcessor } from './RedirectProcessor';
@@ -26,6 +27,30 @@ export function ifEquals(children, x, y, options): any {
 }
 
 /**
+ * Filters children by a name such as constructor or method
+ * @param children
+ * @param options
+ * @param theName
+ * @returns {any}
+ */
+/*
+export const filterByName(children, options, theName: string): any {
+  if (children) {
+    const filtered = children.filter((child) => {
+      return child.name === theName;
+    });
+    // Filtering by isProtected = true and any constructors (we always want to display constructors
+    const publicFiltered = filtered.filter((filteredChild) => {
+      return filteredChild.flags.isPublic || filteredChild.kindString === consts.kindStringConst;
+    });
+    return _.isEmpty(publicFiltered) ? options.inverse(children) : options.fn(publicFiltered);
+  } else {
+    return options.inverse(children);
+  }
+}
+*/
+
+/**
  * Filters children by a kind name such as Constructor or Method
  * @param children
  * @param options
@@ -35,12 +60,13 @@ export function ifEquals(children, x, y, options): any {
 export function filterByKind(children, options, kind): any {
   if (children) {
     const filtered = children.filter((child) => {
-      return child.kindString === kind;
+      return child.kind === kind;
     });
     // Filtering by isProtected = true and any constructors (we always want to display constructors
     const publicFiltered = filtered.filter((filteredChild) => {
-      return filteredChild.flags.isPublic || filteredChild.kindString === consts.kindStringConst;
+      return filteredChild.flags.isPublic || filteredChild.kind === kindNumberConstructor;
     });
+
     return _.isEmpty(publicFiltered) ? options.inverse(children) : options.fn(publicFiltered);
   } else {
     return options.inverse(children);
@@ -60,7 +86,7 @@ export function filterByKind(children, options, kind): any {
 export function filterByTag(children, options, tag): any {
   if (children) {
     const filtered = children.filter((child) => {
-      return child.tag === tag;
+      return child.tag === tag || child.tag === `@${tag}`;
     });
     return _.isEmpty(filtered) ? options.inverse(children) : options.fn(filtered);
   } else {
@@ -451,7 +477,7 @@ export function renderMethodBracket(parameters): string {
  */
 export function renderSourceLink(sources): string {
   if (_.isEmpty(sources)) {
-    throw new TypeError('Sources cannot be empty');
+    return '';
   }
   const defined = _.map(sources, (src) => {
     return `[${src.fileName}:${src.line}](${pjson.repository.url}/blob/master/src/lib/${src.fileName}#L${src.line})`;
@@ -488,9 +514,9 @@ Handlebars.registerHelper('ifEquals', (children, x, y, options) => ifEquals(chil
 
 Handlebars.registerHelper('isSignatureValid', (context, options) => isSignatureValid(context, options));
 
-Handlebars.registerHelper('filterConstructor', (children, options) =>
-  filterByKind(children, options, consts.kindStringConst),
-);
+Handlebars.registerHelper('filterConstructor', (children, options) => {
+  return filterByKind(children, options, consts.kindNumberConstructor);
+});
 
 Handlebars.registerHelper('filterMethod', (children, options) =>
   filterByKind(children, options, consts.kindStringMethod),
@@ -500,9 +526,9 @@ Handlebars.registerHelper('filterProperty', (children, options) =>
   filterByKind(children, options, consts.kindStringProperty),
 );
 
-Handlebars.registerHelper('filterTagExample', (children, options) =>
-  filterByTag(children, options, consts.tagTypeExample),
-);
+Handlebars.registerHelper('filterTagExample', (children, options) => {
+  return filterByTag(children, options, consts.tagTypeExample);
+});
 
 Handlebars.registerHelper('constructParamTable', (parameters) => constructParamTable(parameters));
 
