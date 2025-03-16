@@ -10,6 +10,7 @@ describe('ensemble:BaggingClassifier', () => {
       const classifier = new BaggingClassifier({
         maxSamples: 1.1,
       });
+      // @ts-ignore: intentionally passing in 1D array
       classifier.fit([1, 2, 3], [1, 1, 1]);
     } catch (err) {
       expect(err).toBeInstanceOf(ValidationError);

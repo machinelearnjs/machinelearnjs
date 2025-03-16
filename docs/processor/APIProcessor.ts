@@ -120,8 +120,8 @@ export class APIProcessor extends BaseProcesser {
       (aggregation, moduleChild) => {
         // Looping the first children layer
         // Group child according the module name
-        const [module, file] = moduleChild.name.split('/');
-        // Clean any unwanted chars from the modulen name
+        const [module] = moduleChild.name.split('/');
+        // Clean any unwanted chars from the module name
         const cleanedModuleName = this.cleanName(module);
         // Grabbing each class or method of the module
         // Also it squashes the entities by moduelName.entityName e.g. preprocessing.OneHotEncoder
