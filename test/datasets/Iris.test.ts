@@ -1,19 +1,11 @@
 import fakeFetch from 'jest-fetch-mock';
 import { Iris } from '../../src/lib/datasets';
-import { IRIS_FAKE_DATA, IRIS_FAKE_DESC } from './fake_data/iris';
 
 // Mock fetch
 global.fetch = fakeFetch;
 
 describe('datasets:Iris', () => {
   let iris = null;
-  beforeEach(() => {
-    fetch.resetMocks();
-    // data mock
-    fetch.mockResponseOnce(IRIS_FAKE_DATA);
-    // desc mock
-    fetch.mockResponseOnce(IRIS_FAKE_DESC);
-  });
   beforeAll(() => {
     iris = new Iris();
   });
