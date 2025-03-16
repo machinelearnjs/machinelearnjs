@@ -1,52 +1,52 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`naive_bayes:MultinomialNB should not fit invalid inputs 1`] = `
-Object {
+ValidationError {
   "message": "validateFitInputs received a non-array input X",
-  "name": "",
+  "name": "ValidationError",
 }
 `;
 
 exports[`naive_bayes:MultinomialNB should not fit invalid inputs 2`] = `
-Object {
+ValidationClassMismatch {
   "message": "Number of labels=1 does not math number of samples=2",
-  "name": "",
+  "name": "ValidationClassMismatch",
 }
 `;
 
 exports[`naive_bayes:MultinomialNB should not fit invalid inputs 3`] = `
-Object {
+ValidationClassMismatch {
   "message": "Number of labels=1 does not math number of samples=0",
-  "name": "",
+  "name": "ValidationClassMismatch",
 }
 `;
 
-exports[`naive_bayes:MultinomialNB should not predict if the model is not trained yet 1`] = `[TypeError: Cannot read property 'classCategories' of undefined]`;
+exports[`naive_bayes:MultinomialNB should not predict if the model is not trained yet 1`] = `[TypeError: Cannot read properties of undefined (reading 'classCategories')]`;
 
 exports[`naive_bayes:MultinomialNB should not predict invalid inputs 1`] = `
-Object {
+ValidationError {
   "message": "validateMatrix2D has received a non-array argument",
-  "name": "",
+  "name": "ValidationError",
 }
 `;
 
 exports[`naive_bayes:MultinomialNB should not predict invalid inputs 2`] = `
-Object {
+ValidationError {
   "message": "validateMatrix2D has received a non-array argument",
-  "name": "",
+  "name": "ValidationError",
 }
 `;
 
 exports[`naive_bayes:MultinomialNB should not predict invalid inputs 3`] = `
-Object {
+ValidationError {
   "message": "validateMatrix2D has received a non-array argument",
-  "name": "",
+  "name": "ValidationError",
 }
 `;
 
 exports[`naive_bayes:MultinomialNB should not predict invalid inputs 4`] = `
-Object {
+Validation2DMatrixError {
   "message": "The matrix is not 2D shaped: [1,2] of [2]",
-  "name": "",
+  "name": "Validation2DMatrixError",
 }
 `;
