@@ -3,7 +3,6 @@ import { Iris } from '../../src/lib/datasets';
 import { RandomForestClassifier } from '../../src/lib/ensemble';
 import { accuracyScore } from '../../src/lib/metrics';
 import { train_test_split } from '../../src/lib/model_selection';
-import { IRIS_FAKE_DATA, IRIS_FAKE_DESC } from '../datasets/fake_data/iris';
 import { matchExceptionWithSnapshot } from '../util_testing';
 
 // Mock fetch
@@ -31,12 +30,6 @@ describe('ensemble:forest', () => {
     });
 
     it('should train test split and predict correct test #1', async () => {
-      fetch.resetMocks();
-      // data mock
-      fetch.mockResponseOnce(IRIS_FAKE_DATA);
-      // desc mock
-      fetch.mockResponseOnce(IRIS_FAKE_DESC);
-
       const iris = new Iris();
       const { data, targets } = await iris.load();
       const randomForest = new RandomForestClassifier();
