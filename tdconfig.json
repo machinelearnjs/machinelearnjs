@@ -37,7 +37,6 @@
     // "emitDecoratorMetadata": true /* Enables experimental support for emitting type metadata for decorators. */,
 
     "lib": ["es6", "es2017", "dom"],
-    "types": ["node", "Long"],
     "typeRoots": ["node_modules/@types", "src/types"]
   },
   "entryPoint": ["src/lib/index.ts"],
