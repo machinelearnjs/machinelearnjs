@@ -1,7 +1,6 @@
 import fakeFetch from 'jest-fetch-mock';
 import { Iris } from '../../src/lib/datasets';
 import { classCounts, DecisionTreeClassifier, Leaf } from '../../src/lib/tree/tree';
-import { IRIS_FAKE_DATA, IRIS_FAKE_DESC } from '../datasets/fake_data/iris';
 import { matchExceptionWithSnapshot } from '../util_testing';
 
 // Mock fetch
@@ -13,11 +12,6 @@ describe('tree:DecisionTreeClassifier', () => {
 
   const numberX = [[0, 0], [1, 1]];
   const numberY = [0, 1];
-
-  // Fetch mock for Iris dataset
-  beforeEach(() => {
-    fetch.resetMocks();
-  });
 
   it('Should predict fruitX[0] as Apple', () => {
     const features = ['color', 'diameter', 'label'];
@@ -115,11 +109,6 @@ describe('tree:DecisionTreeClassifier', () => {
   });
 
   it('should correctly predict Iris data 1', async () => {
-    // Iris data mock
-    fetch.mockResponseOnce(IRIS_FAKE_DATA);
-    // Iris desc mock
-    fetch.mockResponseOnce(IRIS_FAKE_DESC);
-
     const iris = new Iris();
     const { data, targets } = await iris.load();
     const decision = new DecisionTreeClassifier();
@@ -132,11 +121,6 @@ describe('tree:DecisionTreeClassifier', () => {
   });
 
   it('should correctly predict Iris data 2', async () => {
-    // Iris data mock
-    fetch.mockResponseOnce(IRIS_FAKE_DATA);
-    // Iris desc mock
-    fetch.mockResponseOnce(IRIS_FAKE_DESC);
-
     const iris = new Iris();
     const { data, targets } = await iris.load();
     const decision = new DecisionTreeClassifier();
