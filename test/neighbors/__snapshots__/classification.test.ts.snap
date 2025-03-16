@@ -1,10 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`classification:KNeighborsClassifier should throw an error if X is not a matrix 1`] = `[TypeError: Cannot read property 'k' of undefined]`;
+exports[`classification:KNeighborsClassifier should throw an error if X is not a matrix 1`] = `[TypeError: Cannot read properties of undefined (reading 'k')]`;
 
 exports[`classification:KNeighborsClassifier should throw an error if y is not a vector 1`] = `
-Object {
+ValidationError {
   "message": "validateFitInputs received a non-array input y",
-  "name": "",
+  "name": "ValidationError",
 }
 `;
