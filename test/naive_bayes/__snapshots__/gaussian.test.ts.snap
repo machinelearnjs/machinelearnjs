@@ -1,78 +1,78 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`naive_bayes:GaussianNB Should fit only accept X and y if number of attributes is same 1`] = `
-Object {
+ValidationClassMismatch {
   "message": "Number of labels=3 does not math number of samples=7",
-  "name": "",
+  "name": "ValidationClassMismatch",
 }
 `;
 
 exports[`naive_bayes:GaussianNB Should fit only accept X and y if number of attributes is same 2`] = `
-Object {
+ValidationClassMismatch {
   "message": "Number of labels=7 does not math number of samples=3",
-  "name": "",
+  "name": "ValidationClassMismatch",
 }
 `;
 
 exports[`naive_bayes:GaussianNB Should not fit non array for testing data 1`] = `
-Object {
+ValidationError {
   "message": "validateFitInputs received a non-array input y",
-  "name": "",
+  "name": "ValidationError",
 }
 `;
 
 exports[`naive_bayes:GaussianNB Should not fit non array for testing data 2`] = `
-Object {
+ValidationError {
   "message": "validateFitInputs received a non-array input y",
-  "name": "",
+  "name": "ValidationError",
 }
 `;
 
 exports[`naive_bayes:GaussianNB Should not fit non array for testing data 3`] = `
-Object {
+ValidationClassMismatch {
   "message": "Number of labels=0 does not math number of samples=7",
-  "name": "",
+  "name": "ValidationClassMismatch",
 }
 `;
 
 exports[`naive_bayes:GaussianNB Should not fit non array for training data 1`] = `
-Object {
+ValidationError {
   "message": "validateFitInputs received a non-array input X",
-  "name": "",
+  "name": "ValidationError",
 }
 `;
 
 exports[`naive_bayes:GaussianNB Should not fit non array for training data 2`] = `
-Object {
+ValidationClassMismatch {
   "message": "Number of labels=2 does not math number of samples=3",
-  "name": "",
+  "name": "ValidationClassMismatch",
 }
 `;
 
 exports[`naive_bayes:GaussianNB Should not fit non array for training data 3`] = `
-Object {
+ValidationError {
   "message": "validateFitInputs received a non-array input X",
-  "name": "",
+  "name": "ValidationError",
 }
 `;
 
 exports[`naive_bayes:GaussianNB should predict only accept X as matrix 1`] = `
-Object {
+ValidationError {
   "message": "validateMatrix2D has received a non-array argument",
-  "name": "",
+  "name": "ValidationError",
 }
 `;
 
 exports[`naive_bayes:GaussianNB should predict only accept X as matrix 2`] = `
-Object {
+ValidationError {
   "message": "validateMatrix2D has received a non-array argument",
-  "name": "",
+  "name": "ValidationError",
 }
 `;
 
 exports[`naive_bayes:GaussianNB should predict only accept X as matrix 3`] = `
-Object {
+Validation2DMatrixError {
   "message": "The matrix is not 2D shaped: [1,2,3] of [3]",
-  "name": "",
+  "name": "Validation2DMatrixError",
 }
 `;
