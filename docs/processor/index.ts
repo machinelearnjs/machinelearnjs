@@ -177,6 +177,10 @@ export function getText(param): string | undefined {
   if (param.comment && param.comment.summary) {
     return param.comment.summary.map((summary) => summary.text).join('\n');
   }
+  // Supporting legacy getText
+  if (param.comment) {
+    return param.comment.text;
+  }
   return undefined;
 }
 
@@ -242,7 +246,7 @@ export function constructParamTable(parameters): string {
         } else if (prop.constraint) {
           args = prop.constraint.type + ' ' + prop.constraint.types.map(renderParamType).join(' | ');
         } else {
-          args = prop.type;
+          args = prop.name;
         }
         sum.push([`${param.name}`, args, prop.defaultValue, getText(param)]);
       });

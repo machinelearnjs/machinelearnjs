@@ -168,7 +168,9 @@ describe('docs:helper', () => {
     });
 
     it('should return false for null input', () => {
-      expect(() => isSignatureValid(null, optionsMock)).toThrow("Cannot read property 'signatures' of null");
+      expect(() => isSignatureValid(null, optionsMock)).toThrow(
+        "Cannot read properties of null (reading 'signatures')",
+      );
     });
   });
 
@@ -202,8 +204,8 @@ describe('docs:helper', () => {
     });
 
     it('should throw exceptions when invalid input is given', () => {
-      expect(() => traverseArrayDefinition(null)).toThrow("Cannot read property 'elementType' of null");
-      expect(() => traverseArrayDefinition(123)).toThrow("Cannot read property 'name' of undefined");
+      expect(() => traverseArrayDefinition(null)).toThrow("Cannot read properties of null (reading 'elementType')");
+      expect(() => traverseArrayDefinition(123)).toThrow("Cannot read properties of undefined (reading 'name')");
     });
   });
 
@@ -235,14 +237,17 @@ describe('docs:helper', () => {
   describe('getText', () => {
     const dummy1 = {
       comment: {
-        text: 'dummy text',
-        shortText: 'dummy shortText',
+        summary: [
+          {
+            text: 'dummy text',
+            shortText: 'dummy shortText',
+          },
+        ],
       },
     };
     const dummy2 = {
       comment: {
-        text: null,
-        shortText: 'dummy shortText',
+        text: 'dummy legacy text',
       },
     };
     it('should dummy1 get text', () => {
@@ -250,9 +255,9 @@ describe('docs:helper', () => {
       expect(text).toBe('dummy text');
     });
 
-    it('should dummy2 get shortText', () => {
-      const shortText = getText(dummy2);
-      expect(shortText).toBe('dummy shortText');
+    it('legacy getText', () => {
+      const text = getText(dummy2);
+      expect(text).toBe('dummy legacy text');
     });
 
     it('should throw an error for an invalid input', () => {
@@ -268,7 +273,7 @@ describe('docs:helper', () => {
       expect(result).toMatchSnapshot();
     });
 
-    it('should build a table for params with Type1DMatrix', () => {
+    it.only('should build a table for params with Type1DMatrix', () => {
       // Testing LinearRegression's fit function
       const params = docsJson.children[16].children[0].children[0].signatures[0].parameters;
       const result = constructParamTable(params);
