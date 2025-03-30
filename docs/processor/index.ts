@@ -5,7 +5,6 @@ import * as path from 'path';
 import { APIProcessor } from './APIProcessor';
 import { ConfigProcessor } from './ConfigProcessor';
 import * as consts from './const';
-import { kindNumberConstructor } from './const';
 import { ExampleProcessor } from './ExampleProcessor';
 import { PagesProcessor } from './PagesProcessor';
 import { RedirectProcessor } from './RedirectProcessor';
@@ -38,12 +37,8 @@ export function filterByKind(children, options, kind): any {
     const filtered = children.filter((child) => {
       return child.kind === kind;
     });
-    // Filtering by isProtected = true and any constructors (we always want to display constructors
-    const publicFiltered = filtered.filter((filteredChild) => {
-      return filteredChild.flags.isPublic || filteredChild.kind === kindNumberConstructor;
-    });
 
-    return _.isEmpty(publicFiltered) ? options.inverse(children) : options.fn(publicFiltered);
+    return _.isEmpty(filtered) ? options.inverse(children) : options.fn(filtered);
   } else {
     return options.inverse(children);
   }
@@ -488,17 +483,17 @@ Handlebars.registerHelper('ifEquals', (children, x, y, options) => ifEquals(chil
 
 Handlebars.registerHelper('isSignatureValid', (context, options) => isSignatureValid(context, options));
 
-Handlebars.registerHelper('filterConstructor', (children, options) =>
-  filterByKind(children, options, consts.kindNumberConstructor),
-);
+Handlebars.registerHelper('filterConstructor', (children, options) => {
+  return filterByKind(children, options, consts.kindNumberConstructor);
+});
 
-Handlebars.registerHelper('filterMethod', (children, options) =>
-  filterByKind(children, options, consts.kindNumberMethod),
-);
+Handlebars.registerHelper('filterMethod', (children, options) => {
+  return filterByKind(children, options, consts.kindNumberMethod);
+});
 
-Handlebars.registerHelper('filterProperty', (children, options) =>
-  filterByKind(children, options, consts.kindNumberProperty),
-);
+Handlebars.registerHelper('filterProperty', (children, options) => {
+  return filterByKind(children, options, consts.kindNumberProperty);
+});
 
 Handlebars.registerHelper('filterTagExample', (children, options) =>
   filterByTag(children, options, consts.tagTypeExample),

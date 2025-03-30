@@ -71,28 +71,25 @@ Object {
 `;
 
 exports[`docs:helper filterByKind should filter all public Variables 1`] = `
-Object {
-  "payload": Array [
-    Object {
-      "comment": Object {
+{
+  "payload": [
+    {
+      "comment": {
         "shortText": "Model training weights",
-      },
-      "flags": Object {
-        "isPublic": true,
       },
       "id": 725,
       "kind": 32,
       "kindString": "Variable",
       "name": "weights",
-      "sources": Array [
-        Object {
+      "sources": [
+        {
           "character": 11,
           "fileName": "linear_model/stochastic_gradient.ts",
           "line": 130,
         },
       ],
-      "type": Object {
-        "elementType": Object {
+      "type": {
+        "elementType": {
           "name": "number",
           "type": "intrinsic",
         },

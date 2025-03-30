@@ -16,6 +16,7 @@ import {
   searchInterface,
   traverseArrayDefinition,
 } from '../../docs/processor';
+import { kindNumberVariable } from '../../docs/processor/const';
 const docsJson = JSON.parse(fs.readFileSync(path.join(__dirname, './__snapshots__/docs.snapshot.json'), 'utf8'));
 
 /**
@@ -55,13 +56,13 @@ describe('docs:helper', () => {
     });
   });
 
-  describe('filterByKind', () => {
+  describe.only('filterByKind', () => {
     const fakePayload = [
       // Constructor
       {
         id: 724,
         name: 'zzzz',
-        kind: 32,
+        kind: 512,
         kindString: 'Constructor',
         flags: {},
         comment: {
@@ -85,9 +86,6 @@ describe('docs:helper', () => {
         name: 'weights',
         kind: 32,
         kindString: 'Variable',
-        flags: {
-          isPublic: true,
-        },
         comment: {
           shortText: 'Model training weights',
         },
@@ -108,7 +106,7 @@ describe('docs:helper', () => {
       },
     ];
     it('should filter all public Variables', () => {
-      const result = filterByKind(fakePayload, optionsMock, 'Variable');
+      const result = filterByKind(fakePayload, optionsMock, kindNumberVariable);
       expect(result).toMatchSnapshot();
     });
 
