@@ -16,7 +16,7 @@ import {
   searchInterface,
   traverseArrayDefinition,
 } from '../../docs/processor';
-import { kindNumberVariable } from '../../docs/processor/const';
+import { kindNumberConstructor, kindNumberVariable } from '../../docs/processor/const';
 const docsJson = JSON.parse(fs.readFileSync(path.join(__dirname, './__snapshots__/docs.snapshot.json'), 'utf8'));
 
 /**
@@ -56,7 +56,7 @@ describe('docs:helper', () => {
     });
   });
 
-  describe.only('filterByKind', () => {
+  describe('filterByKind', () => {
     const fakePayload = [
       // Constructor
       {
@@ -111,7 +111,7 @@ describe('docs:helper', () => {
     });
 
     it('should filter all constructor', () => {
-      const result = filterByKind(fakePayload, optionsMock, 'Constructor');
+      const result = filterByKind(fakePayload, optionsMock, kindNumberConstructor);
       expect(result).toMatchSnapshot();
     });
   });

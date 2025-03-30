@@ -42,25 +42,25 @@ exports[`docs:helper docs:test:renderNewLine should render a newline upon callin
 `;
 
 exports[`docs:helper filterByKind should filter all constructor 1`] = `
-Object {
-  "payload": Array [
-    Object {
-      "comment": Object {
+{
+  "payload": [
+    {
+      "comment": {
         "shortText": "model training epochs",
       },
-      "flags": Object {},
+      "flags": {},
       "id": 724,
-      "kind": 32,
+      "kind": 512,
       "kindString": "Constructor",
       "name": "zzzz",
-      "sources": Array [
-        Object {
+      "sources": [
+        {
           "character": 10,
           "fileName": "linear_model/stochastic_gradient.ts",
           "line": 126,
         },
       ],
-      "type": Object {
+      "type": {
         "name": "number",
         "type": "intrinsic",
       },
@@ -102,9 +102,9 @@ exports[`docs:helper filterByKind should filter all public Variables 1`] = `
 `;
 
 exports[`docs:helper filterByTag should find a tag example 1`] = `
-Object {
-  "payload": Array [
-    Object {
+{
+  "payload": [
+    {
       "tag": "example",
       "text": "
 import { SGDRegressor } from 'kalimdor/linear_model';
