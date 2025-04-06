@@ -14,8 +14,8 @@ exports[`docs:helper constructParamTable should build a table for param1 1`] = `
 exports[`docs:helper constructParamTable should build a table for params with Type1DMatrix 1`] = `
 "| Param | Type | Default | Description |
 | ------ | ------ | ------ | ------ |
-| X | number |  | training values
-| y | number |  | target values
+| X | number[] or number[][] | null | training values
+| y | number[] or number[][] | null | target values
 "
 `;
 
@@ -122,53 +122,178 @@ reg.predict([[2., 2.]]); // result: [ 1.281828588248001 ]
 
 exports[`docs:helper isSignatureValid should return true for the 2nd child 1`] = `
 {
-  "flags": {
-    "isExported": true,
-  },
-  "id": 133,
+  "flags": {},
+  "id": 3,
   "kind": 512,
-  "kindString": "Constructor",
   "name": "constructor",
   "signatures": [
     {
       "flags": {},
-      "id": 134,
+      "id": 4,
       "kind": 16384,
-      "kindString": "Constructor signature",
-      "name": "new KMeans",
+      "name": "KMeans",
       "parameters": [
         {
-          "defaultValue": " {
-      distance: 'euclidean',
-      k: 3,
-      maxIteration: 300
-    }",
+          "defaultValue": "...",
           "flags": {},
-          "id": 135,
+          "id": 5,
           "kind": 32768,
-          "kindString": "Parameter",
-          "name": "options",
+          "name": "__namedParameters",
           "type": {
-            "id": 127,
-            "name": "KMeansOptions",
-            "type": "reference",
+            "declaration": {
+              "children": [
+                {
+                  "defaultValue": "'euclidean'",
+                  "flags": {
+                    "isOptional": true,
+                  },
+                  "id": 8,
+                  "kind": 1024,
+                  "name": "distance",
+                  "sources": [
+                    {
+                      "character": 6,
+                      "fileName": "cluster/k_means.ts",
+                      "line": 42,
+                      "url": "https://github.com/machinelearnjs/machinelearnjs/blob/052527a63850aa38627c13eb0273cef6c858d085/src/lib/cluster/k_means.ts#L42",
+                    },
+                  ],
+                  "type": {
+                    "type": "union",
+                    "types": [
+                      {
+                        "type": "literal",
+                        "value": "euclidean",
+                      },
+                      {
+                        "type": "literal",
+                        "value": "manhattan",
+                      },
+                    ],
+                  },
+                  "variant": "declaration",
+                },
+                {
+                  "defaultValue": "3",
+                  "flags": {},
+                  "id": 7,
+                  "kind": 1024,
+                  "name": "k",
+                  "sources": [
+                    {
+                      "character": 6,
+                      "fileName": "cluster/k_means.ts",
+                      "line": 41,
+                      "url": "https://github.com/machinelearnjs/machinelearnjs/blob/052527a63850aa38627c13eb0273cef6c858d085/src/lib/cluster/k_means.ts#L41",
+                    },
+                  ],
+                  "type": {
+                    "name": "number",
+                    "type": "intrinsic",
+                  },
+                  "variant": "declaration",
+                },
+                {
+                  "defaultValue": "300",
+                  "flags": {
+                    "isOptional": true,
+                  },
+                  "id": 9,
+                  "kind": 1024,
+                  "name": "maxIteration",
+                  "sources": [
+                    {
+                      "character": 6,
+                      "fileName": "cluster/k_means.ts",
+                      "line": 43,
+                      "url": "https://github.com/machinelearnjs/machinelearnjs/blob/052527a63850aa38627c13eb0273cef6c858d085/src/lib/cluster/k_means.ts#L43",
+                    },
+                  ],
+                  "type": {
+                    "name": "number",
+                    "type": "intrinsic",
+                  },
+                  "variant": "declaration",
+                },
+                {
+                  "defaultValue": "0",
+                  "flags": {
+                    "isOptional": true,
+                  },
+                  "id": 10,
+                  "kind": 1024,
+                  "name": "randomState",
+                  "sources": [
+                    {
+                      "character": 6,
+                      "fileName": "cluster/k_means.ts",
+                      "line": 44,
+                      "url": "https://github.com/machinelearnjs/machinelearnjs/blob/052527a63850aa38627c13eb0273cef6c858d085/src/lib/cluster/k_means.ts#L44",
+                    },
+                  ],
+                  "type": {
+                    "name": "number",
+                    "type": "intrinsic",
+                  },
+                  "variant": "declaration",
+                },
+              ],
+              "flags": {},
+              "groups": [
+                {
+                  "children": [
+                    8,
+                    7,
+                    9,
+                    10,
+                  ],
+                  "title": "Properties",
+                },
+              ],
+              "id": 6,
+              "kind": 65536,
+              "name": "__type",
+              "sources": [
+                {
+                  "character": 7,
+                  "fileName": "cluster/k_means.ts",
+                  "line": 40,
+                  "url": "https://github.com/machinelearnjs/machinelearnjs/blob/052527a63850aa38627c13eb0273cef6c858d085/src/lib/cluster/k_means.ts#L40",
+                },
+              ],
+              "variant": "declaration",
+            },
+            "type": "reflection",
           },
+          "variant": "param",
+        },
+      ],
+      "sources": [
+        {
+          "character": 2,
+          "fileName": "cluster/k_means.ts",
+          "line": 34,
+          "url": "https://github.com/machinelearnjs/machinelearnjs/blob/052527a63850aa38627c13eb0273cef6c858d085/src/lib/cluster/k_means.ts#L34",
         },
       ],
       "type": {
-        "id": 132,
         "name": "KMeans",
+        "package": "machinelearn",
+        "target": 2,
         "type": "reference",
       },
+      "variant": "signature",
     },
   ],
   "sources": [
     {
-      "character": 31,
+      "character": 2,
       "fileName": "cluster/k_means.ts",
-      "line": 45,
+      "line": 34,
+      "url": "https://github.com/machinelearnjs/machinelearnjs/blob/052527a63850aa38627c13eb0273cef6c858d085/src/lib/cluster/k_means.ts#L34",
     },
   ],
+  "variant": "declaration",
 }
 `;
 

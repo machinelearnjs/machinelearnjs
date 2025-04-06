@@ -16,7 +16,7 @@ import {
   searchInterface,
   traverseArrayDefinition,
 } from '../../docs/processor';
-import * as constants from '../../docs/processor/const'
+import * as constants from '../../docs/processor/const';
 import { kindNumberConstructor, kindNumberVariable } from '../../docs/processor/const';
 const docsJson = JSON.parse(fs.readFileSync(path.join(__dirname, './__snapshots__/docs.snapshot.json'), 'utf8'));
 
@@ -142,9 +142,9 @@ describe('docs:helper', () => {
 
   describe('searchInterface', () => {
     it('should find reference', () => {
-      const result = searchInterface(docsJson, 948);
+      const result = searchInterface(docsJson, 1028);
       const { id, name, kind } = result;
-      expect(id).toBe(948);
+      expect(id).toBe(1028);
       expect(name).toBe('SVMOptions');
       expect(kind).toBe(constants.refNumberInterface);
     });
@@ -156,7 +156,7 @@ describe('docs:helper', () => {
 
   describe('isSignatureValid', () => {
     it('should return true for the 2nd child', () => {
-      const ele = docsJson.children[1].children[0].children[0];
+      const ele = docsJson.children[0].children[0].children[0];
       const result = isSignatureValid(ele, optionsMock);
       expect(result.result).toBe(true);
       expect(result.payload).toMatchSnapshot();
@@ -276,7 +276,7 @@ describe('docs:helper', () => {
 
     it('should build a table for params with Type1DMatrix', () => {
       // Testing LinearRegression's fit function
-      const params = docsJson.children[16].children[0].children[0].signatures[0].parameters;
+      const params = docsJson.children[5].children[2].children[1].signatures[0].parameters;
       const result = constructParamTable(params);
       expect(result).toMatchSnapshot();
     });
@@ -300,7 +300,7 @@ describe('docs:helper', () => {
   describe('renderMethodReturnType', () => {
     it('should build a return type for any[]', () => {
       // Testing with imputer fit_transform
-      const type = docsJson.children[9].children[1].children[2].signatures[0].type;
+      const type = docsJson.children[10].children[1].children[2].signatures[0].type;
       const returnType = renderMethodReturnType(type);
       expect(returnType).toEqual('any[]');
     });
@@ -322,7 +322,7 @@ describe('docs:helper', () => {
   describe('methodBracket', () => {
     // TODO: renderMethodBracket should decompose all the namedParameters
     it('should print a constructor parameter table', () => {
-      const parameters = docsJson.children[8].children[0].children[0].signatures[0].parameters;
+      const parameters = docsJson.children[5].children[1].children[0].signatures[0].parameters;
       const result = renderMethodBracket(parameters);
       expect(result).toEqual('(__namedParameters: *`object`*)');
     });
