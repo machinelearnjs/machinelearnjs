@@ -27,7 +27,7 @@ jobs:
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.7.3
         with:
-          repository-name: gh-pages
+          repository-name: machinelearnjs/machinelearnjs.github.io
           folder: docs/md_out/.vuepress/dist
 
 
