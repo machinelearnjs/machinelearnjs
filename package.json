@@ -62,7 +62,8 @@
     "release:minor": "./scripts/releases/release-it.sh -v minor",
     "release:patch": "./scripts/releases/release-it.sh -v patch",
     "contributors:add": "npx all-contributors add",
-    "contributors:generate": "npx all-contributors generate"
+    "contributors:generate": "npx all-contributors generate",
+    "precommit": "yarn run lint && yarn run build && pretty-quick --staged"
   },
   "engines": {
     "node": ">=18 && <= 22"
