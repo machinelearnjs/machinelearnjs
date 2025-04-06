@@ -1,0 +1,5 @@
+# Redirect domain aliases to primary domain
+https://www.kalimdor.io/* https://www.machinelearnjs.com/:splat 301!
+
+# Optional: Redirect default Netlify subdomain to primary domain
+https://machinelearn.netlify.com/* https://www.machinelearnjs.com/:splat 301!
