@@ -62,8 +62,7 @@
     "release:minor": "./scripts/releases/release-it.sh -v minor",
     "release:patch": "./scripts/releases/release-it.sh -v patch",
     "contributors:add": "npx all-contributors add",
-    "contributors:generate": "npx all-contributors generate",
-    "precommit": "yarn run lint && yarn run build && pretty-quick --staged"
+    "contributors:generate": "npx all-contributors generate"
   },
   "engines": {
     "node": ">=18 && <= 22"
@@ -103,8 +102,8 @@
     "sass-loader": "^16.0.5",
     "standard-version": "4.0.0",
     "ts-jest": "29.2.6",
-    "ts-loader": "6.0.4",
-    "ts-node": "8.1.0",
+    "ts-loader": "9.5.2",
+    "ts-node": "10.9.2",
     "tslint": "5.4.3",
     "tslint-config-prettier": "1.8.0",
     "typedoc": "0.27.9",

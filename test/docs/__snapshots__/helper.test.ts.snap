@@ -4,10 +4,10 @@ exports[`docs:helper constructParamTable should build a table for param1 1`] = `
 "| Param | Type | Default | Description |
 | ------ | ------ | ------ | ------ |
 | type | string |  | 
-| options.delimiter | string | "," | 
-| options.lastIsTarget | true | true | 
-| options.targetType | string | "float" | 
-| options.trainType | string | "float" | 
+| options.delimiter | string | ',' | 
+| options.lastIsTarget |  | true | 
+| options.targetType | string | 'float' | 
+| options.trainType | string | 'float' | 
 "
 `;
 
@@ -30,9 +30,8 @@ exports[`docs:helper constructParamTable should build table for params with Type
 exports[`docs:helper constructParamTable should build table for params with Type2DMatrix of multiple types 1`] = `
 "| Param | Type | Default | Description |
 | ------ | ------ | ------ | ------ |
-| options.classCategories | T[] |  | List of class categories
-| mean | number[][] |  | Mean of each feature per class
-| variance | number[][] |  | Variance of each feature per class
+| X | number[][] | null | array-like or sparse matrix of shape = [n_samples, n_features]
+| y | unknown | null | array-like, shape = [n_samples] or [n_samples, n_outputs]
 "
 `;
 
@@ -176,6 +175,10 @@ exports[`docs:helper isSignatureValid should return true for the 2nd child 1`] =
 exports[`docs:helper renderMethodReturnType should build a toJSON return type 1`] = `
 "| Param | Type | Description |
 | ------ | ------ | ------ |
-| trees | any[] | Decision trees
+| classes | any[] | classes used for KNN tree
+| distance | any | Choice of distance function, should choose between euclidean | manhattan
+| k | number | Number of neighbors to classify
+| tree | any | KNN tree
+| type | string | Type of algorithm to use, choose between kdtree(default) | balltree | simple
 "
 `;

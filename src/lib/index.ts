@@ -6,10 +6,12 @@ import * as feature_extraction from './feature_extraction';
 import * as linear_model from './linear_model';
 import * as metrics from './metrics';
 import * as model_selection from './model_selection';
+import * as naive_bayes from './naive_bayes';
 import * as neighbors from './neighbors';
 import * as preprocessing from './preprocessing';
 import * as svm from './svm';
 import * as tree from './tree';
+import * as types from './types';
 
 // prettier-ignore
 export {
@@ -17,6 +19,7 @@ export {
 	datasets,
 	decomposition,
 	ensemble,
+	naive_bayes,
 	feature_extraction,
 	linear_model,
 	metrics,
@@ -25,4 +28,5 @@ export {
 	preprocessing,
 	svm,
 	tree,
+	types,
 }

@@ -254,7 +254,7 @@ export function constructParamTable(parameters): string {
       _.forEach(foundRef.children, (prop) => {
         sum.push([`${param.name}.${prop.name}`, renderParamType(prop.type), prop.defaultValue, getText(param)]);
       });
-    } else if (foundRef.kindString === consts.refKindTypeAlias) {
+    } else if (foundRef.kindString === consts.refKindTypeAlias || foundRef.kind === consts.refNumberTypeAlias) {
       // Handling a custom `type` such as Type2DMatrix or Type3DMatrix
       const { type } = foundRef.type;
       if (type === consts.returnTypeArray) {
@@ -266,6 +266,7 @@ export function constructParamTable(parameters): string {
         const typeList = [];
         for (let i = 0; i < typeArguments.length; i++) {
           const typeArg = typeArguments[i];
+          // at this point use typeParameters.kind
           if (typeArg.type === consts.refTypeArgTypeUnion) {
             const types = typeArg.types;
             typeList.push(constructMatrixType(refName, types));
@@ -304,7 +305,7 @@ export function constructParamTable(parameters): string {
           // const foundRef = searchInterface(docsJson, namedParam.type.id);
           if (consts.paramTypeReference === namedParam.type.type) {
             // If the reflection is actually a reference, such as ENUM, then buildParamFromReference
-            buildParamsFromReference(namedParam, sum, namedParam.type.id);
+            buildParamsFromReference(namedParam, sum, namedParam.type?.elementType?.target ?? namedParam.type.target);
           } else {
             sum.push([
               `options.${namedParam.name}`,
@@ -328,7 +329,8 @@ export function constructParamTable(parameters): string {
         // e.g. x: IterableIterator
         // 4.2. Handle any custom defined interfaces / references. Custom references should have an ID that references definition within the docs.json
         // e.g. x: Options
-        buildParamsFromReference(param, sum, param.type.id);
+        // tslint:disable-next-line:no-console
+        buildParamsFromReference(param, sum, param.type.id ?? param.type.target);
       } else if (consts.paramTypeUnion === paramType) {
         // 5. Handles any union types.
         // e.g. string[] | string[][]

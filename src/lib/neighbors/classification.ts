@@ -98,13 +98,27 @@ export class KNeighborsClassifier<T extends number | string | boolean> implement
 
   /**
    * Return the model's state as a JSON object
-   * @return {object} JSON KNN model.
    */
   public toJSON(): {
+    /**
+     * classes used for KNN tree
+     */
     classes: any[];
+    /**
+     * Choice of distance function, should choose between euclidean | manhattan
+     */
     distance: any;
+    /**
+     * Number of neighbors to classify
+     */
     k: number;
+    /**
+     * KNN tree
+     */
     tree: any;
+    /**
+     * Type of algorithm to use, choose between kdtree(default) | balltree | simple
+     */
     type: string;
   } {
     return {

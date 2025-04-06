@@ -96,10 +96,13 @@ export class BaseSGD implements IMlModel<number> {
 
   /**
    * Train the base SGD
-   * @param X - Matrix of data
-   * @param y - Matrix of targets
+   * @param {any} X - Matrix of data
+   * @param {any} y - Matrix of targets
    */
-  public fit(X: Type2DMatrix<number> = null, y: Type1DMatrix<number> = null): void {
+  public fit(
+    X: Type2DMatrix<number> = null,
+    y: Type1DMatrix<number> = null,
+  ): void {
     validateFitInputs(X, y);
 
     // holds all the preprocessed X values

@@ -34,6 +34,8 @@ export const tagTypeExample = 'example';
 export const tagTypeIgnore = 'ignore';
 
 // Reference Kinds
+export const refNumberTypeAlias = 2097152;
+export const refNumberInterface = 256;
 export const refKindInterface = 'Interface';
 export const refKindTypeAlias = 'Type alias';
 export const refTypeArgTypeUnion = 'union';
