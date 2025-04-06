@@ -1,6 +1,5 @@
 import * as tf from '@tensorflow/tfjs';
 import * as _ from 'lodash';
-import { isArray } from 'util';
 import { Type1DMatrix, Type2DMatrix, TypeMatrix } from '../types';
 import {
   Validation1DMatrixError,
@@ -114,7 +113,7 @@ export function validateFitInputs(X: Type2DMatrix<any> | Type1DMatrix<any>, y: T
  * @ignore
  */
 export function validateMatrix1D(X: unknown): number[] {
-  if (!isArray(X)) {
+  if (!_.isArray(X)) {
     throw new ValidationError('validateMatrix1D has received a non-array argument');
   }
 
@@ -123,7 +122,7 @@ export function validateMatrix1D(X: unknown): number[] {
   if (shape.length !== 1 || shape[0] === 0) {
     throw new Validation1DMatrixError(`The matrix is not 1D shaped: ${JSON.stringify(X)} of ${JSON.stringify(shape)}`);
   }
-  return X;
+  return X as number[];
 }
 
 /**

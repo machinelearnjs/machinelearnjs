@@ -35,13 +35,10 @@ export function ifEquals(children, x, y, options): any {
 export function filterByKind(children, options, kind): any {
   if (children) {
     const filtered = children.filter((child) => {
-      return child.kindString === kind;
+      return child.kind === kind;
     });
-    // Filtering by isProtected = true and any constructors (we always want to display constructors
-    const publicFiltered = filtered.filter((filteredChild) => {
-      return filteredChild.flags.isPublic || filteredChild.kindString === consts.kindStringConst;
-    });
-    return _.isEmpty(publicFiltered) ? options.inverse(children) : options.fn(publicFiltered);
+
+    return _.isEmpty(filtered) ? options.inverse(children) : options.fn(filtered);
   } else {
     return options.inverse(children);
   }
@@ -60,7 +57,7 @@ export function filterByKind(children, options, kind): any {
 export function filterByTag(children, options, tag): any {
   if (children) {
     const filtered = children.filter((child) => {
-      return child.tag === tag;
+      return child.tag === tag || child.tag === `@${tag}`;
     });
     return _.isEmpty(filtered) ? options.inverse(children) : options.fn(filtered);
   } else {
@@ -176,12 +173,13 @@ export function getText(param): string | undefined {
   if (_.isEmpty(param)) {
     throw new TypeError('Param should not be null or undefined');
   }
-  const text = _.get(param, 'comment.text');
-  const shortText = _.get(param, 'comment.shortText');
-  if (text) {
-    return text;
-  } else if (shortText) {
-    return shortText;
+
+  if (param.comment && param.comment.summary) {
+    return param.comment.summary.map((summary) => summary.text).join('\n');
+  }
+  // Supporting legacy getText
+  if (param.comment) {
+    return param.comment.text;
   }
   return undefined;
 }
@@ -248,15 +246,15 @@ export function constructParamTable(parameters): string {
         } else if (prop.constraint) {
           args = prop.constraint.type + ' ' + prop.constraint.types.map(renderParamType).join(' | ');
         } else {
-          args = prop.type;
+          args = prop.name;
         }
-        sum.push([`${param.name}`, args, prop.defaultValue, getText(prop)]);
+        sum.push([`${param.name}`, args, prop.defaultValue, getText(param)]);
       });
     } else if (foundRef.kindString === consts.refKindInterface) {
       _.forEach(foundRef.children, (prop) => {
-        sum.push([`${param.name}.${prop.name}`, renderParamType(prop.type), prop.defaultValue, getText(prop)]);
+        sum.push([`${param.name}.${prop.name}`, renderParamType(prop.type), prop.defaultValue, getText(param)]);
       });
-    } else if (foundRef.kindString === consts.refKindTypeAlias) {
+    } else if (foundRef.kindString === consts.refKindTypeAlias || foundRef.kind === consts.refNumberTypeAlias) {
       // Handling a custom `type` such as Type2DMatrix or Type3DMatrix
       const { type } = foundRef.type;
       if (type === consts.returnTypeArray) {
@@ -268,6 +266,7 @@ export function constructParamTable(parameters): string {
         const typeList = [];
         for (let i = 0; i < typeArguments.length; i++) {
           const typeArg = typeArguments[i];
+          // at this point use typeParameters.kind
           if (typeArg.type === consts.refTypeArgTypeUnion) {
             const types = typeArg.types;
             typeList.push(constructMatrixType(refName, types));
@@ -306,7 +305,7 @@ export function constructParamTable(parameters): string {
           // const foundRef = searchInterface(docsJson, namedParam.type.id);
           if (consts.paramTypeReference === namedParam.type.type) {
             // If the reflection is actually a reference, such as ENUM, then buildParamFromReference
-            buildParamsFromReference(namedParam, sum, namedParam.type.id);
+            buildParamsFromReference(namedParam, sum, namedParam.type?.elementType?.target ?? namedParam.type.target);
           } else {
             sum.push([
               `options.${namedParam.name}`,
@@ -330,7 +329,8 @@ export function constructParamTable(parameters): string {
         // e.g. x: IterableIterator
         // 4.2. Handle any custom defined interfaces / references. Custom references should have an ID that references definition within the docs.json
         // e.g. x: Options
-        buildParamsFromReference(param, sum, param.type.id);
+        // tslint:disable-next-line:no-console
+        buildParamsFromReference(param, sum, param.type.id ?? param.type.target);
       } else if (consts.paramTypeUnion === paramType) {
         // 5. Handles any union types.
         // e.g. string[] | string[][]
@@ -347,6 +347,7 @@ export function constructParamTable(parameters): string {
     },
     [],
   );
+
   // flatten any [ [ [] ] ] 3rd layer arrays
   const tableHeader = '| Param | Type | Default | Description |\n';
   const tableSplit = '| ------ | ------ | ------ | ------ |\n';
@@ -451,7 +452,7 @@ export function renderMethodBracket(parameters): string {
  */
 export function renderSourceLink(sources): string {
   if (_.isEmpty(sources)) {
-    throw new TypeError('Sources cannot be empty');
+    return '';
   }
   const defined = _.map(sources, (src) => {
     return `[${src.fileName}:${src.line}](${pjson.repository.url}/blob/master/src/lib/${src.fileName}#L${src.line})`;
@@ -488,17 +489,17 @@ Handlebars.registerHelper('ifEquals', (children, x, y, options) => ifEquals(chil
 
 Handlebars.registerHelper('isSignatureValid', (context, options) => isSignatureValid(context, options));
 
-Handlebars.registerHelper('filterConstructor', (children, options) =>
-  filterByKind(children, options, consts.kindStringConst),
-);
+Handlebars.registerHelper('filterConstructor', (children, options) => {
+  return filterByKind(children, options, consts.kindNumberConstructor);
+});
 
-Handlebars.registerHelper('filterMethod', (children, options) =>
-  filterByKind(children, options, consts.kindStringMethod),
-);
+Handlebars.registerHelper('filterMethod', (children, options) => {
+  return filterByKind(children, options, consts.kindNumberMethod);
+});
 
-Handlebars.registerHelper('filterProperty', (children, options) =>
-  filterByKind(children, options, consts.kindStringProperty),
-);
+Handlebars.registerHelper('filterProperty', (children, options) => {
+  return filterByKind(children, options, consts.kindNumberProperty);
+});
 
 Handlebars.registerHelper('filterTagExample', (children, options) =>
   filterByTag(children, options, consts.tagTypeExample),
@@ -516,6 +517,8 @@ Handlebars.registerHelper('newLine', renderNewLine);
 
 Handlebars.registerHelper('cleanHyperLink', (str) => cleanHyperLink(str));
 
+Handlebars.registerHelper('json', (json) => JSON.stringify(json));
+
 // Processors
 const apiProcessor = new APIProcessor();
 apiProcessor.run(Handlebars);
@@ -527,6 +530,7 @@ const exampleProcessor = new ExampleProcessor();
 exampleProcessor.run(Handlebars);
 
 const configProcessor = new ConfigProcessor();
+
 configProcessor.run({ apiChildren: apiProcessor.apiChildren });
 
 const redirectProcessor = new RedirectProcessor();

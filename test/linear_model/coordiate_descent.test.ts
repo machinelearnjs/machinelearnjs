@@ -1,5 +1,5 @@
 import { Lasso, Ridge } from '../../src/lib/linear_model';
-import { ConstructionError, ValidationError } from '../../src/lib/utils/Errors';
+import { ConstructionError } from '../../src/lib/utils/Errors';
 import { getIris } from '../data_testing';
 import { assertArrayAlmostEqual } from '../util_testing';
 import { lasso_l2_snap, ridge_l1_snap } from './__snapshots__/manual_cd_regressor.snap';

@@ -4,18 +4,18 @@ exports[`docs:helper constructParamTable should build a table for param1 1`] = `
 "| Param | Type | Default | Description |
 | ------ | ------ | ------ | ------ |
 | type | string |  | 
-| options.delimiter | string | \\",\\" | 
-| options.lastIsTarget | true | true | 
-| options.targetType | string | \\"float\\" | 
-| options.trainType | string | \\"float\\" | 
+| options.delimiter | string | ',' | 
+| options.lastIsTarget |  | true | 
+| options.targetType | string | 'float' | 
+| options.trainType | string | 'float' | 
 "
 `;
 
 exports[`docs:helper constructParamTable should build a table for params with Type1DMatrix 1`] = `
 "| Param | Type | Default | Description |
 | ------ | ------ | ------ | ------ |
-| X | number[] |  | training values
-| y | number[] |  | target values
+| X | number[] or number[][] | null | training values
+| y | number[] or number[][] | null | target values
 "
 `;
 
@@ -30,9 +30,8 @@ exports[`docs:helper constructParamTable should build table for params with Type
 exports[`docs:helper constructParamTable should build table for params with Type2DMatrix of multiple types 1`] = `
 "| Param | Type | Default | Description |
 | ------ | ------ | ------ | ------ |
-| options.classCategories | T[] |  | List of class categories
-| mean | number[][] |  | Mean of each feature per class
-| variance | number[][] |  | Variance of each feature per class
+| X | number[][] | null | array-like or sparse matrix of shape = [n_samples, n_features]
+| y | unknown | null | array-like, shape = [n_samples] or [n_samples, n_outputs]
 "
 `;
 
@@ -42,25 +41,25 @@ exports[`docs:helper docs:test:renderNewLine should render a newline upon callin
 `;
 
 exports[`docs:helper filterByKind should filter all constructor 1`] = `
-Object {
-  "payload": Array [
-    Object {
-      "comment": Object {
+{
+  "payload": [
+    {
+      "comment": {
         "shortText": "model training epochs",
       },
-      "flags": Object {},
+      "flags": {},
       "id": 724,
-      "kind": 32,
+      "kind": 512,
       "kindString": "Constructor",
       "name": "zzzz",
-      "sources": Array [
-        Object {
+      "sources": [
+        {
           "character": 10,
           "fileName": "linear_model/stochastic_gradient.ts",
           "line": 126,
         },
       ],
-      "type": Object {
+      "type": {
         "name": "number",
         "type": "intrinsic",
       },
@@ -71,28 +70,25 @@ Object {
 `;
 
 exports[`docs:helper filterByKind should filter all public Variables 1`] = `
-Object {
-  "payload": Array [
-    Object {
-      "comment": Object {
+{
+  "payload": [
+    {
+      "comment": {
         "shortText": "Model training weights",
-      },
-      "flags": Object {
-        "isPublic": true,
       },
       "id": 725,
       "kind": 32,
       "kindString": "Variable",
       "name": "weights",
-      "sources": Array [
-        Object {
+      "sources": [
+        {
           "character": 11,
           "fileName": "linear_model/stochastic_gradient.ts",
           "line": 130,
         },
       ],
-      "type": Object {
-        "elementType": Object {
+      "type": {
+        "elementType": {
           "name": "number",
           "type": "intrinsic",
         },
@@ -105,9 +101,9 @@ Object {
 `;
 
 exports[`docs:helper filterByTag should find a tag example 1`] = `
-Object {
-  "payload": Array [
-    Object {
+{
+  "payload": [
+    {
       "tag": "example",
       "text": "
 import { SGDRegressor } from 'kalimdor/linear_model';
@@ -125,60 +121,189 @@ reg.predict([[2., 2.]]); // result: [ 1.281828588248001 ]
 `;
 
 exports[`docs:helper isSignatureValid should return true for the 2nd child 1`] = `
-Object {
-  "flags": Object {
-    "isExported": true,
-  },
-  "id": 133,
+{
+  "flags": {},
+  "id": 3,
   "kind": 512,
-  "kindString": "Constructor",
   "name": "constructor",
-  "signatures": Array [
-    Object {
-      "flags": Object {},
-      "id": 134,
+  "signatures": [
+    {
+      "flags": {},
+      "id": 4,
       "kind": 16384,
-      "kindString": "Constructor signature",
-      "name": "new KMeans",
-      "parameters": Array [
-        Object {
-          "defaultValue": " {
-      distance: 'euclidean',
-      k: 3,
-      maxIteration: 300
-    }",
-          "flags": Object {},
-          "id": 135,
+      "name": "KMeans",
+      "parameters": [
+        {
+          "defaultValue": "...",
+          "flags": {},
+          "id": 5,
           "kind": 32768,
-          "kindString": "Parameter",
-          "name": "options",
-          "type": Object {
-            "id": 127,
-            "name": "KMeansOptions",
-            "type": "reference",
+          "name": "__namedParameters",
+          "type": {
+            "declaration": {
+              "children": [
+                {
+                  "defaultValue": "'euclidean'",
+                  "flags": {
+                    "isOptional": true,
+                  },
+                  "id": 8,
+                  "kind": 1024,
+                  "name": "distance",
+                  "sources": [
+                    {
+                      "character": 6,
+                      "fileName": "cluster/k_means.ts",
+                      "line": 42,
+                      "url": "https://github.com/machinelearnjs/machinelearnjs/blob/052527a63850aa38627c13eb0273cef6c858d085/src/lib/cluster/k_means.ts#L42",
+                    },
+                  ],
+                  "type": {
+                    "type": "union",
+                    "types": [
+                      {
+                        "type": "literal",
+                        "value": "euclidean",
+                      },
+                      {
+                        "type": "literal",
+                        "value": "manhattan",
+                      },
+                    ],
+                  },
+                  "variant": "declaration",
+                },
+                {
+                  "defaultValue": "3",
+                  "flags": {},
+                  "id": 7,
+                  "kind": 1024,
+                  "name": "k",
+                  "sources": [
+                    {
+                      "character": 6,
+                      "fileName": "cluster/k_means.ts",
+                      "line": 41,
+                      "url": "https://github.com/machinelearnjs/machinelearnjs/blob/052527a63850aa38627c13eb0273cef6c858d085/src/lib/cluster/k_means.ts#L41",
+                    },
+                  ],
+                  "type": {
+                    "name": "number",
+                    "type": "intrinsic",
+                  },
+                  "variant": "declaration",
+                },
+                {
+                  "defaultValue": "300",
+                  "flags": {
+                    "isOptional": true,
+                  },
+                  "id": 9,
+                  "kind": 1024,
+                  "name": "maxIteration",
+                  "sources": [
+                    {
+                      "character": 6,
+                      "fileName": "cluster/k_means.ts",
+                      "line": 43,
+                      "url": "https://github.com/machinelearnjs/machinelearnjs/blob/052527a63850aa38627c13eb0273cef6c858d085/src/lib/cluster/k_means.ts#L43",
+                    },
+                  ],
+                  "type": {
+                    "name": "number",
+                    "type": "intrinsic",
+                  },
+                  "variant": "declaration",
+                },
+                {
+                  "defaultValue": "0",
+                  "flags": {
+                    "isOptional": true,
+                  },
+                  "id": 10,
+                  "kind": 1024,
+                  "name": "randomState",
+                  "sources": [
+                    {
+                      "character": 6,
+                      "fileName": "cluster/k_means.ts",
+                      "line": 44,
+                      "url": "https://github.com/machinelearnjs/machinelearnjs/blob/052527a63850aa38627c13eb0273cef6c858d085/src/lib/cluster/k_means.ts#L44",
+                    },
+                  ],
+                  "type": {
+                    "name": "number",
+                    "type": "intrinsic",
+                  },
+                  "variant": "declaration",
+                },
+              ],
+              "flags": {},
+              "groups": [
+                {
+                  "children": [
+                    8,
+                    7,
+                    9,
+                    10,
+                  ],
+                  "title": "Properties",
+                },
+              ],
+              "id": 6,
+              "kind": 65536,
+              "name": "__type",
+              "sources": [
+                {
+                  "character": 7,
+                  "fileName": "cluster/k_means.ts",
+                  "line": 40,
+                  "url": "https://github.com/machinelearnjs/machinelearnjs/blob/052527a63850aa38627c13eb0273cef6c858d085/src/lib/cluster/k_means.ts#L40",
+                },
+              ],
+              "variant": "declaration",
+            },
+            "type": "reflection",
           },
+          "variant": "param",
         },
       ],
-      "type": Object {
-        "id": 132,
+      "sources": [
+        {
+          "character": 2,
+          "fileName": "cluster/k_means.ts",
+          "line": 34,
+          "url": "https://github.com/machinelearnjs/machinelearnjs/blob/052527a63850aa38627c13eb0273cef6c858d085/src/lib/cluster/k_means.ts#L34",
+        },
+      ],
+      "type": {
         "name": "KMeans",
+        "package": "machinelearn",
+        "target": 2,
         "type": "reference",
       },
+      "variant": "signature",
     },
   ],
-  "sources": Array [
-    Object {
-      "character": 31,
+  "sources": [
+    {
+      "character": 2,
       "fileName": "cluster/k_means.ts",
-      "line": 45,
+      "line": 34,
+      "url": "https://github.com/machinelearnjs/machinelearnjs/blob/052527a63850aa38627c13eb0273cef6c858d085/src/lib/cluster/k_means.ts#L34",
     },
   ],
+  "variant": "declaration",
 }
 `;
 
 exports[`docs:helper renderMethodReturnType should build a toJSON return type 1`] = `
 "| Param | Type | Description |
 | ------ | ------ | ------ |
-| trees | any[] | Decision trees
+| classes | any[] | classes used for KNN tree
+| distance | any | Choice of distance function, should choose between euclidean | manhattan
+| k | number | Number of neighbors to classify
+| tree | any | KNN tree
+| type | string | Type of algorithm to use, choose between kdtree(default) | balltree | simple
 "
 `;

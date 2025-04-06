@@ -61,6 +61,7 @@ describe('math.range', () => {
 
   it('should throw an invalid error', () => {
     try {
+      // @ts-ignore: validation test
       math.range('test', 2);
     } catch (err) {
       expect(err).toBeInstanceOf(ValidationError);

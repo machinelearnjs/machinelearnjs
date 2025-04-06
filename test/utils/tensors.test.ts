@@ -113,6 +113,7 @@ describe('reshape', () => {
       expect(err).toBeInstanceOf(ValidationError);
     }
     try {
+      // @ts-ignore: validation test
       reshape([[1, 2, 3]], 1);
     } catch (err) {
       expect(err).toBeInstanceOf(ValidationError);

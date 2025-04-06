@@ -6,6 +6,13 @@ export const kindStringMethod = 'Method';
 export const kindStringProperty = 'Property';
 export const kindStringEnum = 'Enumeration';
 
+export const kindNumberVariable = 32;
+export const kindNumberFunction = 64;
+export const kindNumberClass = 128;
+export const kindNumberConstructor = 512;
+export const kindNumberProperty = 1024;
+export const kindNumberMethod = 2048;
+
 // Parameter type
 export const paramTypeReflection = 'reflection';
 export const paramTypeIntrinsic = 'intrinsic';
@@ -27,6 +34,8 @@ export const tagTypeExample = 'example';
 export const tagTypeIgnore = 'ignore';
 
 // Reference Kinds
+export const refNumberTypeAlias = 2097152;
+export const refNumberInterface = 256;
 export const refKindInterface = 'Interface';
 export const refKindTypeAlias = 'Type alias';
 export const refTypeArgTypeUnion = 'union';

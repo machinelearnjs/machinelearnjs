@@ -1,3 +1,3 @@
-import { BaseSVM, NuSVC, NuSVR, OneClassSVM, SVC, SVR } from './classes';
+import { BaseSVM, NuSVC, NuSVR, OneClassSVM, SVC, SVMOptions, SVR } from './classes';
 
-export { BaseSVM, NuSVC, NuSVR, OneClassSVM, SVC, SVR };
+export { BaseSVM, NuSVC, NuSVR, OneClassSVM, SVC, SVMOptions, SVR };

@@ -1,0 +1,30 @@
+:root {
+  --homepage-width: 1200px;
+  --content-width: 1200px;
+  --vp-c-accent: #007acd;
+  --vp-c-accent-bg: #007acd;
+  --vp-c-accent-hover: #007acd;
+}
+
+a {
+  color: #007acd;
+}
+
+// Homepage
+.features {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+// Applying responsiveness to the hero image
+@media screen and (max-width: 991px) {
+  .features {
+    flex-direction: column;
+  }
+}
+
+#main-title {
+  display: none;
+}

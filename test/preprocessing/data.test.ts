@@ -162,7 +162,7 @@ describe('data:MinMaxScaler', () => {
     const data = [1, 2, 3];
     const transformed = scaler.transform(data);
     expect(transformed).toEqual(expected);
-    const result = scaler.inverse_transform(transformed);
+    const result = scaler.inverse_transform(transformed as number[]);
     expect(result).toEqual(data);
   });
   it('should not fit invalid inputs', () => {
@@ -327,12 +327,14 @@ describe('data:PolynomialFeatures', () => {
       expect(err).toBeInstanceOf(ConstructionError);
     }
     try {
+      // @ts-ignore: validation error test
       const poly = new PolynomialFeatures({ degree: 'string' });
       poly.transform();
     } catch (err) {
       expect(err).toBeInstanceOf(ConstructionError);
     }
     try {
+      // @ts-ignore: validation error test
       const poly = new PolynomialFeatures({ degree: [] });
       poly.transform();
     } catch (err) {

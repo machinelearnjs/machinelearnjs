@@ -16,6 +16,8 @@ import {
   searchInterface,
   traverseArrayDefinition,
 } from '../../docs/processor';
+import * as constants from '../../docs/processor/const';
+import { kindNumberConstructor, kindNumberVariable } from '../../docs/processor/const';
 const docsJson = JSON.parse(fs.readFileSync(path.join(__dirname, './__snapshots__/docs.snapshot.json'), 'utf8'));
 
 /**
@@ -61,7 +63,7 @@ describe('docs:helper', () => {
       {
         id: 724,
         name: 'zzzz',
-        kind: 32,
+        kind: 512,
         kindString: 'Constructor',
         flags: {},
         comment: {
@@ -85,9 +87,6 @@ describe('docs:helper', () => {
         name: 'weights',
         kind: 32,
         kindString: 'Variable',
-        flags: {
-          isPublic: true,
-        },
         comment: {
           shortText: 'Model training weights',
         },
@@ -108,12 +107,12 @@ describe('docs:helper', () => {
       },
     ];
     it('should filter all public Variables', () => {
-      const result = filterByKind(fakePayload, optionsMock, 'Variable');
+      const result = filterByKind(fakePayload, optionsMock, kindNumberVariable);
       expect(result).toMatchSnapshot();
     });
 
     it('should filter all constructor', () => {
-      const result = filterByKind(fakePayload, optionsMock, 'Constructor');
+      const result = filterByKind(fakePayload, optionsMock, kindNumberConstructor);
       expect(result).toMatchSnapshot();
     });
   });
@@ -143,11 +142,11 @@ describe('docs:helper', () => {
 
   describe('searchInterface', () => {
     it('should find reference', () => {
-      const result = searchInterface(docsJson, 942);
-      const { id, name, kindString } = result;
-      expect(id).toBe(942);
+      const result = searchInterface(docsJson, 1028);
+      const { id, name, kind } = result;
+      expect(id).toBe(1028);
       expect(name).toBe('SVMOptions');
-      expect(kindString).toBe('Interface');
+      expect(kind).toBe(constants.refNumberInterface);
     });
     it('should invalid ID reference return null', () => {
       const result = searchInterface(docsJson, 9999999);
@@ -157,7 +156,7 @@ describe('docs:helper', () => {
 
   describe('isSignatureValid', () => {
     it('should return true for the 2nd child', () => {
-      const ele = docsJson.children[1].children[0].children[0];
+      const ele = docsJson.children[0].children[0].children[0];
       const result = isSignatureValid(ele, optionsMock);
       expect(result.result).toBe(true);
       expect(result.payload).toMatchSnapshot();
@@ -170,7 +169,9 @@ describe('docs:helper', () => {
     });
 
     it('should return false for null input', () => {
-      expect(() => isSignatureValid(null, optionsMock)).toThrow("Cannot read property 'signatures' of null");
+      expect(() => isSignatureValid(null, optionsMock)).toThrow(
+        "Cannot read properties of null (reading 'signatures')",
+      );
     });
   });
 
@@ -204,8 +205,8 @@ describe('docs:helper', () => {
     });
 
     it('should throw exceptions when invalid input is given', () => {
-      expect(() => traverseArrayDefinition(null)).toThrow("Cannot read property 'elementType' of null");
-      expect(() => traverseArrayDefinition(123)).toThrow("Cannot read property 'name' of undefined");
+      expect(() => traverseArrayDefinition(null)).toThrow("Cannot read properties of null (reading 'elementType')");
+      expect(() => traverseArrayDefinition(123)).toThrow("Cannot read properties of undefined (reading 'name')");
     });
   });
 
@@ -237,14 +238,17 @@ describe('docs:helper', () => {
   describe('getText', () => {
     const dummy1 = {
       comment: {
-        text: 'dummy text',
-        shortText: 'dummy shortText',
+        summary: [
+          {
+            text: 'dummy text',
+            shortText: 'dummy shortText',
+          },
+        ],
       },
     };
     const dummy2 = {
       comment: {
-        text: null,
-        shortText: 'dummy shortText',
+        text: 'dummy legacy text',
       },
     };
     it('should dummy1 get text', () => {
@@ -252,9 +256,9 @@ describe('docs:helper', () => {
       expect(text).toBe('dummy text');
     });
 
-    it('should dummy2 get shortText', () => {
-      const shortText = getText(dummy2);
-      expect(shortText).toBe('dummy shortText');
+    it('legacy getText', () => {
+      const text = getText(dummy2);
+      expect(text).toBe('dummy legacy text');
     });
 
     it('should throw an error for an invalid input', () => {
@@ -265,28 +269,28 @@ describe('docs:helper', () => {
 
   describe('constructParamTable', () => {
     it('should build a table for param1', () => {
-      const params = docsJson.children[3].children[0].children[1].signatures[0].parameters;
+      const params = docsJson.children[1].children[0].children[1].signatures[0].parameters;
       const result = constructParamTable(params);
       expect(result).toMatchSnapshot();
     });
 
     it('should build a table for params with Type1DMatrix', () => {
       // Testing LinearRegression's fit function
-      const params = docsJson.children[16].children[0].children[0].signatures[0].parameters;
+      const params = docsJson.children[5].children[2].children[1].signatures[0].parameters;
       const result = constructParamTable(params);
       expect(result).toMatchSnapshot();
     });
 
     it('should build table for params with Type2DMatrix', () => {
       // Testing SGDClassifier's fit function
-      const params = docsJson.children[17].children[2].children[5].signatures[0].parameters;
+      const params = docsJson.children[5].children[6].children[5].signatures[0].parameters;
       const result = constructParamTable(params);
       expect(result).toMatchSnapshot();
     });
 
     it('should build table for params with Type2DMatrix of multiple types', () => {
       // Testing GaussianNB's fit function
-      const params = docsJson.children[23].children[0].children[1].signatures[0].parameters;
+      const params = docsJson.children[8].children[0].children[1].signatures[0].parameters;
 
       const result = constructParamTable(params);
       expect(result).toMatchSnapshot();
@@ -295,20 +299,21 @@ describe('docs:helper', () => {
 
   describe('renderMethodReturnType', () => {
     it('should build a return type for any[]', () => {
-      // Testing with random forest's predict
-      const type = docsJson.children[8].children[1].children[6].signatures[0].type;
+      // Testing with imputer fit_transform
+      const type = docsJson.children[10].children[1].children[2].signatures[0].type;
       const returnType = renderMethodReturnType(type);
       expect(returnType).toEqual('any[]');
     });
     it('should build a return type for void', () => {
-      // Testing with random forest's fit
-      const type = docsJson.children[8].children[1].children[4].signatures[0].type;
+      // Testing with KNN fit
+      const type = docsJson.children[9].children[0].children[2].signatures[0].type;
       const returnType = renderMethodReturnType(type);
       expect(returnType).toEqual('void');
     });
 
     it('should build a toJSON return type', () => {
-      const type = docsJson.children[8].children[1].children[7].signatures[0].type;
+      // Testing with KNN toJSON
+      const type = docsJson.children[9].children[0].children[4].signatures[0].type;
       const returnType = renderMethodReturnType(type);
       expect(returnType).toMatchSnapshot();
     });
@@ -317,7 +322,7 @@ describe('docs:helper', () => {
   describe('methodBracket', () => {
     // TODO: renderMethodBracket should decompose all the namedParameters
     it('should print a constructor parameter table', () => {
-      const parameters = docsJson.children[8].children[1].children[0].signatures[0].parameters;
+      const parameters = docsJson.children[5].children[1].children[0].signatures[0].parameters;
       const result = renderMethodBracket(parameters);
       expect(result).toEqual('(__namedParameters: *`object`*)');
     });
@@ -353,9 +358,8 @@ describe('docs:helper', () => {
     });
 
     it('should not render sources for null', () => {
-      const error = 'Sources cannot be empty';
-      expect(() => renderSourceLink(null)).toThrow(error);
-      expect(() => renderSourceLink(123)).toThrow(error);
+      expect(renderSourceLink(null)).toBe('');
+      expect(renderSourceLink(123)).toBe('');
     });
   });
 

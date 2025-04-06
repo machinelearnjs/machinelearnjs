@@ -1,22 +1,25 @@
-FROM node:8.15.1-stretch
-MAINTAINER Jason Shin <visualbbasic@gmail.com>
+FROM node:22-alpine
 
-# System Deps
-RUN apt-get update -y
-RUN apt-get clean
+LABEL maintainer="Jason Shin <visualbbasic@gmail.com>"
 
-ENV CORE /home/node/app
-RUN mkdir $CORE
-RUN echo $CORE
+# Set working directory
+ENV CORE=/home/node/app
 WORKDIR $CORE
 
-RUN git init
-# Install baseline cache
-COPY ./package.json $CORE
-COPY ./yarn.lock $CORE
-RUN yarn
+# Create app directory
+RUN mkdir -p $CORE
 
-# Finally add remaining project source code to the docker container
-ADD . $CORE
+# Install OS dependencies (Alpine uses apk, not apt-get)
+RUN apk add --no-cache git bash
 
+# Copy package files first to leverage Docker layer caching
+COPY package.json yarn.lock ./
+
+# Install dependencies
+RUN yarn install --frozen-lockfile
+
+# Copy the rest of the application source code
+COPY . .
+
+# Start the app
 CMD ["yarn", "start"]

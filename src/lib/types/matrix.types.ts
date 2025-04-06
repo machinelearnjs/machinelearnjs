@@ -10,6 +10,7 @@ export type Type1DMatrix<T> = T[];
 
 /**
  * Typing for a 2D matrix
+ * @link
  */
 export type Type2DMatrix<T> = T[][];
 
